@@ -1,0 +1,951 @@
+
+All.png
+size: 4096,4096
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Big Mountain in the Back
+  rotate: false
+  xy: 2, 2606
+  size: 2571, 405
+  orig: 2571, 405
+  offset: 0, 0
+  index: -1
+Big Tree in the Back
+  rotate: false
+  xy: 619, 344
+  size: 397, 675
+  orig: 397, 675
+  offset: 0, 0
+  index: -1
+Bomb
+  rotate: false
+  xy: 2704, 1992
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+Bullet
+  rotate: false
+  xy: 4052, 4040
+  size: 39, 13
+  orig: 39, 13
+  offset: 0, 0
+  index: -1
+Controller BG
+  rotate: false
+  xy: 2458, 2137
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+Controller Stick
+  rotate: false
+  xy: 2602, 1952
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+Front Big Tree
+  rotate: false
+  xy: 1229, 1693
+  size: 531, 594
+  orig: 531, 594
+  offset: 0, 0
+  index: -1
+Front Grass
+  rotate: false
+  xy: 2, 2330
+  size: 2568, 233
+  orig: 2568, 233
+  offset: 0, 0
+  index: -1
+Game Over BG
+  rotate: false
+  xy: 2, 1062
+  size: 1225, 1225
+  orig: 1225, 1225
+  offset: 0, 0
+  index: -1
+HealthBar100
+  rotate: false
+  xy: 586, 54
+  size: 132, 35
+  orig: 132, 35
+  offset: 0, 0
+  index: -1
+HealthBar104
+  rotate: false
+  xy: 586, 132
+  size: 136, 37
+  orig: 136, 37
+  offset: 0, 0
+  index: -1
+HealthBar108
+  rotate: false
+  xy: 2749, 2762
+  size: 139, 39
+  orig: 139, 39
+  offset: 0, 0
+  index: -1
+HealthBar112
+  rotate: false
+  xy: 2749, 2925
+  size: 143, 42
+  orig: 143, 42
+  offset: 0, 0
+  index: -1
+HealthBar116
+  rotate: false
+  xy: 2749, 3010
+  size: 146, 44
+  orig: 146, 44
+  offset: 0, 0
+  index: -1
+HealthBar12
+  rotate: false
+  xy: 2896, 3136
+  size: 18, 7
+  orig: 18, 7
+  offset: 0, 0
+  index: -1
+HealthBar120
+  rotate: false
+  xy: 2745, 3097
+  size: 149, 46
+  orig: 149, 46
+  offset: 0, 0
+  index: -1
+HealthBar124
+  rotate: false
+  xy: 1577, 942
+  size: 152, 49
+  orig: 152, 49
+  offset: 0, 0
+  index: -1
+HealthBar128
+  rotate: false
+  xy: 3156, 3833
+  size: 155, 51
+  orig: 155, 51
+  offset: 0, 0
+  index: -1
+HealthBar132
+  rotate: false
+  xy: 2997, 3832
+  size: 157, 54
+  orig: 157, 54
+  offset: 0, 0
+  index: -1
+HealthBar136
+  rotate: false
+  xy: 967, 188
+  size: 160, 56
+  orig: 160, 56
+  offset: 0, 0
+  index: -1
+HealthBar140
+  rotate: false
+  xy: 1192, 330
+  size: 162, 59
+  orig: 162, 59
+  offset: 0, 0
+  index: -1
+HealthBar144
+  rotate: false
+  xy: 1577, 1034
+  size: 164, 61
+  orig: 164, 61
+  offset: 0, 0
+  index: -1
+HealthBar148
+  rotate: false
+  xy: 1192, 432
+  size: 166, 64
+  orig: 166, 64
+  offset: 0, 0
+  index: -1
+HealthBar152
+  rotate: false
+  xy: 1192, 539
+  size: 167, 67
+  orig: 167, 67
+  offset: 0, 0
+  index: -1
+HealthBar156
+  rotate: false
+  xy: 1192, 649
+  size: 169, 69
+  orig: 169, 69
+  offset: 0, 0
+  index: -1
+HealthBar16
+  rotate: false
+  xy: 1883, 968
+  size: 24, 7
+  orig: 24, 7
+  offset: 0, 0
+  index: -1
+HealthBar160
+  rotate: false
+  xy: 2571, 3055
+  size: 170, 72
+  orig: 170, 72
+  offset: 0, 0
+  index: -1
+HealthBar164
+  rotate: false
+  xy: 1192, 761
+  size: 171, 75
+  orig: 171, 75
+  offset: 0, 0
+  index: -1
+HealthBar168
+  rotate: false
+  xy: 1192, 879
+  size: 171, 78
+  orig: 171, 78
+  offset: 0, 0
+  index: -1
+HealthBar172
+  rotate: false
+  xy: 2572, 2332
+  size: 172, 80
+  orig: 172, 80
+  offset: 0, 0
+  index: -1
+HealthBar176
+  rotate: false
+  xy: 1403, 1012
+  size: 172, 83
+  orig: 172, 83
+  offset: 0, 0
+  index: -1
+HealthBar180
+  rotate: false
+  xy: 2458, 1665
+  size: 172, 86
+  orig: 172, 86
+  offset: 0, 0
+  index: -1
+HealthBar184
+  rotate: false
+  xy: 619, 212
+  size: 172, 89
+  orig: 172, 89
+  offset: 0, 0
+  index: -1
+HealthBar188
+  rotate: false
+  xy: 1018, 287
+  size: 172, 92
+  orig: 172, 92
+  offset: 0, 0
+  index: -1
+HealthBar192
+  rotate: false
+  xy: 1229, 1000
+  size: 172, 95
+  orig: 172, 95
+  offset: 0, 0
+  index: -1
+HealthBar196
+  rotate: false
+  xy: 2575, 2605
+  size: 172, 98
+  orig: 172, 98
+  offset: 0, 0
+  index: -1
+HealthBar20
+  rotate: false
+  xy: 1365, 949
+  size: 30, 8
+  orig: 30, 8
+  offset: 0, 0
+  index: -1
+HealthBar200
+  rotate: false
+  xy: 793, 200
+  size: 172, 101
+  orig: 172, 101
+  offset: 0, 0
+  index: -1
+HealthBar204
+  rotate: false
+  xy: 2610, 2185
+  size: 172, 104
+  orig: 172, 104
+  offset: 0, 0
+  index: -1
+HealthBar208
+  rotate: false
+  xy: 2572, 2455
+  size: 172, 107
+  orig: 172, 107
+  offset: 0, 0
+  index: -1
+HealthBar212
+  rotate: false
+  xy: 2575, 2746
+  size: 172, 110
+  orig: 172, 110
+  offset: 0, 0
+  index: -1
+HealthBar216
+  rotate: false
+  xy: 2575, 2899
+  size: 172, 113
+  orig: 172, 113
+  offset: 0, 0
+  index: -1
+HealthBar220
+  rotate: false
+  xy: 2458, 1794
+  size: 172, 115
+  orig: 172, 115
+  offset: 0, 0
+  index: -1
+HealthBar224
+  rotate: false
+  xy: 3878, 3935
+  size: 172, 118
+  orig: 172, 118
+  offset: 0, 0
+  index: -1
+HealthBar228
+  rotate: false
+  xy: 3704, 3932
+  size: 172, 121
+  orig: 172, 121
+  offset: 0, 0
+  index: -1
+HealthBar232
+  rotate: false
+  xy: 3008, 3929
+  size: 172, 124
+  orig: 172, 124
+  offset: 0, 0
+  index: -1
+HealthBar236
+  rotate: false
+  xy: 3182, 3927
+  size: 172, 126
+  orig: 172, 126
+  offset: 0, 0
+  index: -1
+HealthBar24
+  rotate: false
+  xy: 1192, 1011
+  size: 35, 8
+  orig: 35, 8
+  offset: 0, 0
+  index: -1
+HealthBar240
+  rotate: false
+  xy: 3356, 3924
+  size: 172, 129
+  orig: 172, 129
+  offset: 0, 0
+  index: -1
+HealthBar244
+  rotate: false
+  xy: 3530, 3921
+  size: 172, 132
+  orig: 172, 132
+  offset: 0, 0
+  index: -1
+HealthBar248
+  rotate: false
+  xy: 2745, 3186
+  size: 172, 134
+  orig: 172, 134
+  offset: 0, 0
+  index: -1
+HealthBar252
+  rotate: false
+  xy: 2745, 3363
+  size: 172, 137
+  orig: 172, 137
+  offset: 0, 0
+  index: -1
+HealthBar256
+  rotate: false
+  xy: 2571, 3170
+  size: 172, 139
+  orig: 172, 139
+  offset: 0, 0
+  index: -1
+HealthBar260
+  rotate: false
+  xy: 1743, 1110
+  size: 172, 141
+  orig: 172, 141
+  offset: 0, 0
+  index: -1
+HealthBar264
+  rotate: false
+  xy: 2575, 3543
+  size: 172, 144
+  orig: 172, 144
+  offset: 0, 0
+  index: -1
+HealthBar268
+  rotate: false
+  xy: 2749, 3543
+  size: 172, 146
+  orig: 172, 146
+  offset: 0, 0
+  index: -1
+HealthBar272
+  rotate: false
+  xy: 2571, 3352
+  size: 172, 148
+  orig: 172, 148
+  offset: 0, 0
+  index: -1
+HealthBar276
+  rotate: false
+  xy: 350, 56
+  size: 172, 150
+  orig: 172, 150
+  offset: 0, 0
+  index: -1
+HealthBar28
+  rotate: false
+  xy: 4052, 3988
+  size: 41, 9
+  orig: 41, 9
+  offset: 0, 0
+  index: -1
+HealthBar280
+  rotate: false
+  xy: 1743, 1294
+  size: 172, 152
+  orig: 172, 152
+  offset: 0, 0
+  index: -1
+HealthBar284
+  rotate: false
+  xy: 176, 52
+  size: 172, 154
+  orig: 172, 154
+  offset: 0, 0
+  index: -1
+HealthBar288
+  rotate: false
+  xy: 2284, 1714
+  size: 172, 156
+  orig: 172, 156
+  offset: 0, 0
+  index: -1
+HealthBar292
+  rotate: false
+  xy: 2110, 1707
+  size: 172, 158
+  orig: 172, 158
+  offset: 0, 0
+  index: -1
+HealthBar296
+  rotate: false
+  xy: 1936, 1701
+  size: 172, 159
+  orig: 172, 159
+  offset: 0, 0
+  index: -1
+HealthBar300
+  rotate: false
+  xy: 1743, 1489
+  size: 172, 161
+  orig: 172, 161
+  offset: 0, 0
+  index: -1
+HealthBar304
+  rotate: false
+  xy: 2, 44
+  size: 172, 162
+  orig: 172, 162
+  offset: 0, 0
+  index: -1
+HealthBar308
+  rotate: false
+  xy: 1762, 1693
+  size: 172, 164
+  orig: 172, 164
+  offset: 0, 0
+  index: -1
+HealthBar312
+  rotate: false
+  xy: 2284, 1913
+  size: 172, 165
+  orig: 172, 165
+  offset: 0, 0
+  index: -1
+HealthBar316
+  rotate: false
+  xy: 2284, 2121
+  size: 172, 166
+  orig: 172, 166
+  offset: 0, 0
+  index: -1
+HealthBar32
+  rotate: false
+  xy: 967, 291
+  size: 47, 10
+  orig: 47, 10
+  offset: 0, 0
+  index: -1
+HealthBar320
+  rotate: false
+  xy: 2110, 1908
+  size: 172, 167
+  orig: 172, 167
+  offset: 0, 0
+  index: -1
+HealthBar324
+  rotate: false
+  xy: 1018, 422
+  size: 172, 168
+  orig: 172, 168
+  offset: 0, 0
+  index: -1
+HealthBar328
+  rotate: false
+  xy: 2110, 2118
+  size: 172, 169
+  orig: 172, 169
+  offset: 0, 0
+  index: -1
+HealthBar332
+  rotate: false
+  xy: 2749, 3732
+  size: 172, 170
+  orig: 172, 170
+  offset: 0, 0
+  index: -1
+HealthBar336
+  rotate: false
+  xy: 1936, 1903
+  size: 172, 170
+  orig: 172, 170
+  offset: 0, 0
+  index: -1
+HealthBar340
+  rotate: false
+  xy: 1936, 2116
+  size: 172, 171
+  orig: 172, 171
+  offset: 0, 0
+  index: -1
+HealthBar344
+  rotate: false
+  xy: 1018, 633
+  size: 172, 171
+  orig: 172, 171
+  offset: 0, 0
+  index: -1
+HealthBar348
+  rotate: false
+  xy: 1762, 2115
+  size: 172, 172
+  orig: 172, 172
+  offset: 0, 0
+  index: -1
+HealthBar352
+  rotate: false
+  xy: 1018, 847
+  size: 172, 172
+  orig: 172, 172
+  offset: 0, 0
+  index: -1
+HealthBar356
+  rotate: false
+  xy: 2575, 3730
+  size: 172, 172
+  orig: 172, 172
+  offset: 0, 0
+  index: -1
+HealthBar36
+  rotate: false
+  xy: 3714, 3791
+  size: 53, 11
+  orig: 53, 11
+  offset: 0, 0
+  index: -1
+HealthBar360
+  rotate: false
+  xy: 1762, 1900
+  size: 172, 172
+  orig: 172, 172
+  offset: 0, 0
+  index: -1
+HealthBar4
+  rotate: false
+  xy: 2776, 2135
+  size: 6, 7
+  orig: 6, 7
+  offset: 0, 0
+  index: -1
+HealthBar40
+  rotate: false
+  xy: 3653, 3791
+  size: 59, 11
+  orig: 59, 11
+  offset: 0, 0
+  index: -1
+HealthBar44
+  rotate: false
+  xy: 3587, 3782
+  size: 64, 12
+  orig: 64, 12
+  offset: 0, 0
+  index: -1
+HealthBar48
+  rotate: false
+  xy: 3515, 3780
+  size: 70, 14
+  orig: 70, 14
+  offset: 0, 0
+  index: -1
+HealthBar52
+  rotate: false
+  xy: 3438, 3779
+  size: 75, 15
+  orig: 75, 15
+  offset: 0, 0
+  index: -1
+HealthBar56
+  rotate: false
+  xy: 884, 141
+  size: 81, 16
+  orig: 81, 16
+  offset: 0, 0
+  index: -1
+HealthBar60
+  rotate: false
+  xy: 3350, 3778
+  size: 86, 17
+  orig: 86, 17
+  offset: 0, 0
+  index: -1
+HealthBar64
+  rotate: false
+  xy: 791, 138
+  size: 91, 19
+  orig: 91, 19
+  offset: 0, 0
+  index: -1
+HealthBar68
+  rotate: false
+  xy: 2632, 1721
+  size: 96, 20
+  orig: 96, 20
+  offset: 0, 0
+  index: -1
+HealthBar72
+  rotate: false
+  xy: 3051, 3701
+  size: 101, 22
+  orig: 101, 22
+  offset: 0, 0
+  index: -1
+HealthBar76
+  rotate: false
+  xy: 3049, 3766
+  size: 106, 23
+  orig: 106, 23
+  offset: 0, 0
+  index: -1
+HealthBar8
+  rotate: false
+  xy: 1917, 1643
+  size: 12, 7
+  orig: 12, 7
+  offset: 0, 0
+  index: -1
+HealthBar80
+  rotate: false
+  xy: 2919, 3264
+  size: 111, 25
+  orig: 111, 25
+  offset: 0, 0
+  index: -1
+HealthBar84
+  rotate: false
+  xy: 2919, 3400
+  size: 115, 27
+  orig: 115, 27
+  offset: 0, 0
+  index: -1
+HealthBar88
+  rotate: false
+  xy: 2923, 3540
+  size: 120, 29
+  orig: 120, 29
+  offset: 0, 0
+  index: -1
+HealthBar92
+  rotate: false
+  xy: 2923, 3756
+  size: 124, 31
+  orig: 124, 31
+  offset: 0, 0
+  index: -1
+HealthBar96
+  rotate: false
+  xy: 3628, 3845
+  size: 128, 33
+  orig: 128, 33
+  offset: 0, 0
+  index: -1
+Heart
+  rotate: false
+  xy: 524, 146
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+Logo
+  rotate: false
+  xy: 2, 249
+  size: 615, 770
+  orig: 615, 770
+  offset: 0, 0
+  index: -1
+Middle Tall Grass
+  rotate: false
+  xy: 2, 3575
+  size: 2571, 478
+  orig: 2571, 478
+  offset: 0, 0
+  index: -1
+Minus
+  rotate: false
+  xy: 524, 43
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+Plus
+  rotate: false
+  xy: 2632, 1849
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+START
+  rotate: false
+  xy: 2575, 3945
+  size: 431, 108
+  orig: 431, 108
+  offset: 0, 0
+  index: -1
+Shields102
+  rotate: false
+  xy: 2749, 2844
+  size: 146, 38
+  orig: 146, 38
+  offset: 0, 0
+  index: -1
+Shields105
+  rotate: false
+  xy: 1731, 935
+  size: 150, 40
+  orig: 150, 40
+  offset: 0, 0
+  index: -1
+Shields108
+  rotate: false
+  xy: 3472, 3837
+  size: 154, 41
+  orig: 154, 41
+  offset: 0, 0
+  index: -1
+Shields111
+  rotate: false
+  xy: 3313, 3838
+  size: 157, 43
+  orig: 157, 43
+  offset: 0, 0
+  index: -1
+Shields114
+  rotate: false
+  xy: 1192, 242
+  size: 161, 45
+  orig: 161, 45
+  offset: 0, 0
+  index: -1
+Shields117
+  rotate: false
+  xy: 2610, 2095
+  size: 164, 47
+  orig: 164, 47
+  offset: 0, 0
+  index: -1
+Shields120
+  rotate: false
+  xy: 1743, 1018
+  size: 168, 49
+  orig: 168, 49
+  offset: 0, 0
+  index: -1
+Shields45
+  rotate: false
+  xy: 1129, 230
+  size: 60, 14
+  orig: 60, 14
+  offset: 0, 0
+  index: -1
+Shields48
+  rotate: false
+  xy: 724, 154
+  size: 65, 15
+  orig: 65, 15
+  offset: 0, 0
+  index: -1
+Shields51
+  rotate: false
+  xy: 2704, 1933
+  size: 70, 16
+  orig: 70, 16
+  offset: 0, 0
+  index: -1
+Shields54
+  rotate: false
+  xy: 2694, 1873
+  size: 75, 17
+  orig: 75, 17
+  offset: 0, 0
+  index: -1
+Shields57
+  rotate: false
+  xy: 1058, 127
+  size: 80, 18
+  orig: 80, 18
+  offset: 0, 0
+  index: -1
+Shields60
+  rotate: false
+  xy: 3263, 3772
+  size: 85, 18
+  orig: 85, 18
+  offset: 0, 0
+  index: -1
+Shields63
+  rotate: false
+  xy: 967, 126
+  size: 89, 19
+  orig: 89, 19
+  offset: 0, 0
+  index: -1
+Shields66
+  rotate: false
+  xy: 2632, 1657
+  size: 94, 21
+  orig: 94, 21
+  offset: 0, 0
+  index: -1
+Shields69
+  rotate: false
+  xy: 2632, 1784
+  size: 99, 22
+  orig: 99, 22
+  offset: 0, 0
+  index: -1
+Shields72
+  rotate: false
+  xy: 3157, 3767
+  size: 104, 23
+  orig: 104, 23
+  offset: 0, 0
+  index: -1
+Shields75
+  rotate: false
+  xy: 2919, 3197
+  size: 108, 24
+  orig: 108, 24
+  offset: 0, 0
+  index: -1
+Shields78
+  rotate: false
+  xy: 2919, 3332
+  size: 113, 25
+  orig: 113, 25
+  offset: 0, 0
+  index: -1
+Shields81
+  rotate: false
+  xy: 2919, 3470
+  size: 117, 27
+  orig: 117, 27
+  offset: 0, 0
+  index: -1
+Shields84
+  rotate: false
+  xy: 2923, 3612
+  size: 122, 28
+  orig: 122, 28
+  offset: 0, 0
+  index: -1
+Shields87
+  rotate: false
+  xy: 2923, 3683
+  size: 126, 30
+  orig: 126, 30
+  offset: 0, 0
+  index: -1
+Shields90
+  rotate: false
+  xy: 3894, 3861
+  size: 130, 31
+  orig: 130, 31
+  offset: 0, 0
+  index: -1
+Shields93
+  rotate: false
+  xy: 3758, 3856
+  size: 134, 33
+  orig: 134, 33
+  offset: 0, 0
+  index: -1
+Shields96
+  rotate: false
+  xy: 2749, 2606
+  size: 138, 34
+  orig: 138, 34
+  offset: 0, 0
+  index: -1
+Shields99
+  rotate: false
+  xy: 2749, 2683
+  size: 142, 36
+  orig: 142, 36
+  offset: 0, 0
+  index: -1
+Star
+  rotate: false
+  xy: 2923, 3830
+  size: 72, 72
+  orig: 72, 72
+  offset: 0, 0
+  index: -1
+Too Many Trees
+  rotate: false
+  xy: 2, 3054
+  size: 2567, 478
+  orig: 2567, 478
+  offset: 0, 0
+  index: -1
+Turret
+  rotate: false
+  xy: 2458, 1952
+  size: 142, 142
+  orig: 142, 142
+  offset: 0, 0
+  index: -1
+Uni Neue Bold Italic
+  rotate: false
+  xy: 1229, 1138
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: 0
