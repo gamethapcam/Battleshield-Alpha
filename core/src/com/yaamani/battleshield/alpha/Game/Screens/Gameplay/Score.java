@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -88,7 +89,7 @@ public class Score extends Actor implements Resizable{
         font.draw(batch, "+ (Bullets per wave)", _x, _y+13);*/
     }
 
-    void updateBestScoreButDontRegisterToHardDriveYet() {
+    public void updateBestScoreButDontRegisterToHardDriveYet() {
         if (playerScoredBest) {
             currentBest = score;
         }
@@ -108,7 +109,7 @@ public class Score extends Actor implements Resizable{
         }
     }
 
-    void resetScore() {
+    public void resetScore() {
         score = 0;
         playerScoredBest = false;
     }

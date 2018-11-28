@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.ShieldsAndContainersHandler;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -65,7 +66,7 @@ public class Bullet extends Actor implements Resizable {
         return inUse;
     }
 
-    void attachToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
+    public void attachToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
         inUse = true;
         this.parent = parent;
         parent.addActor(this);
@@ -75,7 +76,7 @@ public class Bullet extends Actor implements Resizable {
         setX(getX() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH));
     }
 
-    void detachFromBulletsAndShieldObject() {
+    public void detachFromBulletsAndShieldObject() {
         inUse = false;
         if (parent != null) parent.removeActor(this);
         parent = null;
@@ -173,7 +174,7 @@ public class Bullet extends Actor implements Resizable {
         }
     }*/
 
-    void notSpecial() {
+    public void notSpecial() {
         setSize(BULLETS_ORDINARY_WIDTH, BULLETS_ORDINARY_HEIGHT);
         setOrigin(0, 0);
         setRotation(0);
@@ -181,7 +182,7 @@ public class Bullet extends Actor implements Resizable {
         currentEffect = effects.ordinary;
     }
 
-    void setSpecial(SpecialBullet specialType) {
+    public void setSpecial(SpecialBullet specialType) {
         setSize(BULLETS_SPECIAL_RADIUS, BULLETS_SPECIAL_RADIUS);
         setOrigin(getWidth()/2f, getHeight()/2f);
         setX(getX() - (BULLETS_SPECIAL_RADIUS - BULLETS_ORDINARY_WIDTH)/2f);
@@ -238,7 +239,7 @@ public class Bullet extends Actor implements Resizable {
             plus = new BulletEffect() {
                 @Override
                 public void effect() {
-                    GameplayScreen.ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
+                    ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
                     handler.setActiveShields(handler.getActiveShields()+1);
                     plusMinusCommon();
                     radialTweenStars.start(SpecialBullet.PLUS);
@@ -258,7 +259,7 @@ public class Bullet extends Actor implements Resizable {
             minus = new BulletEffect() {
                 @Override
                 public void effect() {
-                    GameplayScreen.ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
+                    ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
                     handler.setActiveShields(handler.getActiveShields()-1);
                     plusMinusCommon();
                     radialTweenStars.start(SpecialBullet.MINUS);

@@ -5,15 +5,13 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.FastExpTest;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.BulletsHandler;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
@@ -38,7 +36,7 @@ public class StarsContainer extends Group implements Disposable{
     private RadialTween radialTween;
     private float thetaForRadialTween; // Rad
 
-    private GameplayScreen.BulletsHandler bulletsHandler;
+    private BulletsHandler bulletsHandler;
 
     public StarsContainer(AdvancedStage game) {
         setTransform(false);
@@ -120,7 +118,7 @@ public class StarsContainer extends Group implements Disposable{
         return radialTween;
     }
 
-    public void setBulletsHandler(GameplayScreen.BulletsHandler bulletsHandler) {
+    public void setBulletsHandler(BulletsHandler bulletsHandler) {
         this.bulletsHandler = bulletsHandler;
     }
 

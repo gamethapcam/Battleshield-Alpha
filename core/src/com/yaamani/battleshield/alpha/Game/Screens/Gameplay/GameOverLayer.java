@@ -6,10 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
@@ -80,7 +79,7 @@ public class GameOverLayer extends Actor implements Resizable{
             tapAnyWhereToPlayAgainText.draw(batch, getX() + getWidth()/2f - tapAnyWhereToPlayAgainText.getGlyphLayout().width/2f, getHeight()*(1f/5f));
     }
 
-    void thePlayerLost() {
+    public void thePlayerLost() {
         setVisible(true);
 
         scoreText.setCharSequence(gameplayScreen.getScore().getScoreText().getCharSequence());
@@ -91,7 +90,7 @@ public class GameOverLayer extends Actor implements Resizable{
         tapAnyWhereToPlayAgainTextShowingTimer.start();
     }
 
-    void disappearToStartANewGame() {
+    public void disappearToStartANewGame() {
         setVisible(false);
     }
 

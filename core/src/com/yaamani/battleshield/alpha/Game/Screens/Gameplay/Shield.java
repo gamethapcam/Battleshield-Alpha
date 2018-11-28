@@ -45,7 +45,7 @@ public class Shield extends Actor {
         return omegaDeg;
     }
 
-    void setOmegaDeg(float omegaDeg) {
+    public void setOmegaDeg(float omegaDeg) {
         float correctedOmega = MathUtils.clamp(omegaDeg, SHIELDS_SAVING_FROM_ANGLE, SHIELDS_SAVING_TO_ANGLE);
 
         int index = Math.round((correctedOmega - SHIELDS_SAVING_FROM_ANGLE)/SHIELDS_SKIP_ANGLE_WHEN_SAVING);
@@ -56,11 +56,11 @@ public class Shield extends Actor {
         changeSize(this.omegaDeg);
     }
 
-    boolean isOn() {
+    public boolean isOn() {
         return on;
     }
 
-    void setOn(boolean on) {
+    public void setOn(boolean on) {
         this.on = on;
         if (on) setColor(1, 1, 1, 1);
         else setColor(1, 1, 1, 0.5f);

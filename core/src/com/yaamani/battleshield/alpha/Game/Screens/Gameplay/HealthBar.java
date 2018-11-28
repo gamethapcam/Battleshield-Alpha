@@ -1,7 +1,5 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,6 +7,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.HealthHandler;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.DebugOrigin;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -20,14 +20,14 @@ public class HealthBar extends Actor implements Resizable {
 
     public static final String TAG = HealthBar.class.getSimpleName();
 
-    private GameplayScreen.HealthHandler healthHandler;
+    private HealthHandler healthHandler;
 
     private TextureRegion currentRegion;
 
     private ShapeRenderer shapeRenderer;
     private DebugOrigin debugOrigin;
 
-    public HealthBar(GameplayScreen gameplayScreen, GameplayScreen.HealthHandler healthHandler) {
+    public HealthBar(GameplayScreen gameplayScreen, HealthHandler healthHandler) {
         shapeRenderer = new ShapeRenderer();
         debugOrigin = new DebugOrigin(this, shapeRenderer, WORLD_SIZE*0.004f);
 
