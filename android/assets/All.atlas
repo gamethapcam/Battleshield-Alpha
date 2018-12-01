@@ -6,28 +6,28 @@ filter: Linear,Linear
 repeat: none
 Bomb
   rotate: false
-  xy: 620, 414
+  xy: 350, 249
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Bullet
   rotate: false
-  xy: 3857, 3971
+  xy: 3333, 3821
   size: 39, 13
   orig: 39, 13
   offset: 0, 0
   index: -1
 Controller BG
   rotate: false
-  xy: 1577, 1329
+  xy: 2110, 2233
   size: 150, 150
   orig: 150, 150
   offset: 0, 0
   index: -1
 Controller Stick
   rotate: false
-  xy: 518, 393
+  xy: 3271, 3884
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
@@ -41,840 +41,840 @@ Game Over BG
   index: -1
 HealthBar100
   rotate: false
-  xy: 3425, 3492
+  xy: 2, 2
   size: 132, 35
   orig: 132, 35
   offset: 0, 0
   index: -1
 HealthBar104
   rotate: false
-  xy: 3263, 3440
+  xy: 1917, 1798
   size: 136, 37
   orig: 136, 37
   offset: 0, 0
   index: -1
 HealthBar108
   rotate: false
-  xy: 2284, 2189
+  xy: 1917, 1837
   size: 139, 39
   orig: 139, 39
   offset: 0, 0
   index: -1
 HealthBar112
   rotate: false
-  xy: 176, 2
+  xy: 2571, 3199
   size: 143, 42
   orig: 143, 42
   offset: 0, 0
   index: -1
 HealthBar116
   rotate: false
-  xy: 1018, 611
+  xy: 176, 2
   size: 146, 44
   orig: 146, 44
   offset: 0, 0
   index: -1
 HealthBar12
   rotate: false
-  xy: 1933, 1984
+  xy: 2923, 3646
   size: 18, 7
   orig: 18, 7
   offset: 0, 0
   index: -1
 HealthBar120
   rotate: false
-  xy: 2284, 2230
+  xy: 2571, 3373
   size: 149, 46
   orig: 149, 46
   offset: 0, 0
   index: -1
 HealthBar124
   rotate: false
-  xy: 2923, 3358
+  xy: 2571, 3421
   size: 152, 49
   orig: 152, 49
   offset: 0, 0
   index: -1
 HealthBar128
   rotate: false
-  xy: 792, 537
+  xy: 2571, 3472
   size: 155, 51
   orig: 155, 51
   offset: 0, 0
   index: -1
 HealthBar132
   rotate: false
-  xy: 3437, 3602
+  xy: 2571, 3525
   size: 157, 54
   orig: 157, 54
   offset: 0, 0
   index: -1
 HealthBar136
   rotate: false
-  xy: 3263, 3479
+  xy: 2575, 3581
   size: 160, 56
   orig: 160, 56
   offset: 0, 0
   index: -1
 HealthBar140
   rotate: false
-  xy: 1018, 657
+  xy: 3541, 3909
   size: 162, 59
   orig: 162, 59
   offset: 0, 0
   index: -1
 HealthBar144
   rotate: false
-  xy: 2923, 3409
+  xy: 1743, 1384
   size: 164, 61
   orig: 164, 61
   offset: 0, 0
   index: -1
 HealthBar148
   rotate: false
-  xy: 2110, 2116
+  xy: 3373, 3918
   size: 166, 64
   orig: 166, 64
   offset: 0, 0
   index: -1
 HealthBar152
   rotate: false
-  xy: 1936, 2003
+  xy: 952, 333
   size: 167, 67
   orig: 167, 67
   offset: 0, 0
   index: -1
 HealthBar156
   rotate: false
-  xy: 1762, 1922
+  xy: 781, 331
   size: 169, 69
   orig: 169, 69
   offset: 0, 0
   index: -1
 HealthBar16
   rotate: false
-  xy: 3237, 3442
+  xy: 3372, 3860
   size: 24, 7
   orig: 24, 7
   offset: 0, 0
   index: -1
 HealthBar160
   rotate: false
-  xy: 1577, 1524
+  xy: 609, 328
   size: 170, 72
   orig: 170, 72
   offset: 0, 0
   index: -1
 HealthBar164
   rotate: false
-  xy: 619, 513
+  xy: 2110, 1932
   size: 171, 75
   orig: 171, 75
   offset: 0, 0
   index: -1
 HealthBar168
   rotate: false
-  xy: 2749, 3272
+  xy: 2110, 2009
   size: 171, 78
   orig: 171, 78
   offset: 0, 0
   index: -1
 HealthBar172
   rotate: false
-  xy: 1229, 1816
+  xy: 1751, 1302
   size: 172, 80
   orig: 172, 80
   offset: 0, 0
   index: -1
 HealthBar176
   rotate: false
-  xy: 1762, 2409
+  xy: 957, 402
   size: 172, 83
   orig: 172, 83
   offset: 0, 0
   index: -1
 HealthBar180
   rotate: false
-  xy: 2575, 3384
+  xy: 783, 402
   size: 172, 86
   orig: 172, 86
   offset: 0, 0
   index: -1
 HealthBar184
   rotate: false
-  xy: 3089, 3895
+  xy: 609, 402
   size: 172, 89
   orig: 172, 89
   offset: 0, 0
   index: -1
 HealthBar188
   rotate: false
-  xy: 3827, 4002
+  xy: 1141, 496
   size: 172, 92
   orig: 172, 92
   offset: 0, 0
   index: -1
 HealthBar192
   rotate: false
-  xy: 1018, 1170
+  xy: 619, 493
   size: 172, 95
   orig: 172, 95
   offset: 0, 0
   index: -1
 HealthBar196
   rotate: false
-  xy: 2, 285
+  xy: 793, 490
   size: 172, 98
   orig: 172, 98
   offset: 0, 0
   index: -1
 HealthBar20
   rotate: false
-  xy: 1936, 1993
+  xy: 136, 29
   size: 30, 8
   orig: 30, 8
   offset: 0, 0
   index: -1
 HealthBar200
   rotate: false
-  xy: 344, 392
+  xy: 967, 487
   size: 172, 101
   orig: 172, 101
   offset: 0, 0
   index: -1
 HealthBar204
   rotate: false
-  xy: 1229, 1710
+  xy: 2278, 2388
   size: 172, 104
   orig: 172, 104
   offset: 0, 0
   index: -1
 HealthBar208
   rotate: false
-  xy: 1403, 1789
+  xy: 2104, 2385
   size: 172, 107
   orig: 172, 107
   offset: 0, 0
   index: -1
 HealthBar212
   rotate: false
-  xy: 1762, 2297
+  xy: 3394, 3984
   size: 172, 110
   orig: 172, 110
   offset: 0, 0
   index: -1
 HealthBar216
   rotate: false
-  xy: 1936, 2379
+  xy: 1192, 590
   size: 172, 113
   orig: 172, 113
   offset: 0, 0
   index: -1
 HealthBar220
   rotate: false
-  xy: 2575, 3267
+  xy: 1229, 1267
   size: 172, 115
   orig: 172, 115
   offset: 0, 0
   index: -1
 HealthBar224
   rotate: false
-  xy: 2749, 3352
+  xy: 1403, 1264
   size: 172, 118
   orig: 172, 118
   offset: 0, 0
   index: -1
 HealthBar228
   rotate: false
-  xy: 3089, 3772
+  xy: 1577, 1261
   size: 172, 121
   orig: 172, 121
   offset: 0, 0
   index: -1
 HealthBar232
   rotate: false
-  xy: 3263, 3860
+  xy: 3568, 3970
   size: 172, 124
   orig: 172, 124
   offset: 0, 0
   index: -1
 HealthBar236
   rotate: false
-  xy: 1018, 1042
+  xy: 3742, 3968
   size: 172, 126
   orig: 172, 126
   offset: 0, 0
   index: -1
 HealthBar24
   rotate: false
-  xy: 1192, 1257
+  xy: 1366, 1257
   size: 35, 8
   orig: 35, 8
   offset: 0, 0
   index: -1
 HealthBar240
   rotate: false
-  xy: 2, 154
+  xy: 3916, 3965
   size: 172, 129
   orig: 172, 129
   offset: 0, 0
   index: -1
 HealthBar244
   rotate: false
-  xy: 1229, 1576
+  xy: 435, 361
   size: 172, 132
   orig: 172, 132
   offset: 0, 0
   index: -1
 HealthBar248
   rotate: false
-  xy: 1403, 1653
+  xy: 1192, 705
   size: 172, 134
   orig: 172, 134
   offset: 0, 0
   index: -1
 HealthBar252
   rotate: false
-  xy: 1577, 1759
+  xy: 1192, 841
   size: 172, 137
   orig: 172, 137
   offset: 0, 0
   index: -1
 HealthBar256
   rotate: false
-  xy: 1762, 2156
+  xy: 1192, 980
   size: 172, 139
   orig: 172, 139
   offset: 0, 0
   index: -1
 HealthBar260
   rotate: false
-  xy: 1936, 2236
+  xy: 1762, 1897
   size: 172, 141
   orig: 172, 141
   offset: 0, 0
   index: -1
 HealthBar264
   rotate: false
-  xy: 2110, 2348
+  xy: 1192, 1121
   size: 172, 144
   orig: 172, 144
   offset: 0, 0
   index: -1
 HealthBar268
   rotate: false
-  xy: 3089, 3624
+  xy: 1743, 1447
   size: 172, 146
   orig: 172, 146
   offset: 0, 0
   index: -1
 HealthBar272
   rotate: false
-  xy: 3263, 3710
+  xy: 1743, 1595
   size: 172, 148
   orig: 172, 148
   offset: 0, 0
   index: -1
 HealthBar276
   rotate: false
-  xy: 2, 2
+  xy: 1743, 1745
   size: 172, 150
   orig: 172, 150
   offset: 0, 0
   index: -1
 HealthBar28
   rotate: false
-  xy: 949, 562
+  xy: 2667, 3148
   size: 41, 9
   orig: 41, 9
   offset: 0, 0
   index: -1
 HealthBar280
   rotate: false
-  xy: 3437, 3832
+  xy: 1936, 1916
   size: 172, 152
   orig: 172, 152
   offset: 0, 0
   index: -1
 HealthBar284
   rotate: false
-  xy: 1018, 886
+  xy: 1936, 2070
   size: 172, 154
   orig: 172, 154
   offset: 0, 0
   index: -1
 HealthBar288
   rotate: false
-  xy: 1229, 1418
+  xy: 1936, 2226
   size: 172, 156
   orig: 172, 156
   offset: 0, 0
   index: -1
 HealthBar292
   rotate: false
-  xy: 1403, 1493
+  xy: 3097, 3663
   size: 172, 158
   orig: 172, 158
   offset: 0, 0
   index: -1
 HealthBar296
   rotate: false
-  xy: 1577, 1598
+  xy: 1018, 590
   size: 172, 159
   orig: 172, 159
   offset: 0, 0
   index: -1
 HealthBar300
   rotate: false
-  xy: 1762, 1993
+  xy: 3097, 3823
   size: 172, 161
   orig: 172, 161
   offset: 0, 0
   index: -1
 HealthBar304
   rotate: false
-  xy: 1936, 2072
+  xy: 2923, 3655
   size: 172, 162
   orig: 172, 162
   offset: 0, 0
   index: -1
 HealthBar308
   rotate: false
-  xy: 2110, 2182
+  xy: 176, 48
   size: 172, 164
   orig: 172, 164
   offset: 0, 0
   index: -1
 HealthBar312
   rotate: false
-  xy: 2284, 2327
+  xy: 2923, 3819
   size: 172, 165
   orig: 172, 165
   offset: 0, 0
   index: -1
 HealthBar316
   rotate: false
-  xy: 1018, 718
+  xy: 2749, 3646
   size: 172, 166
   orig: 172, 166
   offset: 0, 0
   index: -1
 HealthBar32
   rotate: false
-  xy: 3899, 3990
+  xy: 1315, 578
   size: 47, 10
   orig: 47, 10
   offset: 0, 0
   index: -1
 HealthBar320
   rotate: false
-  xy: 176, 216
+  xy: 1018, 751
   size: 172, 167
   orig: 172, 167
   offset: 0, 0
   index: -1
 HealthBar324
   rotate: false
-  xy: 176, 46
+  xy: 1762, 2040
   size: 172, 168
   orig: 172, 168
   offset: 0, 0
   index: -1
 HealthBar328
   rotate: false
-  xy: 350, 221
+  xy: 176, 214
   size: 172, 169
   orig: 172, 169
   offset: 0, 0
   index: -1
 HealthBar332
   rotate: false
-  xy: 350, 49
+  xy: 2749, 3814
   size: 172, 170
   orig: 172, 170
   offset: 0, 0
   index: -1
 HealthBar336
   rotate: false
-  xy: 3611, 3814
+  xy: 2, 39
   size: 172, 170
   orig: 172, 170
   offset: 0, 0
   index: -1
 HealthBar340
   rotate: false
-  xy: 3089, 3451
+  xy: 1018, 920
   size: 172, 171
   orig: 172, 171
   offset: 0, 0
   index: -1
 HealthBar344
   rotate: false
-  xy: 3263, 3537
+  xy: 2575, 3639
   size: 172, 171
   orig: 172, 171
   offset: 0, 0
   index: -1
 HealthBar348
   rotate: false
-  xy: 3437, 3658
+  xy: 1018, 1093
   size: 172, 172
   orig: 172, 172
   offset: 0, 0
   index: -1
 HealthBar352
   rotate: false
-  xy: 3611, 3640
+  xy: 2575, 3812
   size: 172, 172
   orig: 172, 172
   offset: 0, 0
   index: -1
 HealthBar356
   rotate: false
-  xy: 1229, 1244
+  xy: 2, 211
   size: 172, 172
   orig: 172, 172
   offset: 0, 0
   index: -1
 HealthBar36
   rotate: false
-  xy: 3401, 3466
+  xy: 2575, 2921
   size: 53, 11
   orig: 53, 11
   offset: 0, 0
   index: -1
 HealthBar360
   rotate: false
-  xy: 1403, 1319
+  xy: 1762, 2210
   size: 172, 172
   orig: 172, 172
   offset: 0, 0
   index: -1
 HealthBar4
   rotate: false
-  xy: 2450, 2318
+  xy: 168, 30
   size: 6, 7
   orig: 6, 7
   offset: 0, 0
   index: -1
 HealthBar40
   rotate: false
-  xy: 3425, 3479
+  xy: 3271, 3699
   size: 59, 11
   orig: 59, 11
   offset: 0, 0
   index: -1
 HealthBar44
   rotate: false
-  xy: 702, 499
+  xy: 2575, 2934
   size: 64, 12
   orig: 64, 12
   offset: 0, 0
   index: -1
 HealthBar48
   rotate: false
-  xy: 3827, 3986
+  xy: 2575, 2965
   size: 70, 14
   orig: 70, 14
   offset: 0, 0
   index: -1
 HealthBar52
   rotate: false
-  xy: 524, 312
+  xy: 2575, 2981
   size: 75, 15
   orig: 75, 15
   offset: 0, 0
   index: -1
 HealthBar56
   rotate: false
-  xy: 619, 495
+  xy: 2575, 3017
   size: 81, 16
   orig: 81, 16
   offset: 0, 0
   index: -1
 HealthBar60
   rotate: false
-  xy: 4001, 4056
+  xy: 2575, 3075
   size: 86, 17
   orig: 86, 17
   offset: 0, 0
   index: -1
 HealthBar64
   rotate: false
-  xy: 4001, 4075
+  xy: 2575, 3115
   size: 91, 19
   orig: 91, 19
   offset: 0, 0
   index: -1
 HealthBar68
   rotate: false
-  xy: 1751, 1600
+  xy: 2110, 1910
   size: 96, 20
   orig: 96, 20
   offset: 0, 0
   index: -1
 HealthBar72
   rotate: false
-  xy: 1751, 1646
+  xy: 3271, 3836
   size: 101, 22
   orig: 101, 22
   offset: 0, 0
   index: -1
 HealthBar76
   rotate: false
-  xy: 1751, 1695
+  xy: 1917, 1452
   size: 106, 23
   orig: 106, 23
   offset: 0, 0
   index: -1
 HealthBar8
   rotate: false
-  xy: 3596, 3649
+  xy: 324, 39
   size: 12, 7
   orig: 12, 7
   offset: 0, 0
   index: -1
 HealthBar80
   rotate: false
-  xy: 1751, 1746
+  xy: 1917, 1477
   size: 111, 25
   orig: 111, 25
   offset: 0, 0
   index: -1
 HealthBar84
   rotate: false
-  xy: 1751, 1800
+  xy: 1917, 1504
   size: 115, 27
   orig: 115, 27
   offset: 0, 0
   index: -1
 HealthBar88
   rotate: false
-  xy: 1751, 1858
+  xy: 1917, 1533
   size: 120, 29
   orig: 120, 29
   offset: 0, 0
   index: -1
 HealthBar92
   rotate: false
-  xy: 2450, 2285
+  xy: 1917, 1594
   size: 124, 31
   orig: 124, 31
   offset: 0, 0
   index: -1
 HealthBar96
   rotate: false
-  xy: 792, 502
+  xy: 1917, 1692
   size: 128, 33
   orig: 128, 33
   offset: 0, 0
   index: -1
 Heart
   rotate: false
-  xy: 524, 176
+  xy: 3271, 3774
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Minus
   rotate: false
-  xy: 3785, 3906
+  xy: 350, 187
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Plus
   rotate: false
-  xy: 524, 114
+  xy: 3271, 3712
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Shields102
   rotate: false
-  xy: 3089, 3411
+  xy: 2571, 3159
   size: 146, 38
   orig: 146, 38
   offset: 0, 0
   index: -1
 Shields105
   rotate: false
-  xy: 2110, 2074
+  xy: 2571, 3243
   size: 150, 40
   orig: 150, 40
   offset: 0, 0
   index: -1
 Shields108
   rotate: false
-  xy: 1577, 1481
+  xy: 2571, 3285
   size: 154, 41
   orig: 154, 41
   offset: 0, 0
   index: -1
 Shields111
   rotate: false
-  xy: 1403, 1274
+  xy: 2571, 3328
   size: 157, 43
   orig: 157, 43
   offset: 0, 0
   index: -1
 Shields114
   rotate: false
-  xy: 350, 2
+  xy: 3539, 3862
   size: 161, 45
   orig: 161, 45
   offset: 0, 0
   index: -1
 Shields117
   rotate: false
-  xy: 2284, 2278
+  xy: 3373, 3869
   size: 164, 47
   orig: 164, 47
   offset: 0, 0
   index: -1
 Shields120
   rotate: false
-  xy: 2575, 3216
+  xy: 1751, 1251
   size: 168, 49
   orig: 168, 49
   offset: 0, 0
   index: -1
 Shields45
   rotate: false
-  xy: 4001, 4020
+  xy: 350, 171
   size: 60, 14
   orig: 60, 14
   offset: 0, 0
   index: -1
 Shields48
   rotate: false
-  xy: 949, 573
+  xy: 2575, 2948
   size: 65, 15
   orig: 65, 15
   offset: 0, 0
   index: -1
 Shields51
   rotate: false
-  xy: 3785, 3968
+  xy: 2208, 1914
   size: 70, 16
   orig: 70, 16
   offset: 0, 0
   index: -1
 Shields54
   rotate: false
-  xy: 620, 476
+  xy: 2575, 2998
   size: 75, 17
   orig: 75, 17
   offset: 0, 0
   index: -1
 Shields57
   rotate: false
-  xy: 4001, 4036
+  xy: 2575, 3035
   size: 80, 18
   orig: 80, 18
   offset: 0, 0
   index: -1
 Shields60
   rotate: false
-  xy: 524, 329
+  xy: 2575, 3055
   size: 85, 18
   orig: 85, 18
   offset: 0, 0
   index: -1
 Shields63
   rotate: false
-  xy: 524, 349
+  xy: 2575, 3094
   size: 89, 19
   orig: 89, 19
   offset: 0, 0
   index: -1
 Shields66
   rotate: false
-  xy: 524, 370
+  xy: 2571, 3136
   size: 94, 21
   orig: 94, 21
   offset: 0, 0
   index: -1
 Shields69
   rotate: false
-  xy: 1751, 1622
+  xy: 3271, 3860
   size: 99, 22
   orig: 99, 22
   offset: 0, 0
   index: -1
 Shields72
   rotate: false
-  xy: 1751, 1670
+  xy: 2452, 2387
   size: 104, 23
   orig: 104, 23
   offset: 0, 0
   index: -1
 Shields75
   rotate: false
-  xy: 1751, 1720
+  xy: 2452, 2412
   size: 108, 24
   orig: 108, 24
   offset: 0, 0
   index: -1
 Shields78
   rotate: false
-  xy: 1751, 1773
+  xy: 2452, 2438
   size: 113, 25
   orig: 113, 25
   offset: 0, 0
   index: -1
 Shields81
   rotate: false
-  xy: 1751, 1829
+  xy: 2452, 2465
   size: 117, 27
   orig: 117, 27
   offset: 0, 0
   index: -1
 Shields84
   rotate: false
-  xy: 1018, 581
+  xy: 1917, 1564
   size: 122, 28
   orig: 122, 28
   offset: 0, 0
   index: -1
 Shields87
   rotate: false
-  xy: 2458, 2318
+  xy: 1917, 1627
   size: 126, 30
   orig: 126, 30
   offset: 0, 0
   index: -1
 Shields90
   rotate: false
-  xy: 1762, 1889
+  xy: 1917, 1659
   size: 130, 31
   orig: 130, 31
   offset: 0, 0
   index: -1
 Shields93
   rotate: false
-  xy: 3437, 3529
+  xy: 1917, 1727
   size: 134, 33
   orig: 134, 33
   offset: 0, 0
   index: -1
 Shields96
   rotate: false
-  xy: 1403, 1238
+  xy: 1917, 1762
   size: 138, 34
   orig: 138, 34
   offset: 0, 0
   index: -1
 Shields99
   rotate: false
-  xy: 3437, 3564
+  xy: 1936, 1878
   size: 142, 36
   orig: 142, 36
   offset: 0, 0
   index: -1
 Turret
   rotate: false
-  xy: 2458, 2350
+  xy: 2110, 2089
   size: 142, 142
   orig: 142, 142
   offset: 0, 0
@@ -888,7 +888,7 @@ Logo
   index: -1
 Big Mountain in the Back
   rotate: false
-  xy: 2, 3689
+  xy: 2, 2729
   size: 2571, 405
   orig: 2571, 405
   offset: 0, 0
@@ -902,7 +902,7 @@ Big Tree in the Back
   index: -1
 FREE
   rotate: false
-  xy: 2, 385
+  xy: 1762, 2384
   size: 340, 108
   orig: 340, 108
   offset: 0, 0
@@ -916,14 +916,14 @@ Front Big Tree
   index: -1
 Front Grass
   rotate: false
-  xy: 2, 2974
+  xy: 2, 2494
   size: 2568, 233
   orig: 2568, 233
   offset: 0, 0
   index: -1
 Middle Tall Grass
   rotate: false
-  xy: 2, 3209
+  xy: 2, 3616
   size: 2571, 478
   orig: 2571, 478
   offset: 0, 0
@@ -937,28 +937,28 @@ RESTRICTED
   index: -1
 START
   rotate: false
-  xy: 3394, 3986
+  xy: 2, 385
   size: 431, 108
   orig: 431, 108
   offset: 0, 0
   index: -1
 Too Many Trees
   rotate: false
-  xy: 2, 2494
+  xy: 2, 3136
   size: 2567, 478
   orig: 2567, 478
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 524, 238
+  xy: 350, 311
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Uni Neue Bold Italic
   rotate: false
-  xy: 2575, 3472
+  xy: 1229, 1384
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
