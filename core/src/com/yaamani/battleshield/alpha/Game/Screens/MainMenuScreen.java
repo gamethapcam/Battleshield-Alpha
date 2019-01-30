@@ -24,6 +24,8 @@ public class MainMenuScreen extends AdvancedScreen {
     public static final String TAG= MainMenuScreen.class.getSimpleName();
 
     private Image start;
+    private Image free;
+    private Image restricted;
 
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
@@ -107,6 +109,8 @@ public class MainMenuScreen extends AdvancedScreen {
                 earthEntities);
 
         initializeStart(game);
+        initializeRestricted(game);
+        initializeFree(game);
 
         //start.setLayoutEnabled(false, earthEntities); //for performance.
 
@@ -116,7 +120,12 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(manyTrees);
         addActor(frontTree);
         addActor(frontGrass);
+        addActor(free);
         addActor(start);
+        addActor(restricted);
+
+
+
 
     }
 
@@ -138,7 +147,13 @@ public class MainMenuScreen extends AdvancedScreen {
         if (start != null) start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
                 start.getY());
 
+        restricted.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
+        if (restricted != null) restricted.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+                restricted.getY());
 
+        free.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
+        if (free != null) free.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+                free.getY());
     }
 
     @Override
@@ -187,6 +202,80 @@ public class MainMenuScreen extends AdvancedScreen {
         start.setBounds(start.getX(), start.getY(), start.getWidth(), start.getHeight());
 
         start.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                game.switchScreens(mainMenuToGameplay);
+                //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[1], new ExperimentsScreen(game, false)));
+            }
+        });
+    }
+
+    private void initializeRestricted(final AdvancedStage game) {
+        restricted = new Image(Assets.instance.mainMenuAssets.restricted) {
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+
+                /*Color color = getColor();
+                batch.setColor(1, 1, 1, alpha * parentAlpha);*/
+
+                //Gdx.app.log(TAG, "" + batch.getBlendSrcFunc() + ", " + batch.getBlendDstFunc());
+                batch.setBlendFunction(GL20.GL_ONE_MINUS_DST_COLOR, GL20.GL_ONE_MINUS_SRC_COLOR);
+                super.draw(batch, parentAlpha);
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            }
+        };
+
+        game.setKeyboardFocus(restricted);
+        restricted.setVisible(false);
+
+        restricted.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+                MM_START_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
+
+        restricted.setBounds(restricted.getX(), restricted.getY(), restricted.getWidth(), restricted.getHeight());
+
+        restricted.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                game.switchScreens(mainMenuToGameplay);
+                //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[1], new ExperimentsScreen(game, false)));
+            }
+        });
+    }
+
+    private void initializeFree(final AdvancedStage game) {
+        free = new Image(Assets.instance.mainMenuAssets.free) {
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+
+                /*Color color = getColor();
+                batch.setColor(1, 1, 1, alpha * parentAlpha);*/
+
+                //Gdx.app.log(TAG, "" + batch.getBlendSrcFunc() + ", " + batch.getBlendDstFunc());
+                batch.setBlendFunction(GL20.GL_ONE_MINUS_DST_COLOR, GL20.GL_ONE_MINUS_SRC_COLOR);
+                super.draw(batch, parentAlpha);
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            }
+        };
+
+        //game.setKeyboardFocus(free);
+        free.setVisible(true);
+
+        free.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+                MM_FREE_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
+
+        free.setBounds(free.getX(), free.getY(), 2*free.getImageWidth(), free.getImageHeight());
+
+        free.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;

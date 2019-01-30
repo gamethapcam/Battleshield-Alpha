@@ -38,7 +38,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-
+        setPosition(worldWidth / 2f, worldHeight / 2f);
     }
 
     public Shield getShield() {

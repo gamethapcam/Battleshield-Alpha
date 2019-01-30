@@ -2,6 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -17,6 +18,8 @@ public class BulletsHandler implements Updatable {
     public final String TAG = GameplayScreen.TAG + "." + BulletsHandler.class.getSimpleName();
 
     private GameplayScreen gameplayScreen;
+
+    private Pool<Bullet> bulletPool;
 
     private Timer currentBulletsWaveTimer; // Just a timer.
     private BulletsAndShieldContainer previous;
@@ -38,6 +41,7 @@ public class BulletsHandler implements Updatable {
         game.addUpdatable(BulletsHandler.this);
 
         this.gameplayScreen = gameplayScreen;
+        this.bulletPool = gameplayScreen.getBulletPool();
 
         initializePlusMinusBulletsTimer();
 
@@ -67,13 +71,13 @@ public class BulletsHandler implements Updatable {
         return bulletsPerAttack;
     }
 
-        /*public void setPrevious(BulletsAndShieldContainer previous) {
-            this.previous = previous;
-        }
+    /*public void setPrevious(BulletsAndShieldContainer previous) {
+        this.previous = previous;
+    }
 
-        public void setCurrent(BulletsAndShieldContainer current) {
-            this.current = current;
-        }*/
+    public void setCurrent(BulletsAndShieldContainer current) {
+        this.current = current;
+    }*/
 
     public StarsContainer.RadialTween getRadialTweenStars() {
         return radialTweenStars;
@@ -111,8 +115,13 @@ public class BulletsHandler implements Updatable {
         plusMinusBulletsTimer.start();
     }
 
-    private void resetWaveTimer() {
-        float duration = ((bulletsPerAttack + 1) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH) / BULLETS_SPEED) * 1000;
+    private void resetWaveTimer(/*WaveBulletsType waveBulletsType*/) {
+        float duration;
+        //if (waveBulletsType == WaveBulletsType.ALL_ORDINARY)
+            duration = ((bulletsPerAttack + 1) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH) / BULLETS_SPEED) * 1000;
+        /*else {
+            duration = ;
+        }*/
 
         if (currentBulletsWaveTimer == null) initializeCurrentBulletWave(duration);
         else currentBulletsWaveTimer.setDurationMillis(duration);
@@ -125,43 +134,13 @@ public class BulletsHandler implements Updatable {
         int specialBulletOrder = 0;
         SpecialBullet specialBullet = null;
 
-        /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
-        waveBulletsType = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
-        //else waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_BAD;
-
-        if (waveBulletsType == WaveBulletsType.HAS_A_SPECIAL_GOOD) {
-            specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
-            ;
-
-            if (specialBullet == SpecialBullet.MINUS) {
-                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShields() == SHIELDS_MIN_COUNT | Bullet.isTherePlusOrMinus() | !plusMinusBulletsTimer.isFinished()) {
-                        /*waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_BAD;
-                        specialBullet = SpecialBullet.PLUS;*/
-                    specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, 0, GOOD_BULLETS_PROBABILITY.length - 2);
-                }
-            }
-        } else if (waveBulletsType == WaveBulletsType.HAS_A_SPECIAL_BAD) {
-            specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY);
-
-            if (specialBullet == SpecialBullet.PLUS) {
-                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShields() == SHIELDS_MAX_COUNT | Bullet.isTherePlusOrMinus() | !plusMinusBulletsTimer.isFinished()) {
-                        /*waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_GOOD;
-                        specialBullet = SpecialBullet.MINUS;*/
-                    specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, 0, BAD_BULLETS_PROBABILITY.length - 2);
-                }
-            }
-        }
-
-        specialBulletOrder = MathUtils.random(bulletsPerAttack - 1);
-
-        if (specialBullet == SpecialBullet.PLUS | specialBullet == SpecialBullet.MINUS) {
-            Bullet.setThereIsPlusOrMinus(true);
-        }
+        specialBulletOrder = determineType(waveBulletsType, specialBullet);
 
         //------------------------------------------------------
-        int bulletsAttached = 0;
+        /*int bulletsAttached = 0;
         for (int i = 0; bulletsAttached < bulletsPerAttack; i++) {
             Bullet bullet;
+
             if (i < gameplayScreen.getBulletBank().size)
                 bullet = gameplayScreen.getBulletBank().get(i);
             else {
@@ -179,7 +158,60 @@ public class BulletsHandler implements Updatable {
 
                 bulletsAttached++;
             }
+        }*/
+
+        for (int i = 0; i < bulletsPerAttack; i++) {
+            Bullet bullet = bulletPool.obtain();
+            bullet.attachToBulletsAndShieldContainer(parent, i);
+
+            if (waveBulletsType != WaveBulletsType.ALL_ORDINARY) {
+                if (i == specialBulletOrder) bullet.setSpecial(specialBullet);
+                else bullet.notSpecial();
+            } else bullet.notSpecial();
         }
+    }
+
+    private int determineType(WaveBulletsType waveBulletsType, SpecialBullet specialBullet) {
+        /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
+        waveBulletsType = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
+        //else waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_BAD;
+
+        if (waveBulletsType == WaveBulletsType.HAS_A_SPECIAL_GOOD) {
+            specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
+
+
+            if (specialBullet == SpecialBullet.MINUS) {
+                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShields() == SHIELDS_MIN_COUNT |
+                        Bullet.isTherePlusOrMinus() |
+                        !plusMinusBulletsTimer.isFinished()) {
+                        /*waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_BAD;
+                        specialBullet = SpecialBullet.PLUS;*/
+                    specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY,
+                            0,
+                            GOOD_BULLETS_PROBABILITY.length - 2);
+                }
+            }
+        } else if (waveBulletsType == WaveBulletsType.HAS_A_SPECIAL_BAD) {
+            specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY);
+
+
+            if (specialBullet == SpecialBullet.PLUS) {
+                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShields() == SHIELDS_MAX_COUNT |
+                        Bullet.isTherePlusOrMinus() | !plusMinusBulletsTimer.isFinished()) {
+                        /*waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_GOOD;
+                        specialBullet = SpecialBullet.MINUS;*/
+                    specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY,
+                            0,
+                            BAD_BULLETS_PROBABILITY.length - 2);
+                }
+            }
+        }
+
+        if (specialBullet == SpecialBullet.PLUS | specialBullet == SpecialBullet.MINUS) {
+            Bullet.setThereIsPlusOrMinus(true);
+        }
+
+        return MathUtils.random(bulletsPerAttack - 1);
     }
 
     public void newWave() {
@@ -218,8 +250,8 @@ public class BulletsHandler implements Updatable {
         attachBullets(handlePreviousCurrentContainers());
         attachBullets(handlePreviousCurrentContainers());
 
-            /*attachBullets(probability.removeIndex(MathUtils.random(activeShields-1)));
-            attachBullets(probability.get(MathUtils.random(activeShields-2)));*/
+        /*attachBullets(probability.removeIndex(MathUtils.random(activeShields-1)));
+        attachBullets(probability.get(MathUtils.random(activeShields-2)));*/
     }
 
     private BulletsAndShieldContainer handlePreviousCurrentContainers() {
@@ -279,6 +311,7 @@ public class BulletsHandler implements Updatable {
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
+
     private void initializeCurrentBulletWave(final float duration) {
         currentBulletsWaveTimer = new Timer(duration) {
             @Override

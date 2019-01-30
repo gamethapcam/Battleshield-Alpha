@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Controller;
@@ -17,10 +17,6 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
-import com.yaamani.battleshield.alpha.MyEngine.MyMath;
-import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
-import com.yaamani.battleshield.alpha.MyEngine.Timer;
-import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -33,7 +29,9 @@ public class GameplayScreen extends AdvancedScreen {
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
 
-    private Array<Bullet> bulletBank; //Pool
+    //private Array<Bullet> bulletBank; //Pool
+    private Pool<Bullet> bulletPool;
+    private Array<Bullet> activeBullets;
     private BulletsHandler bulletsHandler;
 
     private HealthBar healthBar;
@@ -55,14 +53,20 @@ public class GameplayScreen extends AdvancedScreen {
 
     private int rotation;
 
-    public GameplayScreen(AdvancedStage game, BitmapFont font, StarsContainer starsContainer, boolean transform) {
+    public GameplayScreen(AdvancedStage game, BitmapFont font, final StarsContainer starsContainer, boolean transform) {
         super(game, transform);
+
+        this.starsContainer = starsContainer;
+        initializeBulletPool();
 
         initializeHandlers(game, starsContainer.getRadialTween());
 
         initializeTurret();
         initializeBulletsAndShieldArray(game);
-        initializeBullets(starsContainer.getRadialTween());
+        //initializeBullets(starsContainer.getRadialTween());
+
+        bulletsHandler.newWave();
+
 
         healthBar = new HealthBar(this, healthHandler);
 
@@ -76,64 +80,15 @@ public class GameplayScreen extends AdvancedScreen {
 
         gameOverLayer = new GameOverLayer(this, font);
 
-        this.starsContainer = starsContainer;
 
         this.font = font;
     }
-    //------------------------------ initializers ------------------------------
-    //------------------------------ initializers ------------------------------
-    //------------------------------ initializers ------------------------------
-    //------------------------------ initializers ------------------------------
-    private void initializeTurret() {
-        turret = new Image(Assets.instance.gameplayAssets.turret);
-        turret.setBounds(0, 0, TURRET_RADIUS * 2, TURRET_RADIUS * 2);
-        addActor(turret);
-        turret.setColor(1, 1, 1, 1f);
-    }
 
-    private void initializeControllers() {
-        controllerLeft = new Controller(this,
-                new Image(Assets.instance.gameplayAssets.controllerBG),
-                new Image(Assets.instance.gameplayAssets.controllerStick),
-                ControllerSize.SMALL,
-                ControllerPosition.LEFT);
+    //----------------------------- Super Class Methods -------------------------------
+    //----------------------------- Super Class Methods -------------------------------
+    //----------------------------- Super Class Methods -------------------------------
+    //----------------------------- Super Class Methods -------------------------------
 
-        controllerRight = new Controller(this,
-                new Image(Assets.instance.gameplayAssets.controllerBG),
-                new Image(Assets.instance.gameplayAssets.controllerStick),
-                ControllerSize.SMALL,
-                ControllerPosition.RIGHT);
-
-        /*controllerLeft.setDebug(true);
-        controllerRight.setDebug(true);*/
-    }
-
-    private void initializeBulletsAndShieldArray(AdvancedStage game) {
-        bulletsAndShieldContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT];
-        for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
-            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i, game);
-        }
-
-        shieldsAndContainersHandler.setActiveShields(SHIELDS_ACTIVE_DEFAULT);
-    }
-
-    private void initializeBullets(StarsContainer.RadialTween radialTweenStars) {
-        bulletBank = new Array<Bullet>();
-        for (int i = 0; i < BULLETS_BANK_INITIAL_CAPACITY; i++) {
-            bulletBank.add(new Bullet(this, radialTweenStars, getStage().getViewport()));
-        }
-        bulletsHandler.newWave();
-    }
-
-    private void initializeHandlers(AdvancedStage game, StarsContainer.RadialTween radialTweenStars) {
-        shieldsAndContainersHandler = new ShieldsAndContainersHandler(this);
-        bulletsHandler = new BulletsHandler(game, radialTweenStars, this);
-        healthHandler = new HealthHandler(this);
-    }
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    //------------------------------------------------------------
     @Override
     public void act(float delta) {
         if (!isVisible()) return;
@@ -185,13 +140,19 @@ public class GameplayScreen extends AdvancedScreen {
         controllerRight.resize(width, height, worldWidth, worldHeight);
 
         for (int i = 0; i < bulletsAndShieldContainers.length; i++) {
-            bulletsAndShieldContainers[i].setPosition(worldWidth / 2f, worldHeight / 2f);
+            //bulletsAndShieldContainers[i].setPosition(worldWidth / 2f, worldHeight / 2f);
             bulletsAndShieldContainers[i].resize(width, height, worldWidth, worldHeight);
         }
 
-        for (int i = 0; i < bulletBank.size; i++) {
+        /*for (int i = 0; i < bulletBank.size; i++) {
             bulletBank.get(i).resize(width, height, worldWidth, worldHeight);
-        }
+        }*/
+
+        Bullet.calculateR(worldWidth, worldHeight);
+
+        /*for (int i = 0; i < bulletPool.getFree(); i++) {
+            bulletBank.get(i).resize(width, height, worldWidth, worldHeight);
+        }*/
 
         healthBar.resize(width, height, worldWidth, worldHeight);
 
@@ -199,6 +160,80 @@ public class GameplayScreen extends AdvancedScreen {
 
         gameOverLayer.resize(width, height, worldWidth, worldHeight);
     }
+
+    //------------------------------ initializers ------------------------------
+    //------------------------------ initializers ------------------------------
+    //------------------------------ initializers ------------------------------
+    //------------------------------ initializers ------------------------------
+
+    private void initializeTurret() {
+        turret = new Image(Assets.instance.gameplayAssets.turret);
+        turret.setBounds(0, 0, TURRET_RADIUS * 2, TURRET_RADIUS * 2);
+        addActor(turret);
+        turret.setColor(1, 1, 1, 1f);
+    }
+
+    private void initializeControllers() {
+        controllerLeft = new Controller(this,
+                new Image(Assets.instance.gameplayAssets.controllerBG),
+                new Image(Assets.instance.gameplayAssets.controllerStick),
+                ControllerSize.SMALL,
+                ControllerPosition.LEFT);
+
+        controllerRight = new Controller(this,
+                new Image(Assets.instance.gameplayAssets.controllerBG),
+                new Image(Assets.instance.gameplayAssets.controllerStick),
+                ControllerSize.SMALL,
+                ControllerPosition.RIGHT);
+
+        /*controllerLeft.setDebug(true);
+        controllerRight.setDebug(true);*/
+    }
+
+    private void initializeBulletsAndShieldArray(AdvancedStage game) {
+        bulletsAndShieldContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT];
+        for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
+            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i, game);
+        }
+
+        shieldsAndContainersHandler.setActiveShields(SHIELDS_ACTIVE_DEFAULT);
+    }
+
+    /*private void initializeBullets(StarsContainer.RadialTween radialTweenStars) {
+        bulletBank = new Array<Bullet>();
+        for (int i = 0; i < BULLETS_POOL_INITIAL_CAPACITY; i++) {
+            bulletBank.add(new Bullet(this, radialTweenStars, getStage().getViewport()));
+        }
+    }*/
+
+    private void initializeBulletPool() {
+        bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY) {
+            @Override
+            protected Bullet newObject() {
+                return new Bullet(GameplayScreen.this, starsContainer.getRadialTween(), getStage().getViewport());
+            }
+
+            @Override
+            public Bullet obtain() {
+                Bullet bullet = super.obtain();
+                activeBullets.add(bullet);
+                return bullet;
+            }
+        };
+
+        activeBullets = new Array<Bullet>(false, 40, Bullet.class);
+    }
+
+    private void initializeHandlers(AdvancedStage game, StarsContainer.RadialTween radialTweenStars) {
+        shieldsAndContainersHandler = new ShieldsAndContainersHandler(this);
+        bulletsHandler = new BulletsHandler(game, radialTweenStars, this);
+        healthHandler = new HealthHandler(this);
+    }
+
+    //------------------------------ Getters And Setters ------------------------------
+    //------------------------------ Getters And Setters ------------------------------
+    //------------------------------ Getters And Setters ------------------------------
+    //------------------------------ Getters And Setters ------------------------------
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {
         return shieldsAndContainersHandler;
@@ -214,10 +249,6 @@ public class GameplayScreen extends AdvancedScreen {
 
     public HealthBar getHealthBar() {
         return healthBar;
-    }
-
-    public State getState() {
-        return state;
     }
 
     public Score getScore() {
@@ -236,12 +267,16 @@ public class GameplayScreen extends AdvancedScreen {
         return controllerRight;
     }
 
-    public Array<Bullet> getBulletBank() {
+    /*public Array<Bullet> getBulletBank() {
         return bulletBank;
+    }*/
+
+    public Pool<Bullet> getBulletPool() {
+        return bulletPool;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public Array<Bullet> getActiveBullets() {
+        return activeBullets;
     }
 
     public GameOverLayer getGameOverLayer() {
@@ -252,68 +287,12 @@ public class GameplayScreen extends AdvancedScreen {
         return starsContainer;
     }
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    public State getState() {
+        return state;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
+    public void setState(State state) {
+        this.state = state;
+    }
 
 }

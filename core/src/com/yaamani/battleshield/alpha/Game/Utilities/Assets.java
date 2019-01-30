@@ -107,8 +107,10 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion treeFront;
         public final TextureRegion frontGrass;
         public final TextureRegion tallGrass;
-        public final TextureRegion start;
         public final TextureRegion manyTrees;
+        public final TextureRegion start;
+        public final TextureRegion restricted;
+        public final TextureRegion free;
 
         private MainMenuAssets(TextureAtlas atlas) {
             mountain = atlas.findRegion(ASSETS_MOUNTAIN);
@@ -116,8 +118,10 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             treeFront = atlas.findRegion(ASSETS_TREE_FRONT);
             frontGrass = atlas.findRegion(ASSETS_FRONT_GRASS);
             tallGrass = atlas.findRegion(ASSETS_TALL_GRASS);
-            start = atlas.findRegion(ASSETS_START);
             manyTrees = atlas.findRegion(ASSETS_MANY_TREES);
+            start = atlas.findRegion(ASSETS_START);
+            restricted = atlas.findRegion(ASSETS_RESTRICTED);
+            free = atlas.findRegion(ASSETS_FREE);
         }
 
     }

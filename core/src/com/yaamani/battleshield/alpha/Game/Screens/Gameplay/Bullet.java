@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.ShieldsAndContainersHandler;
@@ -14,12 +16,15 @@ import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class Bullet extends Actor implements Resizable {
+public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
     public static final String TAG = Bullet.class.getSimpleName();
 
     private static boolean thereIsPlusOrMinus = false;
     private static float R = 0;
+
+    private Pool<Bullet> bulletPool;
+    private Array<Bullet> activeBullets;
 
     private boolean inUse = false;
     private BulletsAndShieldContainer parent;
@@ -35,6 +40,9 @@ public class Bullet extends Actor implements Resizable {
 
     public Bullet(GameplayScreen gameplayScreen, StarsContainer.RadialTween radialTweenStars, Viewport viewport) {
         this.gameplayScreen = gameplayScreen;
+        this.bulletPool = gameplayScreen.getBulletPool();
+        this.activeBullets = gameplayScreen.getActiveBullets();
+
         effects = new Effects();
 
         this.radialTweenStars = radialTweenStars;
@@ -47,7 +55,7 @@ public class Bullet extends Actor implements Resizable {
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        calculateR(worldWidth, worldHeight);
+        //calculateR(worldWidth, worldHeight);
     }
 
     public static float getR() {
@@ -76,8 +84,7 @@ public class Bullet extends Actor implements Resizable {
         setX(getX() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH));
     }
 
-    public void detachFromBulletsAndShieldObject() {
-        inUse = false;
+    private void detachFromBulletsAndShieldObject() {
         if (parent != null) parent.removeActor(this);
         parent = null;
     }
@@ -88,12 +95,12 @@ public class Bullet extends Actor implements Resizable {
         setX(R); // Look @ Non-Finalized Assets/Firing bullets.png
     }
 
-    private void calculateR(float worldWidth, float worldHeight) {
-        if (getStage() != null) {
+    public static void calculateR(float worldWidth, float worldHeight) {
+        //if (getStage() != null) {
             //Viewport viewport = getStage().getViewport();
             //if (viewport != null)
-                R = Vector2.dst(0, 0, /*viewport.getWorldWidth()*/worldWidth/2f, /*viewport.getWorldHeight()*/worldHeight/2f);
-        }
+                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f);
+        //}
     }
 
     @Override
@@ -120,7 +127,9 @@ public class Bullet extends Actor implements Resizable {
                 Shield shield;
                 shield = parent.getShield();
                 // The shield blocked the bullet
-                if (getX() <= SHIELDS_RADIUS+SHIELDS_THICKNESS+SHIELDS_ON_DISPLACEMENT & getX() >= SHIELDS_RADIUS-SHIELDS_THICKNESS+SHIELDS_ON_DISPLACEMENT - getWidth() & shield.isOn()) {
+                if (getX() <= SHIELDS_RADIUS+SHIELDS_THICKNESS+SHIELDS_ON_DISPLACEMENT &
+                        getX() >= SHIELDS_RADIUS-SHIELDS_THICKNESS+SHIELDS_ON_DISPLACEMENT - getWidth() &
+                        shield.isOn()) {
                     stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
                     if (currentEffect == effects.minus | currentEffect == effects.plus) thereIsPlusOrMinus = false;
                     return;
@@ -151,12 +160,16 @@ public class Bullet extends Actor implements Resizable {
     }
 
     private void correctSpecialBulletsRotation() {
-        if (currentEffect != effects.ordinary & getRotation() != -parent.getRight()) setRotation(-parent.getRotation());
+        if (currentEffect != effects.ordinary & getRotation() != -parent.getRight())
+            setRotation(-parent.getRotation());
     }
 
-    private void stopUsingTheBullet(float worldWidth, float worldHeight) {
+    public void stopUsingTheBullet(float worldWidth, float worldHeight) {
+        inUse = false;
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
+        bulletPool.free(this);
+        activeBullets.removeValue(this, true);
     }
 
     /*private void decideSpecialType() {
@@ -206,6 +219,12 @@ public class Bullet extends Actor implements Resizable {
                 break;
         }
     }
+
+    @Override
+    public void reset() {
+
+    }
+
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

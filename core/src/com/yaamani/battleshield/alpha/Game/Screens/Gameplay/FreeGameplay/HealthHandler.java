@@ -38,11 +38,17 @@ public class HealthHandler {
         gameplayScreen.setState(GameplayScreen.State.LOST);
         gameplayScreen.getBulletsHandler().setRoundTurn(null);
         gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().finish();
-        for (int i = 0; i < gameplayScreen.getBulletBank().size; i++) {
-            Bullet bullet = gameplayScreen.getBulletBank().get(i);
-            if (bullet.isInUse()) bullet.detachFromBulletsAndShieldObject();
+
+        float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
+        float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
+        int len = gameplayScreen.getActiveBullets().size;
+        for (int i = 0; i < len; i++) {
+            Bullet bullet = gameplayScreen.getActiveBullets().get(i);
+            bullet.stopUsingTheBullet(worldWidth, worldHeight);
             gameplayScreen.getScore().getFadeOutTween().start();
+            len--;
         }
+
         gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
         gameplayScreen.getStarsContainer().setThetaForRadialTween(5 * MathUtils.degreesToRadians);

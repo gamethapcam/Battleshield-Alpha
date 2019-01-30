@@ -13,7 +13,7 @@ public final class Constants {
 
     public static final int MAX_RESOLUTION_SUPPORTED = 2880; // 5K (iPads are 4k already)
 
-    public static final float RESIZE_AFTER_ORIENTATION_CHANGE_DURATION = 150;
+    //public static final float RESIZE_AFTER_ORIENTATION_CHANGE_DURATION = 150;
 
 
 
@@ -99,9 +99,11 @@ public final class Constants {
 
     public static final float MM_FRONT_GRASS_FINAL_Y = 0;
 
+    public static final float MM_START_TXT_X_MARGIN_FROM_RIGHT = MM_START_TXT_WIDTH + WORLD_SIZE * 0.12592593f;
+
     public static final float MM_START_TXT_FINAL_Y = WORLD_SIZE * 0.80679167f;
 
-    public static final float MM_START_TXT_X_MARGIN_FROM_RIGHT = MM_START_TXT_WIDTH + WORLD_SIZE * 0.12592593f;
+    public static final float MM_FREE_TXT_FINAL_Y = WORLD_SIZE * 0.67679167f;
     //-------
     public static final float MM_MOUNTAIN_X_MOVING_AMOUNT = WORLD_SIZE * 0.02f;
 
@@ -157,15 +159,19 @@ public final class Constants {
 
     public static final float BULLETS_DECREASE_NO_PER_ATTACK_EVERY = 3000;
 
-    public static final int BULLETS_BANK_INITIAL_CAPACITY = 50;
+    public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
 
     public enum WaveAttackType {SINGLE, DOUBLE, ROUND}
 
     public enum RoundType {CLOCKWISE, ANTI_CLOCKWISE}
 
-    public static final WaveAttackType[] WAVE_TYPES_PROBABILITY = {WaveAttackType.SINGLE, WaveAttackType.SINGLE, WaveAttackType.SINGLE, WaveAttackType.SINGLE,
-                                                                   WaveAttackType.DOUBLE, WaveAttackType.DOUBLE,
-                                                                   WaveAttackType.ROUND};
+    public static final WaveAttackType[] WAVE_TYPES_PROBABILITY = {WaveAttackType.SINGLE,
+            WaveAttackType.SINGLE,
+            WaveAttackType.SINGLE,
+            WaveAttackType.SINGLE,
+            WaveAttackType.DOUBLE,
+            WaveAttackType.DOUBLE,
+            WaveAttackType.ROUND};
 
     public enum WaveBulletsType {ALL_ORDINARY, HAS_A_SPECIAL_GOOD, HAS_A_SPECIAL_BAD}
 
@@ -176,12 +182,16 @@ public final class Constants {
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {SpecialBullet.BOMB, SpecialBullet.PLUS};
 
-    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {WaveBulletsType.ALL_ORDINARY, WaveBulletsType.ALL_ORDINARY, WaveBulletsType.ALL_ORDINARY, WaveBulletsType.ALL_ORDINARY,
-                                                                           WaveBulletsType.HAS_A_SPECIAL_GOOD, WaveBulletsType.HAS_A_SPECIAL_BAD};
+    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {WaveBulletsType.ALL_ORDINARY,
+            WaveBulletsType.ALL_ORDINARY,
+            WaveBulletsType.ALL_ORDINARY,
+            WaveBulletsType.ALL_ORDINARY,
+            WaveBulletsType.HAS_A_SPECIAL_GOOD,
+            WaveBulletsType.HAS_A_SPECIAL_BAD};
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -320,5 +330,9 @@ public final class Constants {
     public static final String ASSETS_FONT_FNT_INTERNAL = "Uni Neue Bold Italic.fnt";
 
     public static final String ASSETS_GAME_OVER_BG = "Game Over BG";
+
+    public static final String ASSETS_RESTRICTED = "RESTRICTED";
+
+    public static final String ASSETS_FREE = "FREE";
 
 }
