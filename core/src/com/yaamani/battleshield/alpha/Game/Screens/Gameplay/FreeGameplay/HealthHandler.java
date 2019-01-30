@@ -42,11 +42,10 @@ public class HealthHandler {
         float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
         float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
         int len = gameplayScreen.getActiveBullets().size;
-        for (int i = 0; i < len; i++) {
+        for (int i = len-1; i >= 0; i--) {
             Bullet bullet = gameplayScreen.getActiveBullets().get(i);
             bullet.stopUsingTheBullet(worldWidth, worldHeight);
             gameplayScreen.getScore().getFadeOutTween().start();
-            len--;
         }
 
         gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();

@@ -57,6 +57,7 @@ public class GameplayScreen extends AdvancedScreen {
         super(game, transform);
 
         this.starsContainer = starsContainer;
+
         initializeBulletPool();
 
         initializeHandlers(game, starsContainer.getRadialTween());
