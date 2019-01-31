@@ -29,7 +29,6 @@ public class GameplayScreen extends AdvancedScreen {
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
 
-    //private Array<Bullet> bulletBank; //Pool
     private Pool<Bullet> bulletPool;
     private Array<Bullet> activeBullets;
     private BulletsHandler bulletsHandler;
@@ -101,12 +100,12 @@ public class GameplayScreen extends AdvancedScreen {
         shieldsAndContainersHandler.handleOnShields();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.EQUALS) | Gdx.input.isKeyJustPressed(Input.Keys.PLUS))  {
-            shieldsAndContainersHandler.setActiveShields(shieldsAndContainersHandler.getActiveShields() + 1);
+            shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);
             bulletsHandler.getRadialTweenStars().start(SpecialBullet.PLUS);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.MINUS)) {
-            shieldsAndContainersHandler.setActiveShields(shieldsAndContainersHandler.getActiveShields() - 1);
+            shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() - 1);
             bulletsHandler.getRadialTweenStars().start(SpecialBullet.MINUS);
         }
 
@@ -141,19 +140,10 @@ public class GameplayScreen extends AdvancedScreen {
         controllerRight.resize(width, height, worldWidth, worldHeight);
 
         for (int i = 0; i < bulletsAndShieldContainers.length; i++) {
-            //bulletsAndShieldContainers[i].setPosition(worldWidth / 2f, worldHeight / 2f);
             bulletsAndShieldContainers[i].resize(width, height, worldWidth, worldHeight);
         }
 
-        /*for (int i = 0; i < bulletBank.size; i++) {
-            bulletBank.get(i).resize(width, height, worldWidth, worldHeight);
-        }*/
-
         Bullet.calculateR(worldWidth, worldHeight);
-
-        /*for (int i = 0; i < bulletPool.getFree(); i++) {
-            bulletBank.get(i).resize(width, height, worldWidth, worldHeight);
-        }*/
 
         healthBar.resize(width, height, worldWidth, worldHeight);
 
@@ -197,15 +187,8 @@ public class GameplayScreen extends AdvancedScreen {
             bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i, game);
         }
 
-        shieldsAndContainersHandler.setActiveShields(SHIELDS_ACTIVE_DEFAULT);
+        shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
     }
-
-    /*private void initializeBullets(StarsContainer.RadialTween radialTweenStars) {
-        bulletBank = new Array<Bullet>();
-        for (int i = 0; i < BULLETS_POOL_INITIAL_CAPACITY; i++) {
-            bulletBank.add(new Bullet(this, radialTweenStars, getStage().getViewport()));
-        }
-    }*/
 
     private void initializeBulletPool() {
         bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY) {
@@ -267,10 +250,6 @@ public class GameplayScreen extends AdvancedScreen {
     public Controller getControllerRight() {
         return controllerRight;
     }
-
-    /*public Array<Bullet> getBulletBank() {
-        return bulletBank;
-    }*/
 
     public Pool<Bullet> getBulletPool() {
         return bulletPool;

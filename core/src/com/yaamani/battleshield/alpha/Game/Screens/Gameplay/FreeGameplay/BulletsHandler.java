@@ -1,7 +1,9 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
@@ -37,11 +39,18 @@ public class BulletsHandler implements Updatable {
     private RoundType roundType;
     private boolean roundTurnPassedActiveShieldsMinusOne;
 
+    private boolean isDouble;
+    private WaveBulletsType[] waveBulletsType;
+    private SpecialBullet specialBullet;
+
     public BulletsHandler(AdvancedStage game, StarsContainer.RadialTween radialTweenStars, GameplayScreen gameplayScreen) {
         game.addUpdatable(BulletsHandler.this);
 
         this.gameplayScreen = gameplayScreen;
         this.bulletPool = gameplayScreen.getBulletPool();
+
+        waveBulletsType = new WaveBulletsType[2];
+        waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
 
         initializePlusMinusBulletsTimer();
 
@@ -60,8 +69,15 @@ public class BulletsHandler implements Updatable {
         plusMinusBulletsTimer.update(delta);
         decreaseBulletsPerAttackTimer.update(delta);
 
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            newWave();*/
+
         //Gdx.app.log(TAG, "" + Bullet.isTherePlusOrMinus());
     }
+
+    //--------------------------------------- Getters And Setters ---------------------------------------------
+    //--------------------------------------- Getters And Setters ---------------------------------------------
+    //--------------------------------------- Getters And Setters ---------------------------------------------
 
     void setBulletsPerAttack(int bulletsPerAttack) {
         this.bulletsPerAttack = bulletsPerAttack;
@@ -83,11 +99,11 @@ public class BulletsHandler implements Updatable {
         return radialTweenStars;
     }
 
-    Timer getCurrentBulletsWaveTimer() {
+    public Timer getCurrentBulletsWaveTimer() {
         return currentBulletsWaveTimer;
     }
 
-    Timer getDecreaseBulletsPerAttackTimer() {
+    public Timer getDecreaseBulletsPerAttackTimer() {
         return decreaseBulletsPerAttackTimer;
     }
 
@@ -115,90 +131,86 @@ public class BulletsHandler implements Updatable {
         plusMinusBulletsTimer.start();
     }
 
-    private void resetWaveTimer(/*WaveBulletsType waveBulletsType*/) {
-        float duration;
-        //if (waveBulletsType == WaveBulletsType.ALL_ORDINARY)
-            duration = ((bulletsPerAttack + 1) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH) / BULLETS_SPEED) * 1000;
-        /*else {
-            duration = ;
-        }*/
+    //----------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------
 
-        if (currentBulletsWaveTimer == null) initializeCurrentBulletWave(duration);
-        else currentBulletsWaveTimer.setDurationMillis(duration);
+    private void resetWaveTimer() {
+        float duration, duration1;
+
+        duration = calculateDuration(waveBulletsType[0]);
+        duration1 = 0;
+
+        if (isDouble) {
+            duration1 = calculateDuration(waveBulletsType[1]);
+        }
+
+        if (currentBulletsWaveTimer == null) initializeCurrentBulletWave(Math.max(duration, duration1));
+        else currentBulletsWaveTimer.setDurationMillis(Math.max(duration, duration1));
 
         currentBulletsWaveTimer.start();
     }
 
-    private void attachBullets(BulletsAndShieldContainer parent) {
-        WaveBulletsType waveBulletsType = WaveBulletsType.ALL_ORDINARY;
-        int specialBulletOrder = 0;
-        SpecialBullet specialBullet = null;
-
-        specialBulletOrder = determineType(waveBulletsType, specialBullet);
-
-        //------------------------------------------------------
-        /*int bulletsAttached = 0;
-        for (int i = 0; bulletsAttached < bulletsPerAttack; i++) {
-            Bullet bullet;
-
-            if (i < gameplayScreen.getBulletBank().size)
-                bullet = gameplayScreen.getBulletBank().get(i);
-            else {
-                bullet = new Bullet(gameplayScreen, radialTweenStars, gameplayScreen.getStage().getViewport());
-                gameplayScreen.getBulletBank().add(bullet);
-            }
-
-            if (!bullet.isInUse()) {
-                bullet.attachToBulletsAndShieldContainer(parent, bulletsAttached);
-
-                if (waveBulletsType != WaveBulletsType.ALL_ORDINARY) {
-                    if (bulletsAttached == specialBulletOrder) bullet.setSpecial(specialBullet);
-                    else bullet.notSpecial();
-                } else bullet.notSpecial();
-
-                bulletsAttached++;
-            }
-        }*/
-
-        for (int i = 0; i < bulletsPerAttack; i++) {
-            Bullet bullet = bulletPool.obtain();
-            bullet.attachToBulletsAndShieldContainer(parent, i);
-
-            if (waveBulletsType != WaveBulletsType.ALL_ORDINARY) {
-                if (i == specialBulletOrder) bullet.setSpecial(specialBullet);
-                else bullet.notSpecial();
-            } else bullet.notSpecial();
+    private float calculateDuration(WaveBulletsType waveBulletsType) {
+        if (waveBulletsType == WaveBulletsType.ORDINARY)
+            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH)) / BULLETS_SPEED) * 1000;
+        else {
+            return (BULLETS_SPECIAL_WAVE_LENGTH / BULLETS_SPEED) * 1000;
         }
     }
 
-    private int determineType(WaveBulletsType waveBulletsType, SpecialBullet specialBullet) {
-        /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
-        waveBulletsType = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
-        //else waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_BAD;
+    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave) {
+        waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
+        int specialBulletOrder = 0;
+        specialBullet = null;
 
-        if (waveBulletsType == WaveBulletsType.HAS_A_SPECIAL_GOOD) {
+        specialBulletOrder = determineType(indexForDoubleWave);
+
+        //------------------------------------------------------
+
+        if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.ORDINARY) {
+            for (int i = 0; i < bulletsPerAttack; i++) {
+                Bullet bullet = bulletPool.obtain();
+                bullet.notSpecial();
+                bullet.attachNotSpecialToBulletsAndShieldContainer(parent, i);
+            }
+        } else {
+            Bullet bullet = bulletPool.obtain();
+            bullet.setSpecial(specialBullet);
+            bullet.attachSpecialToBulletsAndShieldContainer(parent, isDouble, indexForDoubleWave);
+        }
+
+    }
+
+    private int determineType(int indexForDoubleWave) {
+        /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
+        waveBulletsType[indexForDoubleWave] = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
+        if (!isDouble | (/*isDouble &*/ indexForDoubleWave == 1)) resetWaveTimer();
+        //else waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
+
+        if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_GOOD) {
             specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
 
 
             if (specialBullet == SpecialBullet.MINUS) {
-                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShields() == SHIELDS_MIN_COUNT |
+                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT |
                         Bullet.isTherePlusOrMinus() |
                         !plusMinusBulletsTimer.isFinished()) {
-                        /*waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_BAD;
+                        /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
                         specialBullet = SpecialBullet.PLUS;*/
                     specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY,
                             0,
                             GOOD_BULLETS_PROBABILITY.length - 2);
                 }
             }
-        } else if (waveBulletsType == WaveBulletsType.HAS_A_SPECIAL_BAD) {
+        } else if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_BAD) {
             specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY);
 
 
             if (specialBullet == SpecialBullet.PLUS) {
-                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShields() == SHIELDS_MAX_COUNT |
+                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT |
                         Bullet.isTherePlusOrMinus() | !plusMinusBulletsTimer.isFinished()) {
-                        /*waveBulletsType = WaveBulletsType.HAS_A_SPECIAL_GOOD;
+                        /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
                         specialBullet = SpecialBullet.MINUS;*/
                     specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY,
                             0,
@@ -216,24 +228,30 @@ public class BulletsHandler implements Updatable {
 
     public void newWave() {
         //if (!isVisible()) return;
+        isDouble = false;
+
         if (roundTurn != null) {
             continueRoundWave();
-            resetWaveTimer();
+            //resetWaveTimer();
             return;
         }
         WaveAttackType waveAttackType = MyMath.chooseFromProbabilityArray(WAVE_TYPES_PROBABILITY);
         switch (waveAttackType) {
             case SINGLE:
                 newSingleWave();
+                //newDoubleWave();
                 break;
             case DOUBLE:
+                //newSingleWave();
                 newDoubleWave();
                 break;
             case ROUND:
+                //newSingleWave();
+                //newDoubleWave();
                 newRoundWave();
                 break;
         }
-        resetWaveTimer();
+        //resetWaveTimer();
     }
 
     //--------------------------------------- Simple waves methods ---------------------------------------------
@@ -242,68 +260,74 @@ public class BulletsHandler implements Updatable {
     private void newSingleWave() {
         Gdx.app.log(TAG, "NEW SINGLE WAVE");
 
-        attachBullets(handlePreviousCurrentContainers());
+        attachBullets(handlePreviousCurrentContainers(), 0);
     }
 
     private void newDoubleWave() {
+        isDouble = true;
         Gdx.app.log(TAG, "NEW DOUBLE WAVE");
-        attachBullets(handlePreviousCurrentContainers());
-        attachBullets(handlePreviousCurrentContainers());
+        attachBullets(handlePreviousCurrentContainers(), 0);
+        attachBullets(handlePreviousCurrentContainers(), 1);
 
         /*attachBullets(probability.removeIndex(MathUtils.random(activeShields-1)));
         attachBullets(probability.get(MathUtils.random(activeShields-2)));*/
     }
 
     private BulletsAndShieldContainer handlePreviousCurrentContainers() {
+        int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
+        Array<BulletsAndShieldContainer> probability = gameplayScreen.getShieldsAndContainersHandler().getProbability();
+
         if (previous == null) {
-            int rand = MathUtils.random(gameplayScreen.getShieldsAndContainersHandler().getActiveShields() - 1);
-            current = gameplayScreen.getShieldsAndContainersHandler().getProbability().removeIndex(rand);
-            Gdx.app.log(TAG, "" + rand);
+            int rand = MathUtils.random( activeShieldsNum - 1);
+            current = probability.removeIndex(rand);
+            //Gdx.app.log(TAG, "" + rand);
 
         } else {
-            int rand = MathUtils.random(gameplayScreen.getShieldsAndContainersHandler().getActiveShields() - 2);
-            current = gameplayScreen.getShieldsAndContainersHandler().getProbability().removeIndex(rand);
-            gameplayScreen.getShieldsAndContainersHandler().getProbability().insert(gameplayScreen.getShieldsAndContainersHandler().getActiveShields() - 2, previous);
-            Gdx.app.log(TAG, "" + rand);
+            int rand = MathUtils.random(activeShieldsNum - 2);
+            current = probability.removeIndex(rand);
+            probability.insert(activeShieldsNum - 2, previous);
+            //Gdx.app.log(TAG, "" + rand);
         }
+
         previous = current;
-        return current;
+        return current/*probability.get(0)*/;
     }
 
     //--------------------------------------- Complex waves methods ---------------------------------------------
     //--------------------------------------- Complex waves methods ---------------------------------------------
     //--------------------------------------- Complex waves methods ---------------------------------------------
+
     private void newRoundWave() {
         roundType = RoundType.values()[MathUtils.random(1)];
-        roundStart = MathUtils.random(gameplayScreen.getShieldsAndContainersHandler().getActiveShields() - 1);
+        roundStart = MathUtils.random(gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() - 1);
         roundTurn = roundStart;
         current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
         roundTurnPassedActiveShieldsMinusOne = false;
-        attachBullets(current);
+        attachBullets(current, 0);
         Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 
     private void continueRoundWave() {
         if (roundType == RoundType.ANTI_CLOCKWISE) {
             roundTurn++;
-            if (roundTurn > gameplayScreen.getShieldsAndContainersHandler().getActiveShields() - 1) {
+            if (roundTurn > gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() - 1) {
                 roundTurn = 0;
                 roundTurnPassedActiveShieldsMinusOne = true;
             }
             if (roundTurn >= roundStart & roundTurnPassedActiveShieldsMinusOne) {
                 roundTurn = null;
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
-            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn]);
+            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0);
         } else {
             roundTurn--;
             if (roundTurn < 0) {
-                roundTurn = gameplayScreen.getShieldsAndContainersHandler().getActiveShields() - 1;
+                roundTurn = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() - 1;
                 roundTurnPassedActiveShieldsMinusOne = true;
             }
             if (roundTurn <= roundStart & roundTurnPassedActiveShieldsMinusOne) {
                 roundTurn = null;
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
-            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn]);
+            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0);
         }
         Gdx.app.log(TAG, "CONTINUE ROUND, " + roundTurn);
     }

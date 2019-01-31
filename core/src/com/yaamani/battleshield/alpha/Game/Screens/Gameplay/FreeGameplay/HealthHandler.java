@@ -70,7 +70,7 @@ public class HealthHandler {
             gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
-            gameplayScreen.getShieldsAndContainersHandler().setActiveShields(SHIELDS_ACTIVE_DEFAULT);
+            gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
         }
     }
 }

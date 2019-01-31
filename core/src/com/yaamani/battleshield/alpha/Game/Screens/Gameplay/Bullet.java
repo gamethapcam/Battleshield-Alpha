@@ -1,8 +1,10 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
@@ -74,14 +76,35 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         return inUse;
     }
 
-    public void attachToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
+    public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
+        attach(parent);
+
+        setX(getX() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH));
+    }
+
+    public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, boolean isDouble, int indexForDoubleWave) {
+        attach(parent);
+
+        //if (isDouble & indexForDoubleWave == 1) {
+            //float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED / 1000f;
+            //setX(getX() + /*MathUtils.random(0, */totalDistance - BULLETS_CLEARANCE_BETWEEN_WAVES - BULLETS_SPECIAL_DIAMETER/2f/*)*/);
+            //return;
+        //}
+
+        float additionalDistance = BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_CLEARANCE_BETWEEN_WAVES; //Distance between the bullet and the nearest bullet attached to the previous wave
+        setX(getX() - additionalDistance + (additionalDistance + BULLETS_SPECIAL_WAVE_LENGTH)/2f - BULLETS_SPECIAL_DIAMETER);
+
+    }
+
+    private void attach(BulletsAndShieldContainer parent) {
         inUse = true;
         this.parent = parent;
         parent.addActor(this);
 
         resetPosition(viewport.getWorldWidth(), viewport.getWorldHeight());
 
-        setX(getX() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH));
+        /*float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED / 1000f;
+        Gdx.app.log(TAG, "totalDistance = " + totalDistance);*/
     }
 
     private void detachFromBulletsAndShieldObject() {
@@ -175,13 +198,13 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     /*private void decideSpecialType() {
         WaveBulletsType bulletType = WAVE_BULLETS_TYPE_PROBABILITY[MathUtils.random(WAVE_BULLETS_TYPE_PROBABILITY.length-1)];
         switch (bulletType) {
-            default: // ALL_ORDINARY
+            default: // ORDINARY
                 notSpecial();
                 break;
-            case HAS_A_SPECIAL_BAD:
+            case SPECIAL_BAD:
                 setSpecial(BAD_BULLETS_PROBABILITY[MathUtils.random(BAD_BULLETS_PROBABILITY.length-1)]);
                 break;
-            case HAS_A_SPECIAL_GOOD:
+            case SPECIAL_GOOD:
                 setSpecial(GOOD_BULLETS_PROBABILITY[MathUtils.random(GOOD_BULLETS_PROBABILITY.length-1)]);
                 break;
         }
@@ -196,9 +219,9 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     }
 
     public void setSpecial(SpecialBullet specialType) {
-        setSize(BULLETS_SPECIAL_RADIUS, BULLETS_SPECIAL_RADIUS);
+        setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
         setOrigin(getWidth()/2f, getHeight()/2f);
-        setX(getX() - (BULLETS_SPECIAL_RADIUS - BULLETS_ORDINARY_WIDTH)/2f);
+        setX(getX() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_WIDTH)/2f);
 
         switch (specialType) {
             case PLUS:
@@ -259,7 +282,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                    handler.setActiveShields(handler.getActiveShields()+1);
+                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
                     plusMinusCommon();
                     radialTweenStars.start(SpecialBullet.PLUS);
                 }
@@ -279,7 +302,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                    handler.setActiveShields(handler.getActiveShields()-1);
+                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
                     plusMinusCommon();
                     radialTweenStars.start(SpecialBullet.MINUS);
                 }

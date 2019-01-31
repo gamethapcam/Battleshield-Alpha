@@ -139,25 +139,29 @@ public final class Constants {
 
     public static final float TURRET_RADIUS = WORLD_SIZE / 15f;
 
-    public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 80f;
-
-    public static final float BULLETS_ORDINARY_WIDTH_RATIO = 3f/1f;
-
-    public static final float BULLETS_ORDINARY_WIDTH = BULLETS_ORDINARY_HEIGHT*BULLETS_ORDINARY_WIDTH_RATIO;
-
-    public static final float BULLETS_SPECIAL_RADIUS = WORLD_SIZE * 4f/80f;
-
-    public static final float BULLETS_DISTANCE_BETWEEN_TWO = WORLD_SIZE / 60f;
-
-    public static final float BULLETS_SPEED = WORLD_SIZE / 2.5f;
-
     public static final int BULLETS_MAX_NUMBER_PER_ATTACK = 10;
 
     public static final int BULLETS_DEFAULT_NO_PER_ATTACK = BULLETS_MAX_NUMBER_PER_ATTACK;
 
     public static final int BULLETS_MIN_NUMBER_PER_ATTACK = 3;
 
-    public static final float BULLETS_DECREASE_NO_PER_ATTACK_EVERY = 3000;
+    public static final float BULLETS_DECREASE_NO_PER_ATTACK_EVERY = 3000/*000*/;
+
+    public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 80f;
+
+    public static final float BULLETS_ORDINARY_WIDTH_RATIO = 3f/1f;
+
+    public static final float BULLETS_ORDINARY_WIDTH = BULLETS_ORDINARY_HEIGHT*BULLETS_ORDINARY_WIDTH_RATIO;
+
+    public static final float BULLETS_SPECIAL_DIAMETER = WORLD_SIZE * 4f/80f;
+
+    public static final float BULLETS_DISTANCE_BETWEEN_TWO = WORLD_SIZE / 60f;
+
+    public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_WIDTH + BULLETS_DISTANCE_BETWEEN_TWO) * BULLETS_MIN_NUMBER_PER_ATTACK;
+
+    public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1 * (BULLETS_ORDINARY_WIDTH + BULLETS_DISTANCE_BETWEEN_TWO);
+
+    public static final float BULLETS_SPEED = WORLD_SIZE / 2.5f;
 
     public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
 
@@ -173,7 +177,7 @@ public final class Constants {
             WaveAttackType.DOUBLE,
             WaveAttackType.ROUND};
 
-    public enum WaveBulletsType {ALL_ORDINARY, HAS_A_SPECIAL_GOOD, HAS_A_SPECIAL_BAD}
+    public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
 
     public enum SpecialBullet {MINUS, HEART,
                                PLUS, BOMB}
@@ -182,16 +186,16 @@ public final class Constants {
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {SpecialBullet.BOMB, SpecialBullet.PLUS};
 
-    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {WaveBulletsType.ALL_ORDINARY,
-            WaveBulletsType.ALL_ORDINARY,
-            WaveBulletsType.ALL_ORDINARY,
-            WaveBulletsType.ALL_ORDINARY,
-            WaveBulletsType.HAS_A_SPECIAL_GOOD,
-            WaveBulletsType.HAS_A_SPECIAL_BAD};
+    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+            WaveBulletsType.SPECIAL_GOOD,
+            WaveBulletsType.SPECIAL_BAD};
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
