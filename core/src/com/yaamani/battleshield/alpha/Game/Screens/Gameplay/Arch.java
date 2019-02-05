@@ -123,7 +123,8 @@ public class Arch extends Actor {
     public void setInnerRadius(float innerRadius) {
         if (innerRadius >= getWidth()/2f)
             throw new ValueOutOfRangeException("innerRadius can't be greater than or equal (arch.getWidth/2f)");
-        this.innerRadius = innerRadius/getWidth();
+        this.innerRadius = innerRadius;
+        this.innerRadiusRatio = innerRadius/getWidth()/2f;
     }
 
     public float getInnerRadius() {
