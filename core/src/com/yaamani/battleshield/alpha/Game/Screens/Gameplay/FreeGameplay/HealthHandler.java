@@ -27,7 +27,7 @@ public class HealthHandler {
         this.health = correctedHealth;
 
         if (gameplayScreen.getHealthBar() != null)
-            gameplayScreen.getHealthBar().drawHealth(correctedHealth);
+            gameplayScreen.getHealthBar().setAngle(correctedHealth*MathUtils.PI2);
 
         if (correctedHealth == 0) {
             playerLost();

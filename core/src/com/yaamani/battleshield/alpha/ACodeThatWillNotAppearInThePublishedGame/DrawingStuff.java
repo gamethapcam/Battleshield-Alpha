@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
+import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
 import java.io.IOException;
 
@@ -156,8 +157,8 @@ public class DrawingStuff { // POJO ;)
                                                     String externalFolderPath,
                                                     int targetResolution) {
 
-        if (fromAngleDeg > toAngleDeg) throw new RuntimeException("fromAngleDeg can't be greater than toAngleDeg");
-        else if (skipAngleDeg <= 0) throw new RuntimeException("skipAngleDeg must be greater than zero");
+        if (fromAngleDeg > toAngleDeg) throw new ValueOutOfRangeException("fromAngleDeg can't be greater than toAngleDeg");
+        else if (skipAngleDeg <= 0) throw new ValueOutOfRangeException("skipAngleDeg must be greater than zero");
 
         for (float i = fromAngleDeg; i <= toAngleDeg; i += skipAngleDeg) {
             Pixmap pix = drawRoundedArc(SHIELDS_RADIUS,
@@ -195,10 +196,10 @@ public class DrawingStuff { // POJO ;)
                                                       int targetResolution,
                                                       String externalFolderPath) {
 
-        if (fromAngleDeg > toAngleDeg) throw new RuntimeException("fromAngleDeg can't be greater than toAngleDeg");
-        if (skipAngleDeg <= 0) throw new RuntimeException("skipAngleDeg must be greater than zero");
+        if (fromAngleDeg > toAngleDeg) throw new ValueOutOfRangeException("fromAngleDeg can't be greater than toAngleDeg");
+        if (skipAngleDeg <= 0) throw new ValueOutOfRangeException("skipAngleDeg must be greater than zero");
 
-        for (float i = fromAngleDeg; i <= toAngleDeg; i += skipAngleDeg) {
+        /*for (float i = fromAngleDeg; i <= toAngleDeg; i += skipAngleDeg) {
             Pixmap pix = drawSharpArc(HEALTH_BAR_RADIUS,
                     HEALTH_BAR_THICKNESS,
                     MathUtils.degRad * i,
@@ -214,7 +215,7 @@ public class DrawingStuff { // POJO ;)
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------

@@ -68,7 +68,7 @@ public class GameplayScreen extends AdvancedScreen {
         bulletsHandler.newWave();
 
 
-        healthBar = new HealthBar(this, healthHandler);
+        healthBar = new HealthBar(this);
 
         score = new Score(this, font);
 
@@ -119,6 +119,9 @@ public class GameplayScreen extends AdvancedScreen {
             //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
         }
         rotation = Gdx.input.getRotation();
+
+        /*healthBar.setOrigin(healthBar.getRadius(), healthBar.getRadius());
+        healthBar.setRotation(healthBar.getRotation() + 1);*/
     }
 
     @Override

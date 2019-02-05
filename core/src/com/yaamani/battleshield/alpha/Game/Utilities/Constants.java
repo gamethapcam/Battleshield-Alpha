@@ -193,9 +193,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_GOOD,
             WaveBulletsType.SPECIAL_BAD};
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -235,9 +235,17 @@ public final class Constants {
 
 
 
-    public static final float HEALTH_BAR_RADIUS = TURRET_RADIUS * 1.1f;
+    //public static final float HEALTH_BAR_RADIUS = TURRET_RADIUS * 1.1f;
 
-    public static final float HEALTH_BAR_THICKNESS = TURRET_RADIUS * 1.2f - HEALTH_BAR_RADIUS;
+    //public static final float HEALTH_BAR_THICKNESS = TURRET_RADIUS * 1.2f - HEALTH_BAR_RADIUS;
+
+    public static final float HEALTH_BAR_RADIUS = TURRET_RADIUS * 1.2f;
+
+    public static final float HEALTH_BAR_INNER_RADIUS = TURRET_RADIUS * 1.1f;
+
+    public static final float HEALTH_BAR_DANGEROUS_ANGLE = 90*MathUtils.degRad;
+
+    public static final Color HEALTH_BAR_DANGEROUS_ANGLE_COLOR = Color.RED;
 
     public static final Color HEALTH_BAR_COLOR = Color.WHITE;
 
@@ -309,7 +317,7 @@ public final class Constants {
 
     public static final String ASSETS_START = "START";
 
-    public static final String ASSETS_STAR = "Star";
+    public static final String ASSETS_STAR = /*"Star"*/"Big Circle";
 
     public static final String ASSETS_MANY_TREES = "Too Many Trees";
 
@@ -329,11 +337,13 @@ public final class Constants {
 
     public static final String ASSETS_BOMB_BULLET = "Bomb";
 
+    public static final String ASSETS_HEALTH_BAR = "Big Circle";
+
     public static final String ASSETS_FONT = "Uni Neue Bold Italic";
 
     public static final String ASSETS_FONT_FNT_INTERNAL = "Uni Neue Bold Italic.fnt";
 
-    public static final String ASSETS_GAME_OVER_BG = "Game Over BG";
+    public static final String ASSETS_GAME_OVER_BG = "Big Circle";
 
     public static final String ASSETS_RESTRICTED = "RESTRICTED";
 

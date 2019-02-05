@@ -46,7 +46,7 @@ public class StarsContainer extends Group implements Disposable{
 
         //game.addUpdatable(this);
 
-        starRegion = Assets.instance.mutualAssets.star;
+        starRegion = Assets.instance.mutualAssets.star/*Assets.instance.gameplayAssets.gameOverBG*/;
         stars = new Array<Star>(false, STARS_COUNT, Star.class);
         for (int i = 0; i < STARS_COUNT; i++) {
             Star star = new Star(starRegion, viewport, i);

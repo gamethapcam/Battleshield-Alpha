@@ -1,4 +1,4 @@
-package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
+package com.yaamani.battleshield.alpha.MyEngine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -6,9 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
 public class Arch extends Group {
 
