@@ -7,9 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
-public class Arch extends Actor {
+public class Arch extends Group {
 
     public static final String TAG = Arch.class.getSimpleName();
 
@@ -17,24 +18,28 @@ public class Arch extends Actor {
 
     private float angle;
     private float innerRadius;
+    private float u_innerRadiusRatio;
     private AngleIncreaseDirection angleIncreaseDirection;
 
     private ShaderProgram shaderProgram;
+
+    private float u_regionCenterX;
+    private float u_regionCenterY;
+
+    private float u_radius;
 
     /**
      *
      * @param region A picture of a filled circle.
      */
-    public Arch(TextureRegion region, AngleIncreaseDirection angleIncreaseDirection) {
-        this.region = region;
+    public Arch(TextureRegion region, AngleIncreaseDirection angleIncreaseDirection, float radius) {
+        setRegion(region);
         this.angle = 360 * MathUtils.degRad;
         innerRadius = 0;
         this.angleIncreaseDirection = angleIncreaseDirection;
+        setRadius(radius);
 
-        setBounds(region.getRegionX(),
-                region.getRegionY(),
-                region.getRegionWidth(),
-                region.getRegionHeight());
+        Gdx.app.log(TAG, "regionX = " + region.getRegionX());
 
         String defaultVertexShader =
                 "attribute vec4 a_position;\n" +
@@ -53,35 +58,7 @@ public class Arch extends Actor {
                 "   gl_Position =  u_projTrans * a_position;\n" +
                 "}\n";
 
-        String myFragmentShader = Gdx.files.internal("Arch.fs.glsl").readString()
-                /*"#define PI 3.1415926535897932384626433832795\n" +
-                        "\n" +
-                        "varying vec4 v_color;\n" +
-                        "varying vec2 v_texCoords;\n" +
-                        "\n" +
-                        "uniform sampler2D u_texture;\n" +
-                        "uniform int u_angleIncreaseDirection;\n" +
-                        "uniform float u_angle;\n" +
-                        "uniform float u_innerRadius;\n" +
-                        "\n" +
-                        "void main() {\n" +
-                        "    vec4 color;\n" +
-                        "    float currentAngle;\n" +
-                        "    if (u_angleIncreaseDirection == 0)\n" +
-                        "        currentAngle = atan(v_texCoords.y - 0.5, 0.5 - v_texCoords.x);\n" +
-                        "    else\n" +
-                        "        currentAngle = atan(0.5 - v_texCoords.x, v_texCoords.y - 0.5);\n" +
-                        "\n" +
-                        "    float r;\n" +
-                        "    if (u_innerRadius > 0.0) {\n" +
-                        "        vec2 texCoord = vec2(v_texCoords.x - 0.5, 0.5 - v_texCoords.y);\n" +
-                        "        r = sqrt(texCoord.x*texCoord.x + texCoord.y*texCoord.y);\n" +
-                        "    }\n" +
-                        "\n" +
-                        "    if (currentAngle + PI >= u_angle || r < u_innerRadius) color = vec4(1.0, 1.0, 1.0, 0.0);\n" +
-                        "    else color = texture2D(u_texture, v_texCoords);" +
-                        "    gl_FragColor = v_color * color;\n" +
-                        "}"*/;
+        String myFragmentShader = Gdx.files.internal("Arch.fs.glsl").readString();
 
         shaderProgram = new ShaderProgram(defaultVertexShader, myFragmentShader);
 
@@ -92,11 +69,16 @@ public class Arch extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
 
+        super.draw(batch, parentAlpha);
+
         batch.setShader(shaderProgram);
 
         shaderProgram.setUniformi("u_angleIncreaseDirection", AngleIncreaseDirection.getIntValue(angleIncreaseDirection));
         shaderProgram.setUniformf("u_angle", angle);
-        shaderProgram.setUniformf("u_innerRadius", innerRadius);
+        shaderProgram.setUniformf("u_radius", u_radius);
+        shaderProgram.setUniformf("u_innerRadiusRatio", u_innerRadiusRatio);
+        shaderProgram.setUniformf("u_regionCenterX", u_regionCenterX);
+        shaderProgram.setUniformf("u_regionCenterY", u_regionCenterY);
 
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
@@ -117,18 +99,23 @@ public class Arch extends Actor {
      */
     public void setAngle(float angle) {
         this.angle = MathUtils.clamp(angle, 0, MathUtils.PI2);
-        Gdx.app.log(TAG, "angle = " + this.angle);
+        //Gdx.app.log(TAG, "angle = " + this.angle);
     }
 
     public void setInnerRadius(float innerRadius) {
         if (innerRadius >= getWidth()/2f)
-            throw new ValueOutOfRangeException("innerRadius can't be greater than or equal (arch.getWidth/2f)");
+            throw new ValueOutOfRangeException("innerRadius can't be greater than or equal the radius");
         this.innerRadius = innerRadius;
-        this.innerRadiusRatio = innerRadius/getWidth()/2f;
+        this.u_innerRadiusRatio = innerRadius/getWidth()/2f;
     }
 
     public float getInnerRadius() {
-        return innerRadius*getWidth();
+        return innerRadius;
+    }
+
+    @Override
+    protected void sizeChanged() {
+        u_radius = (float) region.getRegionWidth()/(float) region.getTexture().getWidth()/2f;
     }
 
     public TextureRegion getRegion() {
@@ -142,6 +129,43 @@ public class Arch extends Actor {
     public void setAngleIncreaseDirection(AngleIncreaseDirection angleIncreaseDirection) {
         this.angleIncreaseDirection = angleIncreaseDirection;
     }
+
+    public void setRegion(TextureRegion region) {
+        this.region = region;
+
+        float centerX = (region.getRegionWidth() + region.getRegionX()*2) / 2f;
+        float centerY = (region.getRegionHeight() + region.getRegionY()*2) / 2f;
+
+        u_regionCenterX = centerX / region.getTexture().getWidth(); //ratio
+        u_regionCenterY = centerY / region.getTexture().getHeight(); //ratio
+    }
+
+    /**
+     * setSize(radius*2, radius*2);
+     * @param radius
+     */
+    public void setRadius(float radius) {
+        setSize(radius*2, radius*2);
+    }
+
+    /**
+     * setBounds(x, y, radius*2, radius*2);
+     * @param x
+     * @param y
+     * @param radius
+     */
+    public void setBounds(float x, float y, float radius) {
+        setBounds(x, y, radius*2, radius*2);
+    }
+
+    /**
+     *
+     * @return getWidth()/2f;
+     */
+    public float getRadius() {
+        return getWidth()/2f;
+    }
+
 
 
     // ---------------------------------------------------------------------------------------------------------
