@@ -2,6 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Shield;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -17,10 +18,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     private Shield shield;
     private byte index;
 
-    private int minusBulletsCount = 0;
-    private int plusBulletsCount = 0;
+    /*private int minusBulletsCount = 0;
+    private int plusBulletsCount = 0;*/
 
-    private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation
+    private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
     public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index, AdvancedStage game) {
         shield = new Shield(this);
@@ -49,9 +50,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         return index;
     }
 
-
-
     //------------------------------------------------------------
+
     public void startRotationOmegaAlphaTween() {
         rotationOmegaAlphaTween.start();
     }
@@ -67,6 +67,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     public void setNewAlpha(float newAlpha) {
         rotationOmegaAlphaTween.setNewAlpha(newAlpha);
     }
+
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

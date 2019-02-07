@@ -204,17 +204,23 @@ public final class Constants {
 
 
 
-    public static final float SHIELDS_RADIUS = /*TURRET_RADIUS * 1.1f*/ TURRET_RADIUS * 1.3f;
+    //public static final float SHIELDS_RADIUS = /*TURRET_RADIUS * 1.1f*/ TURRET_RADIUS * 1.3f;
 
-    public static final float SHIELDS_THICKNESS = WORLD_SIZE / 90f;
+    //public static final float SHIELDS_THICKNESS = WORLD_SIZE / 90f;
+
+    public static final float SHIELDS_INNER_RADIUS = TURRET_RADIUS * 1.3f;
+
+    public static final float SHIELDS_RADIUS = SHIELDS_INNER_RADIUS + WORLD_SIZE / 90f;
+
+    public static final float SHIELDS_OMEGA_SETTER_PHI_MULTIPLIER = 10f;
 
     public static final float SHIELDS_FREE_ANGLE = 10f; //Deg
 
     public static final Color SHIELDS_COLOR = Color.WHITE;
 
-    public static final int SHIELDS_MAX_COUNT = 8/*7*/;
+    public static final int SHIELDS_MAX_COUNT = 8;
 
-    public static final int SHIELDS_MIN_COUNT = 3/*7*/;
+    public static final int SHIELDS_MIN_COUNT = 3/*2*/;
 
     public static final float SHIELDS_SKIP_ANGLE_WHEN_SAVING = 3f; //Deg
 

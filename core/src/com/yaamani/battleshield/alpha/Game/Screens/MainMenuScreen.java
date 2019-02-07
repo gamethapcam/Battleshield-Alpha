@@ -1,7 +1,10 @@
 package com.yaamani.battleshield.alpha.Game.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.MyEngine.Arch;
+import com.yaamani.battleshield.alpha.MyEngine.RoundedArch;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
@@ -36,6 +41,9 @@ public class MainMenuScreen extends AdvancedScreen {
     private MyEarthEntity frontGrass;
 
     private MainMenuToGameplay mainMenuToGameplay;
+
+
+    //private RoundedArch arch;
 
 
     public MainMenuScreen(final AdvancedStage game, boolean transform) {
@@ -124,15 +132,34 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(start);
         addActor(restricted);
 
+        /*Pixmap pix = new Pixmap(10, 10, Pixmap.Format.RGBA4444);
+        pix.setColor(Color.WHITE);
+        for (int i = 0; i < pix.getWidth(); i++)
+            for (int j = 0; j < pix.getHeight(); j++)
+                pix.drawPixel(i, j);
 
-
-
+        arch = new RoundedArch(*//*new TextureRegion(new Texture(pix))*//*Assets.instance.gameplayAssets.healthBar, Arch.AngleIncreaseDirection.THE_POSITIVE_DIRECTION_OF_THE_X_AXIS, WORLD_SIZE/4f);
+        addActor(arch);
+        arch.setColor(1, 1, 1, 0.5f);
+        arch.setInnerRadius(WORLD_SIZE/16f);
+        arch.setAngle(60*MathUtils.degRad);*/
     }
 
     @Override
     public void act(float delta) {
         if (!isVisible()) return;
         super.act(delta);
+
+        /*if (Gdx.input.isKeyPressed(Input.Keys.EQUALS))
+            arch.setAngle(arch.getAngle() + 1 * MathUtils.degRad);
+        if (Gdx.input.isKeyPressed(Input.Keys.MINUS))
+            arch.setAngle(arch.getAngle() - 1 * MathUtils.degRad);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0))
+            arch.setInnerRadius(arch.getInnerRadius() * 1.01f);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_9))
+            arch.setInnerRadius(arch.getInnerRadius() * 0.99f);*/
+
     }
 
     @Override

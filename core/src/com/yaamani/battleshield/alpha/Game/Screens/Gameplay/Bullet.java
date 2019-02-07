@@ -1,15 +1,14 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Shield;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.ShieldsAndContainersHandler;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -150,8 +149,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 Shield shield;
                 shield = parent.getShield();
                 // The shield blocked the bullet
-                if (getX() <= SHIELDS_RADIUS+SHIELDS_THICKNESS+SHIELDS_ON_DISPLACEMENT &
-                        getX() >= SHIELDS_RADIUS-SHIELDS_THICKNESS+SHIELDS_ON_DISPLACEMENT - getWidth() &
+                if (getX() <= /*SHIELDS_RADIUS+SHIELDS_THICKNESS*/SHIELDS_RADIUS+SHIELDS_ON_DISPLACEMENT &
+                        getX() >= /*SHIELDS_RADIUS-SHIELDS_THICKNESS*/SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT - getWidth() &
                         shield.isOn()) {
                     stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
                     if (currentEffect == effects.minus | currentEffect == effects.plus) thereIsPlusOrMinus = false;

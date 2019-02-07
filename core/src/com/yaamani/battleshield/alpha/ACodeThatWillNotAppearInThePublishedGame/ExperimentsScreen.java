@@ -150,7 +150,7 @@ public class ExperimentsScreen extends AdvancedScreen {
                 bullets.add(bullet);
                 bullet.setY(bullet.getY() + i*(bullet.getWidth() + BULLETS_DISTANCE_BETWEEN_TWO));
             }
-            initializeShield();
+            //initializeShield();
         }
 
 
@@ -186,7 +186,7 @@ public class ExperimentsScreen extends AdvancedScreen {
             return bullet;
         }
 
-        private void initializeShield() {
+        /*private void initializeShield() {
             shieldTexture = pixToTex(
                                         drawRoundedArc(SHIELDS_RADIUS,
                                                 SHIELDS_THICKNESS,
@@ -205,7 +205,7 @@ public class ExperimentsScreen extends AdvancedScreen {
             shield.rotateBy(180);
 
             Gdx.app.log(GunBulletsShield.class.getSimpleName(), "shieldTexture size = " + shieldTexture.getWidth() + ", " + shieldTexture.getHeight());
-        }
+        }*/
     }
 
 

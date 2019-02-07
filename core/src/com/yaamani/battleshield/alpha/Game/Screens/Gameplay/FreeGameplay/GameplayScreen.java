@@ -122,6 +122,8 @@ public class GameplayScreen extends AdvancedScreen {
 
         /*healthBar.setOrigin(healthBar.getRadius(), healthBar.getRadius());
         healthBar.setRotation(healthBar.getRotation() + 1);*/
+
+        //bulletsAndShieldContainers[0].getShield().rotateBy(0.1f);
     }
 
     @Override
@@ -191,6 +193,9 @@ public class GameplayScreen extends AdvancedScreen {
         }
 
         shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
+
+        bulletsAndShieldContainers[0].getShield().setDebug(true);
+        bulletsAndShieldContainers[0].getShield().getSemiCircle0().setDebug(true);
     }
 
     private void initializeBulletPool() {

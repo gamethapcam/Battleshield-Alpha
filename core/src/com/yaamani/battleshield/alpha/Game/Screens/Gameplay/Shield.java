@@ -1,89 +1,86 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Align;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.RoundedArch;
 
-import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.resolutionIntoWorldUnits;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class Shield extends Actor {
+public class Shield extends RoundedArch {
 
     public static final String TAG = Shield.class.getSimpleName();
 
-    private float omegaDeg;
-    private TextureRegion currentRegion;
+    private float T, L0, phi;
+
     private boolean on = false;
 
-    public Shield(BulletsAndShieldContainer bulletsAndShieldContainer) {
-        this(90, bulletsAndShieldContainer);
-    }
+    public Shield(/*TextureRegion region, float radius, float innerRadius, */BulletsAndShieldContainer bulletsAndShieldContainer) {
+        super(Assets.instance.gameplayAssets.gameOverBG,
+                AngleIncreaseDirection.THE_POSITIVE_DIRECTION_OF_THE_X_AXIS,
+                SHIELDS_RADIUS);
 
-    public Shield(float omegaDeg, BulletsAndShieldContainer bulletsAndShieldContainer) {
-        setOmegaDeg(omegaDeg);
-        setRotation(-90);
-        //setDebug(true);
+        setInnerRadius(SHIELDS_INNER_RADIUS);
         bulletsAndShieldContainer.addActor(this);
 
-        //getColor().a = .25f;
+        setPosition(-getRadius(), -getRadius());
+
+        setOrigin(Align.center);
+        //setDebug(true);
+
+        //setAngle(90*MathUtils.degRad);
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
-        Color color = getColor();
-        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-        if (on)
-            batch.draw(currentRegion, getX() + SHIELDS_ON_DISPLACEMENT, getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
-        else batch.draw(currentRegion, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+    protected void sizeChanged() {
+        super.sizeChanged();
 
+        updateT_L0_phi();
     }
 
-    float getOmegaDeg() {
-        return omegaDeg;
+    @Override
+    protected void innerRadiusChanged() {
+        updateT_L0_phi();
     }
 
-    public void setOmegaDeg(float omegaDeg) {
-        float correctedOmega = MathUtils.clamp(omegaDeg, SHIELDS_SAVING_FROM_ANGLE, SHIELDS_SAVING_TO_ANGLE);
+    private void updateT_L0_phi() {
+        T = (getRadius() + getInnerRadius())/2f - getInnerRadius();
+        L0 = 0.5f * T;
+        phi = L0/(getInnerRadius()+L0);
+    }
 
-        int index = Math.round((correctedOmega - SHIELDS_SAVING_FROM_ANGLE)/SHIELDS_SKIP_ANGLE_WHEN_SAVING);
-        this.omegaDeg = index*SHIELDS_SKIP_ANGLE_WHEN_SAVING + SHIELDS_SAVING_FROM_ANGLE;
-
-        currentRegion = Assets.instance.gameplayAssets.shieldsWithVariousAngles[index];
-
-        changeSize(this.omegaDeg);
+    public void setOn(boolean on) {
+        this.on = on;
+        if (on) {
+            setColor(1, 1, 1, 1);
+            setX(-getRadius() + SHIELDS_ON_DISPLACEMENT);
+        }
+        else {
+            setColor(1, 1, 1, 0.5f);
+            setX(-getRadius());
+        }
     }
 
     public boolean isOn() {
         return on;
     }
 
-    public void setOn(boolean on) {
-        this.on = on;
-        if (on) setColor(1, 1, 1, 1);
-        else setColor(1, 1, 1, 0.5f);
+    public float getOmegaDeg() {
+        //updateT_L0_phi();
+        return (getAngle() + 2*phi) * MathUtils.radDeg;
     }
 
-    private void changeSize(float omegaDeg) {
-        /*float L0 = 0.5f*SHIELDS_THICKNESS;
-        float phi = L0/(SHIELDS_RADIUS + L0);
-        float theta = omegaDeg*MathUtils.degreesToRadians - 2*phi;
-        float L1 = 2*(SHIELDS_RADIUS + L0) * MathUtils.sin(0.5f*theta);
-        float L2 = (SHIELDS_RADIUS + L0) * MathUtils.cos(0.5f*theta);
-        float L3 = SHIELDS_RADIUS + SHIELDS_THICKNESS - L2;
+    public void setOmegaDeg(float omegaDeg) {
+        //updateT_L0_phi();
+        setAngle(omegaDeg*MathUtils.degRad - SHIELDS_OMEGA_SETTER_PHI_MULTIPLIER*phi);
 
-        setWidth(L1 + 2*L0);
-        setHeight(L3 + L0);*/
-        //Gdx.app.log(TAG, "Before = (" + getWidth() + ", " + getHeight() + ")");
+        Gdx.app.log(TAG, "angleDeg = " + getAngle()*MathUtils.radDeg);
 
-        setSize(resolutionIntoWorldUnits(currentRegion.getRegionWidth(), WORLD_SIZE, 1080),
-                resolutionIntoWorldUnits(currentRegion.getRegionHeight(), WORLD_SIZE, 1080)); // Change 1080 based on the targetResolution of the shields' own targetResolution.
-        //Gdx.app.log(TAG, "After = (" + getWidth() + ", " + getHeight() + ")");
+        //changeSize(this.omegaDeg);
 
-        float theTipOfTheShield = SHIELDS_RADIUS + SHIELDS_THICKNESS;
-        setX(theTipOfTheShield - getHeight());
-        setY(getWidth()/2f);
+        setRotation(-getAngle()*MathUtils.radDeg/2f);
     }
 }

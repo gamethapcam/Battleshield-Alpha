@@ -150,7 +150,7 @@ public class DrawingStuff { // POJO ;)
     //---------------------------------------------------------------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------------------------------------------------------------
 
-    public static void saveShieldsWithVariousAngles(float fromAngleDeg,
+    /*public static void saveShieldsWithVariousAngles(float fromAngleDeg,
                                                     float toAngleDeg,
                                                     float skipAngleDeg,
                                                     float freeAngleBetweenShieldsDeg,
@@ -178,7 +178,7 @@ public class DrawingStuff { // POJO ;)
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     public static void saveTurret(float worldSize, int targetResolution, String externalFolderPath) {
         Pixmap pix = drawTurret(worldSize, targetResolution);
