@@ -127,7 +127,7 @@ public class LoadingToMainMenu extends Transition {
         startTxtAppear = new Tween(START_TXT_APPEAR_DURATION, this) {
             @Override
             public void onStart() {
-                ((MainMenuScreen) in).setStartVisibility(true);
+                ((MainMenuScreen) in).setStartVisibility(/*false*/true);
             }
 
             @Override

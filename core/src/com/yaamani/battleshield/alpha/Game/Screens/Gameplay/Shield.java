@@ -77,7 +77,7 @@ public class Shield extends RoundedArch {
         //updateT_L0_phi();
         setAngle(omegaDeg*MathUtils.degRad - SHIELDS_OMEGA_SETTER_PHI_MULTIPLIER*phi);
 
-        Gdx.app.log(TAG, "angleDeg = " + getAngle()*MathUtils.radDeg);
+        //Gdx.app.log(TAG, "angleDeg = " + getAngle()*MathUtils.radDeg);
 
         //changeSize(this.omegaDeg);
 

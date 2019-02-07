@@ -171,16 +171,16 @@ public class MainMenuScreen extends AdvancedScreen {
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         super.resize(width, height, worldWidth, worldHeight);
         start.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
-        if (start != null) start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+        if (start != null) start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT - start.getWidth(),
                 start.getY());
 
-        restricted.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
-        if (restricted != null) restricted.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
-                restricted.getY());
+        TextureRegion _restricted = Assets.instance.mainMenuAssets.restricted;
+        restricted.setSize(MM_START_TXT_HEIGHT * _restricted.getRegionWidth() / _restricted.getRegionHeight(), MM_START_TXT_HEIGHT);
+        if (restricted != null) restricted.setX(worldWidth - MM_START_TXT_X_MARGIN_FROM_RIGHT - restricted.getWidth());
 
-        free.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
-        if (free != null) free.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
-                free.getY());
+        TextureRegion _free = Assets.instance.mainMenuAssets.free;
+        free.setSize(MM_START_TXT_HEIGHT * _free.getRegionWidth() / _free.getRegionHeight(), MM_START_TXT_HEIGHT);
+        if (free != null) free.setX(worldWidth - MM_START_TXT_X_MARGIN_FROM_RIGHT - free.getWidth());
     }
 
     @Override
@@ -226,7 +226,7 @@ public class MainMenuScreen extends AdvancedScreen {
         start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
                 MM_START_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
 
-        start.setBounds(start.getX(), start.getY(), start.getWidth(), start.getHeight());
+        //start.setBounds(start.getX(), start.getY(), start.getWidth(), start.getHeight());
 
         start.addListener(new InputListener() {
             @Override
@@ -236,7 +236,10 @@ public class MainMenuScreen extends AdvancedScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                game.switchScreens(mainMenuToGameplay);
+                //game.switchScreens(mainMenuToGameplay);
+                start.setVisible(false);
+                free.setVisible(true);
+                restricted.setVisible(true);
                 //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[1], new ExperimentsScreen(game, false)));
             }
         });
@@ -258,12 +261,9 @@ public class MainMenuScreen extends AdvancedScreen {
         };
 
         game.setKeyboardFocus(restricted);
-        restricted.setVisible(false);
+        restricted.setVisible(/*true*/false);
 
-        restricted.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
-                MM_START_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
-
-        restricted.setBounds(restricted.getX(), restricted.getY(), restricted.getWidth(), restricted.getHeight());
+        restricted.setY(MM_START_TXT_FINAL_Y);
 
         restricted.addListener(new InputListener() {
             @Override
@@ -295,12 +295,14 @@ public class MainMenuScreen extends AdvancedScreen {
         };
 
         //game.setKeyboardFocus(free);
-        free.setVisible(true);
+        free.setVisible(/*true*/false);
 
-        free.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
-                MM_FREE_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
+        free.setY(MM_FREE_TXT_FINAL_Y);
 
-        free.setBounds(free.getX(), free.getY(), 2*free.getImageWidth(), free.getImageHeight());
+        /*free.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+                MM_FREE_TXT_FINAL_Y);
+
+        free.setBounds(free.getX(), free.getY(), 2*free.getImageWidth(), free.getImageHeight());*/
 
         free.addListener(new InputListener() {
             @Override

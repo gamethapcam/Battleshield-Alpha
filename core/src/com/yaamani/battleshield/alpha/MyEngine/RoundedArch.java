@@ -81,7 +81,7 @@ public class RoundedArch extends Arch {
         calculateCirclesDimensions();
     }
 
-    public Arch getSemiCircle0() {
+    /*public Arch getSemiCircle0() {
         return semiCircle0;
-    }
+    }*/
 }

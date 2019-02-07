@@ -99,7 +99,7 @@ public final class Constants {
 
     public static final float MM_FRONT_GRASS_FINAL_Y = 0;
 
-    public static final float MM_START_TXT_X_MARGIN_FROM_RIGHT = MM_START_TXT_WIDTH + WORLD_SIZE * 0.12592593f;
+    public static final float MM_START_TXT_X_MARGIN_FROM_RIGHT = /*MM_START_TXT_WIDTH + */WORLD_SIZE * 0.12592593f;
 
     public static final float MM_START_TXT_FINAL_Y = WORLD_SIZE * 0.80679167f;
 
