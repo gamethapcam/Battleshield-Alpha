@@ -37,8 +37,6 @@ public class Arch extends Group {
         this.angleIncreaseDirection = angleIncreaseDirection;
         setRadius(radius);
 
-        Gdx.app.log(TAG, "regionX = " + region.getRegionX());
-
         String defaultVertexShader =
                 "attribute vec4 a_position;\n" +
                 "attribute vec4 a_color;\n" +
@@ -101,19 +99,33 @@ public class Arch extends Group {
     }
 
     public void setInnerRadius(float innerRadius) {
-        if (innerRadius >= getWidth()/2f)
-            throw new ValueOutOfRangeException("innerRadius can't be greater than or equal the radius");
+
         this.innerRadius = innerRadius;
         this.u_innerRadiusRatio = innerRadius/getWidth()/2f;
+
+        checkInnerRadiusValidity();
+
+        innerRadiusChanged();
     }
 
     public float getInnerRadius() {
         return innerRadius;
     }
 
+    protected void innerRadiusChanged() {
+
+    }
+
     @Override
     protected void sizeChanged() {
         u_radius = (float) region.getRegionWidth()/(float) region.getTexture().getWidth()/2f;
+
+        checkInnerRadiusValidity();
+    }
+
+    private void checkInnerRadiusValidity() {
+        if (innerRadius >= getWidth()/2f)
+            throw new ValueOutOfRangeException("innerRadius can't be greater than or equal the radius");
     }
 
     public TextureRegion getRegion() {

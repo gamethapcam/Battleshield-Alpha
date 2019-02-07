@@ -24,8 +24,8 @@ public class RoundedArch extends Arch {
 
         semiCircle0.setRotation(180);
 
-        semiCircle0.setDebug(true);
-        semiCircle1.setDebug(true);
+        /*semiCircle0.setDebug(true);
+        semiCircle1.setDebug(true);*/
 
         calculateCirclesDimensions();
     }
@@ -48,21 +48,29 @@ public class RoundedArch extends Arch {
             semiCircles[i].setOrigin(Align.center);
         }
 
+        float originPolar_r = (getRadius() + getInnerRadius())/2f;
+
         if (getAngleIncreaseDirection() == AngleIncreaseDirection.CLOCKWISE) {
             semiCircle0.setPosition(getRadius() - semiCircle0.getRadius(), getHeight() - semiCircle0.getHeight());
 
-            float originPolar_r = (getRadius() + getInnerRadius())/2f;
             semiCircle1.setPosition(getRadius() + originPolar_r * MathUtils.sin(getAngle()) - semiCircle1.getRadius(),
                     getRadius() + originPolar_r * MathUtils.cos(getAngle()) - semiCircle1.getRadius());
 
             semiCircle1.setRotation(-getAngle() * MathUtils.radDeg);
+        } else {
+            semiCircle0.setPosition(getWidth() - semiCircle0.getWidth(), getHeight()/2f - semiCircle0.getRadius());
+            semiCircle0.setRotation(-90);
+
+            semiCircle1.setPosition(getRadius() + originPolar_r * MathUtils.cos(getAngle()) - semiCircle1.getRadius(),
+                    getRadius() + originPolar_r * MathUtils.sin(getAngle()) - semiCircle1.getRadius());
+
+            semiCircle1.setRotation(getAngle() * MathUtils.radDeg);
+            semiCircle1.rotateBy(90);
         }
     }
 
     @Override
-    public void setInnerRadius(float innerRadius) {
-        super.setInnerRadius(innerRadius);
-
+    protected void innerRadiusChanged() {
         calculateCirclesDimensions();
     }
 
@@ -71,5 +79,9 @@ public class RoundedArch extends Arch {
         super.setAngle(angle);
 
         calculateCirclesDimensions();
+    }
+
+    public Arch getSemiCircle0() {
+        return semiCircle0;
     }
 }
