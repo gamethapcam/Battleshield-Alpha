@@ -109,11 +109,26 @@ public class GameplayScreen extends AdvancedScreen {
             bulletsHandler.getRadialTweenStars().start(SpecialBullet.MINUS);
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0))
+        if (Gdx.input.isKeyPressed(Input.Keys.UP))
             healthHandler.setHealth(healthHandler.getHealth() + .05f);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE))
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
             healthHandler.setHealth(healthHandler.getHealth() - .05f);
+
+        for (int i = BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUM_0;
+             i <= 9 + Input.Keys.NUM_0;
+             i++) {
+            if (Gdx.input.isKeyJustPressed(i)) bulletsHandler.setBulletsPerAttack(i - Input.Keys.NUM_0);
+        }
+
+        for (int i = BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUMPAD_0;
+             i <= 9 + Input.Keys.NUMPAD_0;
+             i++) {
+            if (Gdx.input.isKeyJustPressed(i)) bulletsHandler.setBulletsPerAttack(i - Input.Keys.NUMPAD_0);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0) | Gdx.input.isKeyPressed(Input.Keys.NUMPAD_0))
+            bulletsHandler.setBulletsPerAttack(10);
 
         if (Gdx.input.getRotation() != rotation) {
             //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());

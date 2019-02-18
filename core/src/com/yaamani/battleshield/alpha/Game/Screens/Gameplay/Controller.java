@@ -1,7 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -15,7 +15,7 @@ import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
 
-public class Controller extends Group implements InputProcessor, Resizable {
+public class Controller extends Group implements Resizable {
 
     public final String TAG = Controller.class.getSimpleName();
 
@@ -43,9 +43,47 @@ public class Controller extends Group implements InputProcessor, Resizable {
 
         this.viewport = getStage().getViewport();
 
-        addListener(new MyInputListener());
+        addListener(new MyTouchListener());
+        //gameplayScreen.addListener(this);
 
         //setDebug(true);
+
+        /*for (com.badlogic.gdx.controllers.Controller controller : Controllers.getControllers()) {
+            Gdx.app.log(TAG, controller.getName());
+        }*/
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+
+        gamePadPooling();
+
+    }
+
+    private void gamePadPooling() {
+        if (Controllers.getControllers().size == 0) return;
+        //Gdx.app.log(TAG, "" + Controllers.getControllers().peek().getAxis(2));
+
+        com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
+
+        float rightStickFirstAxis  = MyMath.roundTo(gamePad.getAxis(0), 2);
+        float rightStickSecondAxis = MyMath.roundTo(gamePad.getAxis(1), 2) * -1;
+        float leftStickFirstAxis   = MyMath.roundTo(gamePad.getAxis(2), 2);
+        float leftStickSecondAxis  = MyMath.roundTo(gamePad.getAxis(3), 2) * -1;
+
+        Gdx.app.log(TAG, "rightStick = (" + rightStickFirstAxis + ", " + rightStickSecondAxis + ")" +
+                "leftStick = (" + leftStickFirstAxis + ", " + leftStickSecondAxis + ")");
+
+        if (controllerPosition == ControllerPosition.RIGHT) {
+            angle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
+        } else
+            angle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
+
+        if ((rightStickFirstAxis != 0 | rightStickSecondAxis != 0) & controllerPosition == ControllerPosition.RIGHT |
+                (leftStickFirstAxis != 0 | leftStickSecondAxis != 0) & controllerPosition == ControllerPosition.LEFT)
+            moveTheStickAccordingToTheAngle();
+        else centerTheStick();
     }
 
     public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, ControllerPosition controllerPosition) {
@@ -87,6 +125,17 @@ public class Controller extends Group implements InputProcessor, Resizable {
         centerTheStick();
     }
 
+    private void moveTheStickAccordingToTheAngle() {
+
+        float bgRadius = BG.getWidth()/2f;
+        float bgCentrePointX = BG.getX() + bgRadius;
+        float bgCentrePointY = BG.getY() + bgRadius;
+
+        float stickRadius = stick.getWidth()/2f;
+        stick.setPosition(bgRadius*MyMath.cos(angle) - stickRadius + bgCentrePointX,
+                bgRadius*MyMath.sin(angle) - stickRadius + bgCentrePointY);
+    }
+
     private void centerTheStick() {
         float bgRadius = BG.getWidth()/2f;
         float stickRadius = stick.getWidth()/2f;
@@ -125,7 +174,7 @@ public class Controller extends Group implements InputProcessor, Resizable {
 
 
 
-    private class MyInputListener extends InputListener {
+    private class MyTouchListener extends InputListener {
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             if (pointer <= 1) return true;
@@ -143,9 +192,7 @@ public class Controller extends Group implements InputProcessor, Resizable {
                 angle = MathUtils.atan2(yAccordingToTheCenterToTheBG, xAccordingToTheCenterToTheBG);
                 //Gdx.app.log(TAG, "" + (angle * MathUtils.radiansToDegrees));
 
-                float stickRadius = stick.getWidth()/2f;
-                stick.setPosition(bgRadius*MyMath.cos(angle) - stickRadius + bgCentrePointX,
-                        bgRadius*MyMath.sin(angle) - stickRadius + bgCentrePointY);
+                moveTheStickAccordingToTheAngle();
 
         }
 
@@ -156,60 +203,6 @@ public class Controller extends Group implements InputProcessor, Resizable {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
-    }
 
 
 

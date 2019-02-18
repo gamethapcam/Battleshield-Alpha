@@ -11,7 +11,7 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 public class HealthBar extends Arch implements Resizable {
 
     public HealthBar(GameplayScreen gameplayScreen) {
-        super(Assets.instance.gameplayAssets.turret,
+        super(Assets.instance.gameplayAssets.healthBar,
                 AngleIncreaseDirection.CLOCKWISE,
                 HEALTH_BAR_RADIUS);
 

@@ -2,6 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.MyEngine.Arch;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.RoundedArch;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -150,6 +152,8 @@ public class MainMenuScreen extends AdvancedScreen {
         if (!isVisible()) return;
         super.act(delta);
 
+        cycleAspectRatios();
+
         /*if (Gdx.input.isKeyPressed(Input.Keys.EQUALS))
             arch.setAngle(arch.getAngle() + 1 * MathUtils.degRad);
         if (Gdx.input.isKeyPressed(Input.Keys.MINUS))
@@ -160,6 +164,8 @@ public class MainMenuScreen extends AdvancedScreen {
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_9))
             arch.setInnerRadius(arch.getInnerRadius() * 0.99f);*/
 
+
+        //Gdx.app.log(TAG, "" + Controllers.getControllers().peek().getAxis(2));
     }
 
     @Override
@@ -181,6 +187,35 @@ public class MainMenuScreen extends AdvancedScreen {
         TextureRegion _free = Assets.instance.mainMenuAssets.free;
         free.setSize(MM_START_TXT_HEIGHT * _free.getRegionWidth() / _free.getRegionHeight(), MM_START_TXT_HEIGHT);
         if (free != null) free.setX(worldWidth - MM_START_TXT_X_MARGIN_FROM_RIGHT - free.getWidth());
+    }
+
+    private void cycleAspectRatios() {
+        int height = 630;
+        int width = 0;
+
+        String note = "";
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1) | Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1)) {
+            width = (int) (height * (4f/3f)); // Narrowest
+            note = " (NARROWEST)";
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2) | Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_2)) {
+            width = (int) (height * (16f/9f)); // Most common
+            note = " (MOST COMMON)";
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3) | Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_3)) {
+            width = (int) (height * (19.5f/9f)); // Widest
+            note = "=19.5:9 (WIDEST Till Now)";
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4) | Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_4)) {
+            width = (int) (height * (21.5f/9f)); // Widest
+            note = "=21.5:9 (WIDEST Supported)";
+        }
+
+        String title = "Battleshield ALPHA | Aspect ratio = " + MyMath.ratio(width, height);
+
+        if (width == 0) return;
+
+        Gdx.graphics.setWindowedMode(width	, height);
+        Gdx.graphics.setTitle(title + note);
+
     }
 
     @Override
@@ -220,7 +255,7 @@ public class MainMenuScreen extends AdvancedScreen {
             }
         };
 
-        game.setKeyboardFocus(start);
+        //game.setKeyboardFocus(start);
         start.setVisible(false);
 
         start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,

@@ -6,35 +6,35 @@ filter: Linear,Linear
 repeat: none
 Big Circle
   rotate: false
-  xy: 2, 946
+  xy: 2, 1200
   size: 1225, 1225
   orig: 1225, 1225
   offset: 0, 0
   index: -1
 Bomb
   rotate: false
-  xy: 3394, 3713
+  xy: 1229, 1593
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Bullet
   rotate: false
-  xy: 2104, 2158
+  xy: 2188, 1816
   size: 39, 13
   orig: 39, 13
   offset: 0, 0
   index: -1
 Controller BG
   rotate: false
-  xy: 1018, 794
+  xy: 2379, 2275
   size: 150, 150
   orig: 150, 150
   offset: 0, 0
   index: -1
 Controller Stick
   rotate: false
-  xy: 1229, 961
+  xy: 3394, 3927
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
@@ -55,70 +55,70 @@ Minus
   index: -1
 Plus
   rotate: false
-  xy: 1762, 2001
+  xy: 1846, 1659
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Turret
   rotate: false
-  xy: 2575, 3521
+  xy: 2575, 3775
   size: 142, 142
   orig: 142, 142
   offset: 0, 0
   index: -1
 Logo
   rotate: false
-  xy: 2, 174
+  xy: 1229, 1655
   size: 615, 770
   orig: 615, 770
   offset: 0, 0
   index: -1
 Big Mountain in the Back
   rotate: false
-  xy: 2, 2408
+  xy: 2, 2662
   size: 2571, 405
   orig: 2571, 405
   offset: 0, 0
   index: -1
 Big Tree in the Back
   rotate: false
-  xy: 619, 269
+  xy: 1028, 523
   size: 397, 675
   orig: 397, 675
   offset: 0, 0
   index: -1
 FREE
   rotate: false
-  xy: 1762, 2063
+  xy: 1846, 1721
   size: 340, 108
   orig: 340, 108
   offset: 0, 0
   index: -1
 Front Big Tree
   rotate: false
-  xy: 1229, 1577
+  xy: 1846, 1831
   size: 531, 594
   orig: 531, 594
   offset: 0, 0
   index: -1
 Front Grass
   rotate: false
-  xy: 2, 2173
+  xy: 2, 2427
   size: 2568, 233
   orig: 2568, 233
   offset: 0, 0
   index: -1
 Middle Tall Grass
   rotate: false
-  xy: 2, 3295
+  xy: 2, 3549
   size: 2571, 478
   orig: 2571, 478
   offset: 0, 0
   index: -1
 RESTRICTED
   rotate: false
-  xy: 2575, 3665
+  xy: 2575, 3919
   size: 817, 108
   orig: 817, 108
   offset: 0, 0
@@ -132,22 +132,22 @@ START
   index: -1
 Too Many Trees
   rotate: false
-  xy: 2, 2815
+  xy: 2, 3069
   size: 2567, 478
   orig: 2567, 478
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 619, 195
+  xy: 1028, 449
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Uni Neue Bold Italic
   rotate: false
-  xy: 1229, 1063
-  size: 512, 512
-  orig: 512, 512
+  xy: 2, 174
+  size: 1024, 1024
+  orig: 1024, 1024
   offset: 0, 0
   index: -1

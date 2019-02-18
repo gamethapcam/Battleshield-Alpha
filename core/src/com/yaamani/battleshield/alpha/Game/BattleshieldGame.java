@@ -52,7 +52,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
     @Override
     public void render () {
-        cycleAspectRatios();
+        //cycleAspectRatios();
 
         initializeWhenAssetsReady();
 
@@ -105,35 +105,6 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     }
 
     // ------------------ privates ------------------
-
-    private void cycleAspectRatios() {
-	    int height = 630;
-	    int width = 0;
-
-	    String note = "";
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            width = (int) (height * (4f/3f)); // Narrowest
-            note = " (NARROWEST)";
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-            width = (int) (height * (16f/9f)); // Most common
-            note = " (MOST COMMON)";
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-            width = (int) (height * (19.5f/9f)); // Widest
-            note = "=19.5:9 (WIDEST Till Now)";
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-            width = (int) (height * (21.5f/9f)); // Widest
-            note = "=21.5:9 (WIDEST Supported)";
-        }
-
-        String title = "Battleshield ALPHA | Aspect ratio = " + MyMath.ratio(width, height);
-
-        if (width == 0) return;
-
-        Gdx.graphics.setWindowedMode(width	, height);
-        Gdx.graphics.setTitle(title + note);
-
-    }
 
     private void initializeLoadingScreen() {
         loadingScreen = new LoadingScreen(game, false);

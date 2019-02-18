@@ -193,9 +193,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_GOOD,
             WaveBulletsType.SPECIAL_BAD};
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -291,7 +291,7 @@ public final class Constants {
 
 
 
-    public static final float SCORE_FONT_SCALE = 1f;
+    public static final float SCORE_FONT_SCALE = 0.5f;
 
     public static final float SCORE_FADE_OUT_TWEEN_DURATION = 700;
 

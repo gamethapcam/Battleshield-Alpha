@@ -39,12 +39,14 @@ public class GameOverLayer extends Actor implements Resizable{
 
         setSize(GAME_OVER_BG_R, GAME_OVER_BG_R);
 
-        initializeScoreText(1.5f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
-        initializeNewBestText(0.7f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
-        initializeTapAnyWhereToPlayAgainText(0.6f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
+        initializeScoreText(0.8f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
+        initializeNewBestText(0.3f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
+        initializeTapAnyWhereToPlayAgainText(0.27f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
         // TODO: Put the previous 3 scale values in constants class.
 
         tapAnyWhereToPlayAgainTextShowingTimer = new Timer(SCORE_FADE_OUT_TWEEN_DURATION*2);
+
+        //setDebug(true);
     }
 
     @Override
