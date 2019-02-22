@@ -1,12 +1,9 @@
-package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay;
+package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -41,6 +38,7 @@ public class BulletsHandler implements Updatable {
 
     private boolean isDouble;
     private WaveBulletsType[] waveBulletsType;
+    //private
     private SpecialBullet specialBullet;
 
     public BulletsHandler(AdvancedStage game, StarsContainer.RadialTween radialTweenStars, GameplayScreen gameplayScreen) {
@@ -79,7 +77,7 @@ public class BulletsHandler implements Updatable {
     //--------------------------------------- Getters And Setters ---------------------------------------------
     //--------------------------------------- Getters And Setters ---------------------------------------------
 
-    void setBulletsPerAttack(int bulletsPerAttack) {
+    public void setBulletsPerAttack(int bulletsPerAttack) {
         this.bulletsPerAttack = bulletsPerAttack;
     }
 
@@ -153,7 +151,7 @@ public class BulletsHandler implements Updatable {
 
     private float calculateDuration(WaveBulletsType waveBulletsType) {
         if (waveBulletsType == WaveBulletsType.ORDINARY)
-            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH)) / BULLETS_SPEED) * 1000;
+            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / BULLETS_SPEED) * 1000;
         else {
             return (BULLETS_SPECIAL_WAVE_LENGTH / BULLETS_SPEED) * 1000;
         }
@@ -182,7 +180,7 @@ public class BulletsHandler implements Updatable {
 
     }
 
-    private int determineType(int indexForDoubleWave) {
+    private int  determineType(int indexForDoubleWave) {
         /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
         waveBulletsType[indexForDoubleWave] = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
         if (!isDouble | (/*isDouble &*/ indexForDoubleWave == 1)) resetWaveTimer();

@@ -20,19 +20,19 @@ Bomb
   index: -1
 Bullet
   rotate: false
-  xy: 2188, 1816
-  size: 39, 13
-  orig: 39, 13
+  xy: 2188, 1790
+  size: 13, 39
+  orig: 13, 39
   offset: 0, 0
   index: -1
-Controller BG
+Free Controller BG
   rotate: false
   xy: 2379, 2275
   size: 150, 150
   orig: 150, 150
   offset: 0, 0
   index: -1
-Controller Stick
+Free Controller Stick
   rotate: false
   xy: 3394, 3927
   size: 100, 100

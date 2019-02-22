@@ -6,10 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.HealthHandler;
-import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.HealthHandler;
 import com.yaamani.battleshield.alpha.MyEngine.DebugOrigin;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 

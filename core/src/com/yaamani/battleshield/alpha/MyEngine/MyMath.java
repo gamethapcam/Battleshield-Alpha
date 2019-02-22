@@ -60,6 +60,12 @@ public final class MyMath {
         return (x < 0f) ? (CONST_1 * x + CONST_2 * x * x) : (CONST_1 * x - CONST_2 * x * x);
     }
 
+    public static float deg_0_to_360(float deg) {
+        if (deg < 0) return deg_0_to_360(deg + 360);
+        if (deg > 360) return deg_0_to_360(deg - 360);
+        return deg;
+    }
+
     public enum Dimension {X, Y}
     public static float toWorldCoordinates(float screenCoordinates, Dimension dimension, Viewport viewport) {
         float worldCoordinates = 0;

@@ -8,26 +8,37 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
+import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.Junk.AdvancedDrawing;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.*;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class ExperimentsScreen extends AdvancedScreen {
 
+    public static final String TAG = ExperimentsScreen.class.getSimpleName();
+
     private Turret turret;
 
     //private MaskTexture maskTexture;
     private final int shieldsCount = 4;
     private final float shiftAngle = 0;
-    private Array<GunBulletsShield> gunBulletsShieldArray;
+    //private Array<GunBulletsShield> gunBulletsShieldArray;
+
+    private BulletsAndShieldContainer container;
+    private Bullet[] bullets;
 
 
 
@@ -36,29 +47,70 @@ public class ExperimentsScreen extends AdvancedScreen {
         /*maskTexture = new MaskTexture();
         addActor(maskTexture);*/
 
-        gunBulletsShieldArray = new Array<GunBulletsShield>();
+        /*gunBulletsShieldArray = new Array<GunBulletsShield>();
         for (int i = 0; i < shieldsCount; i++) {
             GunBulletsShield gunBulletsShield;
-            gunBulletsShield = new GunBulletsShield(/*getStage().getViewport()*/);
+            gunBulletsShield = new GunBulletsShield(*//*getStage().getViewport()*//*);
             gunBulletsShieldArray.add(gunBulletsShield);
             addActor(gunBulletsShield);
             gunBulletsShield.rotateBy(i*(360f/shieldsCount)+shiftAngle);
-        }
+        }*/
 
         turret = new Turret();
         //turret.turretImage.setVisible(false);
+
+        container = new BulletsAndShieldContainer(this, (byte) 0, game);
+        container.setNewOmegaDeg(180);
+        container.setNewOmegaDeg(90);
+
+        container.setNewAlpha(0);
+        container.setNewAlpha(1);
+
+        container.setNewRotationDeg(0);
+        container.setNewRotationDeg(0);
+
+        bullets = new Bullet[10];
+        for (int i = 0; i < 10; i++) {
+            /*bullets[i] = new Bullet(this, new Tween(1000) {
+                @Override
+                public void tween(float percentage) {
+
+                }
+            }, getStage().getViewport());*/
+        }
+
+        /*new Timer(2000, game) {
+            @Override
+            public void onFinish() {
+
+                for (int i = 0; i < 10; i++) {
+                    bullets[i].attachNotSpecialToBulletsAndShieldContainer(container, i);
+                }
+
+                start();
+
+                Gdx.app.log(TAG, "f");
+            }
+        }.start();*/
     }
 
     @Override
     public void show() {
+        Viewport viewport = getStage().getViewport();
+        resize(viewport.getScreenWidth(), viewport.getScreenHeight(), viewport.getWorldWidth(), viewport.getWorldHeight());container.startRotationOmegaAlphaTween();
 
+        container.startRotationOmegaAlphaTween();
     }
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        for (int i = 0; i < gunBulletsShieldArray.size; i++) gunBulletsShieldArray.get(i).resize(width, height, worldWidth, worldHeight);
+        //for (int i = 0; i < gunBulletsShieldArray.size; i++) gunBulletsShieldArray.get(i).resize(width, height, worldWidth, worldHeight);
         turret.resize(width, height, worldWidth, worldHeight);
+        container.resize(width, height, worldWidth, worldHeight);
+
+        container.setRotation(container.getRotation() + 1);
     }
+
 
     @Override
     public void pause() {
@@ -78,7 +130,7 @@ public class ExperimentsScreen extends AdvancedScreen {
     @Override
     public void dispose() {
         //maskTexture.dispose();
-        for (int i = 0; i < gunBulletsShieldArray.size; i++) gunBulletsShieldArray.get(i).dispose();
+        //for (int i = 0; i < gunBulletsShieldArray.size; i++) gunBulletsShieldArray.get(i).dispose();
         turret.dispose();
     }
 

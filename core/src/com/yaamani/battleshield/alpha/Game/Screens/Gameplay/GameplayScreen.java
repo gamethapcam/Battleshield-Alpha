@@ -1,18 +1,13 @@
-package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay;
+package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Controller;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameOverLayer;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.HealthBar;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Score;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -25,6 +20,8 @@ public class GameplayScreen extends AdvancedScreen {
     public static final String TAG = GameplayScreen.class.getSimpleName();
 
     private Image turret;
+
+    private GameplayType gameplayType;
 
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
@@ -139,6 +136,31 @@ public class GameplayScreen extends AdvancedScreen {
         healthBar.setRotation(healthBar.getRotation() + 1);*/
 
         //bulletsAndShieldContainers[0].getShield().rotateBy(0.1f);
+
+        gamePadPooling();
+    }
+
+    private void gamePadPooling() {
+        if (Controllers.getControllers().size == 0) return;
+
+        com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
+
+        if (gamePad.getButton(5))
+            healthHandler.setHealth(healthHandler.getHealth() + .05f);
+
+        if (gamePad.getButton(7))
+            healthHandler.setHealth(healthHandler.getHealth() - .05f);
+
+        if (gamePad.getButton(4)) {
+            shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);
+            bulletsHandler.getRadialTweenStars().start(SpecialBullet.PLUS);
+        }
+
+        if (gamePad.getButton(6)) {
+            shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() - 1);
+            bulletsHandler.getRadialTweenStars().start(SpecialBullet.MINUS);
+        }
+
     }
 
     @Override
@@ -189,13 +211,13 @@ public class GameplayScreen extends AdvancedScreen {
                 new Image(Assets.instance.gameplayAssets.controllerBG),
                 new Image(Assets.instance.gameplayAssets.controllerStick),
                 ControllerSize.SMALL,
-                ControllerPosition.LEFT);
+                Direction.LEFT);
 
         controllerRight = new Controller(this,
                 new Image(Assets.instance.gameplayAssets.controllerBG),
                 new Image(Assets.instance.gameplayAssets.controllerStick),
                 ControllerSize.SMALL,
-                ControllerPosition.RIGHT);
+                Direction.RIGHT);
 
         /*controllerLeft.setDebug(true);
         controllerRight.setDebug(true);*/
@@ -241,6 +263,16 @@ public class GameplayScreen extends AdvancedScreen {
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
+
+
+    public GameplayType getGameplayType() {
+        return gameplayType;
+    }
+
+    public void setGameplayType(GameplayType gameplayType) {
+        this.gameplayType = gameplayType;
+        shieldsAndContainersHandler.setGameplayType(gameplayType);
+    }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {
         return shieldsAndContainersHandler;

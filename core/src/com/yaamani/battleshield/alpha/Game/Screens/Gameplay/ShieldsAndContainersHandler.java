@@ -1,11 +1,16 @@
-package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay;
+package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class ShieldsAndContainersHandler {
+
+    public static final String TAG = ShieldsAndContainersHandler.class.getSimpleName();
+
+    private GameplayType gameplayType;
 
     private GameplayScreen gameplayScreen;
 
@@ -32,7 +37,12 @@ public class ShieldsAndContainersHandler {
     private void setRotationForContainers() {
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
             if (i < activeShieldsNum)
-                gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES[activeShieldsNum - SHIELDS_MIN_COUNT]);
+                if (gameplayType == GameplayType.FREE) {
+                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
+                } else {
+                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
+
+                }
             else gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(360);
         }
     }
@@ -51,7 +61,14 @@ public class ShieldsAndContainersHandler {
     }
 
     public void handleOnShields() {
-        Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDegNoNegative(), gameplayScreen.getControllerRight().getAngleDegNoNegative()}; // cAs is for controllerAngles.
+        Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDeg(),
+                gameplayScreen.getControllerRight().getAngleDeg()}; // cAs is for controllerAngles.
+
+        if (cAs[0] != null)
+            cAs[0] = MyMath.deg_0_to_360(cAs[0] - 90);
+
+        if (cAs[1] != null)
+            cAs[1] = MyMath.deg_0_to_360(cAs[1] - 90);
 
         for (int l = 0; l < activeShieldsNum; l++)
             gameplayScreen.getBulletsAndShieldContainers()[l].getShield().setOn(false);
@@ -62,7 +79,7 @@ public class ShieldsAndContainersHandler {
             for (int c = 0; c < activeShieldsNum; c++) {
                 float onStartAngle = gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f);
                 float onEndAngle = gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f);
-                if (onStartAngle < 0) onStartAngle += 360f; //To avoid -ve angles.
+                //if (onStartAngle < 0) onStartAngle += 360f; //To avoid -ve angles.
 
                 boolean setOnToTrue = false;
 
@@ -89,6 +106,10 @@ public class ShieldsAndContainersHandler {
         setRotationForContainers();
         setOmegaForShieldObjects();
         startRotationOmegaTweenForAll();
+
+        for (BulletsAndShieldContainer container : probability) {
+            Gdx.app.log(TAG, "" + container.getRotation());
+        }
     }
 
     public int getActiveShieldsNum() {
@@ -106,5 +127,13 @@ public class ShieldsAndContainersHandler {
 
     public Array<BulletsAndShieldContainer> getProbability() {
         return probability;
+    }
+
+    public GameplayType getGameplayType() {
+        return gameplayType;
+    }
+
+    void setGameplayType(GameplayType gameplayType) {
+        this.gameplayType = gameplayType;
     }
 }

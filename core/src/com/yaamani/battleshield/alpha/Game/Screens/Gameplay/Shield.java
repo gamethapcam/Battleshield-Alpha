@@ -20,7 +20,7 @@ public class Shield extends RoundedArch {
 
     public Shield(/*TextureRegion region, float radius, float innerRadius, */BulletsAndShieldContainer bulletsAndShieldContainer) {
         super(Assets.instance.gameplayAssets.gameOverBG,
-                AngleIncreaseDirection.THE_POSITIVE_DIRECTION_OF_THE_X_AXIS,
+                AngleIncreaseDirection.CLOCKWISE,
                 SHIELDS_RADIUS);
 
         setInnerRadius(SHIELDS_INNER_RADIUS);
@@ -56,11 +56,11 @@ public class Shield extends RoundedArch {
         this.on = on;
         if (on) {
             setColor(1, 1, 1, 1);
-            setX(-getRadius() + SHIELDS_ON_DISPLACEMENT);
+            setY(-getRadius() + SHIELDS_ON_DISPLACEMENT);
         }
         else {
             setColor(1, 1, 1, 0.5f);
-            setX(-getRadius());
+            setY(-getRadius());
         }
     }
 
@@ -81,6 +81,6 @@ public class Shield extends RoundedArch {
 
         //changeSize(this.omegaDeg);
 
-        setRotation(-getAngle()*MathUtils.radDeg/2f);
+        setRotation(/*-*/getAngle()*MathUtils.radDeg/2f);
     }
 }

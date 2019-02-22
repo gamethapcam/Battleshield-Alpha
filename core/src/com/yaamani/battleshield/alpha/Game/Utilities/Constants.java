@@ -121,7 +121,10 @@ public final class Constants {
     //-------
 
 
-    public enum ControllerPosition {RIGHT, LEFT}
+    public enum GameplayType {FREE, RESTRICTED}
+
+
+    public enum Direction {RIGHT, LEFT}
     //Controller size refers to the diameter of the BG.
     public enum ControllerSize {SMALL, LARGE}
 
@@ -147,9 +150,9 @@ public final class Constants {
 
     public static final float BULLETS_DECREASE_NO_PER_ATTACK_EVERY = 3000/*000*/;
 
-    public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 80f;
+    public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 27.69230769f;
 
-    public static final float BULLETS_ORDINARY_WIDTH_RATIO = 3f/1f;
+    public static final float BULLETS_ORDINARY_WIDTH_RATIO = 1f/3f;
 
     public static final float BULLETS_ORDINARY_WIDTH = BULLETS_ORDINARY_HEIGHT*BULLETS_ORDINARY_WIDTH_RATIO;
 
@@ -157,9 +160,9 @@ public final class Constants {
 
     public static final float BULLETS_DISTANCE_BETWEEN_TWO = WORLD_SIZE / 60f;
 
-    public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_WIDTH + BULLETS_DISTANCE_BETWEEN_TWO) * BULLETS_MIN_NUMBER_PER_ATTACK;
+    public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO) * BULLETS_MIN_NUMBER_PER_ATTACK;
 
-    public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1 * (BULLETS_ORDINARY_WIDTH + BULLETS_DISTANCE_BETWEEN_TWO);
+    public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1 * (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO);
 
     public static final float BULLETS_SPEED = WORLD_SIZE / 2.5f;
 
@@ -193,9 +196,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_GOOD,
             WaveBulletsType.SPECIAL_BAD};
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -234,8 +237,10 @@ public final class Constants {
 
     public static final float SHIELDS_ON_DISPLACEMENT = WORLD_SIZE / 100f;
 
-    public static final float[] SHIELDS_SHIFT_ANGLES = {30f, 0, 18f, 0, -12.85714286f, 0};
-    //SHIELDS_SHIFT_ANGLES[0] is the shift angle when the number of shields = SHIELDS_MIN_COUNT ..... And SHIELDS_SHIFT_ANGLES[length-1] is the shift angle  when the number of shields = SHIELDS_MAX_COUNT.
+    public static final float[] SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY = {60f, 0, /*18f*/360f/5f/2f, 0, /*-12.85714286f*/0, 0};
+    //SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[0] is the shift angle when the number of shields = SHIELDS_MIN_COUNT ..... And SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[length-1] is the shift angle  when the number of shields = SHIELDS_MAX_COUNT.
+
+    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/0, 45f, 0, 360f/6f/2f, 0, 360f/8f/2f};
 
     public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 800;
 
@@ -327,9 +332,9 @@ public final class Constants {
 
     public static final String ASSETS_MANY_TREES = "Too Many Trees";
 
-    public static final String ASSETS_CONTROLLER_BG = "Controller BG";
+    public static final String ASSETS_CONTROLLER_BG = "Free Controller BG";
 
-    public static final String ASSETS_CONTROLLER_STICK = "Controller Stick";
+    public static final String ASSETS_CONTROLLER_STICK = "Free Controller Stick";
 
     public static final String ASSETS_TURRET = "Turret";
 

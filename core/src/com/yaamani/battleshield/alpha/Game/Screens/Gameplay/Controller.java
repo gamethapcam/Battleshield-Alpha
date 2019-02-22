@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
@@ -25,11 +24,11 @@ public class Controller extends Group implements Resizable {
     private Image stick;
 
     private ControllerSize controllerSize;
-    private ControllerPosition controllerPosition;
+    private Direction controllerPosition;
 
     private Float angle;
 
-    public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, ControllerSize controllerSize, ControllerPosition controllerPosition) {
+    public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, ControllerSize controllerSize, Direction controllerPosition) {
         setTransform(false);
         gameplayScreen.addActor(this);
 
@@ -63,7 +62,6 @@ public class Controller extends Group implements Resizable {
 
     private void gamePadPooling() {
         if (Controllers.getControllers().size == 0) return;
-        //Gdx.app.log(TAG, "" + Controllers.getControllers().peek().getAxis(2));
 
         com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
 
@@ -75,18 +73,18 @@ public class Controller extends Group implements Resizable {
         Gdx.app.log(TAG, "rightStick = (" + rightStickFirstAxis + ", " + rightStickSecondAxis + ")" +
                 "leftStick = (" + leftStickFirstAxis + ", " + leftStickSecondAxis + ")");
 
-        if (controllerPosition == ControllerPosition.RIGHT) {
+        if (controllerPosition == Direction.RIGHT) {
             angle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
         } else
             angle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
 
-        if ((rightStickFirstAxis != 0 | rightStickSecondAxis != 0) & controllerPosition == ControllerPosition.RIGHT |
-                (leftStickFirstAxis != 0 | leftStickSecondAxis != 0) & controllerPosition == ControllerPosition.LEFT)
+        if ((rightStickFirstAxis != 0 | rightStickSecondAxis != 0) & controllerPosition == Direction.RIGHT |
+                (leftStickFirstAxis != 0 | leftStickSecondAxis != 0) & controllerPosition == Direction.LEFT)
             moveTheStickAccordingToTheAngle();
         else centerTheStick();
     }
 
-    public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, ControllerPosition controllerPosition) {
+    public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, Direction controllerPosition) {
         this(gameplayScreen, BG, stick, CONTROLLER_DEFAULT_SIZE, controllerPosition);
     }
 
@@ -97,7 +95,7 @@ public class Controller extends Group implements Resizable {
     }
 
     private void settingBounds(float worldWidth, float worldHeight) {
-        if (controllerPosition == ControllerPosition.LEFT) setBounds(0, 0, worldWidth/2f, worldHeight);
+        if (controllerPosition == Direction.LEFT) setBounds(0, 0, worldWidth/2f, worldHeight);
         else setBounds(worldWidth/2f, 0, worldWidth, worldHeight);
 
     }
@@ -119,7 +117,7 @@ public class Controller extends Group implements Resizable {
 
     private void calculateNewPositionsInWorldUnits(float marginInWorldUnits) {
         BG.setY(marginInWorldUnits);
-        if (controllerPosition == ControllerPosition.LEFT) BG.setX(BG.getY());
+        if (controllerPosition == Direction.LEFT) BG.setX(BG.getY());
         else BG.setX(getWidth()/2f - BG.getY() - BG.getWidth());
 
         centerTheStick();
@@ -152,11 +150,11 @@ public class Controller extends Group implements Resizable {
         return angle*MathUtils.radiansToDegrees;
     }
 
-    public Float getAngleDegNoNegative() {
+    /*public Float getAngleDegNoNegative() {
         if (angle == null) return null;
         if (angle < 0) return 360f + getAngleDeg();
         return getAngleDeg();
-    }
+    }*/
 
     public ControllerSize getControllerSize() {
         return controllerSize;

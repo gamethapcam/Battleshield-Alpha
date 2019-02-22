@@ -1,8 +1,7 @@
-package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay;
+package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;

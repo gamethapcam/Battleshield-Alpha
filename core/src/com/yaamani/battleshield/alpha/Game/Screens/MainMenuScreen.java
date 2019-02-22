@@ -3,9 +3,7 @@ package com.yaamani.battleshield.alpha.Game.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,9 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
-import com.yaamani.battleshield.alpha.MyEngine.Arch;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
-import com.yaamani.battleshield.alpha.MyEngine.RoundedArch;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
@@ -41,15 +38,16 @@ public class MainMenuScreen extends AdvancedScreen {
     private MyEarthEntity frontTree;
     private MyEarthEntity manyTrees;
     private MyEarthEntity frontGrass;
-
     private MainMenuToGameplay mainMenuToGameplay;
-
+    private GameplayScreen gameplayScreen;
 
     //private RoundedArch arch;
 
 
-    public MainMenuScreen(final AdvancedStage game, boolean transform) {
+    public MainMenuScreen(final AdvancedStage game, GameplayScreen gameplayScreen, boolean transform) {
         super(game, transform);
+
+        this.gameplayScreen = gameplayScreen;
 
         Random random = new Random();
 
@@ -154,6 +152,8 @@ public class MainMenuScreen extends AdvancedScreen {
 
         cycleAspectRatios();
 
+        gamePadPooling();
+
         /*if (Gdx.input.isKeyPressed(Input.Keys.EQUALS))
             arch.setAngle(arch.getAngle() + 1 * MathUtils.degRad);
         if (Gdx.input.isKeyPressed(Input.Keys.MINUS))
@@ -166,6 +166,18 @@ public class MainMenuScreen extends AdvancedScreen {
 
 
         //Gdx.app.log(TAG, "" + Controllers.getControllers().peek().getAxis(2));
+    }
+
+    private void gamePadPooling() {
+        if (Controllers.getControllers().size == 0) return;
+
+        com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
+
+        if (gamePad.getButton(0))
+            startRestricted(getAdvancedStage());
+
+        if (gamePad.getButton(1))
+            startFree(getAdvancedStage());
     }
 
     @Override
@@ -275,7 +287,7 @@ public class MainMenuScreen extends AdvancedScreen {
                 start.setVisible(false);
                 free.setVisible(true);
                 restricted.setVisible(true);
-                //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[1], new ExperimentsScreen(game, false)));
+                //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
             }
         });
     }
@@ -308,10 +320,15 @@ public class MainMenuScreen extends AdvancedScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                game.switchScreens(mainMenuToGameplay);
-                //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[1], new ExperimentsScreen(game, false)));
+                startRestricted(game);
             }
         });
+    }
+
+    private void startRestricted(final AdvancedStage game) {
+        gameplayScreen.setGameplayType(GameplayType.RESTRICTED);
+        game.switchScreens(mainMenuToGameplay);
+        //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
     }
 
     private void initializeFree(final AdvancedStage game) {
@@ -347,10 +364,15 @@ public class MainMenuScreen extends AdvancedScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                game.switchScreens(mainMenuToGameplay);
-                //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[1], new ExperimentsScreen(game, false)));
+                startFree(game);
             }
         });
+    }
+
+    private void startFree(final AdvancedStage game) {
+        gameplayScreen.setGameplayType(GameplayType.FREE);
+        game.switchScreens(mainMenuToGameplay);
+        //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
     }
 
     public void setStartsAlpha(float a) {

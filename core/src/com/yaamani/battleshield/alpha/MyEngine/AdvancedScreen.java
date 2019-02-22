@@ -5,10 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 
 public abstract class AdvancedScreen extends Group implements Resizable {
 
+    private AdvancedStage advancedStage;
 
-    public AdvancedScreen(AdvancedStage game, boolean transform) {
-        game.addActor(this);
-        game.addScreen(this);
+    public AdvancedScreen(AdvancedStage advancedStage, boolean transform) {
+        
+        this.advancedStage = advancedStage;
+        
+        advancedStage.addActor(this);
+        advancedStage.addScreen(this);
         this.setVisible(false);
         setTransform(transform);// for performance.  ... if I'm not scaling or rotating then there's no need for transform to be true.
     }
@@ -43,6 +47,9 @@ public abstract class AdvancedScreen extends Group implements Resizable {
 
     }
 
+    public AdvancedStage getAdvancedStage() {
+        return advancedStage;
+    }
 
     /*public final void render(float delta) {
 

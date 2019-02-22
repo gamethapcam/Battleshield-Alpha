@@ -2,8 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Shield;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -23,7 +22,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
-    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index, AdvancedStage game) {
+    public BulletsAndShieldContainer(AdvancedScreen gameplayScreen, byte index, AdvancedStage game) {
         shield = new Shield(this);
         gameplayScreen.addActor(this);
         this.index = index;

@@ -5,15 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Shield;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.GameplayScreen;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.FreeGameplay.ShieldsAndContainersHandler;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -29,7 +29,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
     private boolean inUse = false;
     private BulletsAndShieldContainer parent;
-    private GameplayScreen gameplayScreen;
+    private /*AdvancedScreen*/GameplayScreen gameplayScreen;
     private TextureRegion region;
 
     private Effects effects;
@@ -39,7 +39,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
     private Viewport viewport;
 
-    public Bullet(GameplayScreen gameplayScreen, StarsContainer.RadialTween radialTweenStars, Viewport viewport) {
+    public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer.RadialTween radialTweenStars, Viewport viewport) {
         this.gameplayScreen = gameplayScreen;
         this.bulletPool = gameplayScreen.getBulletPool();
         this.activeBullets = gameplayScreen.getActiveBullets();
@@ -51,7 +51,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         this.viewport = viewport;
 
         notSpecial();
-        //setDebug(true);
+        setDebug(true);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
         attach(parent);
 
-        setX(getX() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_WIDTH));
+        setY(getY() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT));
     }
 
     public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, boolean isDouble, int indexForDoubleWave) {
@@ -86,12 +86,12 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
         //if (isDouble & indexForDoubleWave == 1) {
             //float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED / 1000f;
-            //setX(getX() + /*MathUtils.random(0, */totalDistance - BULLETS_CLEARANCE_BETWEEN_WAVES - BULLETS_SPECIAL_DIAMETER/2f/*)*/);
+            //setY(getY() + /*MathUtils.random(0, */totalDistance - BULLETS_CLEARANCE_BETWEEN_WAVES - BULLETS_SPECIAL_DIAMETER/2f/*)*/);
             //return;
         //}
 
         float additionalDistance = BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_CLEARANCE_BETWEEN_WAVES; //Distance between the bullet and the nearest bullet attached to the previous wave
-        setX(getX() - additionalDistance + (additionalDistance + BULLETS_SPECIAL_WAVE_LENGTH)/2f - BULLETS_SPECIAL_DIAMETER);
+        setY(getY() - additionalDistance + (additionalDistance + BULLETS_SPECIAL_WAVE_LENGTH)/2f - BULLETS_SPECIAL_DIAMETER);
 
     }
 
@@ -114,7 +114,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     private void resetPosition(float worldWidth, float worldHeight) {
         if (R == 0)
             calculateR(worldWidth, worldHeight);
-        setX(R); // Look @ Non-Finalized Assets/Firing bullets.png
+        setY(R); // Look @ Non-Finalized Assets/Firing bullets.png
     }
 
     public static void calculateR(float worldWidth, float worldHeight) {
@@ -129,7 +129,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-        batch.draw(region, getX(), getY() - getHeight()/2f, getOriginX(), getOriginY(),
+        batch.draw(region, getX() - getWidth()/2f, getY()/* - getHeight()/2f*/, getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
@@ -137,7 +137,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     public void act(float delta) {
         super.act(delta);
         if (inUse) {
-            setX(getX() - BULLETS_SPEED * delta);
+            setY(getY() - BULLETS_SPEED * delta);
 
             correctSpecialBulletsRotation();
 
@@ -149,8 +149,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 Shield shield;
                 shield = parent.getShield();
                 // The shield blocked the bullet
-                if (getX() <= /*SHIELDS_RADIUS+SHIELDS_THICKNESS*/SHIELDS_RADIUS+SHIELDS_ON_DISPLACEMENT &
-                        getX() >= /*SHIELDS_RADIUS-SHIELDS_THICKNESS*/SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT - getWidth() &
+                if (getY() <= /*SHIELDS_RADIUS+SHIELDS_THICKNESS*/SHIELDS_RADIUS+SHIELDS_ON_DISPLACEMENT &
+                        getY() >= /*SHIELDS_RADIUS-SHIELDS_THICKNESS*/SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT - getHeight() &
                         shield.isOn()) {
                     stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
                     if (currentEffect == effects.minus | currentEffect == effects.plus) thereIsPlusOrMinus = false;
@@ -158,8 +158,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 }
             }
 
-            //The bullet hit the turret
-            if (getX() < TURRET_RADIUS)  {
+            //The bullet hits the turret
+            if (getY() < TURRET_RADIUS)  {
                 if (parent.getColor().a >= 0.95f)
                     currentEffect.effect();
 
@@ -219,8 +219,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
     public void setSpecial(SpecialBullet specialType) {
         setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
-        setOrigin(getWidth()/2f, getHeight()/2f);
-        setX(getX() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_WIDTH)/2f);
+        setOrigin(Align.center);
+        setY(getY() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_HEIGHT)/2f);
 
         switch (specialType) {
             case PLUS:
