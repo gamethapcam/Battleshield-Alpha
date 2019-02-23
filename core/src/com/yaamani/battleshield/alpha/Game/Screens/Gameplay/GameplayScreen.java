@@ -271,7 +271,7 @@ public class GameplayScreen extends AdvancedScreen {
 
     public void setGameplayType(GameplayType gameplayType) {
         this.gameplayType = gameplayType;
-        shieldsAndContainersHandler.setGameplayType(gameplayType);
+        //shieldsAndContainersHandler.setGameplayType(gameplayType);
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {

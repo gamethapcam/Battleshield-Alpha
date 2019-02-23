@@ -38,13 +38,16 @@ public class BulletsHandler implements Updatable {
 
     private boolean isDouble;
     private WaveBulletsType[] waveBulletsType;
-    //private
+    private Float angleDoubleRestricted;
     private SpecialBullet specialBullet;
+
+    //private Timer isThereDoubleWaveTimer;
 
     public BulletsHandler(AdvancedStage game, StarsContainer.RadialTween radialTweenStars, GameplayScreen gameplayScreen) {
         game.addUpdatable(BulletsHandler.this);
 
         this.gameplayScreen = gameplayScreen;
+        this.radialTweenStars = radialTweenStars;
         this.bulletPool = gameplayScreen.getBulletPool();
 
         waveBulletsType = new WaveBulletsType[2];
@@ -54,9 +57,10 @@ public class BulletsHandler implements Updatable {
 
         initializeDecreaseBulletsPerAttackTimer();
 
+        //initializeIsThereDoubleWaveTimer();
+
         resetWaveTimer();
 
-        this.radialTweenStars = radialTweenStars;
     }
 
     @Override
@@ -66,6 +70,7 @@ public class BulletsHandler implements Updatable {
         currentBulletsWaveTimer.update(delta);
         plusMinusBulletsTimer.update(delta);
         decreaseBulletsPerAttackTimer.update(delta);
+        //isThereDoubleWaveTimer.update(delta);
 
         /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             newWave();*/
@@ -136,26 +141,35 @@ public class BulletsHandler implements Updatable {
     private void resetWaveTimer() {
         float duration, duration1;
 
-        duration = calculateDuration(waveBulletsType[0]);
+        duration = calculateWaveTimerDuration(waveBulletsType[0]);
         duration1 = 0;
 
         if (isDouble) {
-            duration1 = calculateDuration(waveBulletsType[1]);
+            duration1 = calculateWaveTimerDuration(waveBulletsType[1]);
         }
 
         if (currentBulletsWaveTimer == null) initializeCurrentBulletWave(Math.max(duration, duration1));
         else currentBulletsWaveTimer.setDurationMillis(Math.max(duration, duration1));
 
+        Gdx.app.log(TAG, "waveTimer Duration = " + currentBulletsWaveTimer.getDurationMillis());
         currentBulletsWaveTimer.start();
     }
 
-    private float calculateDuration(WaveBulletsType waveBulletsType) {
+    private float calculateWaveTimerDuration(WaveBulletsType waveBulletsType) {
         if (waveBulletsType == WaveBulletsType.ORDINARY)
             return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / BULLETS_SPEED) * 1000;
         else {
             return (BULLETS_SPECIAL_WAVE_LENGTH / BULLETS_SPEED) * 1000;
         }
     }
+
+    /*private void resetIsThereDoubleWaveTimer() {
+        isThereDoubleWaveTimer.setDurationMillis(currentBulletsWaveTimer.getDurationMillis() - BULLETS_CLEARANCE_BETWEEN_WAVES + (Bullet.getR() - SHIELDS_RADIUS)/BULLETS_SPEED*1000);
+        // Because of the duration of this Timer depends on the currentBulletsWaveTimer duration, you must call this function after resetWaveTimer().
+
+        Gdx.app.log(TAG, "doubleWaveTimer Duration = " + isThereDoubleWaveTimer.getDurationMillis());
+        isThereDoubleWaveTimer.start();
+    }*/
 
     private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave) {
         waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
@@ -180,7 +194,7 @@ public class BulletsHandler implements Updatable {
 
     }
 
-    private int  determineType(int indexForDoubleWave) {
+    private int determineType(int indexForDoubleWave) {
         /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
         waveBulletsType[indexForDoubleWave] = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
         if (!isDouble | (/*isDouble &*/ indexForDoubleWave == 1)) resetWaveTimer();
@@ -193,8 +207,11 @@ public class BulletsHandler implements Updatable {
             if (specialBullet == SpecialBullet.MINUS) {
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT |
                         Bullet.isTherePlusOrMinus() |
-                        !plusMinusBulletsTimer.isFinished()) {
-                        /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
+                        !plusMinusBulletsTimer.isFinished() |
+                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED/* & indexForDoubleWave == 0)|
+                        !isThereDoubleWaveTimer.isFinished(*/)) {
+
+                    /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
                         specialBullet = SpecialBullet.PLUS;*/
                     specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY,
                             0,
@@ -207,8 +224,12 @@ public class BulletsHandler implements Updatable {
 
             if (specialBullet == SpecialBullet.PLUS) {
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT |
-                        Bullet.isTherePlusOrMinus() | !plusMinusBulletsTimer.isFinished()) {
-                        /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
+                        Bullet.isTherePlusOrMinus() |
+                        !plusMinusBulletsTimer.isFinished() |
+                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED /*& indexForDoubleWave == 0)|
+                        !isThereDoubleWaveTimer.isFinished(*/)) {
+
+                    /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
                         specialBullet = SpecialBullet.MINUS;*/
                     specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY,
                             0,
@@ -234,6 +255,7 @@ public class BulletsHandler implements Updatable {
             return;
         }
         WaveAttackType waveAttackType = MyMath.chooseFromProbabilityArray(WAVE_TYPES_PROBABILITY);
+
         switch (waveAttackType) {
             case SINGLE:
                 newSingleWave();
@@ -241,7 +263,13 @@ public class BulletsHandler implements Updatable {
                 break;
             case DOUBLE:
                 //newSingleWave();
-                newDoubleWave();
+                Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isTherePlusOrMinus() + ", " + plusMinusBulletsTimer.isFinished());
+
+                if (gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & Bullet.isTherePlusOrMinus() & plusMinusBulletsTimer.isFinished()) {
+                    if (MathUtils.random(1) == 0) newRoundWave();
+                    else newSingleWave();
+                } else newDoubleWave();
+
                 break;
             case ROUND:
                 //newSingleWave();
@@ -255,6 +283,7 @@ public class BulletsHandler implements Updatable {
     //--------------------------------------- Simple waves methods ---------------------------------------------
     //--------------------------------------- Simple waves methods ---------------------------------------------
     //--------------------------------------- Simple waves methods ---------------------------------------------
+
     private void newSingleWave() {
         Gdx.app.log(TAG, "NEW SINGLE WAVE");
 
@@ -266,14 +295,67 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "NEW DOUBLE WAVE");
         attachBullets(handlePreviousCurrentContainers(), 0);
         attachBullets(handlePreviousCurrentContainers(), 1);
+        //resetIsThereDoubleWaveTimer();
 
         /*attachBullets(probability.removeIndex(MathUtils.random(activeShields-1)));
         attachBullets(probability.get(MathUtils.random(activeShields-2)));*/
     }
 
     private BulletsAndShieldContainer handlePreviousCurrentContainers() {
-        int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
+
         Array<BulletsAndShieldContainer> probability = gameplayScreen.getShieldsAndContainersHandler().getProbability();
+
+        if (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & angleDoubleRestricted != null) {
+            chooseContainerOnTheOtherSide(probability);
+
+            angleDoubleRestricted = null;
+
+        } else {
+            chooseRandomContainer(probability);
+
+            angleDoubleRestricted = null;
+
+            if (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED)
+                angleDoubleRestricted = current.getRotation();
+        }
+
+        /*for (BulletsAndShieldContainer container : probability) {
+            Gdx.app.log(TAG, "" + container.getRotation());
+        }*/
+
+        previous = current;
+        return current/*probability.get(0)*/;
+    }
+
+    private void chooseContainerOnTheOtherSide(Array<BulletsAndShieldContainer> probability) {
+        // If the current gameplay is restricted and the current wave is double, you must choose one container on the left (rotation > 180) and the other on the right (rotation < 180) (This is because of the restrictions of the controls). But if one container is chosen on the top (rotation = 0), the other container can be any other one.
+        if (angleDoubleRestricted == 0)
+            chooseRandomContainer(probability);
+        else if (angleDoubleRestricted < 180) {
+
+            for (int i = 0; i < probability.size; i++) {
+                if (probability.get(i).getRotation() > 180) {
+                    current = probability.removeIndex(i);
+                    if (previous != null) probability.add(previous);
+                    return;
+                }
+            }
+
+        } else {
+
+            for (int i = 0; i < probability.size; i++) {
+                if (probability.get(i).getRotation() < 180) {
+                    current = probability.removeIndex(i);
+                    if (previous != null) probability.add(previous);
+                    return;
+                }
+            }
+
+        }
+    }
+
+    private void chooseRandomContainer(Array<BulletsAndShieldContainer> probability) {
+        int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
 
         if (previous == null) {
             int rand = MathUtils.random( activeShieldsNum - 1);
@@ -283,12 +365,10 @@ public class BulletsHandler implements Updatable {
         } else {
             int rand = MathUtils.random(activeShieldsNum - 2);
             current = probability.removeIndex(rand);
-            probability.insert(activeShieldsNum - 2, previous);
+            //probability.insert(activeShieldsNum - 2, previous);
+            probability.add(previous);
             //Gdx.app.log(TAG, "" + rand);
         }
-
-        previous = current;
-        return current/*probability.get(0)*/;
     }
 
     //--------------------------------------- Complex waves methods ---------------------------------------------
@@ -388,4 +468,15 @@ public class BulletsHandler implements Updatable {
 
         decreaseBulletsPerAttackTimer.start();
     }
+
+    /*private void initializeIsThereDoubleWaveTimer() {
+        isThereDoubleWaveTimer = new Timer(0 *//*It doesn't matter. The duration will be changed during the gameplay*//*) {
+            @Override
+            public void onFinish() {
+                Gdx.app.log(TAG, "isThereDoubleWaveTimer FINISHED");
+            }
+        };
+
+        isThereDoubleWaveTimer.finish();
+    }*/
 }

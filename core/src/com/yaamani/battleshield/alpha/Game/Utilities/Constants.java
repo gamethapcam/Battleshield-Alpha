@@ -172,7 +172,7 @@ public final class Constants {
 
     public enum RoundType {CLOCKWISE, ANTI_CLOCKWISE}
 
-    public static final WaveAttackType[] WAVE_TYPES_PROBABILITY = {WaveAttackType.SINGLE,
+    public static final WaveAttackType[] WAVE_TYPES_PROBABILITY = {/*WaveAttackType.SINGLE,*/
             WaveAttackType.SINGLE,
             WaveAttackType.SINGLE,
             WaveAttackType.SINGLE,

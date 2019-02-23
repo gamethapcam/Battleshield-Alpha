@@ -10,7 +10,7 @@ public class ShieldsAndContainersHandler {
 
     public static final String TAG = ShieldsAndContainersHandler.class.getSimpleName();
 
-    private GameplayType gameplayType;
+    //private GameplayType gameplayType;
 
     private GameplayScreen gameplayScreen;
 
@@ -37,7 +37,7 @@ public class ShieldsAndContainersHandler {
     private void setRotationForContainers() {
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
             if (i < activeShieldsNum)
-                if (gameplayType == GameplayType.FREE) {
+                if (gameplayScreen.getGameplayType() == GameplayType.FREE) {
                     gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
                 } else {
                     gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
@@ -107,9 +107,9 @@ public class ShieldsAndContainersHandler {
         setOmegaForShieldObjects();
         startRotationOmegaTweenForAll();
 
-        for (BulletsAndShieldContainer container : probability) {
+        /*for (BulletsAndShieldContainer container : probability) {
             Gdx.app.log(TAG, "" + container.getRotation());
-        }
+        }*/
     }
 
     public int getActiveShieldsNum() {
@@ -129,11 +129,11 @@ public class ShieldsAndContainersHandler {
         return probability;
     }
 
-    public GameplayType getGameplayType() {
+    /*public GameplayType getGameplayType() {
         return gameplayType;
     }
 
     void setGameplayType(GameplayType gameplayType) {
         this.gameplayType = gameplayType;
-    }
+    }*/
 }
