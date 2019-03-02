@@ -11,12 +11,13 @@ public class RoundedArch extends Arch {
 
     /**
      * @param region A picture of a filled semiCircle0.
+     * @param innerRadiusRatio
      */
-    public RoundedArch(TextureRegion region, AngleIncreaseDirection angleIncreaseDirection, float radius) {
-        super(region, angleIncreaseDirection, radius);
+    public RoundedArch(TextureRegion region, AngleIncreaseDirection angleIncreaseDirection, float radius, float innerRadiusRatio) {
+        super(region, angleIncreaseDirection, radius, innerRadiusRatio);
 
-        semiCircle0 = new Arch(region, AngleIncreaseDirection.CLOCKWISE, radius);
-        semiCircle1 = new Arch(region, AngleIncreaseDirection.CLOCKWISE, radius);
+        semiCircle0 = new Arch(region, AngleIncreaseDirection.CLOCKWISE, radius, 0);
+        semiCircle1 = new Arch(region, AngleIncreaseDirection.CLOCKWISE, radius, 0);
         addActor(semiCircle0);
         addActor(semiCircle1);
         semiCircle0.setAngle(MathUtils.PI);
@@ -42,13 +43,13 @@ public class RoundedArch extends Arch {
 
         Arch[] semiCircles = {semiCircle0, semiCircle1};
 
-        float diameter = getRadius() - getInnerRadius();
+        float diameter = getRadius() - getRadius()*getInnerRadiusRatio();
         for (int i = 0; i < semiCircles.length; i++) {
             semiCircles[i].setSize(diameter, diameter);
             semiCircles[i].setOrigin(Align.center);
         }
 
-        float originPolar_r = (getRadius() + getInnerRadius())/2f;
+        float originPolar_r = (getRadius() + getRadius()*getInnerRadiusRatio())/2f;
 
         if (getAngleIncreaseDirection() == AngleIncreaseDirection.CLOCKWISE) {
             semiCircle0.setPosition(getRadius() - semiCircle0.getRadius(), getHeight() - semiCircle0.getHeight());
@@ -75,8 +76,8 @@ public class RoundedArch extends Arch {
     }
 
     @Override
-    public void setAngle(float angle) {
-        super.setAngle(angle);
+    public void setAngle(float angleRad) {
+        super.setAngle(angleRad);
 
         calculateCirclesDimensions();
     }

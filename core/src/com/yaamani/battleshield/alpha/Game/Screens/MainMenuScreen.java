@@ -141,7 +141,7 @@ public class MainMenuScreen extends AdvancedScreen {
         arch = new RoundedArch(*//*new TextureRegion(new Texture(pix))*//*Assets.instance.gameplayAssets.healthBar, Arch.AngleIncreaseDirection.THE_POSITIVE_DIRECTION_OF_THE_X_AXIS, WORLD_SIZE/4f);
         addActor(arch);
         arch.setColor(1, 1, 1, 0.5f);
-        arch.setInnerRadius(WORLD_SIZE/16f);
+        arch.setInnerRadiusRatio(WORLD_SIZE/16f);
         arch.setAngle(60*MathUtils.degRad);*/
     }
 
@@ -160,9 +160,9 @@ public class MainMenuScreen extends AdvancedScreen {
             arch.setAngle(arch.getAngle() - 1 * MathUtils.degRad);
 
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_0))
-            arch.setInnerRadius(arch.getInnerRadius() * 1.01f);
+            arch.setInnerRadiusRatio(arch.getInnerRadiusRatio() * 1.01f);
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_9))
-            arch.setInnerRadius(arch.getInnerRadius() * 0.99f);*/
+            arch.setInnerRadiusRatio(arch.getInnerRadiusRatio() * 0.99f);*/
 
 
         //Gdx.app.log(TAG, "" + Controllers.getControllers().peek().getAxis(2));

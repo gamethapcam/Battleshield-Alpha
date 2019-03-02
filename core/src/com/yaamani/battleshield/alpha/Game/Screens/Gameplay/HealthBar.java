@@ -12,11 +12,11 @@ public class HealthBar extends Arch implements Resizable {
     public HealthBar(GameplayScreen gameplayScreen) {
         super(Assets.instance.gameplayAssets.healthBar,
                 AngleIncreaseDirection.CLOCKWISE,
-                HEALTH_BAR_RADIUS);
+                HEALTH_BAR_RADIUS, 0);
 
         gameplayScreen.addActor(this);
 
-        setInnerRadius(HEALTH_BAR_INNER_RADIUS);
+        setInnerRadiusRatio(HEALTH_BAR_INNER_RADIUS_RATIO);
     }
 
     @Override
@@ -25,11 +25,11 @@ public class HealthBar extends Arch implements Resizable {
     }
 
     @Override
-    public void setAngle(float angle) {
-        if (angle > MathUtils.PI2) setColor(HEALTH_BAR_HEALTH_OVER_FLOW_COLOR);
-        else if (angle <= HEALTH_BAR_DANGEROUS_ANGLE) setColor(HEALTH_BAR_DANGEROUS_ANGLE_COLOR);
+    public void setAngle(float angleRad) {
+        if (angleRad > MathUtils.PI2) setColor(HEALTH_BAR_HEALTH_OVER_FLOW_COLOR);
+        else if (angleRad <= HEALTH_BAR_DANGEROUS_ANGLE) setColor(HEALTH_BAR_DANGEROUS_ANGLE_COLOR);
         else setColor(HEALTH_BAR_COLOR);
 
-        super.setAngle(angle);
+        super.setAngle(angleRad);
     }
 }

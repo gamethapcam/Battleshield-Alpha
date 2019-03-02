@@ -15,8 +15,8 @@ public class Arch extends Group {
     private TextureRegion region;
 
     private float angle;
-    private float innerRadius;
-    private float u_innerRadiusRatio;
+    private float innerRadiusRatio;
+    //private float u_innerRadiusRatio;
     private AngleIncreaseDirection angleIncreaseDirection;
 
     private ShaderProgram shaderProgram;
@@ -29,11 +29,12 @@ public class Arch extends Group {
     /**
      *
      * @param region A picture of a filled circle.
+     * @param innerRadiusRatio
      */
-    public Arch(TextureRegion region, AngleIncreaseDirection angleIncreaseDirection, float radius) {
+    public Arch(TextureRegion region, AngleIncreaseDirection angleIncreaseDirection, float radius, float innerRadiusRatio) {
         setRegion(region);
         this.angle = 360 * MathUtils.degRad;
-        innerRadius = 0;
+        setInnerRadiusRatio(innerRadiusRatio);
         this.angleIncreaseDirection = angleIncreaseDirection;
         setRadius(radius);
 
@@ -72,7 +73,7 @@ public class Arch extends Group {
         shaderProgram.setUniformi("u_angleIncreaseDirection", AngleIncreaseDirection.getIntValue(angleIncreaseDirection));
         shaderProgram.setUniformf("u_angle", angle);
         shaderProgram.setUniformf("u_radius", u_radius);
-        shaderProgram.setUniformf("u_innerRadiusRatio", u_innerRadiusRatio);
+        shaderProgram.setUniformf("u_innerRadiusRatio", innerRadiusRatio);
         shaderProgram.setUniformf("u_regionCenterX", u_regionCenterX);
         shaderProgram.setUniformf("u_regionCenterY", u_regionCenterY);
 
@@ -91,25 +92,40 @@ public class Arch extends Group {
 
     /**
      *
-     * @param angle In radians.
+     * @param angleRad In radians.
      */
-    public void setAngle(float angle) {
-        this.angle = MathUtils.clamp(angle, 0, MathUtils.PI2);
-        //Gdx.app.log(TAG, "angle = " + this.angle);
+    public void setAngle(float angleRad) {
+        this.angle = MathUtils.clamp(angleRad, 0, MathUtils.PI2);
+        //Gdx.app.log(TAG, "angleRad = " + this.angleRad);
     }
 
-    public void setInnerRadius(float innerRadius) {
+    /**
+     * setSize(radius*2, radius*2);
+     * @param radius
+     */
+    public void setRadius(float radius) {
+        setSize(radius*2, radius*2);
+    }
 
-        this.innerRadius = innerRadius;
-        this.u_innerRadiusRatio = innerRadius/getWidth()/2f;
+    public void setInnerRadiusRatio(float innerRadiusRatio) {
+
+        this.innerRadiusRatio = innerRadiusRatio;
+        //this.u_innerRadiusRatio = innerRadiusRatio /getWidth()/2f;
 
         checkInnerRadiusValidity();
-
         innerRadiusChanged();
     }
 
-    public float getInnerRadius() {
-        return innerRadius;
+    /**
+     *
+     * @return getWidth()/2f;
+     */
+    public float getRadius() {
+        return getWidth()/2f;
+    }
+
+    public float getInnerRadiusRatio() {
+        return innerRadiusRatio;
     }
 
     protected void innerRadiusChanged() {
@@ -120,12 +136,16 @@ public class Arch extends Group {
     protected void sizeChanged() {
         u_radius = (float) region.getRegionWidth()/(float) region.getTexture().getWidth()/2f;
 
-        checkInnerRadiusValidity();
+        //checkInnerRadiusValidity();
     }
 
     private void checkInnerRadiusValidity() {
-        if (innerRadius >= getWidth()/2f)
-            throw new ValueOutOfRangeException("innerRadius can't be greater than or equal the radius");
+
+        if (innerRadiusRatio >= 1.0f)
+            throw new ValueOutOfRangeException("innerRadiusRatio can't be greater than or equal to 1. innerRadiusRatio = " + innerRadiusRatio);
+
+        /*if (innerRadiusRatio >= getRadius())
+            throw new ValueOutOfRangeException("innerRadiusRatio can't be greater than or equal the radius. radius = " + getRadius() + ", innerRadiusRatio = " + innerRadiusRatio);*/
     }
 
     public TextureRegion getRegion() {
@@ -151,14 +171,6 @@ public class Arch extends Group {
     }
 
     /**
-     * setSize(radius*2, radius*2);
-     * @param radius
-     */
-    public void setRadius(float radius) {
-        setSize(radius*2, radius*2);
-    }
-
-    /**
      * setBounds(x, y, radius*2, radius*2);
      * @param x
      * @param y
@@ -166,14 +178,6 @@ public class Arch extends Group {
      */
     public void setBounds(float x, float y, float radius) {
         setBounds(x, y, radius*2, radius*2);
-    }
-
-    /**
-     *
-     * @return getWidth()/2f;
-     */
-    public float getRadius() {
-        return getWidth()/2f;
     }
 
 

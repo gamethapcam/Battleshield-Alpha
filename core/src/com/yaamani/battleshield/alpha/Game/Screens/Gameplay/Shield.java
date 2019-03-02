@@ -1,11 +1,8 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.RoundedArch;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -21,9 +18,9 @@ public class Shield extends RoundedArch {
     public Shield(/*TextureRegion region, float radius, float innerRadius, */BulletsAndShieldContainer bulletsAndShieldContainer) {
         super(Assets.instance.gameplayAssets.gameOverBG,
                 AngleIncreaseDirection.CLOCKWISE,
-                SHIELDS_RADIUS);
+                SHIELDS_RADIUS, 0);
 
-        setInnerRadius(SHIELDS_INNER_RADIUS);
+        setInnerRadiusRatio(SHIELDS_INNER_RADIUS_RATIO);
         bulletsAndShieldContainer.addActor(this);
 
         setPosition(-getRadius(), -getRadius());
@@ -47,9 +44,9 @@ public class Shield extends RoundedArch {
     }
 
     private void updateT_L0_phi() {
-        T = (getRadius() + getInnerRadius())/2f - getInnerRadius();
+        T = (getRadius() + getRadius()*getInnerRadiusRatio())/2f - getRadius()*getInnerRadiusRatio();
         L0 = 0.5f * T;
-        phi = L0/(getInnerRadius()+L0);
+        phi = L0/(getRadius()*getInnerRadiusRatio()+L0);
     }
 
     public void setOn(boolean on) {

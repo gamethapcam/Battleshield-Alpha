@@ -3,6 +3,8 @@ package com.yaamani.battleshield.alpha.Game.Utilities;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 
+import java.math.MathContext;
+
 public final class Constants {
 
     public static final float WORLD_SIZE = 100.0f/*300.0f*/;
@@ -126,17 +128,20 @@ public final class Constants {
 
     public enum Direction {RIGHT, LEFT}
     //Controller size refers to the diameter of the BG.
-    public enum ControllerSize {SMALL, LARGE}
 
-    public static final ControllerSize CONTROLLER_DEFAULT_SIZE = ControllerSize.LARGE;
+    public static final float CONTROLLER_FREE_LARGE_SIZE = 0.4f; //Inches
 
-    public static final float CONTROLLER_LARGE_SIZE = 0.4f; //Inches
-
-    public static final float CONTROLLER_SMALL_SIZE = 0.25f; //Inches
+    public static final float CONTROLLER_FREE_SMALL_SIZE = 0.25f; //Inches
 
     public static final float CONTROLLER_MARGIN = 0.45f; //Inches
 
-    public static final float CONTROLLER_STICK_RATIO = 0.5f; //Inches
+    public static final float CONTROLLER_FREE_STICK_RATIO = 0.5f;
+
+    public static final float CONTROLLER_RESTRICTED_ARCH_RADIUS = 2.5f; //Inches
+
+    public static final float CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO = 0.9f;
+
+    public static final float CONTROLLER_RESTRICTED_ARCH_ANGLE = 45f*MathUtils.degRad;
 
 
 
@@ -215,6 +220,8 @@ public final class Constants {
 
     public static final float SHIELDS_RADIUS = SHIELDS_INNER_RADIUS + WORLD_SIZE / 90f;
 
+    public static final float SHIELDS_INNER_RADIUS_RATIO = SHIELDS_INNER_RADIUS/SHIELDS_RADIUS;
+
     public static final float SHIELDS_OMEGA_SETTER_PHI_MULTIPLIER = 10f;
 
     public static final float SHIELDS_FREE_ANGLE = 10f; //Deg
@@ -252,7 +259,7 @@ public final class Constants {
 
     public static final float HEALTH_BAR_RADIUS = TURRET_RADIUS * 1.2f;
 
-    public static final float HEALTH_BAR_INNER_RADIUS = TURRET_RADIUS * 1.1f;
+    public static final float HEALTH_BAR_INNER_RADIUS_RATIO = TURRET_RADIUS * 1.1f / HEALTH_BAR_RADIUS;
 
     public static final float HEALTH_BAR_DANGEROUS_ANGLE = 90*MathUtils.degRad;
 
