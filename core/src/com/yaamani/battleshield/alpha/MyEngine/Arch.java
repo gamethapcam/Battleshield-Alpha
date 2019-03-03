@@ -82,7 +82,6 @@ public class Arch extends Group {
         batch.draw(region, getX(), getY(), getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
-
         batch.setShader(null);
     }
 

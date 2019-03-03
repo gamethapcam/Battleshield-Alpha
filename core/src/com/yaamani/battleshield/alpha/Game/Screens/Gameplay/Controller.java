@@ -8,41 +8,40 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
 
-public class Controller extends Group implements Resizable {
+public abstract class Controller extends Group implements Resizable {
 
     public final String TAG = Controller.class.getSimpleName();
 
-    private Viewport viewport;
+    protected Image stick;
 
-    private Image BG;
-    private Image stick;
-
-    private ControllerSize controllerSize;
     private Direction controllerPosition;
 
-    private Float angle;
+    private float marginInWorldUnits;
 
-    public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, ControllerSize controllerSize, Direction controllerPosition) {
+    protected Float angle;
+
+    private boolean usingTouch;
+
+    public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition) {
         setTransform(false);
         gameplayScreen.addActor(this);
 
-        this.BG = BG;
         this.stick = stick;
-        addActor(this.BG);
         addActor(this.stick);
 
-        this.controllerSize = controllerSize;
         this.controllerPosition = controllerPosition;
 
-        this.viewport = getStage().getViewport();
-
         addListener(new MyTouchListener());
+
+        usingTouch = false;
+
         //gameplayScreen.addListener(this);
 
         //setDebug(true);
@@ -56,11 +55,39 @@ public class Controller extends Group implements Resizable {
     public void act(float delta) {
         super.act(delta);
 
-        gamePadPooling();
+        if (!usingTouch) gamePadPooling();
+    }
+
+    @Override
+    public void resize(int width, int height, float worldWidth, float worldHeight) {
+        settingBounds(worldWidth, worldHeight);
+        calculateMarginInWorldUnits();
+        calculateNewSizeInWorldUnits();
+        calculateNewPositionsInWorldUnits(marginInWorldUnits);
+    }
+
+    private void settingBounds(float worldWidth, float worldHeight) {
+        if (controllerPosition == Direction.LEFT) setBounds(0, 0, worldWidth/2f, worldHeight);
+        else setBounds(worldWidth/2f, 0, worldWidth/2f, worldHeight);
 
     }
 
-    private void gamePadPooling() {
+    private void calculateMarginInWorldUnits() {
+        marginInWorldUnits = toWorldCoordinates(Gdx.graphics.getPpiX() * CONTROLLER_MARGIN, MyMath.Dimension.X, getStage().getViewport());
+    }
+
+    protected abstract void calculateNewSizeInWorldUnits();
+
+    protected abstract void calculateNewPositionsInWorldUnits(float marginInWorldUnits);
+
+    protected abstract void moveTheStickAccordingToTheAngle();
+
+
+    protected abstract void touchDragged(InputEvent event, float x, float y, int pointer);
+
+    protected abstract void touchUp(InputEvent event, float x, float y, int pointer, int button);
+
+    protected void gamePadPooling() {
         if (Controllers.getControllers().size == 0) return;
 
         com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
@@ -73,81 +100,32 @@ public class Controller extends Group implements Resizable {
         Gdx.app.log(TAG, "rightStick = (" + rightStickFirstAxis + ", " + rightStickSecondAxis + ")" +
                 "leftStick = (" + leftStickFirstAxis + ", " + leftStickSecondAxis + ")");
 
-        if (controllerPosition == Direction.RIGHT) {
+        if (getControllerPosition() == Constants.Direction.RIGHT) {
             angle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
         } else
             angle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
 
-        if ((rightStickFirstAxis != 0 | rightStickSecondAxis != 0) & controllerPosition == Direction.RIGHT |
-                (leftStickFirstAxis != 0 | leftStickSecondAxis != 0) & controllerPosition == Direction.LEFT)
-            moveTheStickAccordingToTheAngle();
-        else centerTheStick();
+        gamePadPooling(rightStickFirstAxis, rightStickSecondAxis, leftStickFirstAxis, leftStickSecondAxis);
     }
 
-    public Controller(GameplayScreen gameplayScreen, Image BG, Image stick, Direction controllerPosition) {
-        this(gameplayScreen, BG, stick, CONTROLLER_DEFAULT_SIZE, controllerPosition);
-    }
-
-    @Override
-    public void resize(int width, int height, float worldWidth, float worldHeight) {
-        settingBounds(worldWidth, worldHeight);
-        calculateNewSizeInWorldUnits(controllerSize);
-    }
-
-    private void settingBounds(float worldWidth, float worldHeight) {
-        if (controllerPosition == Direction.LEFT) setBounds(0, 0, worldWidth/2f, worldHeight);
-        else setBounds(worldWidth/2f, 0, worldWidth, worldHeight);
+    protected void gamePadPooling(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
 
     }
 
-    private void calculateNewSizeInWorldUnits(ControllerSize controllerSize) {
-        float bgDiameterInWorldUnits;
-        float marginInWorldUnits = toWorldCoordinates(Gdx.graphics.getPpiX() * CONTROLLER_MARGIN, Dimension.X, viewport);
-
-        if (controllerSize == ControllerSize.LARGE)
-            bgDiameterInWorldUnits = toWorldCoordinates(Gdx.graphics.getPpiX() * CONTROLLER_LARGE_SIZE, Dimension.X, viewport);
-        else
-            bgDiameterInWorldUnits = toWorldCoordinates(Gdx.graphics.getPpiX() * CONTROLLER_SMALL_SIZE, Dimension.X, viewport);
-
-        BG.setSize(bgDiameterInWorldUnits, bgDiameterInWorldUnits);
-        stick.setSize(bgDiameterInWorldUnits*CONTROLLER_STICK_RATIO, bgDiameterInWorldUnits*CONTROLLER_STICK_RATIO);
-
-        calculateNewPositionsInWorldUnits(marginInWorldUnits);
+    protected boolean gamepadUsingRightOrLeftAxis(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
+        if (usingTouch) return false;
+        return ((rightStickFirstAxis != 0 | rightStickSecondAxis != 0) & getControllerPosition() == Constants.Direction.RIGHT |
+                (leftStickFirstAxis != 0 | leftStickSecondAxis != 0) & getControllerPosition() == Constants.Direction.LEFT);
     }
 
-    private void calculateNewPositionsInWorldUnits(float marginInWorldUnits) {
-        BG.setY(marginInWorldUnits);
-        if (controllerPosition == Direction.LEFT) BG.setX(BG.getY());
-        else BG.setX(getWidth()/2f - BG.getY() - BG.getWidth());
-
-        centerTheStick();
-    }
-
-    private void moveTheStickAccordingToTheAngle() {
-
-        float bgRadius = BG.getWidth()/2f;
-        float bgCentrePointX = BG.getX() + bgRadius;
-        float bgCentrePointY = BG.getY() + bgRadius;
-
-        float stickRadius = stick.getWidth()/2f;
-        stick.setPosition(bgRadius*MyMath.cos(angle) - stickRadius + bgCentrePointX,
-                bgRadius*MyMath.sin(angle) - stickRadius + bgCentrePointY);
-    }
-
-    private void centerTheStick() {
-        float bgRadius = BG.getWidth()/2f;
-        float stickRadius = stick.getWidth()/2f;
-        stick.setPosition(BG.getX() + bgRadius - stickRadius, BG.getY() + bgRadius - stickRadius);
-        angle = null;
-    }
 
     public Float getAngle() {
         return angle;
     }
 
     public Float getAngleDeg() {
-        if (angle == null) return null;
-        return angle*MathUtils.radiansToDegrees;
+        if (getAngle() == null) return null;
+        return getAngle()*MathUtils.radiansToDegrees;
     }
 
     /*public Float getAngleDegNoNegative() {
@@ -156,17 +134,19 @@ public class Controller extends Group implements Resizable {
         return getAngleDeg();
     }*/
 
-    public ControllerSize getControllerSize() {
-        return controllerSize;
+    public Direction getControllerPosition() {
+        return controllerPosition;
     }
 
-    public void setControllerSize(ControllerSize controllerSize) {
+    protected boolean isUsingTouch() {
+        return usingTouch;
+    }
+
+    /*public void setControllerSize(float controllerSize) {
         this.controllerSize = controllerSize;
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
     }
-
-
-
+*/
 
 
 
@@ -175,39 +155,22 @@ public class Controller extends Group implements Resizable {
     private class MyTouchListener extends InputListener {
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            usingTouch = true;
             if (pointer <= 1) return true;
             else return super.touchDown(event, x, y, pointer, button);
         }
 
         @Override
         public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                float bgRadius = BG.getWidth()/2f;
-                float bgCentrePointX = BG.getX() + bgRadius;
-                float bgCentrePointY = BG.getY() + bgRadius;
-                float xAccordingToTheCenterToTheBG = x - bgCentrePointX;
-                float yAccordingToTheCenterToTheBG = y - bgCentrePointY;
-
-                angle = MathUtils.atan2(yAccordingToTheCenterToTheBG, xAccordingToTheCenterToTheBG);
-                //Gdx.app.log(TAG, "" + (angle * MathUtils.radiansToDegrees));
-
-                moveTheStickAccordingToTheAngle();
-
+            Controller.this.touchDragged(event, x, y, pointer);
+            moveTheStickAccordingToTheAngle();
         }
 
         @Override
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-            centerTheStick();
+            usingTouch = false;
+            Controller.this.touchUp(event, x, y, pointer, button);
+            //moveTheStickAccordingToTheAngle();
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

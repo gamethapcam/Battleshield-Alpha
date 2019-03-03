@@ -51,7 +51,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         this.viewport = viewport;
 
         notSpecial();
-        setDebug(true);
+        //setDebug(true);
     }
 
     @Override

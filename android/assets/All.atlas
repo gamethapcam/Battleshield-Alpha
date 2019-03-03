@@ -6,147 +6,147 @@ filter: Linear,Linear
 repeat: none
 Big Circle
   rotate: false
-  xy: 2, 1200
+  xy: 2, 1212
   size: 1225, 1225
   orig: 1225, 1225
   offset: 0, 0
   index: -1
 Bomb
   rotate: false
-  xy: 1229, 1593
+  xy: 821, 124
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Bullet
   rotate: false
-  xy: 2188, 1790
+  xy: 2569, 1626
   size: 13, 39
   orig: 13, 39
   offset: 0, 0
   index: -1
 Free Controller BG
   rotate: false
-  xy: 2379, 2275
-  size: 150, 150
-  orig: 150, 150
+  xy: 1229, 1441
+  size: 996, 996
+  orig: 996, 996
   offset: 0, 0
   index: -1
 Free Controller Stick
   rotate: false
-  xy: 3394, 3927
-  size: 100, 100
-  orig: 100, 100
+  xy: 3507, 3911
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
 Heart
   rotate: false
-  xy: 2, 2
+  xy: 1229, 1269
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Minus
   rotate: false
-  xy: 435, 112
+  xy: 1662, 1379
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Plus
   rotate: false
-  xy: 1846, 1659
+  xy: 2227, 1495
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Turret
   rotate: false
-  xy: 2575, 3775
+  xy: 1028, 1068
   size: 142, 142
   orig: 142, 142
   offset: 0, 0
   index: -1
 Logo
   rotate: false
-  xy: 1229, 1655
+  xy: 2227, 1667
   size: 615, 770
   orig: 615, 770
   offset: 0, 0
   index: -1
 Big Mountain in the Back
   rotate: false
-  xy: 2, 2662
+  xy: 2, 2674
   size: 2571, 405
   orig: 2571, 405
   offset: 0, 0
   index: -1
 Big Tree in the Back
   rotate: false
-  xy: 1028, 523
+  xy: 3108, 3364
   size: 397, 675
   orig: 397, 675
   offset: 0, 0
   index: -1
 FREE
   rotate: false
-  xy: 1846, 1721
+  xy: 2227, 1557
   size: 340, 108
   orig: 340, 108
   offset: 0, 0
   index: -1
 Front Big Tree
   rotate: false
-  xy: 1846, 1831
+  xy: 2575, 3445
   size: 531, 594
   orig: 531, 594
   offset: 0, 0
   index: -1
 Front Grass
   rotate: false
-  xy: 2, 2427
+  xy: 2, 2439
   size: 2568, 233
   orig: 2568, 233
   offset: 0, 0
   index: -1
 Middle Tall Grass
   rotate: false
-  xy: 2, 3549
+  xy: 2, 3561
   size: 2571, 478
   orig: 2571, 478
   offset: 0, 0
   index: -1
 RESTRICTED
   rotate: false
-  xy: 2575, 3919
+  xy: 2, 76
   size: 817, 108
   orig: 817, 108
   offset: 0, 0
   index: -1
 START
   rotate: false
-  xy: 2, 64
+  xy: 1229, 1331
   size: 431, 108
   orig: 431, 108
   offset: 0, 0
   index: -1
 Too Many Trees
   rotate: false
-  xy: 2, 3069
+  xy: 2, 3081
   size: 2567, 478
   orig: 2567, 478
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 1028, 449
+  xy: 2, 2
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Uni Neue Bold Italic
   rotate: false
-  xy: 2, 174
+  xy: 2, 186
   size: 1024, 1024
   orig: 1024, 1024
   offset: 0, 0

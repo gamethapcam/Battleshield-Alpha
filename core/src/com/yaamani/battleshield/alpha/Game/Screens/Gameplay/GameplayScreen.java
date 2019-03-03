@@ -70,7 +70,7 @@ public class GameplayScreen extends AdvancedScreen {
         score = new Score(this, font);
 
         // HUD ----
-        initializeControllers();
+        //initializeControllers();
 
         //---------
         state = State.PLAYING;
@@ -206,18 +206,34 @@ public class GameplayScreen extends AdvancedScreen {
         turret.setColor(1, 1, 1, 1f);
     }
 
-    private void initializeControllers() {
-        controllerLeft = new Controller(this,
-                new Image(Assets.instance.gameplayAssets.controllerBG),
-                new Image(Assets.instance.gameplayAssets.controllerStick),
-                ControllerSize.SMALL,
-                Direction.LEFT);
+    private void initializeControllers(GameplayType gameplayType) {
+        if (gameplayType == GameplayType.FREE) {
+            controllerLeft = new FreeController(this,
+                    new Image(Assets.instance.gameplayAssets.controllerBG),
+                    new Image(Assets.instance.gameplayAssets.controllerStick),
+                    CONTROLLER_FREE_SMALL_SIZE,
+                    Direction.LEFT);
 
-        controllerRight = new Controller(this,
-                new Image(Assets.instance.gameplayAssets.controllerBG),
-                new Image(Assets.instance.gameplayAssets.controllerStick),
-                ControllerSize.SMALL,
-                Direction.RIGHT);
+            controllerRight = new FreeController(this,
+                    new Image(Assets.instance.gameplayAssets.controllerBG),
+                    new Image(Assets.instance.gameplayAssets.controllerStick),
+                    CONTROLLER_FREE_SMALL_SIZE,
+                    Direction.RIGHT);
+        } else {
+            controllerLeft = new RestrictedController(this,
+                    new Image(Assets.instance.gameplayAssets.controllerStick),
+                    CONTROLLER_RESTRICTED_ARCH_RADIUS,
+                    CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO,
+                    CONTROLLER_RESTRICTED_ARCH_ANGLE,
+                    Direction.LEFT);
+
+            controllerRight = new RestrictedController(this,
+                    new Image(Assets.instance.gameplayAssets.controllerStick),
+                    CONTROLLER_RESTRICTED_ARCH_RADIUS,
+                    CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO,
+                    CONTROLLER_RESTRICTED_ARCH_ANGLE,
+                    Direction.RIGHT);
+        }
 
         /*controllerLeft.setDebug(true);
         controllerRight.setDebug(true);*/
@@ -272,6 +288,7 @@ public class GameplayScreen extends AdvancedScreen {
     public void setGameplayType(GameplayType gameplayType) {
         this.gameplayType = gameplayType;
         //shieldsAndContainersHandler.setGameplayType(gameplayType);
+        initializeControllers(gameplayType);
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {

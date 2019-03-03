@@ -137,11 +137,11 @@ public final class Constants {
 
     public static final float CONTROLLER_FREE_STICK_RATIO = 0.5f;
 
-    public static final float CONTROLLER_RESTRICTED_ARCH_RADIUS = 2.5f; //Inches
+    public static final float CONTROLLER_RESTRICTED_ARCH_RADIUS = 1f; //Inches
 
-    public static final float CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO = 0.9f;
+    public static final float CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO = 0.93f;
 
-    public static final float CONTROLLER_RESTRICTED_ARCH_ANGLE = 45f*MathUtils.degRad;
+    public static final float CONTROLLER_RESTRICTED_ARCH_ANGLE = 50f*MathUtils.degRad;
 
 
 

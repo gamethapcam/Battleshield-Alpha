@@ -27,7 +27,7 @@ void main() {
         r = sqrt(texCoordPolar.x*texCoordPolar.x + texCoordPolar.y*texCoordPolar.y);
     }
 
-    if (currentAngle + PI >= u_angle || r < u_innerRadiusRatio*u_radius) color = vec4(1.0, 1.0, 1.0, 0.0);
+    if (currentAngle + PI > u_angle || r < u_innerRadiusRatio*u_radius) color = vec4(1.0, 1.0, 1.0, 0.0);
     else color = texture2D(u_texture, v_texCoords);
 
     /*vec2 POS = vec2(0.5, 0.3);

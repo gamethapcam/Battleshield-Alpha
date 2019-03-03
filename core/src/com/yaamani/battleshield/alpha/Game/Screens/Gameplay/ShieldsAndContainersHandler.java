@@ -77,9 +77,10 @@ public class ShieldsAndContainersHandler {
             if (cAs[i] == null) continue;
 
             for (int c = 0; c < activeShieldsNum; c++) {
-                float onStartAngle = gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f);
-                float onEndAngle = gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f);
+                float onStartAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f));
+                float onEndAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f));
                 //if (onStartAngle < 0) onStartAngle += 360f; //To avoid -ve angles.
+                //Gdx.app.log(TAG,c + ", " + gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngle + ", " + onEndAngle);
 
                 boolean setOnToTrue = false;
 
@@ -88,6 +89,7 @@ public class ShieldsAndContainersHandler {
                 } else if (cAs[i] > onStartAngle & cAs[i] <= onEndAngle) setOnToTrue = true;
 
                 if (setOnToTrue) {
+                    //Gdx.app.log(TAG,gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngle + ", " + onEndAngle + ", " + cAs[i]);
                     gameplayScreen.getBulletsAndShieldContainers()[c].getShield().setOn(true);
                     break;
                 }
