@@ -20,7 +20,7 @@ Bomb
   index: -1
 Bullet
   rotate: false
-  xy: 2569, 1626
+  xy: 1028, 1027
   size: 13, 39
   orig: 13, 39
   offset: 0, 0
@@ -56,6 +56,13 @@ Minus
 Plus
   rotate: false
   xy: 2227, 1495
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+Star
+  rotate: false
+  xy: 2569, 1605
   size: 60, 60
   orig: 60, 60
   offset: 0, 0

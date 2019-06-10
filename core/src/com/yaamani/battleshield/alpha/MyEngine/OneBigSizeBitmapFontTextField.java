@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
+@Deprecated
 public class OneBigSizeBitmapFontTextField { // TODO: Make this class inherit Actor so that it could have an x and y coordinates built in. Don't forget to override setWidth(), setHeight(), setScale(), getWidth(), getHeight(), getScale() ..... in order to make the functionality of the Actor class don't interfere with the functionality of OneBigSizeBitmapFontTextField.
     // Feel free to add getter and setters if needed.
 
@@ -52,6 +53,8 @@ public class OneBigSizeBitmapFontTextField { // TODO: Make this class inherit Ac
 
     private void newGlyph() { // Any change in any of the attributes above except font and glyphLayout requires calling this method in order to properly be updated.
         glyphLayout = new GlyphLayout(font, charSequence, 0, charSequence.length(), color, targetWidth, halign, wrap, truncate);
+
+        //glyphLayout
     }
 
     public void setCharSequence(CharSequence charSequence) {
@@ -94,6 +97,18 @@ public class OneBigSizeBitmapFontTextField { // TODO: Make this class inherit Ac
 
     public Color getColor() {
         return color;
+    }
+
+    public float getTargetWidth() {
+        return targetWidth;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public float getTheResolutionAtWhichTheScaleWasDecided() {
+        return theResolutionAtWhichTheScaleWasDecided;
     }
 
     public void draw(Batch batch, float x, float y) {

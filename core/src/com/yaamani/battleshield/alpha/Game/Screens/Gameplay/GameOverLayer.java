@@ -4,31 +4,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
-import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class GameOverLayer extends Actor implements Resizable{
+public class GameOverLayer extends Group implements Resizable {
 
     private TextureRegion gameOverBG;
 
-    private OneBigSizeBitmapFontTextField scoreText;
-    private OneBigSizeBitmapFontTextField bestScoreText;
-    private OneBigSizeBitmapFontTextField tapAnyWhereToPlayAgainText;
+    private SimpleText scoreText;
+    private SimpleText bestScoreText;
+    private SimpleText tapAnyWhereToText;
+    private SimpleText startAgainText;
 
     private Timer tapAnyWhereToPlayAgainTextShowingTimer;
 
     private GameplayScreen gameplayScreen;
 
-    public GameOverLayer(GameplayScreen gameplayScreen, BitmapFont font) {
+    public GameOverLayer(GameplayScreen gameplayScreen, MyBitmapFont font) {
         gameplayScreen.addActor(this);
         setVisible(false);
 
@@ -38,20 +38,19 @@ public class GameOverLayer extends Actor implements Resizable{
 
         setSize(GAME_OVER_BG_R, GAME_OVER_BG_R);
 
-        initializeScoreText(0.8f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
-        initializeNewBestText(0.3f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
-        initializeTapAnyWhereToPlayAgainText(0.27f, FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED, font);
-        // TODO: Put the previous 3 scale values in constants class.
+        initializeScoreText(font);
+        initializeNewBestText(font);
+        initializeTapAnyWhereToPlayAgainText(font);
 
-        tapAnyWhereToPlayAgainTextShowingTimer = new Timer(SCORE_FADE_OUT_TWEEN_DURATION*2);
+        initializeTapAnyWhereToPlayAgainTextShowingTimer();
 
         //setDebug(true);
     }
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        setX(worldWidth/2f - getWidth()/2f);
-        setY(worldHeight/2f - getHeight()/2f);
+        setX(worldWidth / 2f - getWidth() / 2f);
+        setY(worldHeight / 2f - getHeight() / 2f);
     }
 
     @Override
@@ -71,80 +70,85 @@ public class GameOverLayer extends Actor implements Resizable{
         batch.draw(gameOverBG, getX(), getY(), getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
-        scoreText.draw(batch, getX() + getWidth()/2f - scoreText.getGlyphLayout().width/2f, getHeight()/2f + scoreText.getGlyphLayout().height/2f);
-        // TODO: [FIX A BUG] scoreText's 'x' and 'y' coordinates aren't calculated correctly for a few moments, then they're corrected. Perhaps the problem in glyphLayout.width & glyphLayout.height
-
-        bestScoreText.draw(batch, getX() + getWidth()/2f - bestScoreText.getGlyphLayout().width/2f, WORLD_SIZE/2f - scoreText.getGlyphLayout().height/2f);
-
-        if (tapAnyWhereToPlayAgainTextShowingTimer.isFinished())
-            tapAnyWhereToPlayAgainText.draw(batch, getX() + getWidth()/2f - tapAnyWhereToPlayAgainText.getGlyphLayout().width/2f, getHeight()*(1f/5f));
+        super.draw(batch, parentAlpha);
     }
 
     public void thePlayerLost() {
         setVisible(true);
 
-        scoreText.setCharSequence(gameplayScreen.getScore().getScoreText().getCharSequence());
+        scoreText.setCharSequence(gameplayScreen.getScore().getCharSequence(), true);
 
-        if (gameplayScreen.getScore().isPlayerScoredBest()) bestScoreText.setCharSequence("NEW BEST");
-        else bestScoreText.setCharSequence("Best : " + MyMath.roundTo(gameplayScreen.getScore().getCurrentBest(), 2));
+        if (gameplayScreen.getScore().isPlayerScoredBest())
+            bestScoreText.setCharSequence("NEW BEST", true);
+        else
+            bestScoreText.setCharSequence("Best : " + MyMath.roundTo(gameplayScreen.getScore().getCurrentBest(), 2), true);
+        updatePositions();
 
         tapAnyWhereToPlayAgainTextShowingTimer.start();
     }
 
     public void disappearToStartANewGame() {
         setVisible(false);
+        tapAnyWhereToText.setVisible(false);
+        startAgainText.setVisible(false);
     }
 
+    private void updatePositions() {
+        float halfWidth = getWidth() / 2f, halfHeight = getHeight() / 2f;
+
+        float spaceBetween_bestScoreText_and_scoreText = WORLD_SIZE / 80f;
+        float h = bestScoreText.getHeight() + scoreText.getHeight() + spaceBetween_bestScoreText_and_scoreText;
+        bestScoreText.setPosition(halfWidth - bestScoreText.getWidth() / 2f, halfHeight - h / 2f);
+        scoreText.setPosition(halfWidth - scoreText.getWidth() / 2f, bestScoreText.getY() + bestScoreText.getHeight() + spaceBetween_bestScoreText_and_scoreText);
+
+        startAgainText.setPosition(halfWidth - startAgainText.getWidth() / 2f, getHeight() * 0.1f);
+        tapAnyWhereToText.setPosition(halfWidth - tapAnyWhereToText.getWidth() / 2f, startAgainText.getY() + startAgainText.getHeight() + GAMEOVER_LAYER_TAP_ANY_WHERE_TO_START_AGAIN_TXT_LINE_SPACING);
+    }
 
     //---------------------------------------- Initializers ----------------------------------------------
     //---------------------------------------- Initializers ----------------------------------------------
     //---------------------------------------- Initializers ----------------------------------------------
 
-    private void initializeScoreText(float scale, float theResolutionAtWhichTheScaleWasDecided, BitmapFont font) {
-        scoreText = new OneBigSizeBitmapFontTextField(font,
-                "",
-                Color.BLACK,
-                0,
-                Align.left,
-                false,
-                null,
-                scale,
-                theResolutionAtWhichTheScaleWasDecided);
+    private void initializeScoreText(MyBitmapFont myBitmapFont) {
+        scoreText = new SimpleText(myBitmapFont, "");
+        scoreText.setHeight(GAMEOVER_LAYER_SCORE_TXT_HEIGHT);
+        scoreText.setColor(Color.BLACK);
+        addActor(scoreText);
     }
 
-    private void initializeNewBestText(float scale, float theResolutionAtWhichTheScaleWasDecided, BitmapFont font) {
-        bestScoreText = new OneBigSizeBitmapFontTextField(font,
-                "",
-                Color.LIME,
-                0,
-                Align.left,
-                false,
-                null,
-                scale,
-                theResolutionAtWhichTheScaleWasDecided);
+    private void initializeNewBestText(MyBitmapFont myBitmapFont) {
+        bestScoreText = new SimpleText(myBitmapFont, "");
+        bestScoreText.setHeight(GAMEOVER_LAYER_NEW_BEST_TXT_HEIGHT);
+        bestScoreText.setColor(Color.LIME);
+        addActor(bestScoreText);
     }
 
-    private void initializeTapAnyWhereToPlayAgainText(float scale, float theResolutionAtWhichTheScaleWasDecided, BitmapFont font) {
-        tapAnyWhereToPlayAgainText = new OneBigSizeBitmapFontTextField(font,
-                "TAP ANY WHERE TO START AGAIN",
-                Color.LIGHT_GRAY,
-                getWidth()/1.7f,
-                Align.center,
-                true,
-                null,
-                scale,
-                theResolutionAtWhichTheScaleWasDecided);
+    private void initializeTapAnyWhereToPlayAgainText(MyBitmapFont myBitmapFont) {
+        tapAnyWhereToText = new SimpleText(myBitmapFont, "TAP ANY WHERE TO");
+        tapAnyWhereToText.setHeight(GAMEOVER_LAYER_TAP_ANY_WHERE_TO_TXT_HEIGHT);
+        tapAnyWhereToText.setColor(Color.LIGHT_GRAY);
+        addActor(tapAnyWhereToText);
+
+        startAgainText = new SimpleText(myBitmapFont, "START AGAIN");
+        startAgainText.setHeight(GAMEOVER_LAYER_START_AGAIN_TXT_HEIGHT);
+        startAgainText.setColor(Color.LIGHT_GRAY);
+        addActor(startAgainText);
+
+        tapAnyWhereToText.setVisible(false);
+        startAgainText.setVisible(false);
     }
 
-
-
-
-
-
-
+    private void initializeTapAnyWhereToPlayAgainTextShowingTimer() {
+        tapAnyWhereToPlayAgainTextShowingTimer = new Timer(SCORE_FADE_OUT_TWEEN_DURATION * 2) {
+            @Override
+            public void onFinish() {
+                tapAnyWhereToText.setVisible(true);
+                startAgainText.setVisible(true);
+            }
+        };
+    }
 
     //----------------------------------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------------------------------
-
 }

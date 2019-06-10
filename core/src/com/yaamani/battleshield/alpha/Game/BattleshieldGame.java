@@ -10,6 +10,7 @@ import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
+import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -32,6 +33,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     private LoadingToMainMenu loadingToMainMenu;
     private MainMenuToGameplay mainMenuToGameplay;
 
+    private MyBitmapFont myBitmapFont;
     private BitmapFont font;
 
     @Override
@@ -121,7 +123,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
             initializeStarsContainer();
 
-            gameplayScreen = new GameplayScreen(game, font, starsContainer, false);
+            gameplayScreen = new GameplayScreen(game, myBitmapFont, starsContainer, false);
             mainMenuScreen = new MainMenuScreen(game, gameplayScreen, false);
 
             starsContainer.setBulletsHandler(gameplayScreen.getBulletsHandler());
@@ -145,6 +147,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         font = new BitmapFont(Gdx.files.internal(ASSETS_FONT_FNT_INTERNAL), Assets.instance.mutualAssets.font);
         font.setUseIntegerPositions(false); // When scaling to very small sizes, calling this func and passing false is a necessity (I SPENT ABOUT 4 HOURS GOOGLING TO KNOW THIS)
         //font.getData().setScale(0.14f);
+
+        myBitmapFont = new MyBitmapFont(Gdx.files.internal(ASSETS_FONT_FNT_INTERNAL), Assets.instance.mutualAssets.font);
     }
 
     private void saveProgrammaticallyGeneratedTextures(int targetResolution) {

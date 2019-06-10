@@ -3,26 +3,30 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
+import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
 
-public class Score extends Actor implements Resizable{
+public class Score extends SimpleText implements Resizable{
 
     public static final String TAG = Score.class.getSimpleName();
 
     private float score;
     private boolean playerScoredBest = false;
 
-    private OneBigSizeBitmapFontTextField scoreText;
+    //private SimpleText scoreText;
 
     private Tween fadeOutTween;
 
@@ -35,11 +39,12 @@ public class Score extends Actor implements Resizable{
     private GameplayScreen gameplayScreen;
 
 
-    public Score(GameplayScreen gameplayScreen, BitmapFont font) {
+    public Score(GameplayScreen gameplayScreen, MyBitmapFont font) {
+        super(font, "0.0");
         this.gameplayScreen = gameplayScreen;
         gameplayScreen.addActor(this);
 
-        initializeScoreText(font);
+        setHeight(SCORE_TXT_HEIGHT);
 
         preferences = Gdx.app.getPreferences(SCORE_PREFERENCES_NAME);
         loadBestFromHardDrive();
@@ -51,17 +56,16 @@ public class Score extends Actor implements Resizable{
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
 
-        setX(worldWidth / 40f);
-        setY(worldHeight - getX());
-        //setX(worldWidth/2f);
-        //setY(worldHeight/2f);
+        setX(SCORE_TXT_MARGIN);
+        setY(worldHeight - getHeight() - SCORE_TXT_MARGIN);
+
     }
 
     @Override
     public void act(float delta) {
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
-            score += delta;
+            score = GameplayScreen.getTimePlayedThisTurnSoFar();
             /*score += activeShields*delta;
             score += BULLETS_MAX_NUMBER_PER_ATTACK / (float) bulletsPerAttack * delta;*/
             checkBestScore();
@@ -82,10 +86,8 @@ public class Score extends Actor implements Resizable{
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        scoreText.setCharSequence("" + roundTo(score, 2));
-        scoreText.draw(batch, getX(), getY());
-        /*font.draw(batch, "+ (Total Shields No.) / Sec.", _x, _y+10);
-        font.draw(batch, "+ (Bullets per wave)", _x, _y+13);*/
+        setCharSequence("" + roundTo(score, 2), true);
+        super.draw(batch, parentAlpha);
     }
 
     public void updateBestScoreButDontRegisterToHardDriveYet() {
@@ -104,7 +106,7 @@ public class Score extends Actor implements Resizable{
     private void checkBestScore() {
         if ((currentBest == 0.0 | currentBest < score) & !playerScoredBest) {
             playerScoredBest = true;
-            scoreText.setColor(SCORE_BEST_COLOR);
+            setColor(SCORE_BEST_COLOR);
         }
     }
 
@@ -133,42 +135,23 @@ public class Score extends Actor implements Resizable{
         return fadeOutTween;
     }
 
-    public OneBigSizeBitmapFontTextField getScoreText() {
-        return scoreText;
-    }
-
     private void initializeFadeOutTween() {
         fadeOutTween = new Tween(SCORE_FADE_OUT_TWEEN_DURATION) {
             @Override
             public void tween(float percentage) {
-                scoreText.setColor(scoreText.getColor().r,
-                        scoreText.getColor().g,
-                        scoreText.getColor().b,
-                        linear.apply(1 - percentage));
+                Color color = getColor();
+                setColor(color.r, color.g, color.b, linear.apply(1 - percentage));
             }
 
             @Override
             public void onFinish() {
                 super.onFinish();
-                scoreText.setColor(SCORE_COLOR.r,
-                        SCORE_COLOR.g,
-                        SCORE_COLOR.b,
-                        0.0f);
+                setColor(SCORE_COLOR.r, SCORE_COLOR.g, SCORE_COLOR.b, 0.0f);
             }
         };
     }
 
     //----------------------------------------------------------------------------
 
-    private void initializeScoreText(BitmapFont font) {
-        scoreText = new OneBigSizeBitmapFontTextField(font,
-                "0.0",
-                SCORE_COLOR,
-                0,
-                Align.left,
-                false,
-                null,
-                SCORE_FONT_SCALE,
-                FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED);
-    }
+
 }
