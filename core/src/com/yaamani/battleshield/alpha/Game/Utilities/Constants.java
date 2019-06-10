@@ -165,11 +165,19 @@ public final class Constants {
 
     public static final float BULLETS_DISTANCE_BETWEEN_TWO = WORLD_SIZE / 60f;
 
-    public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO) * BULLETS_MIN_NUMBER_PER_ATTACK;
+    public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO) * /*BULLETS_MIN_NUMBER_PER_ATTACK*/5;
 
     public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1 * (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO);
 
-    public static final float BULLETS_SPEED = WORLD_SIZE / 2.5f;
+    public static final float BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
+
+    //public static final float BULLETS_SPEED_MULTIPLIER_INITIAL = 1f;
+
+    public static final float BULLETS_SPEED_MULTIPLIER_MAX = 2f;
+
+    public static final float BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+
+    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = 50/*5f*/; //sec
 
     public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
 
@@ -181,16 +189,37 @@ public final class Constants {
             WaveAttackType.SINGLE,
             WaveAttackType.SINGLE,
             WaveAttackType.SINGLE,
+
             WaveAttackType.DOUBLE,
             WaveAttackType.DOUBLE,
-            WaveAttackType.ROUND};
+
+            WaveAttackType.ROUND
+    };
 
     public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
 
-    public enum SpecialBullet {MINUS, HEART,
+    public enum SpecialBullet {MINUS, HEART, STAR,
                                PLUS, BOMB}
 
-    public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {SpecialBullet.HEART, SpecialBullet.MINUS};
+    public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+
+            SpecialBullet.STAR
+    };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {SpecialBullet.BOMB, SpecialBullet.PLUS};
 
@@ -299,11 +328,15 @@ public final class Constants {
 
 
 
-    public static final float FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED = 720f; // For this game it's equal for all the text.
+    //public static final float FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED = 720f; // For this game it's equal for all the text.
 
 
 
-    public static final float SCORE_FONT_SCALE = 0.5f;
+    //public static final float SCORE_FONT_SCALE = 0.5f;
+
+    public static final float SCORE_TXT_HEIGHT = WORLD_SIZE / 9f;
+
+    public static final float SCORE_TXT_MARGIN = WORLD_SIZE / 40f;
 
     public static final float SCORE_FADE_OUT_TWEEN_DURATION = 700;
 
@@ -314,6 +347,22 @@ public final class Constants {
     public static final Color SCORE_COLOR = Color.WHITE;
 
     public static final Color SCORE_BEST_COLOR = HEALTH_BAR_HEALTH_OVER_FLOW_COLOR;
+
+
+    public static final float GAMEOVER_LAYER_SCORE_TXT_HEIGHT = WORLD_SIZE / 8f;
+
+    public static final float GAMEOVER_LAYER_NEW_BEST_TXT_HEIGHT = WORLD_SIZE * 0.053f;
+
+    public static final float GAMEOVER_LAYER_TAP_ANY_WHERE_TO_TXT_HEIGHT = WORLD_SIZE * 70f/1440f;
+
+    //public static final float GAMEOVER_LAYER_START_AGAIN_TXT_Y =
+
+    public static final float GAMEOVER_LAYER_START_AGAIN_TXT_HEIGHT = GAMEOVER_LAYER_TAP_ANY_WHERE_TO_TXT_HEIGHT;
+
+    public static final float GAMEOVER_LAYER_TAP_ANY_WHERE_TO_START_AGAIN_TXT_LINE_SPACING = WORLD_SIZE * 58f/1440f;
+
+
+    public static final float BULLET_SPEED_MULTIPLIER_TXT_HEIGHT = WORLD_SIZE / 35f;
 
 
 
@@ -354,6 +403,8 @@ public final class Constants {
     public static final String ASSETS_HEART_BULLET = "Heart";
 
     public static final String ASSETS_BOMB_BULLET = "Bomb";
+
+    public static final String ASSETS_STAR_BULLET = "Star";
 
     public static final String ASSETS_HEALTH_BAR = "Big Circle";
 

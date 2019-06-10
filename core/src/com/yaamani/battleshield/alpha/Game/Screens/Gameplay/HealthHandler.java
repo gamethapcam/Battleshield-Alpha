@@ -3,6 +3,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
+import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -61,8 +62,10 @@ public class HealthHandler {
 
             gameplayScreen.setState(GameplayScreen.State.PLAYING);
             setHealth(1f);
+            GameplayScreen.resetTimePlayedThisTurnSoFar();
+            Bullet.resetSpeedResetTime();
             gameplayScreen.getScore().resetScore();
-            OneBigSizeBitmapFontTextField scoreText = gameplayScreen.getScore().getScoreText();
+            SimpleText scoreText = gameplayScreen.getScore();
             scoreText.setColor(scoreText.getColor().r, scoreText.getColor().g, scoreText.getColor().b, 1);
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(BULLETS_DEFAULT_NO_PER_ATTACK);
             gameplayScreen.getBulletsHandler().newWave();

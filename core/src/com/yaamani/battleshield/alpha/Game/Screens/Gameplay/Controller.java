@@ -55,7 +55,7 @@ public abstract class Controller extends Group implements Resizable {
     public void act(float delta) {
         super.act(delta);
 
-        if (!usingTouch) gamePadPooling();
+        //if (!usingTouch) gamePadPooling();
     }
 
     @Override
@@ -156,6 +156,9 @@ public abstract class Controller extends Group implements Resizable {
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             usingTouch = true;
+
+            touchDragged(event, x, y, pointer );
+
             if (pointer <= 1) return true;
             else return super.touchDown(event, x, y, pointer, button);
         }

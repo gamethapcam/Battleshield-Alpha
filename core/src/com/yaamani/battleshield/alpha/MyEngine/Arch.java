@@ -38,6 +38,8 @@ public class Arch extends Group {
         this.angleIncreaseDirection = angleIncreaseDirection;
         setRadius(radius);
 
+        ShaderProgram.pedantic = false;
+
         String defaultVertexShader =
                 "attribute vec4 a_position;\n" +
                 "attribute vec4 a_color;\n" +
@@ -178,7 +180,6 @@ public class Arch extends Group {
     public void setBounds(float x, float y, float radius) {
         setBounds(x, y, radius*2, radius*2);
     }
-
 
 
     // ---------------------------------------------------------------------------------------------------------

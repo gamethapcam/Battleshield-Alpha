@@ -76,6 +76,7 @@ public class BulletsHandler implements Updatable {
             newWave();*/
 
         //Gdx.app.log(TAG, "" + Bullet.isTherePlusOrMinus());
+        //Gdx.app.log(TAG, "Free bullets in pool = " + bulletPool.getFree());
     }
 
     //--------------------------------------- Getters And Setters ---------------------------------------------
@@ -151,20 +152,20 @@ public class BulletsHandler implements Updatable {
         if (currentBulletsWaveTimer == null) initializeCurrentBulletWave(Math.max(duration, duration1));
         else currentBulletsWaveTimer.setDurationMillis(Math.max(duration, duration1));
 
-        Gdx.app.log(TAG, "waveTimer Duration = " + currentBulletsWaveTimer.getDurationMillis());
+        //Gdx.app.log(TAG, "waveTimer Duration = " + currentBulletsWaveTimer.getDurationMillis());
         currentBulletsWaveTimer.start();
     }
 
     private float calculateWaveTimerDuration(WaveBulletsType waveBulletsType) {
         if (waveBulletsType == WaveBulletsType.ORDINARY)
-            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / BULLETS_SPEED) * 1000;
+            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / Bullet.getSpeed()) * 1000;
         else {
-            return (BULLETS_SPECIAL_WAVE_LENGTH / BULLETS_SPEED) * 1000;
+            return (BULLETS_SPECIAL_WAVE_LENGTH / Bullet.getSpeed()) * 1000;
         }
     }
 
     /*private void resetIsThereDoubleWaveTimer() {
-        isThereDoubleWaveTimer.setDurationMillis(currentBulletsWaveTimer.getDurationMillis() - BULLETS_CLEARANCE_BETWEEN_WAVES + (Bullet.getR() - SHIELDS_RADIUS)/BULLETS_SPEED*1000);
+        isThereDoubleWaveTimer.setDurationMillis(currentBulletsWaveTimer.getDurationMillis() - BULLETS_CLEARANCE_BETWEEN_WAVES + (Bullet.getR() - SHIELDS_RADIUS)/BULLETS_SPEED_INITIAL*1000);
         // Because of the duration of this Timer depends on the currentBulletsWaveTimer duration, you must call this function after resetWaveTimer().
 
         Gdx.app.log(TAG, "doubleWaveTimer Duration = " + isThereDoubleWaveTimer.getDurationMillis());
@@ -263,7 +264,7 @@ public class BulletsHandler implements Updatable {
                 break;
             case DOUBLE:
                 //newSingleWave();
-                Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isTherePlusOrMinus() + ", " + plusMinusBulletsTimer.isFinished());
+                //Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isTherePlusOrMinus() + ", " + plusMinusBulletsTimer.isFinished());
 
                 if (gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & Bullet.isTherePlusOrMinus() & plusMinusBulletsTimer.isFinished()) {
                     if (MathUtils.random(1) == 0) newRoundWave();
@@ -285,14 +286,14 @@ public class BulletsHandler implements Updatable {
     //--------------------------------------- Simple waves methods ---------------------------------------------
 
     private void newSingleWave() {
-        Gdx.app.log(TAG, "NEW SINGLE WAVE");
+        //Gdx.app.log(TAG, "NEW SINGLE WAVE");
 
         attachBullets(handlePreviousCurrentContainers(), 0);
     }
 
     private void newDoubleWave() {
         isDouble = true;
-        Gdx.app.log(TAG, "NEW DOUBLE WAVE");
+        //Gdx.app.log(TAG, "NEW DOUBLE WAVE");
         attachBullets(handlePreviousCurrentContainers(), 0);
         attachBullets(handlePreviousCurrentContainers(), 1);
         //resetIsThereDoubleWaveTimer();
@@ -382,7 +383,7 @@ public class BulletsHandler implements Updatable {
         current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
         roundTurnPassedActiveShieldsMinusOne = false;
         attachBullets(current, 0);
-        Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
+        //Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 
     private void continueRoundWave() {
@@ -407,7 +408,7 @@ public class BulletsHandler implements Updatable {
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
             } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0);
         }
-        Gdx.app.log(TAG, "CONTINUE ROUND, " + roundTurn);
+        //Gdx.app.log(TAG, "CONTINUE ROUND, " + roundTurn);
     }
 
     //------------------------------ initializers ------------------------------
@@ -424,7 +425,7 @@ public class BulletsHandler implements Updatable {
             @Override
             public void onFinish() {
                 super.onFinish();
-                Gdx.app.log(TAG, "------------------------------------------- Finished -------------------------------------------");
+                //Gdx.app.log(TAG, "------------------------------------------- Finished -------------------------------------------");
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
             }
         };
@@ -440,7 +441,7 @@ public class BulletsHandler implements Updatable {
             @Override
             public void onFinish() {
                 super.onFinish();
-                Gdx.app.log(TAG, "plusMinusBulletsTimer isFinished");
+                //Gdx.app.log(TAG, "plusMinusBulletsTimer isFinished");
             }
         };
 
@@ -461,7 +462,7 @@ public class BulletsHandler implements Updatable {
                     if (bulletsPerAttack > BULLETS_MIN_NUMBER_PER_ATTACK) {
                         bulletsPerAttack--;
                         decreaseBulletsPerAttackTimer.start();
-                        Gdx.app.log(TAG, "decreaseBulletsPerAttackTimer isFinished");
+                        //Gdx.app.log(TAG, "decreaseBulletsPerAttackTimer isFinished");
                     }
             }
         };

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -36,8 +37,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
 
         this.assetManager.load(ASSETS_LOGO_ALONE, Texture.class);
         this.assetManager.finishLoading();
-
+        //this.assetManager.load("a", String.class);
         loadingScreenAssets = new LoadingScreenAssets();
+
         this.assetManager.load(ASSETS_ALL, TextureAtlas.class);
     }
 
@@ -139,6 +141,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion minusBullet;
         public final TextureRegion heartBullet;
         public final TextureRegion bombBullet;
+        public final TextureRegion starBullet;
 
         private final int shieldsArrayLength = (int) ((SHIELDS_SAVING_TO_ANGLE - SHIELDS_SAVING_FROM_ANGLE) / SHIELDS_SKIP_ANGLE_WHEN_SAVING) + 1;
         public final TextureRegion[] shieldsWithVariousAngles = new TextureRegion[shieldsArrayLength];
@@ -161,6 +164,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             minusBullet = atlas.findRegion(ASSETS_MINUS_BULLET);
             heartBullet = atlas.findRegion(ASSETS_HEART_BULLET);
             bombBullet = atlas.findRegion(ASSETS_BOMB_BULLET);
+            starBullet = atlas.findRegion(ASSETS_STAR_BULLET);
 
             initializeShieldsWithVariousAngles(atlas);
 
@@ -195,9 +199,8 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
 
         private MutualAssets(TextureAtlas atlas) {
             star = atlas.findRegion(ASSETS_STAR);
+
             font = atlas.findRegion(ASSETS_FONT);
-
-
         }
     }
 

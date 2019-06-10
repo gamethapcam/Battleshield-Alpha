@@ -1,8 +1,10 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
@@ -11,9 +13,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -23,6 +23,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
     private static boolean thereIsPlusOrMinus = false;
     private static float R = 0;
+
+    private static float speedResetTime = 0;
 
     private Pool<Bullet> bulletPool;
     private Array<Bullet> activeBullets;
@@ -52,6 +54,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
         notSpecial();
         //setDebug(true);
+        //bulletPool.getFree();
     }
 
     @Override
@@ -85,7 +88,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         attach(parent);
 
         //if (isDouble & indexForDoubleWave == 1) {
-            //float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED / 1000f;
+            //float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED_INITIAL / 1000f;
             //setY(getY() + /*MathUtils.random(0, */totalDistance - BULLETS_CLEARANCE_BETWEEN_WAVES - BULLETS_SPECIAL_DIAMETER/2f/*)*/);
             //return;
         //}
@@ -102,7 +105,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
         resetPosition(viewport.getWorldWidth(), viewport.getWorldHeight());
 
-        /*float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED / 1000f;
+        /*float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED_INITIAL / 1000f;
         Gdx.app.log(TAG, "totalDistance = " + totalDistance);*/
     }
 
@@ -137,7 +140,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     public void act(float delta) {
         super.act(delta);
         if (inUse) {
-            setY(getY() - BULLETS_SPEED * delta);
+            setY(getY() - getSpeed() * delta);
 
             correctSpecialBulletsRotation();
 
@@ -239,7 +242,31 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 region = Assets.instance.gameplayAssets.heartBullet;
                 currentEffect = effects.heart;
                 break;
+            case STAR:
+                region = Assets.instance.gameplayAssets.starBullet;
+                currentEffect = effects.star;
+                break;
         }
+    }
+
+    public static void resetSpeedResetTime() {
+        speedResetTime = 0;
+    }
+
+    public static void resetSpeed() {
+        speedResetTime = GameplayScreen.getTimePlayedThisTurnSoFar();
+    }
+
+    public static float getSpeed() {
+        int i = (int) /*floor*/ ((GameplayScreen.getTimePlayedThisTurnSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
+        float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+        if (currentMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
+            //Gdx.app.log(TAG, "Speed Multiplier = " + currentMultiplier);
+            return BULLETS_SPEED_INITIAL * currentMultiplier;
+        }
+        //Gdx.app.log(TAG, "Speed Multiplier = " + BULLETS_SPEED_MULTIPLIER_MAX);
+        return BULLETS_SPEED_INITIAL * BULLETS_SPEED_MULTIPLIER_MAX;
     }
 
     @Override
@@ -267,6 +294,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
         private BulletEffect minus;
         private BulletEffect heart;
+        private BulletEffect star;
 
         private Effects() {
 
@@ -311,6 +339,15 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
+                }
+            };
+
+
+            star = new BulletEffect() {
+                @Override
+                public void effect() {
+                    Bullet.resetSpeed();
+                    Gdx.app.log(TAG, "STAR BULLET");
                 }
             };
 

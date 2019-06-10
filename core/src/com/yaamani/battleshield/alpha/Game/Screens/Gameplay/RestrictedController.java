@@ -51,7 +51,7 @@ public class RestrictedController extends Controller {
     public void act(float delta) {
         super.act(delta);
 
-        //if (getControllerPosition() == Direction.RIGHT) bg.setX(bg.getX()-0.1f);
+        //if (getControllerPosition() == Direction.RIGHT) bg.setX(bg.getX()-0.1f);a
         //bg.rotateBy(0.4f);
     }
 
@@ -65,6 +65,7 @@ public class RestrictedController extends Controller {
     @Override
     protected void calculateNewPositionsInWorldUnits(float marginInWorldUnits) {
         //bg.setY(marginInWorldUnits-(bg.getRadius() - bg.getRadius()*MathUtils.sin(archAngle/2f)));
+        bg.setY(getStage().getViewport().getWorldHeight()/2f - bg.getHeight()/2f);
 
         Viewport viewport = getStage().getViewport();
         if (getControllerPosition() == Direction.RIGHT) {
