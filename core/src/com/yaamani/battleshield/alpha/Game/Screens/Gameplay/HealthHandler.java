@@ -2,8 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
-import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 

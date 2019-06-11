@@ -3,11 +3,8 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -15,9 +12,8 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
-import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
-import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -415,6 +411,10 @@ public class GameplayScreen extends AdvancedScreen {
 
     public static float getTimePlayedThisTurnSoFar() {
         return timePlayedThisTurnSoFar;
+    }
+
+    public MyBitmapFont getMyBitmapFont() {
+        return myBitmapFont;
     }
 
     //------------------------------ Other methods ------------------------------

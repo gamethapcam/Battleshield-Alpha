@@ -84,7 +84,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         setY(getY() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT));
     }
 
-    public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, boolean isDouble, int indexForDoubleWave) {
+    public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent/*, boolean isDouble, int indexForDoubleWave*/) {
         attach(parent);
 
         //if (isDouble & indexForDoubleWave == 1) {
@@ -131,7 +131,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
-        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+        batch.setColor(color.r, color.g, color.b, /*color.a*/0.5f * parentAlpha);
         batch.draw(region, getX() - getWidth()/2f, getY()/* - getHeight()/2f*/, getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }

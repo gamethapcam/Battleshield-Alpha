@@ -5,14 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.utils.Align;
-import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.OneBigSizeBitmapFontTextField;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;

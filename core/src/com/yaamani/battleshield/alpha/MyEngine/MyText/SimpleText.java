@@ -1,4 +1,4 @@
-package com.yaamani.battleshield.alpha.MyEngine;
+package com.yaamani.battleshield.alpha.MyEngine.MyText;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -67,7 +67,6 @@ public class SimpleText extends Actor {
             if (aspectRatioLocked)
                 batch.draw(_temp, getX() + cursorX + xoffset, getY() + myYOffsetWorldUnits, w, w * glyph.height / glyph.width);
             else batch.draw(_temp, getX() + cursorX + xoffset,getY() + myYOffsetWorldUnits, w, getHeight() * glyph.height / heightPixelUnits);
-
 
             cursorX += xadvance;
             i++;

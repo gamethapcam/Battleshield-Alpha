@@ -190,7 +190,7 @@ public class BulletsHandler implements Updatable {
         } else {
             Bullet bullet = bulletPool.obtain();
             bullet.setSpecial(specialBullet);
-            bullet.attachSpecialToBulletsAndShieldContainer(parent, isDouble, indexForDoubleWave);
+            bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
         }
 
     }
@@ -214,9 +214,7 @@ public class BulletsHandler implements Updatable {
 
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
                         specialBullet = SpecialBullet.PLUS;*/
-                    specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY,
-                            0,
-                            GOOD_BULLETS_PROBABILITY.length - 2);
+                    specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS);
                 }
             }
         } else if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_BAD) {
@@ -232,9 +230,7 @@ public class BulletsHandler implements Updatable {
 
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
                         specialBullet = SpecialBullet.MINUS;*/
-                    specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY,
-                            0,
-                            BAD_BULLETS_PROBABILITY.length - 2);
+                    specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS);
                 }
             }
         }
@@ -317,7 +313,7 @@ public class BulletsHandler implements Updatable {
             angleDoubleRestricted = null;
 
             if (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED)
-                angleDoubleRestricted = current.getRotation();
+                angleDoubleRestricted = MyMath.deg_0_to_360(current.getRotation());
         }
 
         /*for (BulletsAndShieldContainer container : probability) {
@@ -335,7 +331,7 @@ public class BulletsHandler implements Updatable {
         else if (angleDoubleRestricted < 180) {
 
             for (int i = 0; i < probability.size; i++) {
-                if (probability.get(i).getRotation() > 180) {
+                if (MyMath.deg_0_to_360(probability.get(i).getRotation()) > 180) {
                     current = probability.removeIndex(i);
                     if (previous != null) probability.add(previous);
                     return;
@@ -345,7 +341,7 @@ public class BulletsHandler implements Updatable {
         } else {
 
             for (int i = 0; i < probability.size; i++) {
-                if (probability.get(i).getRotation() < 180) {
+                if (MyMath.deg_0_to_360(probability.get(i).getRotation()) < 180) {
                     current = probability.removeIndex(i);
                     if (previous != null) probability.add(previous);
                     return;

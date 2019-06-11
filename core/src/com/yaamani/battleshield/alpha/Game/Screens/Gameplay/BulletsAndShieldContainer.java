@@ -1,13 +1,17 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
-import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
+//import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsAndShieldContainer extends Group implements Resizable {
@@ -17,22 +21,36 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     private Shield shield;
     private byte index;
 
+   /* private SimpleText rotationText;
+    private SimpleText rotationNoMinusText;*/
+
     /*private int minusBulletsCount = 0;
     private int plusBulletsCount = 0;*/
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
-    public BulletsAndShieldContainer(AdvancedScreen gameplayScreen, byte index, AdvancedStage game) {
+    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index, AdvancedStage game) {
         shield = new Shield(this);
         gameplayScreen.addActor(this);
         this.index = index;
 
         rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, game);
 
+        /*rotationText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
+        addActor(rotationText);
+        rotationText.setBoundsHeight(0, WORLD_SIZE/3f, WORLD_SIZE/40f);
+        rotationText.setColor(Color.WHITE);
+
+        rotationNoMinusText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
+        addActor(rotationNoMinusText);
+        rotationNoMinusText.setBoundsHeight(0, WORLD_SIZE/3f + rotationText.getHeight()*1.2f, WORLD_SIZE/40f);
+        rotationNoMinusText.setColor(Color.WHITE);*/
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        /*rotationText.setCharSequence("" + getRotation(), true);
+        rotationNoMinusText.setCharSequence("" + MyMath.deg_0_to_360(getRotation()), true);*/
         super.draw(batch, parentAlpha);
     }
 
@@ -102,11 +120,12 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         @Override
         public void tween(float percentage) {
-            BulletsAndShieldContainer.this.getColor().a = fastExp10.apply(oldAlpha, newAlpha, percentage);
+            Interpolation interpolation = MyInterpolation.fastExp10;
+            BulletsAndShieldContainer.this.getColor().a = interpolation.apply(oldAlpha, newAlpha, percentage);
 
             if (newOmegaDeg == null | newRotationDeg == null) return;
-            BulletsAndShieldContainer.this.getShield().setOmegaDeg(fastExp10.apply(oldOmegaDeg, newOmegaDeg, percentage));
-            BulletsAndShieldContainer.this.setRotation(fastExp10.apply(oldRotationDeg, newRotationDeg, percentage));
+            BulletsAndShieldContainer.this.getShield().setOmegaDeg(interpolation.apply(oldOmegaDeg, newOmegaDeg, percentage));
+            BulletsAndShieldContainer.this.setRotation(interpolation.apply(oldRotationDeg, newRotationDeg, percentage));
 
         }
 

@@ -223,16 +223,20 @@ public final class Constants {
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {SpecialBullet.BOMB, SpecialBullet.PLUS};
 
-    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {WaveBulletsType.ORDINARY,
+    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {
             WaveBulletsType.ORDINARY,
             WaveBulletsType.ORDINARY,
             WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+
             WaveBulletsType.SPECIAL_GOOD,
-            WaveBulletsType.SPECIAL_BAD};
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+            WaveBulletsType.SPECIAL_BAD
+    };
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
+
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -276,9 +280,9 @@ public final class Constants {
     public static final float[] SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY = {60f, 0, /*18f*/360f/5f/2f, 0, /*-12.85714286f*/0, 0};
     //SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[0] is the shift angle when the number of shields = SHIELDS_MIN_COUNT ..... And SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[length-1] is the shift angle  when the number of shields = SHIELDS_MAX_COUNT.
 
-    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/0, 45f, 0, 360f/6f/2f, 0, 360f/8f/2f};
+    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 360f/6f/2f, 360f/7f, 360f/8f};
 
-    public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 800;
+    public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 650/*3000*/;
 
 
 

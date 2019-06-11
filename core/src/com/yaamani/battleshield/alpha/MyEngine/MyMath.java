@@ -1,10 +1,16 @@
 package com.yaamani.battleshield.alpha.MyEngine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.io.PrintStream;
+import java.util.LinkedList;
+
 public final class MyMath {
+
+    public static final String TAG = MyMath.class.getSimpleName();
 
     public static final double millisToNano = 1000f;
 
@@ -89,6 +95,24 @@ public final class MyMath {
 
     public static <T> T chooseFromProbabilityArray(T[] arr) {
         return chooseFromProbabilityArray(arr, 0, arr.length-1);
+    }
+
+    public static <T> T chooseFromProbabilityArray(T[] arr, T... excludeItems) {
+        int arrLen = arr.length;
+        for (int i = 0, exLen = excludeItems.length; i < arrLen; i++) {
+            int j;
+            for (j = 0; j < exLen; j++) {
+                if (arr[i] == excludeItems[j]) {
+                    // delete arr[i]
+                    arr[i] = arr[arrLen-1]; // move it to the end
+                    arrLen--;
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        return chooseFromProbabilityArray(arr, 0, arrLen-1);
     }
 
     public static float roundTo(float val, int numOfDigitsAfterTheDecimalPoint) {

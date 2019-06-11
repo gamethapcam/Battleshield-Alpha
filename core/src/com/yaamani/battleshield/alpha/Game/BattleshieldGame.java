@@ -10,7 +10,7 @@ import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
-import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;

@@ -1,8 +1,7 @@
-package com.yaamani.battleshield.alpha.MyEngine;
+package com.yaamani.battleshield.alpha.MyEngine.MyText;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
 

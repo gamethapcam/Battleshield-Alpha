@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.MyEngine.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;

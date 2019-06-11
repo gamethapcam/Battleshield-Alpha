@@ -59,7 +59,7 @@ public class ExperimentsScreen extends AdvancedScreen {
         turret = new Turret();
         //turret.turretImage.setVisible(false);
 
-        container = new BulletsAndShieldContainer(this, (byte) 0, game);
+        /*container = new BulletsAndShieldContainer(this, (byte) 0, game);
         container.setNewOmegaDeg(180);
         container.setNewOmegaDeg(90);
 
@@ -69,7 +69,7 @@ public class ExperimentsScreen extends AdvancedScreen {
         container.setNewRotationDeg(0);
         container.setNewRotationDeg(0);
 
-        bullets = new Bullet[10];
+        bullets = new Bullet[10];*/
         for (int i = 0; i < 10; i++) {
             /*bullets[i] = new Bullet(this, new Tween(1000) {
                 @Override

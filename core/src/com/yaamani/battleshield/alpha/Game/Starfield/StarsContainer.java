@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsHandler;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 
@@ -138,12 +140,18 @@ public class StarsContainer extends Group implements Disposable{
         radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION) {
             @Override
             public void tween(float percentage) {
+                Interpolation interpolationIn = MyInterpolation.fastExp10In;
+                Interpolation interpolationOut = MyInterpolation.fastExp10Out;
                 if (percentage < 0.5) {
-                    if (getSpecialBullet() == SpecialBullet.MINUS) thetaForRadialTween = fastExp10In.apply(0, STARS_RADIAL_TWEEN_THETA_MAX, percentage * 2);
-                    else if (getSpecialBullet() == SpecialBullet.PLUS) thetaForRadialTween = fastExp10In.apply(0, -STARS_RADIAL_TWEEN_THETA_MAX, percentage * 2);
+                    if (getSpecialBullet() == SpecialBullet.MINUS)
+                        thetaForRadialTween = interpolationIn.apply(0, STARS_RADIAL_TWEEN_THETA_MAX, percentage * 2);
+                    else if (getSpecialBullet() == SpecialBullet.PLUS)
+                        thetaForRadialTween = interpolationIn.apply(0, -STARS_RADIAL_TWEEN_THETA_MAX, percentage * 2);
                 } else {
-                    if (getSpecialBullet() == SpecialBullet.MINUS) thetaForRadialTween = fastExp10Out.apply(STARS_RADIAL_TWEEN_THETA_MAX, 0, (percentage - 0.5f) * 2);
-                    else if (getSpecialBullet() == SpecialBullet.PLUS) thetaForRadialTween = fastExp10Out.apply(-STARS_RADIAL_TWEEN_THETA_MAX, 0, (percentage - 0.5f) * 2);
+                    if (getSpecialBullet() == SpecialBullet.MINUS)
+                        thetaForRadialTween = interpolationOut.apply(STARS_RADIAL_TWEEN_THETA_MAX, 0, (percentage - 0.5f) * 2);
+                    else if (getSpecialBullet() == SpecialBullet.PLUS)
+                        thetaForRadialTween = interpolationOut.apply(-STARS_RADIAL_TWEEN_THETA_MAX, 0, (percentage - 0.5f) * 2);
                 }
             }
         };
