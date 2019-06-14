@@ -61,8 +61,8 @@ public class HealthHandler {
 
             gameplayScreen.setState(GameplayScreen.State.PLAYING);
             setHealth(1f);
-            GameplayScreen.resetTimePlayedThisTurnSoFar();
-            Bullet.resetSpeedResetTime();
+            gameplayScreen.resetTimePlayedThisTurnSoFar();
+            gameplayScreen.getBulletsHandler().resetSpeedResetTime();
             gameplayScreen.getScore().resetScore();
             SimpleText scoreText = gameplayScreen.getScore();
             scoreText.setColor(scoreText.getColor().r, scoreText.getColor().g, scoreText.getColor().b, 1);
@@ -72,6 +72,9 @@ public class HealthHandler {
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
             gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
+            gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
+            gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().start();
+
         }
     }
 }

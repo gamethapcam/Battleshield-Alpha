@@ -38,10 +38,10 @@ public class GameplayScreen extends AdvancedScreen {
     public enum State {PLAYING, LOST}
     private State state;
 
-    private static float timePlayedThisTurnSoFar;
+    private float timePlayedThisTurnSoFar;
     private Score score;
-    //private OneBigSizeBitmapFontTextField bulletSpeedMultiplierText;
-    private SimpleText bulletSpeedMultiplierText;
+
+    private SpeedMultiplierStuff speedMultiplierStuff;
 
     private Controller controllerLeft;
     private Controller controllerRight;
@@ -76,7 +76,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         // HUD ----
         score = new Score(this, myBitmapFont);
-        initializeBulletSpeedMultiplierText(myBitmapFont);
+        speedMultiplierStuff = new SpeedMultiplierStuff(this);
 
         //initializeControllers();
 
@@ -102,8 +102,10 @@ public class GameplayScreen extends AdvancedScreen {
         if (!isVisible()) return;
         super.act(delta);
 
-        if (getState() == GameplayScreen.State.PLAYING)
+        if (getState() == GameplayScreen.State.PLAYING) {
+            speedMultiplierStuff.update(delta);
             timePlayedThisTurnSoFar += delta;
+        }
 
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
         //Gdx.app.log(TAG, "controllerLeft.getAngleDeg() = " + controllerLeft.getAngleDeg());
@@ -152,21 +154,6 @@ public class GameplayScreen extends AdvancedScreen {
         //bulletsAndShieldContainers[0].getShield().rotateBy(0.1f);
 
         gamePadPooling();
-
-        if (state == State.PLAYING) {
-            String currentSpeedStr = bulletSpeedMultiplierText.getCharSequence().substring(1);
-            float currentSpeed;
-            if (!currentSpeedStr.isEmpty()) {
-                currentSpeed = Float.parseFloat(currentSpeedStr);
-                if (currentSpeed != Bullet.getSpeed()) {
-                    bulletSpeedMultiplierText.setCharSequence("x" + Bullet.getSpeed() / BULLETS_SPEED_INITIAL, true);
-                    bulletSpeedMultiplierTextUpdatePosition();
-                }
-            } else {
-                bulletSpeedMultiplierText.setCharSequence("x" + Bullet.getSpeed() / BULLETS_SPEED_INITIAL, true);
-                bulletSpeedMultiplierTextUpdatePosition();
-            }
-        }
     }
 
     private void gamePadPooling() {
@@ -195,11 +182,6 @@ public class GameplayScreen extends AdvancedScreen {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-
-        /*font.draw(batch, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n" +
-                "abcdefghijklmnopqrstuvwxyz\n" +
-                "1234567890 \n" +
-                "\"!`?'.,;:()[]{}<>|/@\\^$-%+=#_&~*\u0000\u007F", 0, WORLD_SIZE/2f);*/
     }
 
     @Override
@@ -222,7 +204,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         gameOverLayer.resize(width, height, worldWidth, worldHeight);
 
-        bulletSpeedMultiplierTextUpdatePosition();
+        speedMultiplierStuff.resize(width, height, worldWidth, worldHeight);
     }
 
     //------------------------------ initializers ------------------------------
@@ -292,7 +274,7 @@ public class GameplayScreen extends AdvancedScreen {
             @Override
             public void free(Bullet object) {
                 super.free(object);
-                Gdx.app.log(TAG, "Free bullets in pool = " + getFree());
+                //Gdx.app.log(TAG, "Free bullets in pool = " + getFree());
             }
 
             @Override
@@ -312,26 +294,7 @@ public class GameplayScreen extends AdvancedScreen {
         healthHandler = new HealthHandler(this);
     }
 
-    private void initializeBulletSpeedMultiplierText(MyBitmapFont myBitmapFont) {
-        /*bulletSpeedMultiplierText = new OneBigSizeBitmapFontTextField(font,
-                "x",
-                new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1.0f)*//*GRAY*//*,
-                *//*(float) (0.8 * 2* TURRET_RADIUS)*//*WORLD_SIZE*3f/2f,
-                Align.center,
-                false,
-                null,
-                0.2f,
-                FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED);*/
 
-        bulletSpeedMultiplierText = new SimpleText(myBitmapFont, "x");
-        bulletSpeedMultiplierText.setColor(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1.0f);
-        bulletSpeedMultiplierText.setHeight(BULLET_SPEED_MULTIPLIER_TXT_HEIGHT);
-        addActor(bulletSpeedMultiplierText);
-
-        /*Viewport viewport = getStage().getViewport();
-        bulletSpeedMultiplierText.setPosition(viewport.getWorldWidth()/2f - bulletSpeedMultiplierText.getWidth()/2f,
-                viewport.getWorldHeight()/2f - bulletSpeedMultiplierText.getHeight()/2f);*/
-    }
 
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
@@ -409,7 +372,7 @@ public class GameplayScreen extends AdvancedScreen {
         this.state = state;
     }
 
-    public static float getTimePlayedThisTurnSoFar() {
+    public float getTimePlayedThisTurnSoFar() {
         return timePlayedThisTurnSoFar;
     }
 
@@ -417,21 +380,16 @@ public class GameplayScreen extends AdvancedScreen {
         return myBitmapFont;
     }
 
+    public SpeedMultiplierStuff getSpeedMultiplierStuff() {
+        return speedMultiplierStuff;
+    }
+
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
 
-    public static void resetTimePlayedThisTurnSoFar() {
+    public void resetTimePlayedThisTurnSoFar() {
         timePlayedThisTurnSoFar = 0;
     }
-
-    private void bulletSpeedMultiplierTextUpdatePosition() {
-        float bulletSpeedMultiplierTextWidth2 = bulletSpeedMultiplierText.getWidth()/2f;
-        float bulletSpeedMultiplierTextHeight2 = bulletSpeedMultiplierText.getHeight()/2f;
-        Viewport viewport = getStage().getViewport();
-        bulletSpeedMultiplierText.setPosition(viewport.getWorldWidth()/2f - bulletSpeedMultiplierTextWidth2,
-                viewport.getWorldHeight()/2f - bulletSpeedMultiplierTextHeight2);
-    }
-
 }

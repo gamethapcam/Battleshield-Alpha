@@ -9,6 +9,9 @@ public abstract class MyInterpolation extends Interpolation {
     public static final FastExpIn fastExp10In = new FastExpIn(10);
     public static final FastExpOut fastExp10Out = new FastExpOut(10);
 
+    public static final FastExp fastExp5 = new FastExp(5);
+    public static final FastExpIn fastExp5In = new FastExpIn(5);
+    public static final FastExpOut fastExp5Out = new FastExpOut(5);
 
 
 

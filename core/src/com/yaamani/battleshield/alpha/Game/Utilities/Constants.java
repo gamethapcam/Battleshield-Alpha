@@ -177,7 +177,7 @@ public final class Constants {
 
     public static final float BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
 
-    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = 50/*5f*/; //sec
+    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = 50/*5f*//*1f*/; //sec
 
     public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
 
@@ -366,7 +366,21 @@ public final class Constants {
     public static final float GAMEOVER_LAYER_TAP_ANY_WHERE_TO_START_AGAIN_TXT_LINE_SPACING = WORLD_SIZE * 58f/1440f;
 
 
-    public static final float BULLET_SPEED_MULTIPLIER_TXT_HEIGHT = WORLD_SIZE / 35f;
+    public static final float BULLET_SPEED_MULTIPLIER_TXT_HEIGHT = WORLD_SIZE / 31.5f;
+
+    public static final Color BULLET_SPEED_MULTIPLIER_TXT_COLOR = new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
+
+    public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_HEIGHT = WORLD_SIZE * 17f/1440f;
+
+    public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_WIDTH = WORLD_SIZE * 130f/1440f;
+
+    public static final Color BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_BG_COLOR = BULLET_SPEED_MULTIPLIER_TXT_COLOR;
+
+    public static final Color BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_PERCENTAGE_BAR_COLOR = Color.WHITE;
+
+    public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TXT_DIFF_Y = WORLD_SIZE / 130f;
+
+    public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION = 300;
 
 
 

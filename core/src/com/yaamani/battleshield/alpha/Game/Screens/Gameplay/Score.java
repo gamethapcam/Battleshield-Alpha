@@ -60,7 +60,7 @@ public class Score extends SimpleText implements Resizable{
     public void act(float delta) {
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
-            score = GameplayScreen.getTimePlayedThisTurnSoFar();
+            score = gameplayScreen.getTimePlayedThisTurnSoFar();
             /*score += activeShields*delta;
             score += BULLETS_MAX_NUMBER_PER_ATTACK / (float) bulletsPerAttack * delta;*/
             checkBestScore();

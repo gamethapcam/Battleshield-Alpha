@@ -31,6 +31,10 @@ public class BulletsHandler implements Updatable {
 
     private StarsContainer.RadialTween radialTweenStars;
 
+    private float currentSpeedMultiplier;
+    private Timer currentSpeedMultiplierTimer;
+    private float speedResetTime = 0;
+
     private int roundStart;
     private Integer roundTurn = null;
     private RoundType roundType;
@@ -40,6 +44,7 @@ public class BulletsHandler implements Updatable {
     private WaveBulletsType[] waveBulletsType;
     private Float angleDoubleRestricted;
     private SpecialBullet specialBullet;
+
 
     //private Timer isThereDoubleWaveTimer;
 
@@ -59,6 +64,9 @@ public class BulletsHandler implements Updatable {
 
         //initializeIsThereDoubleWaveTimer();
 
+        currentSpeedMultiplier = 1;
+        initializeCurrentSpeedMultiplierTimer();
+
         resetWaveTimer();
 
     }
@@ -70,6 +78,9 @@ public class BulletsHandler implements Updatable {
         currentBulletsWaveTimer.update(delta);
         plusMinusBulletsTimer.update(delta);
         decreaseBulletsPerAttackTimer.update(delta);
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+            currentSpeedMultiplierTimer.update(delta);
+
         //isThereDoubleWaveTimer.update(delta);
 
         /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
@@ -135,6 +146,47 @@ public class BulletsHandler implements Updatable {
         plusMinusBulletsTimer.start();
     }
 
+    public float getCurrentSpeedMultiplier() {
+        return currentSpeedMultiplier;
+    }
+
+    public Timer getCurrentSpeedMultiplierTimer() {
+        return currentSpeedMultiplierTimer;
+    }
+
+    public void resetSpeedResetTime() {
+        speedResetTime = 0;
+    }
+
+    public void resetCurrentSpeedMultiplier() {
+        currentSpeedMultiplier = 1;
+    }
+
+    public void resetSpeed() {
+        speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
+        gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
+        currentSpeedMultiplierTimer.start();
+        resetCurrentSpeedMultiplier();
+        gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
+    }
+
+    public float getSpeedResetTime() {
+        return speedResetTime;
+    }
+
+    public float getBulletSpeed() {
+        int i = (int) /*floor*/ ((gameplayScreen.getTimePlayedThisTurnSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
+        float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+        if (currentMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
+            Gdx.app.log(TAG, "Speed Multiplier = " + currentMultiplier);
+            return BULLETS_SPEED_INITIAL * currentMultiplier;
+        }
+
+        Gdx.app.log(TAG, "Speed Multiplier = " + BULLETS_SPEED_MULTIPLIER_MAX);
+        return BULLETS_SPEED_INITIAL * BULLETS_SPEED_MULTIPLIER_MAX;
+    }
+
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
@@ -158,9 +210,9 @@ public class BulletsHandler implements Updatable {
 
     private float calculateWaveTimerDuration(WaveBulletsType waveBulletsType) {
         if (waveBulletsType == WaveBulletsType.ORDINARY)
-            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / Bullet.getSpeed()) * 1000;
+            return ((BULLETS_CLEARANCE_BETWEEN_WAVES + (bulletsPerAttack) * (BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getBulletSpeed()) * 1000;
         else {
-            return (BULLETS_SPECIAL_WAVE_LENGTH / Bullet.getSpeed()) * 1000;
+            return (BULLETS_SPECIAL_WAVE_LENGTH / getBulletSpeed()) * 1000;
         }
     }
 
@@ -464,6 +516,28 @@ public class BulletsHandler implements Updatable {
         };
 
         decreaseBulletsPerAttackTimer.start();
+    }
+
+    private void initializeCurrentSpeedMultiplierTimer() {
+        currentSpeedMultiplierTimer = new Timer(BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*1000f) {
+            @Override
+            public void onFinish() {
+                //float nextSpeedMultiplier = getBulletSpeed() / BULLETS_SPEED_INITIAL;
+                float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier+BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
+                if (gameplayScreen.getState() == GameplayScreen.State.PLAYING &
+                        nextSpeedMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
+                    currentSpeedMultiplier = nextSpeedMultiplier;
+                    //currentSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier, 5);
+                    gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
+                }
+                if (currentSpeedMultiplier < BULLETS_SPEED_MULTIPLIER_MAX) {
+                    gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
+                    start();
+                }
+            }
+        };
+
+        currentSpeedMultiplierTimer.start();
     }
 
     /*private void initializeIsThereDoubleWaveTimer() {

@@ -24,13 +24,12 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     private static boolean thereIsPlusOrMinus = false;
     private static float R = 0;
 
-    private static float speedResetTime = 0;
-
     private Pool<Bullet> bulletPool;
     private Array<Bullet> activeBullets;
 
     private boolean inUse = false;
     private BulletsAndShieldContainer parent;
+    private BulletsHandler bulletsHandler;
     private /*AdvancedScreen*/GameplayScreen gameplayScreen;
     private TextureRegion region;
 
@@ -45,6 +44,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         this.gameplayScreen = gameplayScreen;
         this.bulletPool = gameplayScreen.getBulletPool();
         this.activeBullets = gameplayScreen.getActiveBullets();
+        this.bulletsHandler = gameplayScreen.getBulletsHandler();
 
         effects = new Effects();
 
@@ -131,7 +131,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
-        batch.setColor(color.r, color.g, color.b, /*color.a*/0.5f * parentAlpha);
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         batch.draw(region, getX() - getWidth()/2f, getY()/* - getHeight()/2f*/, getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
@@ -140,7 +140,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
     public void act(float delta) {
         super.act(delta);
         if (inUse) {
-            setY(getY() - getSpeed() * delta);
+            setY(getY() - bulletsHandler.getBulletSpeed() * delta);
 
             correctSpecialBulletsRotation();
 
@@ -249,26 +249,6 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         }
     }
 
-    public static void resetSpeedResetTime() {
-        speedResetTime = 0;
-    }
-
-    public static void resetSpeed() {
-        speedResetTime = GameplayScreen.getTimePlayedThisTurnSoFar();
-    }
-
-    public static float getSpeed() {
-        int i = (int) /*floor*/ ((GameplayScreen.getTimePlayedThisTurnSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
-        float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
-
-        if (currentMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
-            //Gdx.app.log(TAG, "Speed Multiplier = " + currentMultiplier);
-            return BULLETS_SPEED_INITIAL * currentMultiplier;
-        }
-        //Gdx.app.log(TAG, "Speed Multiplier = " + BULLETS_SPEED_MULTIPLIER_MAX);
-        return BULLETS_SPEED_INITIAL * BULLETS_SPEED_MULTIPLIER_MAX;
-    }
-
     @Override
     public void reset() {
 
@@ -346,7 +326,7 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
             star = new BulletEffect() {
                 @Override
                 public void effect() {
-                    Bullet.resetSpeed();
+                    bulletsHandler.resetSpeed();
                     Gdx.app.log(TAG, "STAR BULLET");
                 }
             };

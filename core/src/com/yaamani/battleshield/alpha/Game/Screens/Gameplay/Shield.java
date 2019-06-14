@@ -26,6 +26,8 @@ public class Shield extends RoundedArch {
         setPosition(-getRadius(), -getRadius());
 
         setOrigin(Align.center);
+
+        //setTransform(false);
         //setDebug(true);
 
         //setAngle(90*MathUtils.degRad);
