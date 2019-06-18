@@ -47,6 +47,8 @@ public class HealthHandler {
             gameplayScreen.getScore().getFadeOutTween().start();
         }
 
+        Bullet.setThereIsPlusOrMinus(false);
+
         gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
         gameplayScreen.getStarsContainer().setThetaForRadialTween(5 * MathUtils.degreesToRadians);

@@ -43,7 +43,11 @@ public class BulletsHandler implements Updatable {
     private boolean isDouble;
     private WaveBulletsType[] waveBulletsType;
     private Float angleDoubleRestricted;
-    private SpecialBullet specialBullet;
+    private SpecialBullet currentSpecialBullet;
+    private boolean questionMark = false;
+
+    /*private final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS;
+    private final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS;*/
 
 
     //private Timer isThereDoubleWaveTimer;
@@ -57,6 +61,8 @@ public class BulletsHandler implements Updatable {
 
         waveBulletsType = new WaveBulletsType[2];
         waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
+
+        //initializeNoMinusNoPlusProbability();
 
         initializePlusMinusBulletsTimer();
 
@@ -160,6 +166,7 @@ public class BulletsHandler implements Updatable {
 
     public void resetCurrentSpeedMultiplier() {
         currentSpeedMultiplier = 1;
+        gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
     }
 
     public void resetSpeed() {
@@ -167,7 +174,6 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
         currentSpeedMultiplierTimer.start();
         resetCurrentSpeedMultiplier();
-        gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
     }
 
     public float getSpeedResetTime() {
@@ -179,11 +185,11 @@ public class BulletsHandler implements Updatable {
         float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
         if (currentMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
-            Gdx.app.log(TAG, "Speed Multiplier = " + currentMultiplier);
+            //Gdx.app.log(TAG, "Speed Multiplier = " + currentMultiplier);
             return BULLETS_SPEED_INITIAL * currentMultiplier;
         }
 
-        Gdx.app.log(TAG, "Speed Multiplier = " + BULLETS_SPEED_MULTIPLIER_MAX);
+        //Gdx.app.log(TAG, "Speed Multiplier = " + BULLETS_SPEED_MULTIPLIER_MAX);
         return BULLETS_SPEED_INITIAL * BULLETS_SPEED_MULTIPLIER_MAX;
     }
 
@@ -226,10 +232,10 @@ public class BulletsHandler implements Updatable {
 
     private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave) {
         waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
-        int specialBulletOrder = 0;
-        specialBullet = null;
+        //int specialBulletOrder = 0;
 
-        specialBulletOrder = determineType(indexForDoubleWave);
+        //specialBulletOrder = determineSpecialBullet(indexForDoubleWave);
+        currentSpecialBullet = determineSpecialBullet(indexForDoubleWave);
 
         //------------------------------------------------------
 
@@ -241,23 +247,39 @@ public class BulletsHandler implements Updatable {
             }
         } else {
             Bullet bullet = bulletPool.obtain();
-            bullet.setSpecial(specialBullet);
+            bullet.setSpecial(currentSpecialBullet, questionMark);
             bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
         }
 
     }
 
-    private int determineType(int indexForDoubleWave) {
+    private /*int*/SpecialBullet determineSpecialBullet(int indexForDoubleWave) {
+        SpecialBullet currentSpecialBullet = null;
+
         /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
         waveBulletsType[indexForDoubleWave] = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
         if (!isDouble | (/*isDouble &*/ indexForDoubleWave == 1)) resetWaveTimer();
         //else waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
 
         if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_GOOD) {
-            specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
+            currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
 
+             if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
+                currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+                questionMark = true;
+                Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
+             } else {
+                 questionMark = false;
+                 Gdx.app.log(TAG, "" + currentSpecialBullet);
+             }
 
-            if (specialBullet == SpecialBullet.MINUS) {
+            if (currentSpecialBullet == SpecialBullet.MINUS) {
+
+                Gdx.app.log(TAG, "" + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT) + ", " +
+                        Bullet.isTherePlusOrMinus() + ", " +
+                        !plusMinusBulletsTimer.isFinished() + ", " +
+                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED));
+
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT |
                         Bullet.isTherePlusOrMinus() |
                         !plusMinusBulletsTimer.isFinished() |
@@ -265,15 +287,31 @@ public class BulletsHandler implements Updatable {
                         !isThereDoubleWaveTimer.isFinished(*/)) {
 
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
-                        specialBullet = SpecialBullet.PLUS;*/
-                    specialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS);
+                        currentSpecialBullet = SpecialBullet.PLUS;*/
+
+                    //currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS);
+                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY_NO_MINUS, SpecialBullet.QUESTION_MARK);
                 }
             }
         } else if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_BAD) {
-            specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY);
+            currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY);
 
+            if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
+                currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+                questionMark = true;
+                Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
+            } else {
+                questionMark = false;
+                Gdx.app.log(TAG, "" + currentSpecialBullet);
+            }
 
-            if (specialBullet == SpecialBullet.PLUS) {
+            if (currentSpecialBullet == SpecialBullet.PLUS) {
+
+                Gdx.app.log(TAG, "" + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT) + ", " +
+                        Bullet.isTherePlusOrMinus() + ", " +
+                        !plusMinusBulletsTimer.isFinished() + ", " +
+                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED));
+
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT |
                         Bullet.isTherePlusOrMinus() |
                         !plusMinusBulletsTimer.isFinished() |
@@ -281,17 +319,19 @@ public class BulletsHandler implements Updatable {
                         !isThereDoubleWaveTimer.isFinished(*/)) {
 
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
-                        specialBullet = SpecialBullet.MINUS;*/
-                    specialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS);
+                        currentSpecialBullet = SpecialBullet.MINUS;*/
+                    //currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS);
+                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY_NO_PLUS, SpecialBullet.QUESTION_MARK);
                 }
             }
         }
 
-        if (specialBullet == SpecialBullet.PLUS | specialBullet == SpecialBullet.MINUS) {
+        if (currentSpecialBullet == SpecialBullet.PLUS | currentSpecialBullet == SpecialBullet.MINUS) {
             Bullet.setThereIsPlusOrMinus(true);
         }
 
-        return MathUtils.random(bulletsPerAttack - 1);
+        //return MathUtils.random(bulletsPerAttack - 1);
+        return currentSpecialBullet;
     }
 
     public void newWave() {
@@ -549,5 +589,9 @@ public class BulletsHandler implements Updatable {
         };
 
         isThereDoubleWaveTimer.finish();
+    }*/
+
+    /*private void initializeNoMinusNoPlusProbability() {
+        GOOD_BULLETS_PROBABILITY_NO_MINUS = new SpecialBullet[GOOD_BULLETS_PROBABILITY.length];
     }*/
 }

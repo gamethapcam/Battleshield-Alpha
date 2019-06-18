@@ -4,20 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class Bullet extends Actor implements Resizable, Pool.Poolable {
+public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public static final String TAG = Bullet.class.getSimpleName();
 
@@ -40,6 +41,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
 
     private Viewport viewport;
 
+    private SimpleText type; // Debugging
+
     public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer.RadialTween radialTweenStars, Viewport viewport) {
         this.gameplayScreen = gameplayScreen;
         this.bulletPool = gameplayScreen.getBulletPool();
@@ -55,6 +58,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         notSpecial();
         //setDebug(true);
         //bulletPool.getFree();
+
+        initializeType();
     }
 
     @Override
@@ -134,6 +139,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         batch.draw(region, getX() - getWidth()/2f, getY()/* - getHeight()/2f*/, getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+
+        super.draw(batch, parentAlpha);
     }
 
     @Override
@@ -218,40 +225,59 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         setRotation(0);
         region = Assets.instance.gameplayAssets.bullet;
         currentEffect = effects.ordinary;
+
+        if (type != null) type.setVisible(false);
     }
 
-    public void setSpecial(SpecialBullet specialType) {
+    public void setSpecial(SpecialBullet specialType, boolean questionMark) {
         setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
         setOrigin(Align.center);
         setY(getY() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_HEIGHT)/2f);
 
+        if (type != null) type.setVisible(true);
+
         switch (specialType) {
             case PLUS:
-                region = Assets.instance.gameplayAssets.plusBullet;
+                if (!questionMark) region = Assets.instance.gameplayAssets.plusBullet;
                 currentEffect = effects.plus;
                 break;
             case MINUS:
-                region = Assets.instance.gameplayAssets.minusBullet;
+                if (!questionMark) region = Assets.instance.gameplayAssets.minusBullet;
                 currentEffect = effects.minus;
                 break;
             case BOMB:
-                region = Assets.instance.gameplayAssets.bombBullet;
+                if (!questionMark) region = Assets.instance.gameplayAssets.bombBullet;
                 currentEffect = effects.bomb;
                 break;
             case HEART:
-                region = Assets.instance.gameplayAssets.heartBullet;
+                if (!questionMark) region = Assets.instance.gameplayAssets.heartBullet;
                 currentEffect = effects.heart;
                 break;
             case STAR:
-                region = Assets.instance.gameplayAssets.starBullet;
+                if (!questionMark) region = Assets.instance.gameplayAssets.starBullet;
                 currentEffect = effects.star;
                 break;
+            /*case QUESTION_MARK:
+                region = Assets.instance.gameplayAssets.questionMarkBullet;
+                currentEffect =
+                break;*/
         }
+
+        if (questionMark)
+            region = Assets.instance.gameplayAssets.questionMarkBullet;
+
+        if (type != null) type.setCharSequence("" + specialType, true);
     }
 
     @Override
     public void reset() {
 
+    }
+
+    private void initializeType() {
+        type = new SimpleText(gameplayScreen.getMyBitmapFont(), "Bullet");
+        type.setBoundsHeight(BULLETS_SPECIAL_DIAMETER/*WORLD_SIZE/2f*/, BULLETS_SPECIAL_DIAMETER, WORLD_SIZE/30f);
+        //addActor(type);
     }
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -275,6 +301,8 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
         private BulletEffect minus;
         private BulletEffect heart;
         private BulletEffect star;
+
+        //private BulletEffect questionMark;
 
         private Effects() {
 
@@ -331,6 +359,13 @@ public class Bullet extends Actor implements Resizable, Pool.Poolable {
                 }
             };
 
+
+            /*questionMark = new BulletEffect() {
+                @Override
+                public void effect() {
+
+                }
+            };*/
         }
 
         private void affectHealth(float by) {

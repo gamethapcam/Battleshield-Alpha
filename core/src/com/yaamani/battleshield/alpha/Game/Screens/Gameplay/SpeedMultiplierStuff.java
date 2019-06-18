@@ -60,8 +60,11 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
                 progressBarUpdatePosition();
             }*/
 
-            if (myProgressBarTween.isFinished() & bulletSpeed < BULLETS_SPEED_MULTIPLIER_MAX*BULLETS_SPEED_INITIAL)
-                myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().getPercentage()/*(gameplayScreen.getTimePlayedThisTurnSoFar() - gameplayScreen.getBulletsHandler().getSpeedResetTime()) % BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*/);
+            if (myProgressBarTween.isFinished()) {
+                if (bulletSpeed < BULLETS_SPEED_MULTIPLIER_MAX * BULLETS_SPEED_INITIAL)
+                    myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().getPercentage()/*(gameplayScreen.getTimePlayedThisTurnSoFar() - gameplayScreen.getBulletsHandler().getSpeedResetTime()) % BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*/);
+                else myProgressBar.setPercentage(1);
+            }
 
             myProgressBarTween.update(delta);
         }
@@ -122,7 +125,7 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
 
             @Override
             public void tween(float percentage) {
-                myProgressBar.setPercentage(/*fastExp10Out*/fastExp5Out.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
+                myProgressBar.setPercentage(/*fastExp10Out*/fadeOut.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
             }
 
             @Override

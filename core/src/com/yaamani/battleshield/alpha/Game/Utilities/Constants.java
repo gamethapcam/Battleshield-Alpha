@@ -198,8 +198,11 @@ public final class Constants {
 
     public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
 
-    public enum SpecialBullet {MINUS, HEART, STAR,
-                               PLUS, BOMB}
+    public enum SpecialBullet {
+        MINUS, HEART, STAR, // Good
+        PLUS, BOMB, // Bad
+        QUESTION_MARK
+    }
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
             SpecialBullet.HEART,
@@ -218,10 +221,60 @@ public final class Constants {
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
 
-            SpecialBullet.STAR
+            SpecialBullet.STAR,
+
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK
     };
 
-    public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {SpecialBullet.BOMB, SpecialBullet.PLUS};
+    public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = {
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+
+            SpecialBullet.STAR,
+
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK
+    };
+
+    public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+
+            SpecialBullet.PLUS,
+            SpecialBullet.PLUS,
+            SpecialBullet.PLUS,
+
+            SpecialBullet.QUESTION_MARK
+    };
+
+    public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = {
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+
+            SpecialBullet.QUESTION_MARK
+    };
 
     public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {
             WaveBulletsType.ORDINARY,
@@ -234,9 +287,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_BAD
     };
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -380,7 +433,7 @@ public final class Constants {
 
     public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TXT_DIFF_Y = WORLD_SIZE / 130f;
 
-    public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION = 300;
+    public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION = 200;
 
 
 
@@ -423,6 +476,8 @@ public final class Constants {
     public static final String ASSETS_BOMB_BULLET = "Bomb";
 
     public static final String ASSETS_STAR_BULLET = "Star";
+
+    public static final String ASSETS_QUESTION_MARK_BULLET = "Question Mark";
 
     public static final String ASSETS_HEALTH_BAR = "Big Circle";
 

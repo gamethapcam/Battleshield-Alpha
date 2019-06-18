@@ -20,7 +20,7 @@ Bomb
   index: -1
 Bullet
   rotate: false
-  xy: 1028, 1027
+  xy: 1172, 1171
   size: 13, 39
   orig: 13, 39
   offset: 0, 0
@@ -60,9 +60,16 @@ Plus
   orig: 60, 60
   offset: 0, 0
   index: -1
-Star
+Question Mark
   rotate: false
   xy: 2569, 1605
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+Star
+  rotate: false
+  xy: 1028, 1006
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
