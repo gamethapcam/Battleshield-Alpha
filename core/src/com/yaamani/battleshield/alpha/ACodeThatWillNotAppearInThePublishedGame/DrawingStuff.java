@@ -42,10 +42,10 @@ public class DrawingStuff { // POJO ;)
      * @param R refers to the radius.
      * @param T refers to thickness.
      * @param omega is the arc angle in radians.
-     * @return A texture of the roundedArc.
+     * @return A texture of the roundedArch.
      */
-    public static Pixmap drawRoundedArc(float R, float T, float omega, Color color,float worldSize, int targetResolution) {
-        // The Math is of course vague. So I highly recommend checking out (Shields Dimensions.png) in the Non-Finalized Assets folder.
+    public static Pixmap drawRoundedArch(float R, float T, float omega, Color color, float worldSize, int targetResolution) {
+        // The Math is of course vague. So I highly recommend checking out (Shields Dimensions.png) in the Unpacked Assets folder.
         float L0 = T/2;
         float phi = L0/(R+L0);
         float theta = omega-2*phi;
@@ -53,13 +53,13 @@ public class DrawingStuff { // POJO ;)
         float L2 = (R+L0)*MathUtils.cos(theta/2);
         float L3 = (R+T)-L2;
 
-        int pixWidth = worldUnitsIntoResolution(L1+2*L0, worldSize, targetResolution);
-        int pixHeight = worldUnitsIntoResolution(L0+L3, worldSize, targetResolution);
+        int pixWidth = worldUnitsIntoResolution(L1+2*L0, worldSize, targetResolution) + 1;
+        int pixHeight = worldUnitsIntoResolution(L0+L3, worldSize, targetResolution) + 1;
 
         int RInResolution = worldUnitsIntoResolution(R, worldSize, targetResolution);
         int TInResolution = worldUnitsIntoResolution(T, worldSize, targetResolution);
 
-        Pixmap pix = drawSharpArcLogic(RInResolution,
+        Pixmap pix = drawSharpArchLogic(RInResolution,
                 TInResolution,
                 theta,
                 pixWidth,
@@ -78,10 +78,10 @@ public class DrawingStuff { // POJO ;)
      * @param R refers to the radius.
      * @param T refers to thickness.
      * @param theta is the arc angle in radians.
-     * @return A texture of the sharpArc.
+     * @return A texture of the sharpArch.
      */
-    public static Pixmap drawSharpArc(float R, float T, float theta, Color color,float worldSize, int targetResolution) {
-        // The Math is of course vague. So I highly recommend checking out (Shields Dimensions.png) in the Non-Finalized Assets folder.
+    public static Pixmap drawSharpArch(float R, float T, float theta, Color color, float worldSize, int targetResolution) {
+        // The Math is of course vague. So I highly recommend checking out (Shields Dimensions.png) in the Unpacked Assets folder.
         float sinHalfTheta = MathUtils.sin(theta/2);
         float L4 = 2*R*sinHalfTheta;
         float L5 = T*sinHalfTheta;
@@ -91,16 +91,16 @@ public class DrawingStuff { // POJO ;)
         int pixHeight;
         if (theta < MathUtils.PI) {
             L6 = R * MathUtils.cos(theta/2);
-            pixWidth = worldUnitsIntoResolution(L4 + 2 * L5, worldSize, targetResolution);
+            pixWidth = worldUnitsIntoResolution(L4 + 2 * L5, worldSize, targetResolution) + 1;
 
         } else {
             L6 = (R+T) * MathUtils.cos((theta)/2);
-            pixWidth = worldUnitsIntoResolution(2 * (R + T), worldSize, targetResolution);
+            pixWidth = worldUnitsIntoResolution(2 * (R + T), worldSize, targetResolution) + 1;
         }
 
-        pixHeight = worldUnitsIntoResolution(R + T - L6, worldSize, targetResolution);
+        pixHeight = worldUnitsIntoResolution(R + T - L6, worldSize, targetResolution) + 1;
 
-        Pixmap pix = drawSharpArcLogic(worldUnitsIntoResolution(R, worldSize, targetResolution),
+        Pixmap pix = drawSharpArchLogic(worldUnitsIntoResolution(R, worldSize, targetResolution),
                 worldUnitsIntoResolution(T, worldSize, targetResolution),
                 theta,
                 pixWidth,
@@ -112,15 +112,15 @@ public class DrawingStuff { // POJO ;)
         return pix;
     }
 
-    private static Pixmap drawSharpArcLogic(float R, float T, float theta, int pixWidth, int pixHeight, int centerPointX, int centerPointY, Color color) {
+    private static Pixmap drawSharpArchLogic(float R, float T, float theta, int pixWidth, int pixHeight, int centerPointX, int centerPointY, Color color) {
         // The Math is of course vague. So I highly recommend checking out (Shields Dimensions.png) in the Non-Finalized Assets folder.
         Pixmap pix = new Pixmap(pixWidth, pixHeight, Pixmap.Format.RGBA8888);
         /*pix.setColor(Color.DARK_GRAY);
         pix.fill();*/
         pix.setColor(color);
 
-        for (int x = 0; x < pixWidth; x++) {
-            for (int y = 0; y < pixHeight; y++) {
+        for (int x = 0; x <= pixWidth; x++) {
+            for (int y = 0; y <= pixHeight; y++) {
                 // Translation af axis, in order to make the center point equal to (centerPointX, centerPointY).
                 int X = x - centerPointX;
                 int Y = y - centerPointY;
@@ -146,11 +146,39 @@ public class DrawingStuff { // POJO ;)
         return texture;
     }
 
+    public static Pixmap rotatePix90(Pixmap pix) {
+        Pixmap rotatedPix = new Pixmap(pix.getHeight(), pix.getWidth(), pix.getFormat());
+
+        int color;
+        for (int x = 0; x <= rotatedPix.getWidth(); x++) {
+            for (int y = 0; y <= rotatedPix.getHeight(); y++) {
+                color = pix.getPixel(y, x);
+                rotatedPix.drawPixel(x, y, color);
+            }
+        }
+
+        return rotatedPix;
+    }
+
+    public static Pixmap rotatePix180(Pixmap pix) {
+        Pixmap rotatedPix = new Pixmap(pix.getWidth(), pix.getHeight(), pix.getFormat());
+
+        int color;
+        for (int x = 0; x <= rotatedPix.getWidth(); x++) {
+            for (int y = 0; y <= rotatedPix.getHeight(); y++) {
+                color = pix.getPixel(pix.getWidth() - x, y);
+                rotatedPix.drawPixel(x, y, color);
+            }
+        }
+
+        return rotatedPix;
+    }
+
     //---------------------------------------------------------------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------------------------------------------------------------
 
-    /*public static void saveShieldsWithVariousAngles(float fromAngleDeg,
+    public static void saveShieldsWithVariousAngles(float fromAngleDeg,
                                                     float toAngleDeg,
                                                     float skipAngleDeg,
                                                     float freeAngleBetweenShieldsDeg,
@@ -161,12 +189,12 @@ public class DrawingStuff { // POJO ;)
         else if (skipAngleDeg <= 0) throw new ValueOutOfRangeException("skipAngleDeg must be greater than zero");
 
         for (float i = fromAngleDeg; i <= toAngleDeg; i += skipAngleDeg) {
-            Pixmap pix = drawRoundedArc(SHIELDS_RADIUS,
-                    SHIELDS_THICKNESS,
+            Pixmap pix = rotatePix90(drawRoundedArch(SHIELDS_RADIUS,
+                    /*SHIELDS_THICKNESS*/SHIELDS_RADIUS - SHIELDS_INNER_RADIUS,
                     MathUtils.degRad * (i - freeAngleBetweenShieldsDeg),
                     SHIELDS_COLOR,
                     WORLD_SIZE,
-                    targetResolution);
+                    targetResolution));
 
 
             FileHandle fileHandle = new FileHandle(externalFolderPath + "/" + SHIELDS_NAMING_WHEN_SAVING + (int) i + ".png");
@@ -178,7 +206,7 @@ public class DrawingStuff { // POJO ;)
                 e.printStackTrace();
             }
         }
-    }*/
+    }
 
     public static void saveTurret(float worldSize, int targetResolution, String externalFolderPath) {
         Pixmap pix = drawTurret(worldSize, targetResolution);
@@ -200,7 +228,7 @@ public class DrawingStuff { // POJO ;)
         if (skipAngleDeg <= 0) throw new ValueOutOfRangeException("skipAngleDeg must be greater than zero");
 
         /*for (float i = fromAngleDeg; i <= toAngleDeg; i += skipAngleDeg) {
-            Pixmap pix = drawSharpArc(HEALTH_BAR_RADIUS,
+            Pixmap pix = drawSharpArch(HEALTH_BAR_RADIUS,
                     HEALTH_BAR_THICKNESS,
                     MathUtils.degRad * i,
                     HEALTH_BAR_COLOR,
@@ -216,6 +244,33 @@ public class DrawingStuff { // POJO ;)
                 e.printStackTrace();
             }
         }*/
+    }
+
+    public static void saveRestrictedControllerBG(float worldSize, int targetResolution, String externalFolderPath) {
+        float r = CONTROLLER_RESTRICTED_SAVING_PPI * CONTROLLER_RESTRICTED_ARCH_RADIUS;
+        float t = r - CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO * r;
+        Color c = new Color(Color.LIGHT_GRAY);
+        Pixmap pix = drawRoundedArch(r, t, CONTROLLER_RESTRICTED_ARCH_ANGLE, c, worldSize, targetResolution);
+        Pixmap pixRight = rotatePix90(pix);
+        Pixmap pixLeft = rotatePix180(pixRight);
+
+        FileHandle fileHandleRight = new FileHandle(externalFolderPath + "/" + ASSETS_RESTRICTED_CONTROLLER_RIGHT_BG + ".png");
+        FileHandle fileHandleLeft = new FileHandle(externalFolderPath + "/" + ASSETS_RESTRICTED_CONTROLLER_LEFT_BG + ".png");
+        PixmapIO.PNG png = new PixmapIO.PNG();
+
+        //Right
+        try {
+            png.write(fileHandleRight, pixRight);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Left
+        try {
+            png.write(fileHandleLeft, pixLeft);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------

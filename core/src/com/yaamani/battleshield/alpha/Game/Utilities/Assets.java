@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -131,7 +130,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public class GameplayAssets {
 
-        public final TextureRegion controllerBG;
+        public final TextureRegion freeControllerBG;
+        public final TextureRegion restrictedControllerRightBG;
+        public final TextureRegion restrictedControllerLeftBG;
         public final TextureRegion controllerStick;
 
         public final TextureRegion turret;
@@ -155,7 +156,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
 
         private GameplayAssets(TextureAtlas atlas) {
             //Gdx.app.log(TAG, "" + shieldsArrayLength);
-            controllerBG = atlas.findRegion(ASSETS_CONTROLLER_BG);
+            freeControllerBG = atlas.findRegion(ASSETS_FREE_CONTROLLER_BG);
+            restrictedControllerRightBG = atlas.findRegion(ASSETS_RESTRICTED_CONTROLLER_RIGHT_BG);
+            restrictedControllerLeftBG = atlas.findRegion(ASSETS_RESTRICTED_CONTROLLER_LEFT_BG);
             controllerStick = atlas.findRegion(ASSETS_CONTROLLER_STICK);
 
             turret = atlas.findRegion(ASSETS_TURRET);

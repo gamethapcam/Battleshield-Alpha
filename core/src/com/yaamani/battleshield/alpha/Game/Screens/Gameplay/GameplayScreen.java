@@ -7,13 +7,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -222,13 +220,13 @@ public class GameplayScreen extends AdvancedScreen {
     private void initializeControllers(GameplayType gameplayType) {
         if (gameplayType == GameplayType.FREE) {
             controllerLeft = new FreeController(this,
-                    new Image(Assets.instance.gameplayAssets.controllerBG),
+                    new Image(Assets.instance.gameplayAssets.freeControllerBG),
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_FREE_SMALL_SIZE,
                     Direction.LEFT);
 
             controllerRight = new FreeController(this,
-                    new Image(Assets.instance.gameplayAssets.controllerBG),
+                    new Image(Assets.instance.gameplayAssets.freeControllerBG),
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_FREE_SMALL_SIZE,
                     Direction.RIGHT);

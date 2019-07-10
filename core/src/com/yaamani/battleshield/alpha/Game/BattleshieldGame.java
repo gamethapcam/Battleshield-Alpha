@@ -2,6 +2,7 @@ package com.yaamani.battleshield.alpha.Game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -17,6 +18,9 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
+import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.drawRoundedArch;
+import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.saveRestrictedControllerBG;
+import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.saveShieldsWithVariousAngles;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BattleshieldGame extends AdvancedApplicationAdapter {
@@ -48,7 +52,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         initializeLoadingScreen();
 
-        saveProgrammaticallyGeneratedTextures(1080);
+        //saveProgrammaticallyGeneratedTextures(1080);
     }
 
     @Override
@@ -152,12 +156,14 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     }
 
     private void saveProgrammaticallyGeneratedTextures(int targetResolution) {
-        /*saveShieldsWithVariousAngles(SHIELDS_SAVING_FROM_ANGLE,
+        saveShieldsWithVariousAngles(SHIELDS_SAVING_FROM_ANGLE,
                 SHIELDS_SAVING_TO_ANGLE,
                 SHIELDS_SKIP_ANGLE_WHEN_SAVING,
                 SHIELDS_FREE_ANGLE,
-                "/Users/mac/OneDrive/Battleshield(Alpha)/Non-Finalized Assets/1080p/Gameplay/ShieldsWithVariousAngles",
-                targetResolution);*/
+                "/Users/mac/OneDrive/Battleshield(Alpha)/Unpacked Assets/1080p/Gameplay/ShieldsWithVariousAngles",
+                targetResolution);
+
+        //saveRestrictedControllerBG(WORLD_SIZE, targetResolution, "/Users/mac/OneDrive/Battleshield(Alpha)/Unpacked Assets/1080p/Gameplay");
 
         //saveTurret(WORLD_SIZE, targetResolution, "/Users/mac/OneDrive/Battleshield(Alpha)/Non-Finalized Assets/1080p/Gameplay");
 
@@ -168,5 +174,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
                 HEALTH_BAR_SKIP_ANGLE_WHEN_SAVING,
                 targetResolution,
                 "/Users/mac/OneDrive/Battleshield(Alpha)/Non-Finalized Assets/1080p/Gameplay/HealthBarWithVariousAngles");*/
+
+        Gdx.app.log(TAG, "Programmatically Generated Textures Saved.");
     }
 }

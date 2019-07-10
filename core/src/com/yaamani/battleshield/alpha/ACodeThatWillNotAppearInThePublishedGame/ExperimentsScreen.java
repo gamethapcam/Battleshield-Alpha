@@ -240,7 +240,7 @@ public class ExperimentsScreen extends AdvancedScreen {
 
         /*private void initializeShield() {
             shieldTexture = pixToTex(
-                                        drawRoundedArc(SHIELDS_RADIUS,
+                                        drawRoundedArch(SHIELDS_RADIUS,
                                                 SHIELDS_THICKNESS,
                                                 MathUtils.degRad*(360f/shieldsCount-10),
                                                 Color.WHITE,

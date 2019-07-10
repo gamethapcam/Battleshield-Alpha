@@ -143,6 +143,8 @@ public final class Constants {
 
     public static final float CONTROLLER_RESTRICTED_ARCH_ANGLE = 50f*MathUtils.degRad;
 
+    public static final float CONTROLLER_RESTRICTED_SAVING_PPI = 50;
+
 
 
     public static final float TURRET_RADIUS = WORLD_SIZE / 15f;
@@ -287,9 +289,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_BAD
     };
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -302,7 +304,7 @@ public final class Constants {
 
     //public static final float SHIELDS_THICKNESS = WORLD_SIZE / 90f;
 
-    public static final float SHIELDS_INNER_RADIUS = TURRET_RADIUS * 1.3f;
+    public static final float SHIELDS_INNER_RADIUS = TURRET_RADIUS * 1.15f;
 
     public static final float SHIELDS_RADIUS = SHIELDS_INNER_RADIUS + WORLD_SIZE / 90f;
 
@@ -459,7 +461,11 @@ public final class Constants {
 
     public static final String ASSETS_MANY_TREES = "Too Many Trees";
 
-    public static final String ASSETS_CONTROLLER_BG = "Free Controller BG";
+    public static final String ASSETS_FREE_CONTROLLER_BG = "Free Controller BG";
+
+    public static final String ASSETS_RESTRICTED_CONTROLLER_RIGHT_BG = "Restricted Controller Right BG";
+
+    public static final String ASSETS_RESTRICTED_CONTROLLER_LEFT_BG = "Restricted Controller Left BG";
 
     public static final String ASSETS_CONTROLLER_STICK = "Free Controller Stick";
 
