@@ -257,6 +257,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!questionMark) region = Assets.instance.gameplayAssets.starBullet;
                 currentEffect = effects.star;
                 break;
+            case SHIELD_DISABLING:
+                if (!questionMark) region = Assets.instance.gameplayAssets.shieldDisablingBullet;
+                currentEffect = effects.shieldDisabling;
+                break;
+
             /*case QUESTION_MARK:
                 region = Assets.instance.gameplayAssets.questionMarkBullet;
                 currentEffect =
@@ -297,6 +302,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         private BulletEffect plus;
         private BulletEffect bomb;
+        private BulletEffect shieldDisabling;
 
         private BulletEffect minus;
         private BulletEffect heart;
@@ -313,6 +319,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 }
             };
 
+
+
             plus = new BulletEffect() {
                 @Override
                 public void effect() {
@@ -327,6 +335,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
+                }
+            };
+
+            shieldDisabling = new BulletEffect() {
+                @Override
+                public void effect() {
+                    parent.getShield().shieldDisablingBullet();
                 }
             };
 

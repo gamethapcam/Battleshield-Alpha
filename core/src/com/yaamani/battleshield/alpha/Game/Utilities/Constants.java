@@ -202,7 +202,7 @@ public final class Constants {
 
     public enum SpecialBullet {
         MINUS, HEART, STAR, // Good
-        PLUS, BOMB, // Bad
+        PLUS, BOMB, SHIELD_DISABLING, // Bad
         QUESTION_MARK
     }
 
@@ -258,11 +258,17 @@ public final class Constants {
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
 
             SpecialBullet.PLUS,
             SpecialBullet.PLUS,
             SpecialBullet.PLUS,
+            SpecialBullet.PLUS,
 
+            SpecialBullet.SHIELD_DISABLING,
+            SpecialBullet.SHIELD_DISABLING,
+
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
@@ -270,11 +276,17 @@ public final class Constants {
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
-
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
             SpecialBullet.BOMB,
 
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+
+            SpecialBullet.SHIELD_DISABLING,
+            SpecialBullet.SHIELD_DISABLING,
+
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
@@ -338,6 +350,8 @@ public final class Constants {
     public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 360f/6f/2f, 360f/7f, 360f/8f};
 
     public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 650/*3000*/;
+
+    public static final float SHIELD_DISABLED_DURATION = 2000;
 
 
 
@@ -484,6 +498,8 @@ public final class Constants {
     public static final String ASSETS_STAR_BULLET = "Star";
 
     public static final String ASSETS_QUESTION_MARK_BULLET = "Question Mark";
+
+    public static final String ASSETS_SHIELD_DISABLING_BULLET = "Shield Disabling";
 
     public static final String ASSETS_HEALTH_BAR = "Big Circle";
 

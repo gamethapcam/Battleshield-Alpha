@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.resolutionIntoWorldUnits;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -18,8 +19,11 @@ public class Shield extends Actor {
     private TextureRegion currentRegion;
     private boolean on = false;
 
+    private Timer shieldDisabledTimer;
+
     public Shield(BulletsAndShieldContainer bulletsAndShieldContainer) {
         this(90, bulletsAndShieldContainer);
+        initializeShieldDisabledTimer();
     }
 
     public Shield(float omegaDeg, BulletsAndShieldContainer bulletsAndShieldContainer) {
@@ -42,6 +46,12 @@ public class Shield extends Actor {
 
     }
 
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        shieldDisabledTimer.update(delta);
+    }
+
     float getOmegaDeg() {
         return omegaDeg;
     }
@@ -62,9 +72,17 @@ public class Shield extends Actor {
     }
 
     public void setOn(boolean on) {
-        this.on = on;
+        if (!shieldDisabledTimer.isFinished())
+            this.on = false;
+        else
+            this.on = on;
+
         if (on) setColor(1, 1, 1, 1);
         else setColor(1, 1, 1, 0.5f);
+    }
+
+    public void shieldDisablingBullet() {
+        shieldDisabledTimer.start();
     }
 
     private void changeSize(float omegaDeg) {
@@ -91,5 +109,26 @@ public class Shield extends Actor {
 
         setOrigin(-getX(), -getY());
         setRotation(90);
+    }
+
+    private void initializeShieldDisabledTimer() {
+        shieldDisabledTimer = new Timer(SHIELD_DISABLED_DURATION) {
+            @Override
+            public void onStart() {
+                setVisible(false);
+                setOn(false);
+            }
+
+            @Override
+            public void onUpdate(float delta) {
+                if (getColor().a == 0)
+                    finish();
+            }
+
+            @Override
+            public void onFinish() {
+                setVisible(true);
+            }
+        };
     }
 }

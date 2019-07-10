@@ -25,13 +25,6 @@ Bullet
   orig: 13, 39
   offset: 0, 0
   index: -1
-Disable Shield
-  rotate: false
-  xy: 33, 66
-  size: 60, 60
-  orig: 60, 60
-  offset: 0, 0
-  index: -1
 Free Controller BG
   rotate: false
   xy: 1229, 1493
@@ -48,28 +41,28 @@ Free Controller Stick
   index: -1
 Heart
   rotate: false
-  xy: 895, 176
+  xy: 33, 66
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Minus
   rotate: false
-  xy: 1258, 1321
+  xy: 895, 176
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Plus
   rotate: false
-  xy: 2254, 1547
+  xy: 1258, 1321
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Question Mark
   rotate: false
-  xy: 1688, 1431
+  xy: 2254, 1547
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
@@ -86,6 +79,13 @@ Restricted Controller Right BG
   xy: 3507, 3615
   size: 83, 476
   orig: 83, 476
+  offset: 0, 0
+  index: -1
+Shield Disabling
+  rotate: false
+  xy: 1688, 1431
+  size: 60, 60
+  orig: 60, 60
   offset: 0, 0
   index: -1
 Shields102
