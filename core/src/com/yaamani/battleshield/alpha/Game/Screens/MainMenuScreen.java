@@ -18,6 +18,7 @@ import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import java.util.Random;
 
@@ -42,7 +43,6 @@ public class MainMenuScreen extends AdvancedScreen {
     private GameplayScreen gameplayScreen;
 
     //private RoundedArch arch;
-
 
     public MainMenuScreen(final AdvancedStage game, GameplayScreen gameplayScreen, boolean transform) {
         super(game, transform);

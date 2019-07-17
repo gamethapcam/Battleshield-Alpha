@@ -21,9 +21,9 @@ public class Shield extends Actor {
 
     private Timer shieldDisabledTimer;
 
-    public Shield(BulletsAndShieldContainer bulletsAndShieldContainer) {
+    public Shield(BulletsAndShieldContainer bulletsAndShieldContainer, GameplayScreen gameplayScreen) {
         this(90, bulletsAndShieldContainer);
-        initializeShieldDisabledTimer();
+        initializeShieldDisabledTimer(gameplayScreen);
     }
 
     public Shield(float omegaDeg, BulletsAndShieldContainer bulletsAndShieldContainer) {
@@ -111,7 +111,7 @@ public class Shield extends Actor {
         setRotation(90);
     }
 
-    private void initializeShieldDisabledTimer() {
+    private void initializeShieldDisabledTimer(GameplayScreen gameplayScreen) {
         shieldDisabledTimer = new Timer(SHIELD_DISABLED_DURATION) {
             @Override
             public void onStart() {
@@ -130,5 +130,7 @@ public class Shield extends Actor {
                 setVisible(true);
             }
         };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(shieldDisabledTimer);
     }
 }

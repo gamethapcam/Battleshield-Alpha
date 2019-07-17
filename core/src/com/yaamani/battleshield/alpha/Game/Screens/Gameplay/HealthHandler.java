@@ -2,7 +2,9 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -44,14 +46,22 @@ public class HealthHandler {
         for (int i = len-1; i >= 0; i--) {
             Bullet bullet = gameplayScreen.getActiveBullets().get(i);
             bullet.stopUsingTheBullet(worldWidth, worldHeight);
-            gameplayScreen.getScore().getFadeOutTween().start();
         }
+
+        gameplayScreen.getScore().getFadeOutTween().start();
+        gameplayScreen.getPauseStuff().getPauseSymbolFadesOutWhenLosing().start();
 
         Bullet.setThereIsPlusOrMinus(false);
 
         gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
         gameplayScreen.getStarsContainer().setThetaForRadialTween(5 * MathUtils.degreesToRadians);
+
+        Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
+        for (int i = 0; i < pauseWhenPausingFinishWhenLosing.length; i++) {
+            if (pauseWhenPausingFinishWhenLosing[i] != null)
+                pauseWhenPausingFinishWhenLosing[i].finish();
+        }
     }
 
     public void newGame() {
@@ -68,6 +78,8 @@ public class HealthHandler {
             gameplayScreen.getScore().resetScore();
             SimpleText scoreText = gameplayScreen.getScore();
             scoreText.setColor(scoreText.getColor().r, scoreText.getColor().g, scoreText.getColor().b, 1);
+            Image pauseSymbol = gameplayScreen.getPauseStuff().getPauseSymbol();
+            pauseSymbol.setColor(pauseSymbol.getColor().r, pauseSymbol.getColor().g, pauseSymbol.getColor().b, 1);
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(BULLETS_DEFAULT_NO_PER_ATTACK);
             gameplayScreen.getBulletsHandler().newWave();
             gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 
 import java.util.Random;
 
@@ -61,7 +62,11 @@ public class Star {
         generateRandomness(viewport);
     }
 
-    public void act(float delta, Vector2 additionalVelocity, StarsContainer.RadialTween radialTween, float thetaForRadialTween, int bulletsPerAttack) { // additionalVelocity is a parameter by the starsContainer to achieve the cool effect of the intro
+    public void act(float delta, Vector2 additionalVelocity, StarsContainer.RadialTween radialTween, float thetaForRadialTween, int bulletsPerAttack, GameplayScreen gameplayScreen) {
+
+        if (gameplayScreen.getState() == GameplayScreen.State.PAUSED)
+            return;
+        // additionalVelocity is a parameter by the starsContainer to achieve the cool effect of the intro
         linearPosition.mulAdd(linearVelocity, delta * (BULLETS_MAX_NUMBER_PER_ATTACK/(float) bulletsPerAttack));
 
         linearPosition.x += additionalVelocity.x * delta*velocityRandom;

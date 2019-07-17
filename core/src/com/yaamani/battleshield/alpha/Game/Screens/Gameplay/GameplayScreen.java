@@ -4,14 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -23,6 +30,8 @@ public class GameplayScreen extends AdvancedScreen {
 
     private GameplayType gameplayType;
 
+    private Array<Timer> pauseWhenPausingFinishWhenLosing;
+
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
 
@@ -33,11 +42,13 @@ public class GameplayScreen extends AdvancedScreen {
     private HealthBar healthBar;
     private HealthHandler healthHandler;
 
-    public enum State {PLAYING, LOST}
+    public enum State {PLAYING, PAUSED, LOST}
     private State state;
 
     private float timePlayedThisTurnSoFar;
     private Score score;
+
+    private PauseStuff pauseStuff;
 
     private SpeedMultiplierStuff speedMultiplierStuff;
 
@@ -60,12 +71,14 @@ public class GameplayScreen extends AdvancedScreen {
         this.myBitmapFont = myBitmapFont;
         this.starsContainer = starsContainer;
 
+        pauseWhenPausingFinishWhenLosing = new Array<Timer>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
+
         initializeBulletPool();
 
         initializeHandlers(game, starsContainer.getRadialTween());
 
         initializeTurret();
-        initializeBulletsAndShieldArray(game);
+        initializeBulletsAndShieldArray();
         //initializeBullets(starsContainer.getRadialTween());
 
         bulletsHandler.newWave();
@@ -99,6 +112,8 @@ public class GameplayScreen extends AdvancedScreen {
     public void act(float delta) {
         if (!isVisible()) return;
         super.act(delta);
+
+        pauseStuff.update(delta);
 
         if (getState() == GameplayScreen.State.PLAYING) {
             speedMultiplierStuff.update(delta);
@@ -190,6 +205,8 @@ public class GameplayScreen extends AdvancedScreen {
         if (controllerLeft != null) controllerLeft.resize(width, height, worldWidth, worldHeight);
         if (controllerRight != null) controllerRight.resize(width, height, worldWidth, worldHeight);
 
+        pauseStuff.resize(width, height, worldWidth, worldHeight);
+
         for (int i = 0; i < bulletsAndShieldContainers.length; i++) {
             bulletsAndShieldContainers[i].resize(width, height, worldWidth, worldHeight);
         }
@@ -250,10 +267,10 @@ public class GameplayScreen extends AdvancedScreen {
         controllerRight.setDebug(true);*/
     }
 
-    private void initializeBulletsAndShieldArray(AdvancedStage game) {
+    private void initializeBulletsAndShieldArray() {
         bulletsAndShieldContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT];
         for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
-            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i, game);
+            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i);
         }
 
         shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
@@ -292,8 +309,6 @@ public class GameplayScreen extends AdvancedScreen {
         healthHandler = new HealthHandler(this);
     }
 
-
-
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
@@ -308,6 +323,8 @@ public class GameplayScreen extends AdvancedScreen {
         this.gameplayType = gameplayType;
         //shieldsAndContainersHandler.setGameplayType(gameplayType);
         initializeControllers(gameplayType);
+        pauseStuff = new PauseStuff(this, myBitmapFont); // must be called after initializeControllers() because pauseSymbol.addActor() must be called after controllerRight.addActor() so that touch gestures for the pauseSymbol have a higher priority.
+
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {
@@ -333,10 +350,6 @@ public class GameplayScreen extends AdvancedScreen {
     public BulletsAndShieldContainer[] getBulletsAndShieldContainers() {
         return bulletsAndShieldContainers;
     }
-
-    /*public SimpleText getBulletSpeedMultiplierText() {
-        return bulletSpeedMultiplierText;
-    }*/
 
     public Controller getControllerLeft() {
         return controllerLeft;
@@ -378,8 +391,16 @@ public class GameplayScreen extends AdvancedScreen {
         return myBitmapFont;
     }
 
+    public PauseStuff getPauseStuff() {
+        return pauseStuff;
+    }
+
     public SpeedMultiplierStuff getSpeedMultiplierStuff() {
         return speedMultiplierStuff;
+    }
+
+    public Timer[] getPauseWhenPausingFinishWhenLosing() {
+        return pauseWhenPausingFinishWhenLosing.items;
     }
 
     //------------------------------ Other methods ------------------------------
@@ -389,5 +410,9 @@ public class GameplayScreen extends AdvancedScreen {
 
     public void resetTimePlayedThisTurnSoFar() {
         timePlayedThisTurnSoFar = 0;
+    }
+
+    public void addToPauseWhenPausingFinishWhenLosing(Timer timer) {
+        pauseWhenPausingFinishWhenLosing.add(timer);
     }
 }

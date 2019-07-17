@@ -13,9 +13,9 @@ public abstract class AdvancedApplicationAdapter implements ApplicationListener 
 
     protected AdvancedStage game;
 
-    private int rotation;
+    //private int rotation;
 
-    private Timer resizeAfterOrientationChange;
+    //private Timer resizeAfterOrientationChange;
 
     private boolean orientationChanges;
     private int fixedWidth;

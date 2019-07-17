@@ -517,6 +517,7 @@ public class BulletsHandler implements Updatable {
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
             }
         };
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentBulletsWaveTimer);
     }
 
     private void initializePlusMinusBulletsTimer() {
@@ -534,6 +535,8 @@ public class BulletsHandler implements Updatable {
         };
 
         plusMinusBulletsTimer.start();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(plusMinusBulletsTimer);
     }
 
     private void initializeDecreaseBulletsPerAttackTimer() {
@@ -556,6 +559,8 @@ public class BulletsHandler implements Updatable {
         };
 
         decreaseBulletsPerAttackTimer.start();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(decreaseBulletsPerAttackTimer);
     }
 
     private void initializeCurrentSpeedMultiplierTimer() {
@@ -578,6 +583,8 @@ public class BulletsHandler implements Updatable {
         };
 
         currentSpeedMultiplierTimer.start();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedMultiplierTimer);
     }
 
     /*private void initializeIsThereDoubleWaveTimer() {

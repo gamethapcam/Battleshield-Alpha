@@ -1,14 +1,11 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
-import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 //import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -29,12 +26,12 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
-    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index, AdvancedStage game) {
-        shield = new Shield(this);
+    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index) {
+        shield = new Shield(this, gameplayScreen);
         gameplayScreen.addActor(this);
         this.index = index;
 
-        rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, game);
+        initializeRotationOmegaAlphaTween(gameplayScreen);
 
         /*rotationText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
         addActor(rotationText);
@@ -45,6 +42,13 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         addActor(rotationNoMinusText);
         rotationNoMinusText.setBoundsHeight(0, WORLD_SIZE/3f + rotationText.getHeight()*1.2f, WORLD_SIZE/40f);
         rotationNoMinusText.setColor(Color.WHITE);*/
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+
+        rotationOmegaAlphaTween.update(delta);
     }
 
     @Override
@@ -85,17 +89,22 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         rotationOmegaAlphaTween.setNewAlpha(newAlpha);
     }
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    private void initializeRotationOmegaAlphaTween(GameplayScreen gameplayScreen) {
+        rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION);
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(rotationOmegaAlphaTween);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
     public class RotationOmegaAlphaTween extends Tween {
 
@@ -110,8 +119,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         private float oldAlpha;
         private Float newAlpha;
 
-        private RotationOmegaAlphaTween(float durationMillis, AdvancedStage game) {
-            super(durationMillis, game);
+        private RotationOmegaAlphaTween(float durationMillis) {
+            super(durationMillis);
 
             oldRotationDeg = BulletsAndShieldContainer.this.getRotation();
             oldOmegaDeg = BulletsAndShieldContainer.this.getShield().getOmegaDeg();

@@ -146,6 +146,10 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion questionMarkBullet;
         public final TextureRegion shieldDisablingBullet;
 
+        public final TextureRegion pauseText;
+        public final TextureRegion pauseSymbol;
+        public final TextureRegion dimmingOverlay;
+
         private final int shieldsArrayLength = (int) ((SHIELDS_SAVING_TO_ANGLE - SHIELDS_SAVING_FROM_ANGLE) / SHIELDS_SKIP_ANGLE_WHEN_SAVING) + 1;
         public final TextureRegion[] shieldsWithVariousAngles = new TextureRegion[shieldsArrayLength];
 
@@ -172,6 +176,10 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             starBullet = atlas.findRegion(ASSETS_STAR_BULLET);
             questionMarkBullet = atlas.findRegion(ASSETS_QUESTION_MARK_BULLET);
             shieldDisablingBullet = atlas.findRegion(ASSETS_SHIELD_DISABLING_BULLET);
+
+            pauseText = atlas.findRegion(ASSETS_PAUSE_TEXT);
+            pauseSymbol = atlas.findRegion(ASSETS_PAUSE_SYMBOL);
+            dimmingOverlay = atlas.findRegion(ASSETS_DIMMING_OVERLAY);
 
             initializeShieldsWithVariousAngles(atlas);
 

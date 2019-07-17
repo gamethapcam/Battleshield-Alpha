@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsHandler;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -38,6 +39,8 @@ public class StarsContainer extends Group implements Disposable{
     private float thetaForRadialTween; // Rad
 
     private BulletsHandler bulletsHandler;
+
+    private GameplayScreen gameplayScreen;
 
     public StarsContainer(AdvancedStage game) {
         setTransform(false);
@@ -74,7 +77,7 @@ public class StarsContainer extends Group implements Disposable{
     public void act(float delta) {
         radialTween.update(delta);
         for (Star star : stars) {
-            star.act(delta, transitionVelocity, radialTween, thetaForRadialTween, bulletsHandler.getBulletsPerAttack());
+            star.act(delta, transitionVelocity, radialTween, thetaForRadialTween, bulletsHandler.getBulletsPerAttack(), gameplayScreen);
         }
     }
 
@@ -129,6 +132,11 @@ public class StarsContainer extends Group implements Disposable{
 
     public void setThetaForRadialTween(float thetaForRadialTween) {
         this.thetaForRadialTween = thetaForRadialTween;
+    }
+
+    public void setGameplayScreen(GameplayScreen gameplayScreen) {
+        this.gameplayScreen = gameplayScreen;
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(radialTween);
     }
 
     @Override

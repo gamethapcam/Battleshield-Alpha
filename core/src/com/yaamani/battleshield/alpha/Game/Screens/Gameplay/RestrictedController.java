@@ -59,6 +59,8 @@ public class RestrictedController extends Controller {
     @Override
     protected void calculateNewSizeInWorldUnits() {
         //calculateRadiusInnerRadius(bg);
+        setBgSize();
+
         float T = CONTROLLER_RESTRICTED_ARCH_RADIUS - CONTROLLER_RESTRICTED_ARCH_RADIUS*CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO;
         float stickDiameter = (toWorldCoordinates(T * Gdx.graphics.getPpiX(), Dimension.X, getStage().getViewport())) / CONTROLLER_FREE_STICK_RATIO;
 
@@ -203,6 +205,20 @@ public class RestrictedController extends Controller {
                 + ", progress = " + (angle - (MathUtils.PI - archAngle/2f)) / (archAngle / 2f));
     }
 
+    private void setBgSize() {
+        float R = CONTROLLER_RESTRICTED_ARCH_RADIUS;
+        float T = R - R * CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO;
+        float theta = CONTROLLER_RESTRICTED_ARCH_ANGLE - 2*(T/2f / (R+T/2f));
+
+        float widthInInches = R + 3f*T/2f - (R + T/2f) * (float) Math.cos(theta/2f);
+        float heightInInches = (float) (2*(R + T/2f)*Math.sin(theta/2f)) + T;
+
+        bg.setSize(
+                toWorldCoordinates(widthInInches * Gdx.graphics.getPpiX(), Dimension.X, getStage().getViewport()),
+                toWorldCoordinates(heightInInches * Gdx.graphics.getPpiY(), Dimension.Y, getStage().getViewport())
+        );
+    }
+
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
@@ -222,17 +238,7 @@ public class RestrictedController extends Controller {
         else if (getControllerPosition() == Direction.RIGHT)
             bg = new Image(Assets.instance.gameplayAssets.restrictedControllerRightBG);
 
-        float R = CONTROLLER_RESTRICTED_ARCH_RADIUS;
-        float T = R - R * CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO;
-        float theta = CONTROLLER_RESTRICTED_ARCH_ANGLE - 2*(T/2f / (R+T/2f));
-
-        float widthInInches = R + 3f*T/2f - (R + T/2f) * (float) Math.cos(theta/2f);
-        float heightInInches = (float) (2*(R + T/2f)*Math.sin(theta/2f)) + T;
-
-        bg.setSize(
-                toWorldCoordinates(widthInInches * Gdx.graphics.getPpiX(), Dimension.X, getStage().getViewport()),
-                toWorldCoordinates(heightInInches * Gdx.graphics.getPpiY(), Dimension.Y, getStage().getViewport())
-        );
+        setBgSize();
 
         //Gdx.app.log(TAG, "bg.getWidth() = " + bg.getWidth() + ", bg.getHeight() = " + bg.getHeight());
 

@@ -301,9 +301,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_BAD
     };
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -452,6 +452,23 @@ public final class Constants {
     public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION = 200;
 
 
+    public static final float PAUSE_SYMBOL_MARGIN_RIGHT = SCORE_TXT_MARGIN;
+
+    public static final float PAUSE_SYMBOL_MARGIN_UP = SCORE_TXT_MARGIN;
+
+    public static final float PAUSE_SYMBOL_HEIGHT = WORLD_SIZE * 79f/1080f;
+
+    public static final float PAUSE_SYMBOL_WIDTH = PAUSE_SYMBOL_HEIGHT * 58f/79f;
+
+    public static final float PAUSE_TEXT_HEIGHT = WORLD_SIZE * 422f/1080f;
+
+    public static final float PAUSE_TEXT_WIDTH = PAUSE_TEXT_HEIGHT * 900f/422f;
+
+    public static final float PAUSE_3_2_1_HEIGHT = TURRET_RADIUS * 2 * 0.7f;
+
+
+    public static final int PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY = 20;
+
 
     public static final String ASSETS_LOGO_ALONE = "Logo.png";
 
@@ -500,6 +517,12 @@ public final class Constants {
     public static final String ASSETS_QUESTION_MARK_BULLET = "Question Mark";
 
     public static final String ASSETS_SHIELD_DISABLING_BULLET = "Shield Disabling";
+
+    public static final String ASSETS_PAUSE_TEXT = "Pause Text";
+
+    public static final String ASSETS_PAUSE_SYMBOL = "Pause Symbol";
+
+    public static final String ASSETS_DIMMING_OVERLAY = "Dimming Overlay";
 
     public static final String ASSETS_HEALTH_BAR = "Big Circle";
 

@@ -131,6 +131,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
             mainMenuScreen = new MainMenuScreen(game, gameplayScreen, false);
 
             starsContainer.setBulletsHandler(gameplayScreen.getBulletsHandler());
+            starsContainer.setGameplayScreen(gameplayScreen);
 
             loadingToMainMenu = new LoadingToMainMenu(game, loadingScreen, mainMenuScreen, starsContainer);
             mainMenuToGameplay = new MainMenuToGameplay(game, mainMenuScreen, gameplayScreen);

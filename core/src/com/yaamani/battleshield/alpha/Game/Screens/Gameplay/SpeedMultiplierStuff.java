@@ -95,6 +95,14 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
         return myProgressBarTween;
     }
 
+    public SimpleText getBulletSpeedMultiplierText() {
+        return bulletSpeedMultiplierText;
+    }
+
+    public MyProgressBar getMyProgressBar() {
+        return myProgressBar;
+    }
+
     //---------------------------------------- Initializers ---------------------------------------
     //---------------------------------------- Initializers ---------------------------------------
     //---------------------------------------- Initializers ---------------------------------------
@@ -137,5 +145,7 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
         };
 
         myProgressBarTween.finish();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(myProgressBarTween);
     }
 }

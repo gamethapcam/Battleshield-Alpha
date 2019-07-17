@@ -146,6 +146,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     @Override
     public void act(float delta) {
         super.act(delta);
+
+        if (gameplayScreen.getState() == GameplayScreen.State.PAUSED)
+            return;
+
         if (inUse) {
             setY(getY() - bulletsHandler.getBulletSpeed() * delta);
 

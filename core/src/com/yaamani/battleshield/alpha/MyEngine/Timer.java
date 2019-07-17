@@ -7,10 +7,11 @@ public class Timer implements Updatable {
     protected float percentage;
     private boolean started = false;
     private boolean finished = false;
+    private boolean paused = false;
 
     //private long delayTimeStart;
     private double delayCurrentTime;
-    private float delay = 0;
+    private float delayMillis = 0;
     private boolean inDelay = false;
 
     /**
@@ -39,8 +40,8 @@ public class Timer implements Updatable {
         onStart();
     }
 
-    public final void start(float delay) {
-        this.delay = delay;
+    public final void start(float delayMillis) {
+        this.delayMillis = delayMillis;
         //delayTimeStart = TimeUtils.nanoTime();
         delayCurrentTime = 0;
         inDelay = true;
@@ -55,10 +56,12 @@ public class Timer implements Updatable {
 
     @Override
     public final void update(float delta) {
+        if (paused) return;
+
         if (inDelay) {
             //float currentDelayTime = MyMath.millisSince(delayTimeStart);
             delayCurrentTime += delta*MyMath.millisToNano;
-            if(/*currentDelayTime*/ delayCurrentTime >= delay) {
+            if(/*currentDelayTime*/ delayCurrentTime >= delayMillis) {
                 inDelay = false;
                 start();
             } else return;
@@ -66,7 +69,7 @@ public class Timer implements Updatable {
 
         if (started) {
             //float currentTime = MyMath.millisSince(startTime);
-            percentage = (float) (currentTime/ durationMillis);
+            percentage = (float) (currentTime / durationMillis);
             currentTime += delta*MyMath.millisToNano;
             if (currentTime > durationMillis) {
                 finish();
@@ -74,10 +77,29 @@ public class Timer implements Updatable {
             }
             //tween(percentage);
         }
+
         onUpdate(delta);
     }
 
     public void onUpdate(float delta) {
+
+    }
+
+    public final void pause() {
+        paused = true;
+        onPause();
+    }
+
+    public void onPause() {
+
+    }
+
+    public final void resume() {
+        paused = false;
+        onResume();
+    }
+
+    public void onResume() {
 
     }
 
@@ -110,5 +132,9 @@ public class Timer implements Updatable {
 
     public boolean isFinished() {
         return finished;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 }
