@@ -4,12 +4,17 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public abstract class AdvancedApplicationAdapter implements ApplicationListener {
+
+    public static final String TAG = AdvancedApplicationAdapter.class.getSimpleName();
 
     protected AdvancedStage game;
 

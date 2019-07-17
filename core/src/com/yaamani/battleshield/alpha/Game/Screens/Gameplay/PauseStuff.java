@@ -1,10 +1,19 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
@@ -18,10 +27,14 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class PauseStuff implements Resizable, Updatable {
 
+    public static final String TAG = PauseStuff.class.getSimpleName();
+
     private Image pauseSymbol;
     private Group resumeBounds;
     private Image pauseText;
     private Image dimmingOverlay;
+
+    private GestureDetector doubleTapToResume;
 
     private MyBitmapFont myBitmapFont;
     private SimpleText _3;
@@ -43,6 +56,8 @@ public class PauseStuff implements Resizable, Updatable {
         dimmingOverlay = new Image(Assets.instance.gameplayAssets.dimmingOverlay);
 
         initializePauseText();
+
+        initializeDoubleTapToResume();
 
         initializeResumeBounds();
 
@@ -136,6 +151,10 @@ public class PauseStuff implements Resizable, Updatable {
         return pauseSymbol;
     }
 
+    public GestureDetector getDoubleTapToResume() {
+        return doubleTapToResume;
+    }
+
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
@@ -146,19 +165,32 @@ public class PauseStuff implements Resizable, Updatable {
         pauseText.setSize(PAUSE_TEXT_WIDTH, PAUSE_TEXT_HEIGHT);
     }
 
+    private void initializeDoubleTapToResume() {
+        doubleTapToResume = new GestureDetector(new GestureDetector.GestureAdapter() {
+            @Override
+            public boolean tap(float x, float y, int count, int button) {
+                if (gameplayScreen.getState() == GameplayScreen.State.PLAYING & count == 2)
+                    pauseTheGame();
+                return false;
+            }
+        });
+
+        InputMultiplexer inputMultiplexer = new InputMultiplexer(doubleTapToResume, gameplayScreen.getStage());
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
+
     private void initializeResumeBounds() {
         resumeBounds = new Group();
         resumeBounds.addActor(dimmingOverlay);
         resumeBounds.addActor(pauseText);
-        resumeBounds.addListener(new ActorGestureListener() {
+        resumeBounds.addListener(new ClickListener() {
             @Override
-            public void tap(InputEvent event, float x, float y, int count, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 resumeAfterCountDown.start();
                 _3Tween.start();
                 gameplayScreen.getSpeedMultiplierStuff().getBulletSpeedMultiplierText().setVisible(false);
                 gameplayScreen.getSpeedMultiplierStuff().getMyProgressBar().setVisible(false);
                 gameplayScreen.removeActor(resumeBounds);
-                super.tap(event, x, y, count, button);
             }
         });
     }
@@ -168,9 +200,9 @@ public class PauseStuff implements Resizable, Updatable {
         pauseSymbol.setSize(PAUSE_SYMBOL_WIDTH, PAUSE_SYMBOL_HEIGHT);
         gameplayScreen.addActor(pauseSymbol);
 
-        pauseSymbol.addListener(new ActorGestureListener() {
+        pauseSymbol.addListener(new ClickListener() {
             @Override
-            public void tap(InputEvent event, float x, float y, int count, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 pauseTheGame();
             }
         });
@@ -290,4 +322,17 @@ public class PauseStuff implements Resizable, Updatable {
             }
         };
     }
+
+
+    // --------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------
+
+
 }
+
+
+
+

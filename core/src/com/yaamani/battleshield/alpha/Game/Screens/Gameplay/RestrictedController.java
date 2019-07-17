@@ -200,9 +200,9 @@ public class RestrictedController extends Controller {
             else angle = MathUtils.clamp(angle, -MathUtils.PI, -(MathUtils.PI-archAngle/2f));
         }
 
-        Gdx.app.log(TAG, "angle = " + angle*MathUtils.radDeg
+       /* Gdx.app.log(TAG, "angle = " + angle*MathUtils.radDeg
                 + ", getAngle() = " + getAngle()*MathUtils.radDeg
-                + ", progress = " + (angle - (MathUtils.PI - archAngle/2f)) / (archAngle / 2f));
+                + ", progress = " + (angle - (MathUtils.PI - archAngle/2f)) / (archAngle / 2f));*/
     }
 
     private void setBgSize() {

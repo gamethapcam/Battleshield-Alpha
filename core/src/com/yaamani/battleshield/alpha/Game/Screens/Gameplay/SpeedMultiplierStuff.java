@@ -82,7 +82,7 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
         float bulletSpeedMultiplierTextHeight2 = bulletSpeedMultiplierText.getHeight()/2f;
         Viewport viewport = gameplayScreen.getStage().getViewport();
         bulletSpeedMultiplierText.setPosition(viewport.getWorldWidth()/2f - bulletSpeedMultiplierTextWidth2,
-                viewport.getWorldHeight()/2f - bulletSpeedMultiplierTextHeight2);
+                viewport.getWorldHeight()/2f - bulletSpeedMultiplierTextHeight2 / 1.7f);
     }
 
     private void progressBarUpdatePosition() {

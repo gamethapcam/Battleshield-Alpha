@@ -323,7 +323,7 @@ public class GameplayScreen extends AdvancedScreen {
         this.gameplayType = gameplayType;
         //shieldsAndContainersHandler.setGameplayType(gameplayType);
         initializeControllers(gameplayType);
-        pauseStuff = new PauseStuff(this, myBitmapFont); // must be called after initializeControllers() because pauseSymbol.addActor() must be called after controllerRight.addActor() so that touch gestures for the pauseSymbol have a higher priority.
+        pauseStuff = new PauseStuff(this, myBitmapFont); // must be called after initializeControllers() because pauseSymbol.addActor() and some other actors must be called after controllerRight.addActor() so that touch gestures for the pauseSymbol have a higher priority for triggering input events.
 
     }
 
