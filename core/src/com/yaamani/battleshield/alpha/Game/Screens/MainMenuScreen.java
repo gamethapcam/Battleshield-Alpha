@@ -327,6 +327,8 @@ public class MainMenuScreen extends AdvancedScreen {
 
     private void startRestricted(final AdvancedStage game) {
         gameplayScreen.setGameplayType(GameplayType.RESTRICTED);
+        //gameplayScreen.setState(GameplayScreen.State.PLAYING);
+        gameplayScreen.getHealthHandler().newGame();
         game.switchScreens(mainMenuToGameplay);
         //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
     }

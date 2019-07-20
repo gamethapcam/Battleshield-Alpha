@@ -81,7 +81,7 @@ public class GameplayScreen extends AdvancedScreen {
         initializeBulletsAndShieldArray();
         //initializeBullets(starsContainer.getRadialTween());
 
-        bulletsHandler.newWave();
+        //bulletsHandler.newWave();
 
         healthBar = new HealthBar(this);
 
