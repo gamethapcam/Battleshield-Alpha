@@ -3,12 +3,10 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
-//import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsAndShieldContainer extends Group implements Resizable {
@@ -90,7 +88,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     }
 
     private void initializeRotationOmegaAlphaTween(GameplayScreen gameplayScreen) {
-        rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION);
+        rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, MyInterpolation.fastExp10);
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(rotationOmegaAlphaTween);
     }
 
@@ -119,8 +117,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         private float oldAlpha;
         private Float newAlpha;
 
-        private RotationOmegaAlphaTween(float durationMillis) {
-            super(durationMillis);
+        private RotationOmegaAlphaTween(float durationMillis, Interpolation interpolation) {
+            super(durationMillis, interpolation);
 
             oldRotationDeg = BulletsAndShieldContainer.this.getRotation();
             oldOmegaDeg = BulletsAndShieldContainer.this.getShield().getOmegaDeg();
@@ -128,8 +126,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         }
 
         @Override
-        public void tween(float percentage) {
-            Interpolation interpolation = MyInterpolation.fastExp10;
+        public void tween(float percentage, Interpolation interpolation) {
+            //Interpolation interpolation = MyInterpolation.fastExp10;
             BulletsAndShieldContainer.this.getColor().a = interpolation.apply(oldAlpha, newAlpha, percentage);
 
             if (newOmegaDeg == null | newRotationDeg == null) return;

@@ -145,21 +145,21 @@ public class StarsContainer extends Group implements Disposable{
     }
 
     private void initializeRadialTween() {
-        radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION) {
+        radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION, fastExp10) {
             @Override
-            public void tween(float percentage) {
-                Interpolation interpolationIn = MyInterpolation.fastExp10In;
-                Interpolation interpolationOut = MyInterpolation.fastExp10Out;
-                if (percentage < 0.5) {
+            public void tween(float percentage, Interpolation interpolation) {
+                /*Interpolation interpolationIn = MyInterpolation.fastExp10In;
+                Interpolation interpolationOut = MyInterpolation.fastExp10Out;*/
+                if (percentage < 0.5) { // interpolationIn
                     if (getSpecialBullet() == SpecialBullet.MINUS)
-                        thetaForRadialTween = interpolationIn.apply(0, STARS_RADIAL_TWEEN_THETA_MAX, percentage * 2);
+                        thetaForRadialTween = interpolation.apply(0, STARS_RADIAL_TWEEN_THETA_MAX, percentage);
                     else if (getSpecialBullet() == SpecialBullet.PLUS)
-                        thetaForRadialTween = interpolationIn.apply(0, -STARS_RADIAL_TWEEN_THETA_MAX, percentage * 2);
-                } else {
+                        thetaForRadialTween = interpolation.apply(0, -STARS_RADIAL_TWEEN_THETA_MAX, percentage);
+                } else { // interpolationIn
                     if (getSpecialBullet() == SpecialBullet.MINUS)
-                        thetaForRadialTween = interpolationOut.apply(STARS_RADIAL_TWEEN_THETA_MAX, 0, (percentage - 0.5f) * 2);
+                        thetaForRadialTween = interpolation.apply(STARS_RADIAL_TWEEN_THETA_MAX, 0, percentage);
                     else if (getSpecialBullet() == SpecialBullet.PLUS)
-                        thetaForRadialTween = interpolationOut.apply(-STARS_RADIAL_TWEEN_THETA_MAX, 0, (percentage - 0.5f) * 2);
+                        thetaForRadialTween = interpolation.apply(-STARS_RADIAL_TWEEN_THETA_MAX, 0, percentage);
                 }
             }
         };
@@ -189,8 +189,8 @@ public class StarsContainer extends Group implements Disposable{
 
         private SpecialBullet specialBullet;
 
-        public RadialTween(float durationMillis) {
-            super(durationMillis);
+        public RadialTween(float durationMillis, Interpolation interpolation) {
+            super(durationMillis, interpolation);
         }
 
         public void start(SpecialBullet specialBullet) {

@@ -132,5 +132,6 @@ public class Shield extends Actor {
         };
 
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(shieldDisabledTimer);
+        shieldDisabledTimer.finish();
     }
 }

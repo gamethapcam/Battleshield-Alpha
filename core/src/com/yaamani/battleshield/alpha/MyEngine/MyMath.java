@@ -12,7 +12,7 @@ public final class MyMath {
 
     public static final String TAG = MyMath.class.getSimpleName();
 
-    public static final double millisToNano = 1000f;
+    public static final double secondsToMillis = 1000f;
 
     //The next 2 methods for calculating the aspect ratio. from (https://codereview.stackexchange.com/a/26698)
     private static int gcd(int p, int q) {

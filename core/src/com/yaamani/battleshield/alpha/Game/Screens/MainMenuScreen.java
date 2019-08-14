@@ -6,6 +6,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,12 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import java.util.Random;
 
@@ -41,6 +45,13 @@ public class MainMenuScreen extends AdvancedScreen {
     private MyEarthEntity frontGrass;
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
+
+    private MyTween _dummy;
+    private float _dummyInitialX;
+    private float _dummyFinalX;
+    private Array<Float> _xPoints, _yPoints;
+    private float currentTime;
+    private boolean isRecording;
 
     //private RoundedArch arch;
 
@@ -143,12 +154,67 @@ public class MainMenuScreen extends AdvancedScreen {
         arch.setColor(1, 1, 1, 0.5f);
         arch.setInnerRadiusRatio(WORLD_SIZE/16f);
         arch.setAngle(60*MathUtils.degRad);*/
+        _dummyInitialX = 0;
+        _dummyFinalX = 0;
+        _dummy = new MyTween(3000, /*MyInterpolation.fastExp10Out*/MyInterpolation.myLinear, _dummyInitialX, _dummyFinalX) {
+            @Override
+            public void myTween(float percentage, Interpolation interpolation, float initialVal, float finalVal) {
+                start.setX(interpolation.apply(initialVal, finalVal, percentage));
+            }
+        };
+    }
+
+    private void printXY() {
+        StringBuilder x = new StringBuilder("[");
+        for (int i = 0; i < _xPoints.size; i++) {
+            if (i < _xPoints.size-1) {
+                x.append(_xPoints.get(i));
+                x.append(", ");
+            } else
+                x.append(_xPoints.get(i));
+        }
+        x.append("]");
+        Gdx.app.log(TAG, _xPoints.size + ", " + x.toString());
+
+        StringBuilder y = new StringBuilder("[");
+        for (int i = 0; i < _yPoints.size; i++) {
+            if (i < _yPoints.size-1) {
+                y.append(_yPoints.get(i));
+                y.append(", ");
+            } else
+                y.append(_yPoints.get(i));
+        }
+        y.append("]");
+        Gdx.app.log(TAG, y.toString());
     }
 
     @Override
     public void act(float delta) {
         if (!isVisible()) return;
         super.act(delta);
+
+        _dummy.update(delta);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            _dummy.start();
+            _dummy.resume();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.P))
+            _dummy.pauseGradually(3000, MyTween.PauseResumeGraduallyInterpolationMode.EXP10);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
+            isRecording = !isRecording;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            printXY();
+
+        /*else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
+            _dummy.resumeGradually(400, MyInterpolation.fastExp10In);*/
+
+        currentTime += delta * MyMath.secondsToMillis;
+
+        if (isRecording) {
+            if (_xPoints == null) _xPoints = new Array<Float>(1000);
+            if (_yPoints == null) _yPoints = new Array<Float>(1000);
+            _xPoints.add(currentTime);
+            _yPoints.add(start.getX());
+        }
 
         cycleAspectRatios();
 
@@ -189,8 +255,12 @@ public class MainMenuScreen extends AdvancedScreen {
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         super.resize(width, height, worldWidth, worldHeight);
         start.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
-        if (start != null) start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT - start.getWidth(),
-                start.getY());
+        if (start != null) {
+            start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT - start.getWidth(),
+                    start.getY());
+            _dummy.setFinalVal(start.getX());
+            Gdx.app.log(TAG, "" + start.getX());
+        }
 
         TextureRegion _restricted = Assets.instance.mainMenuAssets.restricted;
         restricted.setSize(MM_START_TXT_HEIGHT * _restricted.getRegionWidth() / _restricted.getRegionHeight(), MM_START_TXT_HEIGHT);

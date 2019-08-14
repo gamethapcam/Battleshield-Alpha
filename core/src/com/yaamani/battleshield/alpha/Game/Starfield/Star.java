@@ -66,9 +66,10 @@ public class Star {
 
         if (gameplayScreen.getState() == GameplayScreen.State.PAUSED)
             return;
-        // additionalVelocity is a parameter by the starsContainer to achieve the cool effect of the intro
+
         linearPosition.mulAdd(linearVelocity, delta * (BULLETS_MAX_NUMBER_PER_ATTACK/(float) bulletsPerAttack));
 
+        // additionalVelocity is a parameter by the starsContainer to achieve the cool effect of the intro
         linearPosition.x += additionalVelocity.x * delta*velocityRandom;
         linearPosition.y += additionalVelocity.y * delta*velocityRandom;
 

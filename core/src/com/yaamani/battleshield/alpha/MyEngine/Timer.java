@@ -32,6 +32,10 @@ public class Timer implements Updatable {
         this.durationMillis = durationMillis;
     }
 
+    public Timer() {
+        this(0);
+    }
+
     public final void start() {
         //startTime = TimeUtils.nanoTime();
         currentTime = 0;
@@ -60,7 +64,7 @@ public class Timer implements Updatable {
 
         if (inDelay) {
             //float currentDelayTime = MyMath.millisSince(delayTimeStart);
-            delayCurrentTime += delta*MyMath.millisToNano;
+            delayCurrentTime += delta*MyMath.secondsToMillis;
             if(/*currentDelayTime*/ delayCurrentTime >= delayMillis) {
                 inDelay = false;
                 start();
@@ -70,7 +74,7 @@ public class Timer implements Updatable {
         if (started) {
             //float currentTime = MyMath.millisSince(startTime);
             percentage = (float) (currentTime / durationMillis);
-            currentTime += delta*MyMath.millisToNano;
+            currentTime += delta*MyMath.secondsToMillis;
             if (currentTime > durationMillis) {
                 finish();
                 //return;
@@ -124,6 +128,13 @@ public class Timer implements Updatable {
 
     public float getPercentage() {
         return percentage;
+    }
+
+    public void setPercentage(float percentage) {
+        if (percentage > 1 | percentage < 0)
+            throw new ValueOutOfRangeException("percentage must be smaller than 1 and greater than 0.");
+        this.percentage = percentage;
+        currentTime = percentage * getDurationMillis();
     }
 
     public boolean isStarted() {
