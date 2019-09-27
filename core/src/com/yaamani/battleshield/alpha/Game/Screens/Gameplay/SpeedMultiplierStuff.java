@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyProgressBar;
@@ -127,13 +128,13 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
     }
 
     private void initializeMyProgressBarTween() {
-        myProgressBarTween = new Tween(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION) {
+        myProgressBarTween = new Tween(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION, fadeOut) {
             private float progressBarPercentageOnStart;
             private float progressBarPercentageOnFinish;
 
             @Override
-            public void tween(float percentage) {
-                myProgressBar.setPercentage(/*fastExp10Out*/fadeOut.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
+            public void tween(float percentage, Interpolation interpolation) {
+                myProgressBar.setPercentage(/*myExp10Out*/interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
             }
 
             @Override

@@ -2,15 +2,16 @@ package com.yaamani.battleshield.alpha.Game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.ResumeGraduallyTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
@@ -18,8 +19,6 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
-import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.drawRoundedArch;
-import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.saveRestrictedControllerBG;
 import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.saveShieldsWithVariousAngles;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -53,6 +52,9 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         initializeLoadingScreen();
 
         //saveProgrammaticallyGeneratedTextures(1080);
+
+        ResumeGraduallyTesting resumeGraduallyTesting = new ResumeGraduallyTesting();
+        resumeGraduallyTesting.compareFunctions(MyInterpolation.myPow5Out, 1, 0, 1, 0.4f, 0.01f, 71, 1/100f, 4, 2);
     }
 
     @Override

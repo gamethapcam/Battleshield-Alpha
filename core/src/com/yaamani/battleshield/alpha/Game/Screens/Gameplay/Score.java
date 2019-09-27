@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Interpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
@@ -131,11 +132,11 @@ public class Score extends SimpleText implements Resizable{
     }
 
     private void initializeFadeOutTween() {
-        fadeOutTween = new Tween(SCORE_FADE_OUT_TWEEN_DURATION) {
+        fadeOutTween = new Tween(SCORE_FADE_OUT_TWEEN_DURATION, linear) {
             @Override
-            public void tween(float percentage) {
+            public void tween(float percentage, Interpolation interpolation) {
                 Color color = getColor();
-                setColor(color.r, color.g, color.b, linear.apply(1 - percentage));
+                setColor(color.r, color.g, color.b, interpolation.apply(1 - percentage));
             }
 
             @Override

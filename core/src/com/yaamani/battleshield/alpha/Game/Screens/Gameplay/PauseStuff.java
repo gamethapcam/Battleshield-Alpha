@@ -4,15 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
@@ -132,10 +127,10 @@ public class PauseStuff implements Resizable, Updatable {
         gameplayScreen.getSpeedMultiplierStuff().getMyProgressBar().setVisible(true);
     }
 
-    private void _3_2_1_Tween_Interpolation(SimpleText text, float percentage) {
+    private void _3_2_1_Tween(SimpleText text, float percentage, Interpolation interpolation) {
         Color color = text.getColor();
         if (percentage < 0.3f)
-            text.setColor(color.r, color.g, color.b, linear.apply(percentage) * 10f/3f);
+            text.setColor(color.r, color.g, color.b, interpolation.apply(percentage) * 10f/3f);
     }
 
     //------------------------------ Getters And Setters ------------------------------
@@ -209,11 +204,11 @@ public class PauseStuff implements Resizable, Updatable {
     }
 
     private void initializePauseSymbolFadesOutWhenLosing() {
-        pauseSymbolFadesOutWhenLosing = new Tween(SCORE_FADE_OUT_TWEEN_DURATION) {
+        pauseSymbolFadesOutWhenLosing = new Tween(SCORE_FADE_OUT_TWEEN_DURATION, linear) {
             @Override
-            public void tween(float percentage) {
+            public void tween(float percentage, Interpolation interpolation) {
                 Color color = pauseSymbol.getColor();
-                pauseSymbol.setColor(color.r, color.g, color.b, linear.apply(1 - percentage));
+                pauseSymbol.setColor(color.r, color.g, color.b, interpolation.apply(1 - percentage));
             }
 
             @Override
@@ -259,10 +254,10 @@ public class PauseStuff implements Resizable, Updatable {
     }
 
     private void initialize_3_2_1_Tween() {
-        _3Tween = new Tween(1000) {
+        _3Tween = new Tween(1000, linear) {
             @Override
-            public void tween(float percentage) {
-                _3_2_1_Tween_Interpolation(_3, percentage);
+            public void tween(float percentage, Interpolation interpolation) {
+                _3_2_1_Tween(_3, percentage, linear);
             }
 
             @Override
@@ -281,10 +276,10 @@ public class PauseStuff implements Resizable, Updatable {
 
         // -------------------
 
-        _2Tween = new Tween(1000) {
+        _2Tween = new Tween(1000, linear) {
             @Override
-            public void tween(float percentage) {
-                _3_2_1_Tween_Interpolation(_2, percentage);
+            public void tween(float percentage, Interpolation interpolation) {
+                _3_2_1_Tween(_2, percentage, interpolation);
             }
 
             @Override
@@ -303,10 +298,10 @@ public class PauseStuff implements Resizable, Updatable {
 
         // -------------------
 
-        _1Tween = new Tween(1000) {
+        _1Tween = new Tween(1000, linear) {
             @Override
-            public void tween(float percentage) {
-                _3_2_1_Tween_Interpolation(_1, percentage);
+            public void tween(float percentage, Interpolation interpolation) {
+                _3_2_1_Tween(_1, percentage, linear);
             }
 
             @Override

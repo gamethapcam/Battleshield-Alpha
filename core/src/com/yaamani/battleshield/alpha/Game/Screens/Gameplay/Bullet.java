@@ -1,11 +1,12 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -13,9 +14,12 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
+import static com.badlogic.gdx.math.Interpolation.*;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class Bullet extends Group implements Resizable, Pool.Poolable {
@@ -43,6 +47,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private SimpleText type; // Debugging
 
+    private Tween bulletMovement;
+    private float initialY;
+    private float finalY;
+
     public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer.RadialTween radialTweenStars, Viewport viewport) {
         this.gameplayScreen = gameplayScreen;
         this.bulletPool = gameplayScreen.getBulletPool();
@@ -60,6 +68,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //bulletPool.getFree();
 
         initializeType();
+
+        initializeBulletMovement();
+
+        //setColor(1, 1, 1, 0.2f); //Debugging
     }
 
     @Override
@@ -87,6 +99,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         attach(parent);
 
         setY(getY() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT));
+
+        bulletMovementSetDurationAndStart();
     }
 
     public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent/*, boolean isDouble, int indexForDoubleWave*/) {
@@ -101,6 +115,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         float additionalDistance = BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_CLEARANCE_BETWEEN_WAVES; //Distance between the bullet and the nearest bullet attached to the previous wave
         setY(getY() - additionalDistance + (additionalDistance + BULLETS_SPECIAL_WAVE_LENGTH)/2f - BULLETS_SPECIAL_DIAMETER);
 
+        bulletMovementSetDurationAndStart();
     }
 
     private void attach(BulletsAndShieldContainer parent) {
@@ -150,8 +165,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (gameplayScreen.getState() == GameplayScreen.State.PAUSED)
             return;
 
+
         if (inUse) {
-            setY(getY() - bulletsHandler.getBulletSpeed() * delta);
+            //setY(getY() - bulletsHandler.getBulletSpeed() * delta);
+            bulletMovement.update(delta);
+            //type.setColor(1, 1, 1, type.getColor().a - 0.001f);
 
             correctSpecialBulletsRotation();
 
@@ -173,7 +191,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             }
 
             //The bullet hits the turret
-            if (getY() < TURRET_RADIUS)  {
+            if (getY() <= TURRET_RADIUS)  {
                 if (parent.getColor().a >= 0.95f)
                     currentEffect.effect();
 
@@ -202,6 +220,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public void stopUsingTheBullet(float worldWidth, float worldHeight) {
         inUse = false;
+        bulletMovement.finish();
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
         bulletPool.free(this);
@@ -230,7 +249,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         region = Assets.instance.gameplayAssets.bullet;
         currentEffect = effects.ordinary;
 
-        if (type != null) type.setVisible(false);
+        //if (type != null) type.setVisible(false);
     }
 
     public void setSpecial(SpecialBullet specialType, boolean questionMark) {
@@ -289,18 +308,39 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //addActor(type);
     }
 
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    private void bulletMovementSetDurationAndStart() {
+        initialY = getY();
+        finalY = 0;
+        bulletMovement.setDurationMillis((initialY - finalY) / (bulletsHandler.getBulletSpeed()) * 1000);
+        bulletMovement.start();
+    }
+
+    private void initializeBulletMovement() {
+        bulletMovement = new Tween(linear) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setY(interpolation.apply(initialY, finalY, percentage));
+            }
+        };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(bulletMovement);
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+
     private interface BulletEffect {
         void effect();
     }
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
+
     private class Effects {
         private BulletEffect ordinary;
 

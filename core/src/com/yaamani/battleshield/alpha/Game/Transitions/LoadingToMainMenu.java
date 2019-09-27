@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Transitions;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
@@ -51,53 +52,53 @@ public class LoadingToMainMenu extends Transition {
 
     //--------
     private void initializePinkToGreyBG() {
-        pinkToGreyBG = new Tween(PINK_TO_GREY_DURATION, this) {
+        pinkToGreyBG = new Tween(PINK_TO_GREY_DURATION, linear, this) {
             @Override
-            public void tween(float percentage) {
-                float r = linear.apply(LOADING_BG_COLOR_R, BG_COLOR_GREY, percentage);
-                float g = linear.apply(LOADING_BG_COLOR_G, BG_COLOR_GREY, percentage);
-                float b = linear.apply(LOADING_BG_COLOR_B, BG_COLOR_GREY, percentage);
+            public void tween(float percentage, Interpolation interpolation) {
+                float r = interpolation.apply(LOADING_BG_COLOR_R, BG_COLOR_GREY, percentage);
+                float g = interpolation.apply(LOADING_BG_COLOR_G, BG_COLOR_GREY, percentage);
+                float b = interpolation.apply(LOADING_BG_COLOR_B, BG_COLOR_GREY, percentage);
                 SolidBG.instance.setColor(r, g, b);
             }
         };
     }
 
     private void initializeStarsFadeIn(final StarsContainer starsContainer) {
-        starsFadeIn = new Tween(STARS_FADE_IN_DURATION, this) {
+        starsFadeIn = new Tween(STARS_FADE_IN_DURATION, linear, this) {
             Star[] stars = starsContainer.getStars();
 
             @Override
-            public void tween(float percentage) {
+            public void tween(float percentage, Interpolation interpolation) {
                 for (int i = 0; i < stars.length; i++) {
-                    stars[i].setAlpha(linear.apply(percentage));
+                    stars[i].setAlpha(interpolation.apply(percentage));
                 }
             }
         };
     }
 
     private void initializeEntitiesUpwards() {
-        mmEarthEntitiesUpwards = new Tween(MM_EARTH_ENTITIES_UPWARDS_DURATION, this) {
+        mmEarthEntitiesUpwards = new Tween(MM_EARTH_ENTITIES_UPWARDS_DURATION, fadeOut, this) {
             MyEarthEntity[] earthEntities = ((MainMenuScreen) in).getEarthEntities();
 
             @Override
-            public void tween(float percentage) {
+            public void tween(float percentage, Interpolation interpolation) {
                 for (MyEarthEntity earthEntity : (earthEntities)) {
-                    earthEntity.setY(fadeOut.apply(earthEntity.getInitialImageY(), earthEntity.getFinalImageY(), percentage));
+                    earthEntity.setY(interpolation.apply(earthEntity.getInitialImageY(), earthEntity.getFinalImageY(), percentage));
                 }
             }
         };
     }
 
     private void initializeStarsUpwards(final StarsContainer starsContainer) {
-        starsUpwards = new Tween(STARS_UPWARDS_DURATION, this) {
+        starsUpwards = new Tween(STARS_UPWARDS_DURATION, fade, this) {
             Vector2 transitionVel = starsContainer.getTransitionVelocity();
 
             @Override
-            public void tween(float percentage) {
+            public void tween(float percentage, Interpolation interpolation) {
                 if (percentage <= 0.5f)
-                    transitionVel.set(0, fade.apply(0, STARS_UPWARDS_MAX_TRANSITION, percentage * 2));
+                    transitionVel.set(0, fade.apply(0, STARS_UPWARDS_MAX_TRANSITION, percentage));
                 else
-                    transitionVel.set(0, fade.apply(STARS_UPWARDS_MAX_TRANSITION, 0, (percentage - 0.5f) * 2f));
+                    transitionVel.set(0, fade.apply(STARS_UPWARDS_MAX_TRANSITION, 0, percentage));
             }
 
             @Override
@@ -115,24 +116,24 @@ public class LoadingToMainMenu extends Transition {
     }
 
     private void initializeLogoFadesOut() {
-        logoFadesOut = new Tween(LOGO_FADES_OUT_DURATION, this) {
+        logoFadesOut = new Tween(LOGO_FADES_OUT_DURATION, linear, this) {
             @Override
-            public void tween(float percentage) {
-                ((LoadingScreen) out).setLogosAlpha(linear.apply(1-percentage));
+            public void tween(float percentage, Interpolation interpolation) {
+                ((LoadingScreen) out).setLogosAlpha(interpolation.apply(1-percentage));
             }
         };
     }
 
     private void initializeStartTxtAppear() {
-        startTxtAppear = new Tween(START_TXT_APPEAR_DURATION, this) {
+        startTxtAppear = new Tween(START_TXT_APPEAR_DURATION, threeSteps, this) {
             @Override
             public void onStart() {
                 ((MainMenuScreen) in).setStartVisibility(/*false*/true);
             }
 
             @Override
-            public void tween(float percentage) {
-                ((MainMenuScreen) in).setStartsAlpha(threeSteps.apply(percentage));
+            public void tween(float percentage, Interpolation interpolation) {
+                ((MainMenuScreen) in).setStartsAlpha(interpolation.apply(percentage));
             }
         };
     }
