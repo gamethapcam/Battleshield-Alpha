@@ -30,7 +30,7 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class MainMenuScreen extends AdvancedScreen {
 
-    public static final String TAG= MainMenuScreen.class.getSimpleName();
+    public static final String TAG = MainMenuScreen.class.getSimpleName();
 
     private Image start;
     private Image free;
@@ -156,10 +156,16 @@ public class MainMenuScreen extends AdvancedScreen {
         arch.setAngle(60*MathUtils.degRad);*/
         _dummyInitialX = 0;
         _dummyFinalX = 0;
-        _dummy = new MyTween(3000, /*MyInterpolation.fastExp10Out*/MyInterpolation.myLinear, _dummyInitialX, _dummyFinalX) {
+        _dummy = new MyTween(2000, /*MyInterpolation.myExp10Out*/MyInterpolation.myExp10, _dummyInitialX, _dummyFinalX) {
             @Override
-            public void myTween(float percentage, Interpolation interpolation, float initialVal, float finalVal) {
-                start.setX(interpolation.apply(initialVal, finalVal, percentage));
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX) {
+                start.setX(myInterpolation.apply(startX, endX, startY, endY, currentX));
+            }
+
+            @Override
+            public void onUpdate(float delta) {
+                super.onUpdate(delta);
+                //Gdx.app.log(MainMenuScreen.TAG, getPercentage() + ", isStarted() = " + isStarted() + ", getX() = " + start.getX());
             }
         };
     }
@@ -198,14 +204,21 @@ public class MainMenuScreen extends AdvancedScreen {
             _dummy.start();
             _dummy.resume();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.P))
-            _dummy.pauseGradually(3000, MyTween.PauseResumeGraduallyInterpolationMode.EXP10);
+            _dummy.pause();
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.G))
+            //_dummy.pauseGradually(1000, start.getX() - 15);
+            _dummy.pauseGradually(1500);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.H))
+            _dummy.resumeGradually(1500);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
+            _dummy.resume();
         else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
             isRecording = !isRecording;
         else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             printXY();
 
         /*else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
-            _dummy.resumeGradually(400, MyInterpolation.fastExp10In);*/
+            _dummy.resumeGradually(400, MyInterpolation.myExp10In);*/
 
         currentTime += delta * MyMath.secondsToMillis;
 

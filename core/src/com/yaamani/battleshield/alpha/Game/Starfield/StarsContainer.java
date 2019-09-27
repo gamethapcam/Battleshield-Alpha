@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsHandler;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
-import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 
@@ -145,11 +144,11 @@ public class StarsContainer extends Group implements Disposable{
     }
 
     private void initializeRadialTween() {
-        radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION, fastExp10) {
+        radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION, myExp10) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                /*Interpolation interpolationIn = MyInterpolation.fastExp10In;
-                Interpolation interpolationOut = MyInterpolation.fastExp10Out;*/
+                /*Interpolation interpolationIn = MyInterpolation.myExp10In;
+                Interpolation interpolationOut = MyInterpolation.myExp10Out;*/
                 if (percentage < 0.5) { // interpolationIn
                     if (getSpecialBullet() == SpecialBullet.MINUS)
                         thetaForRadialTween = interpolation.apply(0, STARS_RADIAL_TWEEN_THETA_MAX, percentage);

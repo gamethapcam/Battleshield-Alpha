@@ -134,7 +134,7 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                myProgressBar.setPercentage(/*fastExp10Out*/interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
+                myProgressBar.setPercentage(/*myExp10Out*/interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
             }
 
             @Override

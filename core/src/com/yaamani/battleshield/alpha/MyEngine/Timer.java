@@ -4,7 +4,7 @@ public class Timer implements Updatable {
     //private long startTime;
     private double currentTime;
     private float durationMillis; // millis
-    protected float percentage;
+    private float percentage;
     private boolean started = false;
     private boolean finished = false;
     private boolean paused = false;

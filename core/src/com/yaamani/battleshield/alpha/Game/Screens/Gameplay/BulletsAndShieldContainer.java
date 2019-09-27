@@ -88,7 +88,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     }
 
     private void initializeRotationOmegaAlphaTween(GameplayScreen gameplayScreen) {
-        rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, MyInterpolation.fastExp10);
+        rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, MyInterpolation.myExp10);
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(rotationOmegaAlphaTween);
     }
 
@@ -127,7 +127,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         @Override
         public void tween(float percentage, Interpolation interpolation) {
-            //Interpolation interpolation = MyInterpolation.fastExp10;
+            //Interpolation interpolation = MyInterpolation.myExp10;
             BulletsAndShieldContainer.this.getColor().a = interpolation.apply(oldAlpha, newAlpha, percentage);
 
             if (newOmegaDeg == null | newRotationDeg == null) return;
