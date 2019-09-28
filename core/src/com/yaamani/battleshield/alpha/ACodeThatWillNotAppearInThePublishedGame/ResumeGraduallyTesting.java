@@ -115,34 +115,28 @@ public class ResumeGraduallyTesting {
     }
 
     private void initializeFunctions() {
-        MyMath.BisectionFunction function0 = new MyMath.BisectionFunction() {
-            @Override
-            public float function(float x) {
-                x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
+        MyMath.BisectionFunction function0 = x -> {
+            x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
 
-                float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
-                float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
+            float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
+            float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
 
-                float val1 = -oxy_pauseX+oxy_x;
-                float val2 = s_s*r_d*r_d;
+            float val1 = -oxy_pauseX+oxy_x;
+            float val2 = s_s*r_d*r_d;
 
-                return (val1*val1)/val2 - d_dx_oxy_x;
-            }
+            return (val1*val1)/val2 - d_dx_oxy_x;
         };
 
-        MyMath.BisectionFunction function1 = new MyMath.BisectionFunction() {
-            @Override
-            public float function(float x) {
-                x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
+        MyMath.BisectionFunction function1 = x -> {
+            x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
 
-                float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
-                float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
+            float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
+            float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
 
-                float val1 = -oxy_pauseX+oxy_x;
-                float val2 = s_s*r_d*r_d;
+            float val1 = -oxy_pauseX+oxy_x;
+            float val2 = s_s*r_d*r_d;
 
-                return val1*val1 - val2*d_dx_oxy_x;
-            }
+            return val1*val1 - val2*d_dx_oxy_x;
         };
 
         functionsS_s = new MyMath.BisectionFunction[2];
@@ -150,80 +144,68 @@ public class ResumeGraduallyTesting {
         functionsS_s[1] = function1;
 
 
-        MyMath.BisectionFunction function0S_s0 = new MyMath.BisectionFunction() {
-            @Override
-            public float function(float x) {
-                float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
-                float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
+        MyMath.BisectionFunction function0S_s0 = x -> {
+            float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
+            float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
 
-                float val1 = -oxy_pauseX+oxy_x;
-                float val2 = MathUtils.PI/(2*r_d);
+            float val1 = -oxy_pauseX+oxy_x;
+            float val2 = MathUtils.PI/(2*r_d);
 
-                return val1*val2 - d_dx_oxy_x;
-            }
+            return val1*val2 - d_dx_oxy_x;
         };
 
-        MyMath.BisectionFunction function0S_s1 = new MyMath.BisectionFunction() {
-            @Override
-            public float function(float x) {
-                float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
-                float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
+        MyMath.BisectionFunction function0S_s1 = x -> {
+            float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
+            float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
 
-                float val1 = -oxy_pauseX+oxy_x;
-                float val2 = (2*r_d)/MathUtils.PI;
+            float val1 = -oxy_pauseX+oxy_x;
+            float val2 = (2*r_d)/MathUtils.PI;
 
-                return val1 - val2*d_dx_oxy_x;
-            }
+            return val1 - val2*d_dx_oxy_x;
         };
 
         functions0S_s = new MyMath.BisectionFunction[2];
         functions0S_s[0] = function0S_s0;
         functions0S_s[1] = function0S_s1;
 
-        MyMath.BisectionFunction functionRE0 = new MyMath.BisectionFunction() {
-            @Override
-            public float function(float x) {
-                x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
+        MyMath.BisectionFunction functionRE0 = x -> {
+            x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
 
-                float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
-                float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
+            float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
+            float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
 
-                float p = SEXY_G;
-                float val1 = (-oxy_pauseX+oxy_x);
-                float val2 = (float) (p/(1-Math.exp(-p)));
-                float val3 = (float) (Math.exp(p)-1);
-                float val4 = 2*r_d;
+            float p = SEXY_G;
+            float val1 = (-oxy_pauseX+oxy_x);
+            float val2 = (float) (p/(1-Math.exp(-p)));
+            float val3 = (float) (Math.exp(p)-1);
+            float val4 = 2*r_d;
 
-                float term1 = val3*val1*val1;
-                float term2 = (-p*val1) + val4*s_s*val3;
-                float term3 = -val4*d_dx_oxy_x + val2*val1;
+            float term1 = val3*val1*val1;
+            float term2 = (-p*val1) + val4*s_s*val3;
+            float term3 = -val4*d_dx_oxy_x + val2*val1;
 
-                return term1 + term2 * term3;
-            }
+            return term1 + term2 * term3;
         };
 
 
-        MyMath.BisectionFunction functionRE1 = new MyMath.BisectionFunction() {
-            @Override
-            public float function(float x) {
-                x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
+        MyMath.BisectionFunction functionRE1 = x -> {
+            x = MathUtils.clamp(x, 0.001f/* * durationMillis*/, Float.MAX_VALUE);
 
-                float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
-                float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
+            float oxy_x = myInterpolation.apply(0, durationMillis, initialVal, finalVal, x);
+            float d_dx_oxy_x = myInterpolation.slopeAt(0, durationMillis, initialVal, finalVal, x);
 
-                float p = SEXY_G;
-                float val1 = (-oxy_pauseX+oxy_x);
-                float val2 = (float) (p/(1-Math.exp(-p)));
-                float val3 = (float) (Math.exp(p)-1);
-                float val4 = 2*r_d;
+            float p = SEXY_G;
+            float val1 = (-oxy_pauseX+oxy_x);
+            float val2 = (float) (p/(1-Math.exp(-p)));
+            float val3 = (float) (Math.exp(p)-1);
+            float val4 = 2*r_d;
 
 
-                float term1 = val1*val1;
-                float term2 = (-p*val1)/val3 + val4*s_s;
-                float term3 = -val4*d_dx_oxy_x + val2*val1;
+            float term1 = val1*val1;
+            float term2 = (-p*val1)/val3 + val4*s_s;
+            float term3 = -val4*d_dx_oxy_x + val2*val1;
 
-                return term1 + term2 * term3;
-            }
+            return term1 + term2 * term3;
         };
 
         functionsRE = new MyMath.BisectionFunction[2];
