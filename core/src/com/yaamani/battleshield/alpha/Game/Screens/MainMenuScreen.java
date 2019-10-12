@@ -46,9 +46,9 @@ public class MainMenuScreen extends AdvancedScreen {
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
 
-    private MyTween _dummy;
-    private float _dummyInitialX;
-    private float _dummyFinalX;
+    //private MyTween _dummy;
+    //private float _dummyInitialX;
+    //private float _dummyFinalX;
     private Array<Float> _xPoints, _yPoints;
     private float currentTime;
     private boolean isRecording;
@@ -154,9 +154,11 @@ public class MainMenuScreen extends AdvancedScreen {
         arch.setColor(1, 1, 1, 0.5f);
         arch.setInnerRadiusRatio(WORLD_SIZE/16f);
         arch.setAngle(60*MathUtils.degRad);*/
-        _dummyInitialX = 0;
+
+
+        /*_dummyInitialX = 0;
         _dummyFinalX = 0;
-        _dummy = new MyTween(2000, /*MyInterpolation.myExp10Out*/MyInterpolation.myExp10, _dummyInitialX, _dummyFinalX) {
+        _dummy = new MyTween(2000, *//*MyInterpolation.myExp10Out*//*MyInterpolation.myExp10, _dummyInitialX, _dummyFinalX) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX) {
                 start.setX(myInterpolation.apply(startX, endX, startY, endY, currentX));
@@ -167,7 +169,7 @@ public class MainMenuScreen extends AdvancedScreen {
                 super.onUpdate(delta);
                 //Gdx.app.log(MainMenuScreen.TAG, getPercentage() + ", isStarted() = " + isStarted() + ", getX() = " + start.getX());
             }
-        };
+        };*/
     }
 
     private void printXY() {
@@ -199,7 +201,7 @@ public class MainMenuScreen extends AdvancedScreen {
         if (!isVisible()) return;
         super.act(delta);
 
-        _dummy.update(delta);
+        /*_dummy.update(delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             _dummy.start();
             _dummy.resume();
@@ -215,7 +217,7 @@ public class MainMenuScreen extends AdvancedScreen {
         else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
             isRecording = !isRecording;
         else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            printXY();
+            printXY();*/
 
         /*else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
             _dummy.resumeGradually(400, MyInterpolation.myExp10In);*/
@@ -271,7 +273,7 @@ public class MainMenuScreen extends AdvancedScreen {
         if (start != null) {
             start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT - start.getWidth(),
                     start.getY());
-            _dummy.setFinalVal(start.getX());
+            //_dummy.setFinalVal(start.getX());
             Gdx.app.log(TAG, "" + start.getX());
         }
 

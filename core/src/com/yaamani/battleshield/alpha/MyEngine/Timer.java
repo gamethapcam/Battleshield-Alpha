@@ -2,7 +2,7 @@ package com.yaamani.battleshield.alpha.MyEngine;
 
 public class Timer implements Updatable {
     //private long startTime;
-    private double currentTime;
+    private float currentTime;
     private float durationMillis; // millis
     private float percentage;
     private boolean started = false;
@@ -41,6 +41,7 @@ public class Timer implements Updatable {
         currentTime = 0;
         started = true;
         finished = false;
+        if (isPaused()) paused = false;
         onStart();
     }
 
@@ -73,7 +74,7 @@ public class Timer implements Updatable {
 
         if (started) {
             //float currentTime = MyMath.millisSince(startTime);
-            percentage = (float) (currentTime / durationMillis);
+            percentage = currentTime / durationMillis;
             currentTime += delta*MyMath.secondsToMillis;
             if (currentTime > durationMillis) {
                 finish();
@@ -110,6 +111,7 @@ public class Timer implements Updatable {
     public final void finish() {
         started = false;
         finished = true;
+        //if (isPaused()) paused = false;
         onFinish();
         //tween(1);
     }
@@ -135,6 +137,17 @@ public class Timer implements Updatable {
             throw new ValueOutOfRangeException("percentage must be smaller than 1 and greater than 0.");
         this.percentage = percentage;
         currentTime = percentage * getDurationMillis();
+
+        if (isFinished()) started = true;
+    }
+
+    protected void setCurrentTime(float currentTime) {
+        if (currentTime > durationMillis | currentTime < 0)
+            throw new ValueOutOfRangeException("currentTime must be smaller than durationMillis and greater than 0.");
+        this.currentTime = currentTime;
+        percentage = currentTime / durationMillis;
+
+        if (isFinished()) started = true;
     }
 
     public boolean isStarted() {

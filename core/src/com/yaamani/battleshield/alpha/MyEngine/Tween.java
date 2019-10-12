@@ -10,14 +10,6 @@ public abstract class Tween extends Timer implements Updatable {
 
     private Interpolation interpolation;
 
-    /*private boolean isPausingGradually;
-    private boolean isResumingGradually;
-    private float pauseResumeGraduallyDurationMillis;
-    private float pauseResumeGraduallyCurrentTime;
-    private float pauseResumeGraduallyInitialPercentage;
-    private float pauseResumeGraduallyFinalPercentage;
-    private Interpolation pauseResumeGraduallyInterpolation;*/
-
     public Tween(float durationMillis, Interpolation interpolation, Transition transition) {
         super(durationMillis);
         this.interpolation = interpolation;
@@ -60,39 +52,6 @@ public abstract class Tween extends Timer implements Updatable {
         tween(1, interpolation);
     }
 
-    /*public void pauseGradually(float pauseDurationMillis, Interpolation pauseInterpolation) {
-        isPausingGradually = true;
-        isResumingGradually = false;
-        if (pauseDurationMillis > getDurationMillis() - getPercentage() * getDurationMillis()) {
-            Gdx.app.log(TAG, "The duration for pausing gradually (" + pauseDurationMillis + "ms) is greater than the remaining duration of the tween itself (" + getPercentage() * getDurationMillis() + "ms). So, the duration that is going to be applied for pausing gradually is (" + getPercentage() * getDurationMillis() + "ms).");
-            pauseResumeGraduallyDurationMillis = getDurationMillis() - getPercentage() * getDurationMillis();
-        } else
-            pauseResumeGraduallyDurationMillis = pauseDurationMillis;
-
-        pauseResumeGraduallyCurrentTime = 0;
-        pauseResumeGraduallyInterpolation = pauseInterpolation;
-        pauseResumeGraduallyInitialPercentage = getPercentage();
-        pauseResumeGraduallyFinalPercentage = (getPercentage() * getDurationMillis() + pauseResumeGraduallyDurationMillis) / getDurationMillis();
-        Gdx.app.log(TAG, "initialPercentage = " + pauseResumeGraduallyInitialPercentage + ", finalPercentage = " + pauseResumeGraduallyFinalPercentage);
-    }
-
-    public void resumeGradually(float resumeDurationMillis, Interpolation resumeInterpolation) {
-        isPausingGradually = false;
-        isResumingGradually = true;
-        if (resumeDurationMillis > getDurationMillis() - getPercentage() * getDurationMillis()) {
-            Gdx.app.log(TAG, "The duration for resuming gradually (" + resumeDurationMillis + "ms) is greater than the remaining duration of the tween itself (" + getPercentage() * getDurationMillis() + "ms). So, the duration that is going to be applied for resuming gradually is (" + getPercentage() * getDurationMillis() + "ms).");
-            pauseResumeGraduallyDurationMillis = getDurationMillis() - getPercentage() * getDurationMillis();
-        } else
-            pauseResumeGraduallyDurationMillis = resumeDurationMillis;
-
-        pauseResumeGraduallyCurrentTime = 0;
-        pauseResumeGraduallyInterpolation = resumeInterpolation;
-        pauseResumeGraduallyInitialPercentage = getPercentage();
-        pauseResumeGraduallyFinalPercentage = (getPercentage() * getDurationMillis() + pauseResumeGraduallyDurationMillis) / getDurationMillis();
-
-        resume();
-    }*/
-
     public void setInterpolation(Interpolation interpolation) {
         this.interpolation = interpolation;
     }
@@ -101,21 +60,9 @@ public abstract class Tween extends Timer implements Updatable {
         return interpolation;
     }
 
-    /*private void pausingResumingGradually(float delta) {
-        if (!(isPausingGradually | isResumingGradually))
-            return;
-
-        pauseResumeGraduallyCurrentTime += delta * MyMath.secondsToMillis;
-
-        if (pauseResumeGraduallyCurrentTime > pauseResumeGraduallyDurationMillis) {
-            if (isPausingGradually) pause();
-
-            isPausingGradually = isResumingGradually = false;
-            return;
-        }
-
-        setPercentage(pauseResumeGraduallyInterpolation.apply(pauseResumeGraduallyInitialPercentage, pauseResumeGraduallyFinalPercentage, pauseResumeGraduallyCurrentTime / pauseResumeGraduallyDurationMillis));
-
-        Gdx.app.log(TAG, "" + getPercentage() + ", " + isFinished());
-    }*/
+    @Override
+    public void setPercentage(float percentage) {
+        super.setPercentage(percentage);
+        if (isFinished() | isPaused()) tween(percentage, interpolation);
+    }
 }

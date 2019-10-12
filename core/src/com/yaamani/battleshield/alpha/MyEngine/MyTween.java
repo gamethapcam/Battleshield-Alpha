@@ -3,10 +3,12 @@ package com.yaamani.battleshield.alpha.MyEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 
 /**
- * This class has an additional functionality which is pausing gradually. unlike the normal pausing, gradual pausing pauses the tween smoothly with some sort of deceleration.
+ * <p>This class has an additional functionality which is pausing gradually as well as resuming gradually.</p>
+ * <p>Unlike the normal pausing, gradual pausing pauses the tween smoothly with some sort of deceleration.
+ * If you're using a tween to move an object, pausing gradually will decelerate your object till it reaches nearly a zero velocity.</p>
+ * <p>Gradual resuming follows the same logic. If you're using a tween to move an object, resume gradually will accelerate your object smoothly and resume the tween</p>
  *
  * @Author Mahmoud Yamani
  */
@@ -28,7 +30,6 @@ public abstract class MyTween extends Tween {
     private GradualResumingStuff gradualResumingStuff;
     private boolean isResumingGradually;
 
-    private Array<Float> _xPoints, _yPoints;
 
     public MyTween(float durationMillis, MyInterpolation myInterpolation, Transition transition) {
         super(durationMillis, myInterpolation, transition);
@@ -98,39 +99,29 @@ public abstract class MyTween extends Tween {
 
     }
 
-    public abstract void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX);
+    public abstract void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage);
 
-
-    Array<Double> durations = new Array<Double>(Double.class);
-    Array<Double> durationsGradually = new Array<Double>(Double.class);
     @Override
     public void onUpdate(float delta) {
-        /*durations.add(1.0, 2.0, 3.0, 4.0);
-        Gdx.app.log(TAG, durations.get(0) + ", " + durations.get(1) + ", " + durations.get(2) + ", " + durations.get(3) + ", Med = " + MyMath.medianOfArray(durations.items));*/
-        //Gdx.app.log(TAG, "isPausingGradually = " + isPausingGradually + ", isResumingGradually = " + isResumingGradually);
-
         if (isPausingGradually || isResumingGradually) {
-            //long before = System.nanoTime();
             currentGradualStuff.updateGradualTween(delta);
-            //durationsGradually.add(MyMath.millisSince(before));
         } else
             if (isStarted() & getPercentage() < 1) {
-                //long before = System.nanoTime();
-                myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, getPercentage()*getDurationMillis());
-                //durations.add(MyMath.millisSince(before));
-                /*if (_xPoints == null) _xPoints = new Array<Float>(1000);
-                if (_yPoints == null) _yPoints = new Array<Float>(1000);
-                _xPoints.add(getPercentage());
-                _yPoints.add(myInterpolation.apply(initialVal, finalVal, getPercentage()));*/
+                myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, getPercentage()*getDurationMillis(), getPercentage());
             }
 
     }
 
     @Override
     public void onFinish() {
-        myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, getDurationMillis());
-        printXY();
+        myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, getDurationMillis(), getPercentage());
+        if (isPausingGradually | isResumingGradually) {
+            isPausingGradually = false;
+            isResumingGradually = false;
+        }
     }
+
+
 
     @Override
     public void onPause() {
@@ -138,33 +129,18 @@ public abstract class MyTween extends Tween {
         isPausedNormally = true;
     }
 
-    private void printXY() {
-        /*StringBuilder x = new StringBuilder("[");
-        for (int i = 0; i < _xPoints.size; i++) {
-            if (i < _xPoints.size-1) {
-                x.append(_xPoints.get(i));
-                x.append(", ");
-            } else
-                x.append(_xPoints.get(i));
+    @Override
+    public void onStart() {
+        if (isPausingGradually | isResumingGradually) {
+            isPausingGradually = false;
+            isResumingGradually = false;
         }
-        x.append("]");
-        Gdx.app.log(TAG, _xPoints.size + ", " + x.toString());
-
-        StringBuilder y = new StringBuilder("[");
-        for (int i = 0; i < _yPoints.size; i++) {
-            if (i < _yPoints.size-1) {
-                y.append(_yPoints.get(i));
-                y.append(", ");
-            } else
-                y.append(_yPoints.get(i));
-        }
-        y.append("]");
-        Gdx.app.log(TAG, y.toString());*/
     }
+
+
 
     /**
      *
-     * Note:
      * @param gradualPausingDurationMillis
      * @param finalValueAfterGradualPausing
      */
@@ -214,16 +190,26 @@ public abstract class MyTween extends Tween {
 
     //TODO: شوفلك حل ف setPercentage()
 
-    //TODO: Make sure that when pause() is called while pausing gradually, the tween pauses the gradual pausing.
-    /*TODO: resume() has 2 special cases:
-    *  1) If pause() was called before : resume() resumes the gradual pause.
-    *  2) If pause() wasn't called before : resume() finishes the gradual pause and resumes the main tween with the main interpolation.
-    *  - Make documentation describing those 2 special cases.*/
+    @Override
+    public void setPercentage(float percentage) {
+        super.setPercentage(percentage);
+        boolean callMyTween = false;
 
-    /*TODO: When resumeGradually() is called in the middle of gradual pausing, make resumeGradually() work on the interpolation of the gradual pause not the main interpolation.
-        And when pauseGradually() is called in the middle of gradual resuming, make pauseGradually() work on the interpolation of the gradual resume not the main interpolation.
-     */
+        if (isFinished() | isPaused())
+            callMyTween = true;
 
+        if (isPausingGradually) {
+            isPausingGradually = false;
+            pause();
+            callMyTween = true;
+        } else if (isResumingGradually) {
+            isResumingGradually = false;
+            callMyTween = true;
+        }
+
+        if (callMyTween)
+            myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, percentage*getDurationMillis(), percentage);
+    }
 
     @Override
     public void onResume() {
@@ -298,22 +284,19 @@ public abstract class MyTween extends Tween {
 
             if (gradualCurrentX < ex) {
 
-                myTween(gradualInterpolation, sx, ex, sy, ey, gradualCurrentX);
+                myTween(gradualInterpolation, sx, ex, sy, ey, gradualCurrentX, getPercentage());
 
-                setPercentageToInverse(gradualInterpolation); //TODO: This calculation maybe expensive to be done every frame. If you have time make it more efficient. Don't set percentage to the inverse every frame. instead, calculate the inverse when getPercentage,  when resuming and when finishing the gradual pause. And don't forget to handle the increase in currentTime (Timer class).
+                setCurrentTimeToInverse(gradualInterpolation);
+                //TODO: This calculation maybe expensive to be done every frame. If you have time make it more efficient. Don't set percentage to the inverse every frame. instead, calculate the inverse when getPercentage,  when resuming and when finishing the gradual pause. And don't forget to handle the increase in currentTime (Timer class).
+                //setCurrentTime(gradualCurrentX);
 
                 if(gradualType == GradualType.PAUSING) onPausingGradually();
                 else onResumingGradually();
-                /*_xPoints.add(gradualCurrentX / gradualDurationMillis);
-                _yPoints.add(gradualInterpolation.currentAppliedValue);*/
             } else {
-                myTween(gradualInterpolation, sx, ex, sy, ey, ex);
-                /*float inverse = getPercentage();
-                Gdx.app.log(TAG, "inverseFinalPauseGradual = "+inverse);
-                setPercentage(inverse); //TODO: Make setPercentage don't throw an exception.*/
-                setPercentageToInverse(gradualInterpolation);
-                //printXY();
-                //Gdx.app.log(TAG, "gradualPauseDuration = " + gradualPauseDuration);
+                gradualCurrentX = ex;
+                myTween(gradualInterpolation, sx, ex, sy, ey, ex, getPercentage());
+                setCurrentTimeToInverse(gradualInterpolation);
+                //setCurrentTime(gradualCurrentX);
                 if (gradualType == GradualType.PAUSING) {
                     pause();
                     isPausingGradually = false;
@@ -321,16 +304,15 @@ public abstract class MyTween extends Tween {
                     //resume();
                     isResumingGradually = false;
                 }
-                /*Gdx.app.log(TAG, "Gradual : " + MyMath.arrayStatistics(durationsGradually.items, false));*/
-
             }
         }
 
-        private void setPercentageToInverse(MyInterpolationCurrentValueSaved gradualInterpolation) {
+        private void setCurrentTimeToInverse(MyInterpolationCurrentValueSaved gradualInterpolation) {
             float currentAppliedValue = gradualInterpolation.currentAppliedValue;
             //Gdx.app.log(TAG, "currentAppliedValue = " + currentAppliedValue);
-            float inverse = myInterpolation.inverseFunction(0, getDurationMillis(), initialVal, finalVal, currentAppliedValue) / getDurationMillis();
-            setPercentage(MathUtils.clamp(inverse, 0, 1));
+            float inverse = myInterpolation.inverseFunction(0, getDurationMillis(), initialVal, finalVal, currentAppliedValue)/* / getDurationMillis()*/;
+            //setPercentage(MathUtils.clamp(inverse, 0, 1));
+            setCurrentTime(inverse);
         }
     }
 
@@ -346,14 +328,16 @@ public abstract class MyTween extends Tween {
 
         //private float gradualPauseDuration;
 
+        MyInterpolationCurrentValueSaved myInterpolationCurrentValueSaved;
+
         private GradualPausingStuff() {
-            gradualInterpolation = new MyInterpolationCurrentValueSaved(new MyInterpolation.MyInterpolationOut(new MyInterpolation.MyExp()));
+            myInterpolationCurrentValueSaved = new MyInterpolationCurrentValueSaved(new MyInterpolation.MyInterpolationOut(new MyInterpolation.MyExp()));
             gradualType = GradualType.PAUSING;
         }
 
         private void initPausingGradually(float gradualPausingDurationMillis, float finalValueAfterGradualPausing) {
 
-            //gradualPauseDuration = 0;
+            gradualInterpolation = myInterpolationCurrentValueSaved;
 
             gradualDurationMillis = gradualPausingDurationMillis;
 
@@ -400,7 +384,7 @@ public abstract class MyTween extends Tween {
             float G = slope*E / F;
             float G01_A_sx = calculateSxSy(cx, cy, E, G);
 
-            //printValues(gradualPausingDurationMillis, cx, cy, slope, E, F, G, G01_A_sx);
+            printValues(gradualPausingDurationMillis, cx, cy, slope, E, F, G, G01_A_sx);
 
             if (F == 0 | G01_A_sx == Float.NEGATIVE_INFINITY) {
                 pause();
@@ -414,6 +398,8 @@ public abstract class MyTween extends Tween {
         }
 
         private void initPausingGradually(float gradualPausingDurationMillis) {
+
+            gradualInterpolation = myInterpolationCurrentValueSaved;
             //gradualPauseDuration = 0;
             gradualDurationMillis = gradualPausingDurationMillis;
             float cx, cy, slope;
@@ -493,6 +479,7 @@ public abstract class MyTween extends Tween {
         public static final float defaultS_s = 0.004f; //starting slope
 
         ResumeGraduallyInterpolation resumeGraduallyInterpolation;
+        MyInterpolationCurrentValueSaved myInterpolationCurrentValueSaved;
 
         MyMath.BisectionFunction bisectionFunction;
 
@@ -503,13 +490,16 @@ public abstract class MyTween extends Tween {
 
         public GradualResumingStuff() {
             resumeGraduallyInterpolation = new ResumeGraduallyInterpolation();
-            gradualInterpolation = new MyInterpolationCurrentValueSaved(new MyInterpolation.MyInterpolationIn(resumeGraduallyInterpolation));
+            myInterpolationCurrentValueSaved = new MyInterpolationCurrentValueSaved(new MyInterpolation.MyInterpolationIn(resumeGraduallyInterpolation));
+            gradualInterpolation = myInterpolationCurrentValueSaved;
             gradualType = GradualType.RESUMING;
 
             initializeBisectionFunction();
         }
 
         private void initResumingGradually(float gradualResumingDurationMillis) {
+            gradualInterpolation = myInterpolationCurrentValueSaved;
+
             gradualDurationMillis = gradualResumingDurationMillis;
 
             if (isPausingGradually) {
