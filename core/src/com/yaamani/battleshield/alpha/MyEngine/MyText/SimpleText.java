@@ -52,17 +52,23 @@ public class SimpleText extends Actor {
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 
         float cursorX = 0;
-        float w, xoffset = 0, myOffsetPixelUnits, myYOffsetWorldUnits, xadvance;
+        float w, xoffset = 0, myOffsetPixelUnits, myYOffsetWorldUnits, xadvance, kerning;
         int i = 0;
         for (BitmapFont.Glyph glyph : glyphs) {
 
             _temp.setRegion(myBitmapFont.pages[glyph.page], glyph.srcX, glyph.srcY, glyph.width, glyph.height);
 
             w = (float) glyph.width / charSequenceWidthPixelUnits * getWidth();
-            if (i != 0) xoffset = (float) glyph.xoffset / charSequenceWidthPixelUnits * getWidth();
+            if (i > 0) xoffset = (float) glyph.xoffset / charSequenceWidthPixelUnits * getWidth();
             myOffsetPixelUnits = yoffsetPlusHeightMax - ((glyph.yoffset) + glyph.height);
             myYOffsetWorldUnits = myOffsetPixelUnits / heightPixelUnits * getHeight();
             xadvance = (float) glyph.xadvance / charSequenceWidthPixelUnits * getWidth();
+
+            if (i > 0) {
+                kerning = (float) glyphs.get(i-1).getKerning((char) glyph.id) / charSequenceWidthPixelUnits * getWidth();
+                cursorX += kerning;
+                //Gdx.app.log(TAG, "" + glyphs.get(i-1).id + ", " + glyph.id + ", " + glyphs.get(i-1).getKerning((char) glyph.id) + ", " + kerning);
+            }
 
             if (aspectRatioLocked)
                 batch.draw(_temp, getX() + cursorX + xoffset, getY() + myYOffsetWorldUnits, w, w * glyph.height / glyph.width);
