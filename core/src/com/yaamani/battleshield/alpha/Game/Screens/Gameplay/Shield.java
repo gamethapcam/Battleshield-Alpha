@@ -120,9 +120,10 @@ public class Shield extends Actor {
             }
 
             @Override
-            public void onUpdate(float delta) {
+            public boolean onUpdate(float delta) {
                 if (getColor().a == 0)
                     finish();
+                return false;
             }
 
             @Override

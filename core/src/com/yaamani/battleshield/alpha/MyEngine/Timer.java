@@ -39,6 +39,7 @@ public class Timer implements Updatable {
     public final void start() {
         //startTime = TimeUtils.nanoTime();
         currentTime = 0;
+        percentage = 0;
         started = true;
         finished = false;
         if (isPaused()) paused = false;
@@ -72,22 +73,31 @@ public class Timer implements Updatable {
             } else return;
         }
 
+        //if (onUpdate(delta)) return;
+
         if (started) {
             //float currentTime = MyMath.millisSince(startTime);
             percentage = currentTime / durationMillis;
-            currentTime += delta*MyMath.secondsToMillis;
-            if (currentTime > durationMillis) {
+
+            if (!onUpdate(delta)) currentTime += delta*MyMath.secondsToMillis;
+
+            if (currentTime >= durationMillis) {
                 finish();
                 //return;
             }
             //tween(percentage);
         }
 
-        onUpdate(delta);
+        //onUpdate(delta);
     }
 
-    public void onUpdate(float delta) {
-
+    /**
+     * You should return false unless you handled the currentTime or the percentage values in your implementation of onUpdate(float), then return true. This way the Timer class won't update the currentTime value or the percentage, as you've already handled them.
+     * @param delta
+     * @return
+     */
+    public boolean onUpdate(float delta) {
+        return false;
     }
 
     public final void pause() {
@@ -134,7 +144,7 @@ public class Timer implements Updatable {
 
     public void setPercentage(float percentage) {
         if (percentage > 1 | percentage < 0)
-            throw new ValueOutOfRangeException("percentage must be smaller than 1 and greater than 0.");
+            throw new ValueOutOfRangeException("percentage(" + percentage + ") must be smaller than 1 and greater than 0.");
         this.percentage = percentage;
         currentTime = percentage * getDurationMillis();
 
@@ -143,7 +153,7 @@ public class Timer implements Updatable {
 
     protected void setCurrentTime(float currentTime) {
         if (currentTime > durationMillis | currentTime < 0)
-            throw new ValueOutOfRangeException("currentTime must be smaller than durationMillis and greater than 0.");
+            throw new ValueOutOfRangeException("currentTime(" + currentTime + ") must be smaller than durationMillis and greater than 0.");
         this.currentTime = currentTime;
         percentage = currentTime / durationMillis;
 

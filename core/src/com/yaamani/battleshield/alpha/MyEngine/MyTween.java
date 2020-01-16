@@ -99,17 +99,30 @@ public abstract class MyTween extends Tween {
 
     }
 
+    /**
+     * whateverIWannaAnimate.whatever = myInterpolation.apply(startX, endX, startY, endY, currentX);<br>
+     * object.setAlpha(myInterpolation.apply(startX, endX, startY, endY, currentX));
+     * @param myInterpolation
+     * @param startX
+     * @param endX
+     * @param startY
+     * @param endY
+     * @param currentX
+     * @param percentage
+     */
     public abstract void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage);
 
     @Override
-    public void onUpdate(float delta) {
+    public boolean onUpdate(float delta) {
         if (isPausingGradually || isResumingGradually) {
             currentGradualStuff.updateGradualTween(delta);
+            return true;
         } else
             if (isStarted() & getPercentage() < 1) {
                 myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, getPercentage()*getDurationMillis(), getPercentage());
             }
 
+        return false;
     }
 
     @Override
@@ -126,6 +139,7 @@ public abstract class MyTween extends Tween {
     @Override
     public void onPause() {
         super.onPause();
+        myTween(myInterpolation, 0, getDurationMillis(), initialVal, finalVal, getPercentage()*getDurationMillis(), getPercentage());
         isPausedNormally = true;
     }
 
@@ -149,6 +163,7 @@ public abstract class MyTween extends Tween {
         //if()
 
         if (!isStarted() | isFinished() | isPaused()) return;
+        currentGradualStuff = gradualPausingStuff;
         gradualPausingStuff.initPausingGradually(gradualPausingDurationMillis, finalValueAfterGradualPausing);
 
     }
@@ -160,7 +175,7 @@ public abstract class MyTween extends Tween {
     public void pauseGradually(float gradualPausingDurationMillis) {
         //Gdx.app.log(TAG, "Normal : " + MyMath.arrayStatistics(durations.items, false));
         if (!isStarted() | isFinished() | isPaused()) return;
-        currentGradualStuff = gradualPausingStuff;
+        //currentGradualStuff = gradualPausingStuff;
         gradualPausingStuff.initPausingGradually(gradualPausingDurationMillis);
     }
 
@@ -169,8 +184,8 @@ public abstract class MyTween extends Tween {
     }
 
     public void resumeGradually(float gradualResumingDurationMillis) {
-        if (!(isPausingGradually | isPaused())) return;
-        currentGradualStuff = gradualResumingStuff;
+        if (isFinished() | !(isPausingGradually | isPaused())) return;
+        //currentGradualStuff = gradualResumingStuff;
         gradualResumingStuff.initResumingGradually(gradualResumingDurationMillis);
     }
 
@@ -187,8 +202,6 @@ public abstract class MyTween extends Tween {
         }*/
         return super.getPercentage();
     }
-
-    //TODO: شوفلك حل ف setPercentage()
 
     @Override
     public void setPercentage(float percentage) {
@@ -256,8 +269,13 @@ public abstract class MyTween extends Tween {
         return myInterpolation.apply(0, getDurationMillis(), initialVal, finalVal, getPercentage()*getDurationMillis());
     }
 
+    public boolean isPausingGradually() {
+        return isPausingGradually;
+    }
 
-
+    public boolean isPausedNormally() {
+        return isPausedNormally;
+    }
 
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
@@ -305,6 +323,12 @@ public abstract class MyTween extends Tween {
                     isResumingGradually = false;
                 }
             }
+
+            /*Gdx.app.log(TAG, "gradualCurrentX = " + gradualCurrentX
+                    + ",\t ex = " + ex
+                    + ",\t isPausingGradually = " + isPausingGradually
+                    + ",\t currentValue = " + gradualInterpolation.currentAppliedValue);*/
+
         }
 
         private void setCurrentTimeToInverse(MyInterpolationCurrentValueSaved gradualInterpolation) {
@@ -312,6 +336,8 @@ public abstract class MyTween extends Tween {
             //Gdx.app.log(TAG, "currentAppliedValue = " + currentAppliedValue);
             float inverse = myInterpolation.inverseFunction(0, getDurationMillis(), initialVal, finalVal, currentAppliedValue)/* / getDurationMillis()*/;
             //setPercentage(MathUtils.clamp(inverse, 0, 1));
+            /*Gdx.app.log(TAG, "inverse = " + inverse
+            + ",\t currentAppliedValue = " + currentAppliedValue);*/
             setCurrentTime(inverse);
         }
     }
@@ -343,16 +369,16 @@ public abstract class MyTween extends Tween {
 
             float cx, cy, slope, currentMainValue;
 
-            if (isResumingGradually) {
-                gradualCurrentX = gradualResumingStuff.gradualCurrentX;
+            if (isResumingGradually | isPausingGradually) {
+                gradualCurrentX = currentGradualStuff.gradualCurrentX;
                 cx = gradualCurrentX;
-                cy = gradualResumingStuff.gradualInterpolation.currentAppliedValue;
-                float r_sx = gradualResumingStuff.sx;
-                float r_sy = gradualResumingStuff.sy;
-                float r_ex = gradualResumingStuff.ex;
-                float r_ey = gradualResumingStuff.ey;
-                slope = gradualResumingStuff.gradualInterpolation.slopeAt(r_sx, r_ex, r_sy, r_ey, gradualCurrentX);
-                currentMainValue = /*gradualResumingStuff.gradualInterpolation.currentAppliedValue*/cy;
+                cy = currentGradualStuff.gradualInterpolation.currentAppliedValue;
+                float r_sx = currentGradualStuff.sx;
+                float r_sy = currentGradualStuff.sy;
+                float r_ex = currentGradualStuff.ex;
+                float r_ey = currentGradualStuff.ey;
+                slope = currentGradualStuff.gradualInterpolation.slopeAt(r_sx, r_ex, r_sy, r_ey, gradualCurrentX);
+                currentMainValue = /*currentGradualStuff.gradualInterpolation.currentAppliedValue*/cy;
                 isResumingGradually = false;
             } else {
                 gradualCurrentX = getPercentage() * getDurationMillis();
@@ -362,6 +388,8 @@ public abstract class MyTween extends Tween {
                 currentMainValue = /*myInterpolationCurrentValueSaved.currentAppliedValue*//*getCurrentAppliedValue()*/cy;
             }
             //float currentMainValue = /*myInterpolationCurrentValueSaved.currentAppliedValue*/getCurrentAppliedValue();
+
+            currentGradualStuff = gradualPausingStuff;
 
             if (slope > 0 & finalValueAfterGradualPausing > finalVal) {
                 Gdx.app.log(TAG, "According to initialVal and finalVal, finalValueAfterGradualPausing(" + finalValueAfterGradualPausing + ") can't be greater than finalVal(" + finalVal + "). So, finalValueAfterGradualPausing is now changed to finalVal");
@@ -384,7 +412,7 @@ public abstract class MyTween extends Tween {
             float G = slope*E / F;
             float G01_A_sx = calculateSxSy(cx, cy, E, G);
 
-            printValues(gradualPausingDurationMillis, cx, cy, slope, E, F, G, G01_A_sx);
+            printGradualPausingValues(gradualPausingDurationMillis, cx, cy, slope, E, F, G, G01_A_sx);
 
             if (F == 0 | G01_A_sx == Float.NEGATIVE_INFINITY) {
                 pause();
@@ -395,6 +423,7 @@ public abstract class MyTween extends Tween {
             _yPoints.clear();*/
 
             isPausingGradually = true;
+            gradualInterpolation.currentAppliedValue = cy;
         }
 
         private void initPausingGradually(float gradualPausingDurationMillis) {
@@ -404,15 +433,15 @@ public abstract class MyTween extends Tween {
             gradualDurationMillis = gradualPausingDurationMillis;
             float cx, cy, slope;
 
-            if (isResumingGradually) {
-                gradualCurrentX = gradualResumingStuff.gradualCurrentX;
+            if (isResumingGradually | isPausingGradually) {
+                gradualCurrentX = currentGradualStuff.gradualCurrentX;
                 cx = gradualCurrentX;
-                cy = gradualResumingStuff.gradualInterpolation.currentAppliedValue;
-                float r_sx = gradualResumingStuff.sx;
-                float r_sy = gradualResumingStuff.sy;
-                float r_ex = gradualResumingStuff.ex;
-                float r_ey = gradualResumingStuff.ey;
-                slope = gradualResumingStuff.gradualInterpolation.slopeAt(r_sx, r_ex, r_sy, r_ey, gradualCurrentX);
+                cy = currentGradualStuff.gradualInterpolation.currentAppliedValue;
+                float r_sx = currentGradualStuff.sx;
+                float r_sy = currentGradualStuff.sy;
+                float r_ex = currentGradualStuff.ex;
+                float r_ey = currentGradualStuff.ey;
+                slope = currentGradualStuff.gradualInterpolation.slopeAt(r_sx, r_ex, r_sy, r_ey, gradualCurrentX);
                 isResumingGradually = false;
             } else {
                 gradualCurrentX = getPercentage() * getDurationMillis();
@@ -420,6 +449,9 @@ public abstract class MyTween extends Tween {
                 cy = myInterpolation.apply(initialVal, finalVal, getPercentage());
                 slope = myInterpolation.slopeAt(0, getDurationMillis(), initialVal, finalVal, getPercentage() * getDurationMillis());
             }
+
+            currentGradualStuff = gradualPausingStuff;
+
             ex = cx + gradualDurationMillis;
             float G = SEXY_G;
             float E = ex-cx;
@@ -431,7 +463,7 @@ public abstract class MyTween extends Tween {
             float F = ey - cy;
             float G01_A_sx = calculateSxSy(cx, cy, E, G);
 
-            printValues(gradualPausingDurationMillis, cx, cy, slope, E, ey-cy, G, G01_A_sx);
+            printGradualPausingValues(gradualPausingDurationMillis, cx, cy, slope, E, ey-cy, G, G01_A_sx);
 
             if (F == 0 | G01_A_sx == Float.NEGATIVE_INFINITY) {
                 pause();
@@ -439,9 +471,10 @@ public abstract class MyTween extends Tween {
             }
 
             isPausingGradually = true;
+            gradualInterpolation.currentAppliedValue = cy;
         }
 
-        private void printValues(float gradualPausingDurationMillis, float cx, float cy, float slope, float E, float F, float G, float G01_A_sx) {
+        private void printGradualPausingValues(float gradualPausingDurationMillis, float cx, float cy, float slope, float E, float F, float G, float G01_A_sx) {
             Gdx.app.log(TAG, "--------------------------------------------------------------------");
             Gdx.app.log(TAG, "durationMillis = " + getDurationMillis());
             Gdx.app.log(TAG, "percentage = " + getPercentage());
@@ -502,24 +535,27 @@ public abstract class MyTween extends Tween {
 
             gradualDurationMillis = gradualResumingDurationMillis;
 
-            if (isPausingGradually) {
-                s_s = gradualPausingStuff.gradualInterpolation.slopeAt(
-                        gradualPausingStuff.sx,
-                        gradualPausingStuff.ex,
-                        gradualPausingStuff.sy,
-                        gradualPausingStuff.ey,
-                        gradualPausingStuff.gradualCurrentX
+            if (isPausingGradually | (isResumingGradually & !isPausedNormally)) {
+                s_s = currentGradualStuff.gradualInterpolation.slopeAt(
+                        currentGradualStuff.sx,
+                        currentGradualStuff.ex,
+                        currentGradualStuff.sy,
+                        currentGradualStuff.ey,
+                        currentGradualStuff.gradualCurrentX
                 );
-                oxy_pauseX = gradualPausingStuff.gradualInterpolation.currentAppliedValue;
+                oxy_pauseX = currentGradualStuff.gradualInterpolation.currentAppliedValue;
                 isPausingGradually = false;
             } else {
                 if (finalVal - initialVal < 0)
                     s_s = -defaultS_s;
                 else s_s = defaultS_s;
+
+                oxy_pauseX = myInterpolation.apply(initialVal, finalVal, getPercentage());
             }
 
-            pauseX = getPercentage() *  getDurationMillis();
-            oxy_pauseX = myInterpolation.apply(0, getDurationMillis(), initialVal, finalVal, pauseX);
+            currentGradualStuff = gradualResumingStuff;
+
+            pauseX = getPercentage() * getDurationMillis();
             r_d = gradualDurationMillis;
             sy = oxy_pauseX;
             ex = MyMath.bisectionFalsePos(bisectionFunction, pauseX, getDurationMillis(), 1 / 100f, 4, 2, getDurationMillis(), null, null);
@@ -531,8 +567,26 @@ public abstract class MyTween extends Tween {
             //((MyInterpolation.MyReciprocal)((MyInterpolation.MyInterpolationIn)gradualInterpolation.getInterpolation()).getMyInterpolationInOut()).setA(a);
             resumeGraduallyInterpolation.myReciprocal.setA(a);
 
+            Gdx.app.log(TAG, "--------------------------------------------------------------------");
+            Gdx.app.log(TAG, "durationMillis = " + getDurationMillis());
+            Gdx.app.log(TAG, "percentage = " + getPercentage());
+            Gdx.app.log(TAG, "initialVal = " + initialVal);
+            Gdx.app.log(TAG, "finalVal = " + finalVal);
+            Gdx.app.log(TAG, "gradualResumingDurationMillis = " + gradualResumingDurationMillis);
+            Gdx.app.log(TAG, "pauseX = " + pauseX);
+            Gdx.app.log(TAG, "pauseY (oxy_pauseX) = " + oxy_pauseX);
+            Gdx.app.log(TAG, "s_s = " + s_s);
+            Gdx.app.log(TAG, "r_d = " + r_d);
+            Gdx.app.log(TAG, "a = " + a);
+            Gdx.app.log(TAG, "ex = " + ex);
+            Gdx.app.log(TAG, "ey = " + ey);
+            Gdx.app.log(TAG, "sx = " + sx);
+            Gdx.app.log(TAG, "sy = " + sy);
+            Gdx.app.log(TAG, "--------------------------------------------------------------------");
+
             resume();
             isResumingGradually = true;
+            gradualInterpolation.currentAppliedValue = oxy_pauseX;
         }
 
         private void initializeBisectionFunction() {

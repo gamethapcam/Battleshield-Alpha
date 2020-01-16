@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.MyTweenTesting;
 import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.ResumeGraduallyTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
@@ -51,10 +52,13 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         initializeLoadingScreen();
 
+
         //saveProgrammaticallyGeneratedTextures(1080);
 
-        ResumeGraduallyTesting resumeGraduallyTesting = new ResumeGraduallyTesting();
-        resumeGraduallyTesting.compareFunctions(MyInterpolation.myPow5Out, 1, 0, 1, 0.4f, 0.01f, 71, 1/100f, 4, 2);
+        /*ResumeGraduallyTesting resumeGraduallyTesting = new ResumeGraduallyTesting();
+        resumeGraduallyTesting.compareFunctions(MyInterpolation.myPow5Out, 1, 0, 1, 0.4f, 0.01f, 71, 1/100f, 4, 2);*/
+
+        new MyTweenTesting(game);
     }
 
     @Override
@@ -64,6 +68,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         initializeWhenAssetsReady();
 
         SolidBG.instance.draw();
+
+
 
         super.render();
 

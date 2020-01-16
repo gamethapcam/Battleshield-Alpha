@@ -35,12 +35,21 @@ public class MyTweenTesting extends Group {
         super.act(delta);
         tween.update(delta);
 
+        /*if (tween.isStarted()) {
+            Gdx.app.log(TAG, "testObject.getX() = " + testObject.getX()
+                    + "\t\t percentage = " + tween.getPercentage()
+                    + "\t\t currentX = " + tween.getDurationMillis()*tween.getPercentage());
+        }*/
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) tween.start();
         else if (Gdx.input.isKeyJustPressed(Input.Keys.F)) tween.finish();
         else if (Gdx.input.isKeyJustPressed(Input.Keys.P)) tween.pause();
         else if (Gdx.input.isKeyJustPressed(Input.Keys.R)) tween.resume();
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.G)) tween.pauseGradually(1000);
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.H)) tween.resumeGradually(1000);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.G)) tween.pauseGradually(3000);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            //Gdx.app.log(TAG, "testObject.getX() = " + testObject.getX() + ",\t currentX = " + tween.getDurationMillis()*tween.getPercentage());
+            tween.resumeGradually(600);
+        }
         else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) tween.setPercentage(0.6f);
 
         //Gdx.app.log(TAG, "getPercentage() = " + tween.getPercentage());
@@ -56,9 +65,10 @@ public class MyTweenTesting extends Group {
     }
 
     private void initializeTween() {
-        float initialVal = 0;
-        float finalVal = viewport.getWorldWidth() - testObject.getWidth();
-        tween = new MyTween(3000, MyInterpolation.myLinear, initialVal, finalVal) {
+        float leftPos = 0;
+        float rightPos = viewport.getWorldWidth() - testObject.getWidth();
+        tween = new MyTween(700, MyInterpolation.myLinear, rightPos, leftPos) {
+
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
                 testObject.setX(myInterpolation.apply(startX, endX, startY, endY, currentX));

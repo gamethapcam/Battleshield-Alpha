@@ -458,7 +458,7 @@ public final class MyMath {
      * <p>This implementation of good old bisection method always outputs a solution even when it should output failure.</p>
      * <p>This function will only work properly and as expected if you're trying to solve a function that has a unique solution within the given bounds.</p>
      * <p>So, don't use it purely to solve mathematical problems.
-     * Use it only in game after you came up with your perfect mathematical model that ensures a unique solution with in the bounds.</p>
+     * Use it only in your game after you came up with your perfect mathematical model that ensures a unique solution with in the bounds.</p>
      * <p>The reason it doesn't output failure is I don't want the failure of it to interrupt or crash the game at any given moment.</p>
      * <p>If the function you're trying to solve have 2 solutions with in the given bounds, it'll (most likely) output the higher in value.
      * If it has more than 2, it'll output one of them. Which one ?, you might ask, this only depends on the upper and lower bounds.</p>
@@ -520,7 +520,7 @@ public final class MyMath {
      * <p>This implementation of the false position method always outputs a solution even when it should output failure.</p>
      * <p>This function will only work properly and as expected if you're trying to solve a function that has a unique solution within the given bounds.</p>
      * <p>So, don't use it purely to solve mathematical problems.
-     * Use it only in game after you came up with your perfect mathematical model that ensures a unique solution with in the bounds.</p>
+     * Use it only in your game after you came up with your perfect mathematical model that ensures a unique solution with in the bounds.</p>
      * <p>The reason it doesn't output failure is I don't want the failure of it to interrupt or crash the game at any given moment.</p>
      * <p>If the function you're trying to solve have 2 solutions with in the given bounds, it'll (most likely) return the higher in value.
      * If it has more than 2, it'll output one of them. Which one ?, you might ask, this only depends on the upper and lower bounds.</p>
