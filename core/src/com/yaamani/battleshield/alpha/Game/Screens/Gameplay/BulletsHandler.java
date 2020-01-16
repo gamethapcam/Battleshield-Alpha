@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
@@ -19,6 +18,7 @@ public class BulletsHandler implements Updatable {
     private GameplayScreen gameplayScreen;
 
     private Pool<Bullet> bulletPool;
+    private Array<Bullet> activeBullets;
 
     private Timer currentBulletsWaveTimer; // Just a timer.
     private BulletsAndShieldContainer previous;
@@ -28,8 +28,6 @@ public class BulletsHandler implements Updatable {
     private Timer decreaseBulletsPerAttackTimer;
 
     private Timer plusMinusBulletsTimer;
-
-    private StarsContainer.RadialTween radialTweenStars;
 
     private float currentSpeedMultiplier;
     private Timer currentSpeedMultiplierTimer;
@@ -52,12 +50,12 @@ public class BulletsHandler implements Updatable {
 
     //private Timer isThereDoubleWaveTimer;
 
-    public BulletsHandler(AdvancedStage game, StarsContainer.RadialTween radialTweenStars, GameplayScreen gameplayScreen) {
+    public BulletsHandler(AdvancedStage game, GameplayScreen gameplayScreen) {
         game.addUpdatable(BulletsHandler.this);
 
         this.gameplayScreen = gameplayScreen;
-        this.radialTweenStars = radialTweenStars;
-        this.bulletPool = gameplayScreen.getBulletPool();
+
+        initializeBulletPool();
 
         waveBulletsType = new WaveBulletsType[2];
         waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
@@ -92,7 +90,7 @@ public class BulletsHandler implements Updatable {
         /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             newWave();*/
 
-        //Gdx.app.log(TAG, "" + Bullet.isTherePlusOrMinus());
+        //Gdx.app.log(TAG, "" + Bullet.isPlusOrMinusExists());
         //Gdx.app.log(TAG, "Free bullets in pool = " + bulletPool.getFree());
     }
 
@@ -108,16 +106,12 @@ public class BulletsHandler implements Updatable {
         return bulletsPerAttack;
     }
 
-    /*public void setPrevious(BulletsAndShieldContainer previous) {
-        this.previous = previous;
+    public Pool<Bullet> getBulletPool() {
+        return bulletPool;
     }
 
-    public void setCurrent(BulletsAndShieldContainer current) {
-        this.current = current;
-    }*/
-
-    public StarsContainer.RadialTween getRadialTweenStars() {
-        return radialTweenStars;
+    public Array<Bullet> getActiveBullets() {
+        return activeBullets;
     }
 
     public Timer getCurrentBulletsWaveTimer() {
@@ -207,7 +201,8 @@ public class BulletsHandler implements Updatable {
             duration1 = calculateWaveTimerDuration(waveBulletsType[1]);
         }
 
-        if (currentBulletsWaveTimer == null) initializeCurrentBulletWave(Math.max(duration, duration1));
+        if (currentBulletsWaveTimer == null)
+            initializeCurrentBulletWave(Math.max(duration, duration1));
         else currentBulletsWaveTimer.setDurationMillis(Math.max(duration, duration1));
 
         //Gdx.app.log(TAG, "waveTimer Duration = " + currentBulletsWaveTimer.getDurationMillis());
@@ -264,24 +259,40 @@ public class BulletsHandler implements Updatable {
         if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_GOOD) {
             currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
 
-             if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
+            if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
                 currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
                 questionMark = true;
                 Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
-             } else {
-                 questionMark = false;
-                 Gdx.app.log(TAG, "" + currentSpecialBullet);
-             }
+            } else {
+                questionMark = false;
+                //Gdx.app.log(TAG, "" + currentSpecialBullet);
+            }
+
+            if (currentSpecialBullet == SpecialBullet.STAR) {
+
+                Gdx.app.log(TAG, "Possible STAR -> " +
+                        Bullet.isPlusOrMinusExists() + ", " +
+                        Bullet.isStarExists() + ", " +
+                        !plusMinusBulletsTimer.isFinished());
+
+                if (Bullet.isPlusOrMinusExists() |
+                        Bullet.isStarExists() |
+                        !plusMinusBulletsTimer.isFinished()) {
+                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
+                } else Bullet.setStarExists(true);
+            }
 
             if (currentSpecialBullet == SpecialBullet.MINUS) {
 
-                Gdx.app.log(TAG, "" + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT) + ", " +
-                        Bullet.isTherePlusOrMinus() + ", " +
+                Gdx.app.log(TAG, "Possible MINUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT) + ", " +
+                        Bullet.isPlusOrMinusExists() + ", " +
+                        Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
                         (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED));
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT |
-                        Bullet.isTherePlusOrMinus() |
+                        Bullet.isPlusOrMinusExists() |
+                        Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished() |
                         (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED/* & indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/)) {
@@ -290,7 +301,7 @@ public class BulletsHandler implements Updatable {
                         currentSpecialBullet = SpecialBullet.PLUS;*/
 
                     //currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS);
-                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY_NO_MINUS, SpecialBullet.QUESTION_MARK);
+                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY_NO_MINUS, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
                 }
             }
         } else if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_BAD) {
@@ -302,18 +313,20 @@ public class BulletsHandler implements Updatable {
                 Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
             } else {
                 questionMark = false;
-                Gdx.app.log(TAG, "" + currentSpecialBullet);
+                //Gdx.app.log(TAG, "" + currentSpecialBullet);
             }
 
             if (currentSpecialBullet == SpecialBullet.PLUS) {
 
-                Gdx.app.log(TAG, "" + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT) + ", " +
-                        Bullet.isTherePlusOrMinus() + ", " +
+                Gdx.app.log(TAG, "Possible PLUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT) + ", " +
+                        Bullet.isPlusOrMinusExists() + ", " +
+                        Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
                         (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED));
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT |
-                        Bullet.isTherePlusOrMinus() |
+                        Bullet.isPlusOrMinusExists() |
+                        Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished() |
                         (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED /*& indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/)) {
@@ -327,8 +340,11 @@ public class BulletsHandler implements Updatable {
         }
 
         if (currentSpecialBullet == SpecialBullet.PLUS | currentSpecialBullet == SpecialBullet.MINUS) {
-            Bullet.setThereIsPlusOrMinus(true);
+            Bullet.setPlusOrMinusExists(true);
         }
+
+        /*if (!questionMark)
+            Gdx.app.log(TAG, "" + currentSpecialBullet);*/
 
         //return MathUtils.random(bulletsPerAttack - 1);
         return currentSpecialBullet;
@@ -352,9 +368,9 @@ public class BulletsHandler implements Updatable {
                 break;
             case DOUBLE:
                 //newSingleWave();
-                //Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isTherePlusOrMinus() + ", " + plusMinusBulletsTimer.isFinished());
+                //Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isPlusOrMinusExists() + ", " + plusMinusBulletsTimer.isFinished());
 
-                if (gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & Bullet.isTherePlusOrMinus() & plusMinusBulletsTimer.isFinished()) {
+                if (gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
                     if (MathUtils.random(1) == 0) newRoundWave();
                     else newSingleWave();
                 } else newDoubleWave();
@@ -447,7 +463,7 @@ public class BulletsHandler implements Updatable {
         int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
 
         if (previous == null) {
-            int rand = MathUtils.random( activeShieldsNum - 1);
+            int rand = MathUtils.random(activeShieldsNum - 1);
             current = probability.removeIndex(rand);
             //Gdx.app.log(TAG, "" + rand);
 
@@ -503,12 +519,32 @@ public class BulletsHandler implements Updatable {
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
 
+    private void initializeBulletPool() {
+        bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY) {
+            @Override
+            protected Bullet newObject() {
+                return new Bullet(gameplayScreen, gameplayScreen.getStarsContainer()/*.getRadialTween()*/, gameplayScreen.getStage().getViewport());
+            }
+
+            @Override
+            public void free(Bullet object) {
+                super.free(object);
+                //Gdx.app.log(TAG, "Free bullets in pool = " + getFree());
+            }
+
+            @Override
+            public Bullet obtain() {
+                Bullet bullet = super.obtain();
+                activeBullets.add(bullet);
+                return bullet;
+            }
+        };
+
+        activeBullets = new Array<Bullet>(false, 40, Bullet.class);
+    }
+
     private void initializeCurrentBulletWave(final float duration) {
         currentBulletsWaveTimer = new Timer(duration) {
-            @Override
-            public void onUpdate(float delta) {
-                //Gdx.app.log(bulletsHandler.TAG, "duration = " + duration);
-            }
 
             @Override
             public void onFinish() {
@@ -522,10 +558,6 @@ public class BulletsHandler implements Updatable {
 
     private void initializePlusMinusBulletsTimer() {
         plusMinusBulletsTimer = new Timer(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION) {
-            @Override
-            public void onUpdate(float delta) {
-
-            }
 
             @Override
             public void onFinish() {
@@ -541,10 +573,6 @@ public class BulletsHandler implements Updatable {
 
     private void initializeDecreaseBulletsPerAttackTimer() {
         decreaseBulletsPerAttackTimer = new Timer(BULLETS_DECREASE_NO_PER_ATTACK_EVERY) {
-            @Override
-            public void onUpdate(float delta) {
-
-            }
 
             @Override
             public void onFinish() {
@@ -564,11 +592,11 @@ public class BulletsHandler implements Updatable {
     }
 
     private void initializeCurrentSpeedMultiplierTimer() {
-        currentSpeedMultiplierTimer = new Timer(BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*1000f) {
+        currentSpeedMultiplierTimer = new Timer(BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY * 1000f) {
             @Override
             public void onFinish() {
                 //float nextSpeedMultiplier = getBulletSpeed() / BULLETS_SPEED_INITIAL;
-                float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier+BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
+                float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier + BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING &
                         nextSpeedMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
                     currentSpeedMultiplier = nextSpeedMultiplier;

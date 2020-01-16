@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Starfield;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsHandler;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 
@@ -33,6 +36,9 @@ public class StarsContainer extends Group implements Disposable{
     //private final Vector2 distanceOffset = new Vector2(Wo)
     private Vector2 transitionVelocity = new Vector2(0, 0);
     private Vector2 transitionVelocityMax = new Vector2(0, 0);
+
+    private float currentSpeed;
+    private Tween currentSpeedTweenStarBullet;
 
     private RadialTween radialTween;
     private float thetaForRadialTween; // Rad
@@ -56,7 +62,11 @@ public class StarsContainer extends Group implements Disposable{
             stars.add(star);
         }
 
+        currentSpeed = STARS_MAX_SPEED;
+
         frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, viewport.getScreenWidth(), viewport.getScreenHeight(), false);
+
+        initializeCurrentSpeedTween();
 
         initializeRadialTween();
 
@@ -74,10 +84,18 @@ public class StarsContainer extends Group implements Disposable{
 
     @Override
     public void act(float delta) {
+        currentSpeedTweenStarBullet.update(delta);
         radialTween.update(delta);
         for (Star star : stars) {
-            star.act(delta, transitionVelocity, radialTween, thetaForRadialTween, bulletsHandler.getBulletsPerAttack(), gameplayScreen);
+            star.act(delta, transitionVelocity, currentSpeed, thetaForRadialTween, bulletsHandler.getBulletsPerAttack(), gameplayScreen);
         }
+
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            //currentSpeedTweenStarBullet.start();
+            radialTween.pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION, 0);
+
+            Gdx.app.log(TAG, "" + radialTween.isPausingGradually());
+        }*/
     }
 
     @Override
@@ -88,6 +106,8 @@ public class StarsContainer extends Group implements Disposable{
         for (Star star : stars) {
             star.draw(batch);
         }
+
+        //Gdx.app.log(TAG, "isStarted() = " + currentSpeedTweenStarBullet.isStarted() + ", getPercentage() = " + currentSpeedTweenStarBullet.getPercentage());
 
         //frameBuffer.end();
 
@@ -117,8 +137,16 @@ public class StarsContainer extends Group implements Disposable{
         return stars.items;
     }
 
+    public Tween getCurrentSpeedTweenStarBullet() {
+        return currentSpeedTweenStarBullet;
+    }
+
     public RadialTween getRadialTween() {
         return radialTween;
+    }
+
+    public void resetCurrentSpeed() {
+        this.currentSpeed = STARS_MAX_SPEED;
     }
 
     public void setBulletsHandler(BulletsHandler bulletsHandler) {
@@ -136,6 +164,7 @@ public class StarsContainer extends Group implements Disposable{
     public void setGameplayScreen(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(radialTween);
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedTweenStarBullet);
     }
 
     @Override
@@ -143,23 +172,37 @@ public class StarsContainer extends Group implements Disposable{
         frameBuffer.dispose();
     }
 
+    private void initializeCurrentSpeedTween() {
+        currentSpeedTweenStarBullet = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, myLinear/*myExp5Out*/, STARS_MAX_SPEED, 0) {
+            @Override
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+                currentSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
+            }
+        };
+    }
+
     private void initializeRadialTween() {
-        radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION, myExp10) {
+        radialTween = new RadialTween(STARS_RADIAL_TWEEN_DURATION, exp10) {
+
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                /*Interpolation interpolationIn = MyInterpolation.myExp10In;
-                Interpolation interpolationOut = MyInterpolation.myExp10Out;*/
-                if (percentage < 0.5) { // interpolationIn
+                if (percentage < 0.5f) { // interpolationIn
                     if (getSpecialBullet() == SpecialBullet.MINUS)
                         thetaForRadialTween = interpolation.apply(0, STARS_RADIAL_TWEEN_THETA_MAX, percentage);
                     else if (getSpecialBullet() == SpecialBullet.PLUS)
                         thetaForRadialTween = interpolation.apply(0, -STARS_RADIAL_TWEEN_THETA_MAX, percentage);
-                } else { // interpolationIn
+                } else { // interpolationOut
                     if (getSpecialBullet() == SpecialBullet.MINUS)
                         thetaForRadialTween = interpolation.apply(STARS_RADIAL_TWEEN_THETA_MAX, 0, percentage);
                     else if (getSpecialBullet() == SpecialBullet.PLUS)
                         thetaForRadialTween = interpolation.apply(-STARS_RADIAL_TWEEN_THETA_MAX, 0, percentage);
                 }
+            }
+
+            @Override
+            public void onFinish() {
+                thetaForRadialTween = 0;
+                super.onFinish();
             }
         };
     }
@@ -184,7 +227,7 @@ public class StarsContainer extends Group implements Disposable{
 
 
 
-    public abstract class RadialTween extends Tween {
+    public abstract static class RadialTween extends Tween {
 
         private SpecialBullet specialBullet;
 

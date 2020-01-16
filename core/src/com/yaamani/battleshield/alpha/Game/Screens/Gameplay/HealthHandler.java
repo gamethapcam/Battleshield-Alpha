@@ -42,16 +42,17 @@ public class HealthHandler {
 
         float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
         float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
-        int len = gameplayScreen.getActiveBullets().size;
+        int len = gameplayScreen.getBulletsHandler().getActiveBullets().size;
         for (int i = len-1; i >= 0; i--) {
-            Bullet bullet = gameplayScreen.getActiveBullets().get(i);
+            Bullet bullet = gameplayScreen.getBulletsHandler().getActiveBullets().get(i);
             bullet.stopUsingTheBullet(worldWidth, worldHeight);
         }
 
         gameplayScreen.getScore().getFadeOutTween().start();
         gameplayScreen.getPauseStuff().getPauseSymbolFadesOutWhenLosing().start();
 
-        Bullet.setThereIsPlusOrMinus(false);
+        Bullet.setPlusOrMinusExists(false);
+        Bullet.setStarExists(false);
 
         gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
@@ -85,6 +86,7 @@ public class HealthHandler {
             gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
+            gameplayScreen.getStarsContainer().resetCurrentSpeed();
             gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().start();

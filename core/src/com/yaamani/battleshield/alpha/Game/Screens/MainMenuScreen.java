@@ -3,9 +3,16 @@ package com.yaamani.battleshield.alpha.Game.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -13,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -20,12 +29,15 @@ import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import java.util.Random;
 
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class MainMenuScreen extends AdvancedScreen {
@@ -55,8 +67,16 @@ public class MainMenuScreen extends AdvancedScreen {
 
     //private RoundedArch arch;
 
+    /*private Image bg;
+    private MyBitmapFont myBitmapFontOCR;
+    private FrameBuffer fboOCR;
+    private SpriteBatch spriteBatchOCR;
+    private Image fboImg;*/
+
+
     public MainMenuScreen(final AdvancedStage game, GameplayScreen gameplayScreen, boolean transform) {
         super(game, transform);
+
 
         this.gameplayScreen = gameplayScreen;
 
@@ -143,6 +163,21 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(start);
         addActor(restricted);
 
+
+        /*bg = new Image(Assets.instance.gameplayAssets.gameOverBG);
+        bg.setBounds(-100, -100, 500, 500);
+        bg.setColor(Color.BLACK);
+        //addActor(bg);
+
+        myBitmapFontOCR = new MyBitmapFont(Gdx.files.internal(ASSETS_FONT_FNT_INTERNAL), Assets.instance.mutualAssets.font);
+        fboOCR = new FrameBuffer(Pixmap.Format.RGBA8888, 512, 512, false);
+        spriteBatchOCR = new SpriteBatch(100);
+
+        fboImg = new Image();*/
+        /*addActor(fboImg);
+        fboImg.setBounds(0, 0, 100, 100);*/
+
+
         /*Pixmap pix = new Pixmap(10, 10, Pixmap.Format.RGBA4444);
         pix.setColor(Color.WHITE);
         for (int i = 0; i < pix.getWidth(); i++)
@@ -200,6 +235,64 @@ public class MainMenuScreen extends AdvancedScreen {
     public void act(float delta) {
         if (!isVisible()) return;
         super.act(delta);
+
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+
+            SimpleText _dummyOCR = new SimpleText(myBitmapFontOCR, "I want to OCR.");
+            _dummyOCR.setHeight(WORLD_SIZE / 10f);
+            _dummyOCR.setColor(Color.WHITE);
+            _dummyOCR.setPosition(0, 0);
+
+            fboOCR.begin();
+
+            Gdx.gl.glClearColor(0f, 0f, 0f, 0f); //transparent black
+            Gdx.gl.glClear(GL_COLOR_BUFFER_BIT); //clear the color buffer
+
+            //spriteBatchOCR.begin();
+
+            Batch spriteBatch = getStage().getBatch();
+            spriteBatch.begin();
+
+            bg.draw(spriteBatch, 1);
+            _dummyOCR.draw(spriteBatch, 1);
+
+            spriteBatch.end();
+
+            Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 512, 512);
+
+            //spriteBatchOCR.end();
+
+            fboOCR.end();
+
+
+
+            *//*byte[] pixels = ScreenUtils.getFrameBufferPixels(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), true);
+
+            // this loop makes sure the whole screenshot is opaque and looks exactly like what the user is seeing
+            for(int i = 4; i < pixels.length; i += 4) {
+                pixels[i - 1] = (byte) 255;
+            }
+
+            Pixmap pixmap = new Pixmap(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), Pixmap.Format.RGBA8888);
+            BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
+            PixmapIO.writePNG(Gdx.files.external("mypixmap1.png"), pixmap);
+            pixmap.dispose();*//*
+
+            *//*fboImg = new Image(fboOCR.getColorBufferTexture());
+            addActor(fboImg);
+            fboImg.setBounds(0, 0, 10, 10);*//*
+
+            *//*Texture texture = fboOCR.getColorBufferTexture();
+
+            TextureData textureData = texture.getTextureData());
+            if (!textureData.isPrepared()) {
+                textureData.prepare();
+            }*//*
+
+            PixmapIO.writePNG(Gdx.files.external("mypixmap1.png"), pixmap);
+        }
+
+        fboImg.setY(fboImg.getY() - 0.5f);*/
 
         /*_dummy.update(delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {

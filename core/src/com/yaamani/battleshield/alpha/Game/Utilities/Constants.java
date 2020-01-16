@@ -381,11 +381,13 @@ public final class Constants {
 
 
 
-    public static final float STAR_MAX_SPEED = WORLD_SIZE / 70.0f;
+    public static final float STARS_MAX_SPEED = WORLD_SIZE / 70.0f;
 
-    public static final float STAR_MAX_OFFSET_DISTANCE = WORLD_SIZE / 10.0f;
+    public static final float STARS_MAX_OFFSET_DISTANCE = WORLD_SIZE / 10.0f;
 
-    public static final float STAR_MAX_RADIUS = WORLD_SIZE / 200.0f;
+    public static final float STARS_MAX_RADIUS = WORLD_SIZE / 200.0f;
+
+    public static final float STARS_MOVING_ANGLE = 40f * MathUtils.degRad;
 
     public static final int STARS_COUNT = 500;
 
@@ -467,7 +469,12 @@ public final class Constants {
     public static final float PAUSE_3_2_1_HEIGHT = TURRET_RADIUS * 2 * 0.7f;
 
 
-    public static final int PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY = 20;
+
+    public static final int STAR_BULLET_FIRST_STAGE_DURATION = 2000;
+
+
+
+    public static final int PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY = 24;
 
 
     public static final String ASSETS_LOGO_ALONE = "Logo.png";

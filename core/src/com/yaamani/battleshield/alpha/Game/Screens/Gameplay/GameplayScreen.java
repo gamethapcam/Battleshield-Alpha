@@ -4,15 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -35,8 +28,6 @@ public class GameplayScreen extends AdvancedScreen {
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
 
-    private Pool<Bullet> bulletPool;
-    private Array<Bullet> activeBullets;
     private BulletsHandler bulletsHandler;
 
     private HealthBar healthBar;
@@ -72,8 +63,6 @@ public class GameplayScreen extends AdvancedScreen {
         this.starsContainer = starsContainer;
 
         pauseWhenPausingFinishWhenLosing = new Array<Timer>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
-
-        initializeBulletPool();
 
         initializeHandlers(game, starsContainer.getRadialTween());
 
@@ -120,6 +109,9 @@ public class GameplayScreen extends AdvancedScreen {
             timePlayedThisTurnSoFar += delta;
         }
 
+
+
+
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
         //Gdx.app.log(TAG, "controllerLeft.getAngleDeg() = " + controllerLeft.getAngleDeg());
 
@@ -127,12 +119,12 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.EQUALS) | Gdx.input.isKeyJustPressed(Input.Keys.PLUS))  {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);
-            bulletsHandler.getRadialTweenStars().start(SpecialBullet.PLUS);
+            starsContainer.getRadialTween().start(SpecialBullet.PLUS);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.MINUS)) {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() - 1);
-            bulletsHandler.getRadialTweenStars().start(SpecialBullet.MINUS);
+            starsContainer.getRadialTween().start(SpecialBullet.MINUS);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP))
@@ -182,12 +174,12 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (gamePad.getButton(4)) {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);
-            bulletsHandler.getRadialTweenStars().start(SpecialBullet.PLUS);
+            starsContainer.getRadialTween().start(SpecialBullet.PLUS);
         }
 
         if (gamePad.getButton(6)) {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() - 1);
-            bulletsHandler.getRadialTweenStars().start(SpecialBullet.MINUS);
+            starsContainer.getRadialTween().start(SpecialBullet.MINUS);
         }
 
     }
@@ -279,33 +271,9 @@ public class GameplayScreen extends AdvancedScreen {
         bulletsAndShieldContainers[0].getShield().getSemiCircle0().setDebug(true);*/
     }
 
-    private void initializeBulletPool() {
-        bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY) {
-            @Override
-            protected Bullet newObject() {
-                return new Bullet(GameplayScreen.this, starsContainer.getRadialTween(), getStage().getViewport());
-            }
-
-            @Override
-            public void free(Bullet object) {
-                super.free(object);
-                //Gdx.app.log(TAG, "Free bullets in pool = " + getFree());
-            }
-
-            @Override
-            public Bullet obtain() {
-                Bullet bullet = super.obtain();
-                activeBullets.add(bullet);
-                return bullet;
-            }
-        };
-
-        activeBullets = new Array<Bullet>(false, 40, Bullet.class);
-    }
-
     private void initializeHandlers(AdvancedStage game, StarsContainer.RadialTween radialTweenStars) {
         shieldsAndContainersHandler = new ShieldsAndContainersHandler(this);
-        bulletsHandler = new BulletsHandler(game, radialTweenStars, this);
+        bulletsHandler = new BulletsHandler(game, this);
         healthHandler = new HealthHandler(this);
     }
 
@@ -357,14 +325,6 @@ public class GameplayScreen extends AdvancedScreen {
 
     public Controller getControllerRight() {
         return controllerRight;
-    }
-
-    public Pool<Bullet> getBulletPool() {
-        return bulletPool;
-    }
-
-    public Array<Bullet> getActiveBullets() {
-        return activeBullets;
     }
 
     public GameOverLayer getGameOverLayer() {

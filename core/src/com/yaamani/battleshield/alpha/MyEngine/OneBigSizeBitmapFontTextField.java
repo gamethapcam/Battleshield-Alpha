@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 @Deprecated
-public class OneBigSizeBitmapFontTextField { // TODO: Make this class inherit Actor so that it could have an x and y coordinates built in. Don't forget to override setWidth(), setHeight(), setScale(), getWidth(), getHeight(), getScale() ..... in order to make the functionality of the Actor class don't interfere with the functionality of OneBigSizeBitmapFontTextField.
+public class OneBigSizeBitmapFontTextField {
     // Feel free to add getter and setters if needed.
 
     private BitmapFont font;

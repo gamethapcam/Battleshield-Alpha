@@ -4,13 +4,22 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
+
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.ASSETS_FONT_FNT_INTERNAL;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.WORLD_SIZE;
 
 public abstract class AdvancedApplicationAdapter implements ApplicationListener {
 
@@ -28,6 +37,9 @@ public abstract class AdvancedApplicationAdapter implements ApplicationListener 
 
     private Input.Orientation orientation;
 
+
+
+
     /**
      *
      * @param viewport
@@ -42,6 +54,8 @@ public abstract class AdvancedApplicationAdapter implements ApplicationListener 
         if (Gdx.app.getType() == Application.ApplicationType.Android) fixedWidth = Gdx.graphics.getWidth();
         currentWidth = Gdx.graphics.getWidth();
         currentHeight = Gdx.graphics.getHeight();
+
+
 
     }
 
@@ -61,11 +75,15 @@ public abstract class AdvancedApplicationAdapter implements ApplicationListener 
                 Gdx.graphics.getWidth() != fixedWidth) { // The game looks stretched out in some cases like exactly after unlocking the phone. So, draw a black color instead.
 
             Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
             return;
         }
 
         basicDrawing();
+
+
+
+
 
         if (orientationChanges) orientationChangeDetection();
 

@@ -1,11 +1,9 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
@@ -14,19 +12,17 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
-import static com.badlogic.gdx.math.Interpolation.*;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public static final String TAG = Bullet.class.getSimpleName();
 
-    private static boolean thereIsPlusOrMinus = false;
+    private static boolean plusOrMinusExists = false;
+    private static boolean starExists = false;
     private static float R = 0;
 
     private Pool<Bullet> bulletPool;
@@ -41,25 +37,27 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private Effects effects;
     private BulletEffect currentEffect;
 
-    private StarsContainer.RadialTween radialTweenStars;
+    //private MyTween currentSpeedTweenStars;
+    //private StarsContainer.RadialTween radialTweenStars;
+    private StarsContainer starsContainer;
 
     private Viewport viewport;
 
     private SimpleText type; // Debugging
 
-    private Tween bulletMovement;
+    /*private Tween bulletMovement;
     private float initialY;
-    private float finalY;
+    private float finalY;*/
 
-    public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer.RadialTween radialTweenStars, Viewport viewport) {
+    public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer starsContainer, Viewport viewport) {
         this.gameplayScreen = gameplayScreen;
-        this.bulletPool = gameplayScreen.getBulletPool();
-        this.activeBullets = gameplayScreen.getActiveBullets();
         this.bulletsHandler = gameplayScreen.getBulletsHandler();
+        this.bulletPool = bulletsHandler.getBulletPool();
+        this.activeBullets = bulletsHandler.getActiveBullets();
 
         effects = new Effects();
 
-        this.radialTweenStars = radialTweenStars;
+        /*this.radialTweenStars*/this.starsContainer = starsContainer;
 
         this.viewport = viewport;
 
@@ -69,7 +67,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         initializeType();
 
-        initializeBulletMovement();
+        //initializeBulletMovement();
 
         //setColor(1, 1, 1, 0.2f); //Debugging
     }
@@ -83,12 +81,23 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         return R;
     }
 
-    public static boolean isTherePlusOrMinus() {
-        return thereIsPlusOrMinus;
+
+    public static boolean isPlusOrMinusExists() {
+        return plusOrMinusExists;
     }
 
-    public static void setThereIsPlusOrMinus(boolean thereIsPlusOrMinus) {
-        Bullet.thereIsPlusOrMinus = thereIsPlusOrMinus;
+    public static void setPlusOrMinusExists(boolean plusOrMinusExists) {
+        Bullet.plusOrMinusExists = plusOrMinusExists;
+    }
+
+    public static boolean isStarExists() {
+        return starExists;
+    }
+
+
+
+    public static void setStarExists(boolean starExists) {
+        Bullet.starExists = starExists;
     }
 
     public boolean isInUse() {
@@ -100,7 +109,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         setY(getY() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT));
 
-        bulletMovementSetDurationAndStart();
+        //bulletMovementSetDurationAndStart();
     }
 
     public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent/*, boolean isDouble, int indexForDoubleWave*/) {
@@ -115,7 +124,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         float additionalDistance = BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_CLEARANCE_BETWEEN_WAVES; //Distance between the bullet and the nearest bullet attached to the previous wave
         setY(getY() - additionalDistance + (additionalDistance + BULLETS_SPECIAL_WAVE_LENGTH)/2f - BULLETS_SPECIAL_DIAMETER);
 
-        bulletMovementSetDurationAndStart();
+        //bulletMovementSetDurationAndStart();
     }
 
     private void attach(BulletsAndShieldContainer parent) {
@@ -167,8 +176,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
 
         if (inUse) {
-            //setY(getY() - bulletsHandler.getBulletSpeed() * delta);
-            bulletMovement.update(delta);
+            setY(getY() - bulletsHandler.getBulletSpeed() * delta);
+            //bulletMovement.update(delta);
             //type.setColor(1, 1, 1, type.getColor().a - 0.001f);
 
             correctSpecialBulletsRotation();
@@ -185,7 +194,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                         getY() >= /*SHIELDS_RADIUS-SHIELDS_THICKNESS*/SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT - getHeight() &
                         shield.isOn()) {
                     stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
-                    if (currentEffect == effects.minus | currentEffect == effects.plus) thereIsPlusOrMinus = false;
+                    if (currentEffect == effects.minus | currentEffect == effects.plus) plusOrMinusExists = false;
                     return;
                 }
             }
@@ -203,7 +212,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void whenTheShieldStartsToDisappear() {
         if (parent.getColor().a < 0.95f) {
             if (currentEffect == effects.minus | currentEffect == effects.plus)
-                setThereIsPlusOrMinus(false);
+                setPlusOrMinusExists(false);
+            else if (currentEffect == effects.star)
+                setStarExists(false);
         }
     }
 
@@ -220,7 +231,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public void stopUsingTheBullet(float worldWidth, float worldHeight) {
         inUse = false;
-        bulletMovement.finish();
+        //bulletMovement.finish();
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
         bulletPool.free(this);
@@ -284,12 +295,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!questionMark) region = Assets.instance.gameplayAssets.shieldDisablingBullet;
                 currentEffect = effects.shieldDisabling;
                 break;
-
-            /*case QUESTION_MARK:
-                region = Assets.instance.gameplayAssets.questionMarkBullet;
-                currentEffect =
-                break;*/
         }
+
+        // Next 2 lines are for debugging.
+        /*if (!questionMark) region = Assets.instance.gameplayAssets.starBullet;
+        currentEffect = effects.star;*/
+
 
         if (questionMark)
             region = Assets.instance.gameplayAssets.questionMarkBullet;
@@ -308,7 +319,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //addActor(type);
     }
 
-    private void bulletMovementSetDurationAndStart() {
+    /*private void bulletMovementSetDurationAndStart() {
         initialY = getY();
         finalY = 0;
         bulletMovement.setDurationMillis((initialY - finalY) / (bulletsHandler.getBulletSpeed()) * 1000);
@@ -324,7 +335,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         };
 
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(bulletMovement);
-    }
+    }*/
 
     //------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
@@ -356,66 +367,40 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         private Effects() {
 
-            ordinary = new BulletEffect() {
-                @Override
-                public void effect() {
-                    affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
-                }
+            ordinary = () -> affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
+
+
+
+            plus = () -> {
+                ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
+                handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
+                plusMinusCommon();
+                starsContainer.getRadialTween().start(SpecialBullet.PLUS);
             };
 
+            bomb = () -> affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
+
+            shieldDisabling = () -> parent.getShield().shieldDisablingBullet();
 
 
-            plus = new BulletEffect() {
-                @Override
-                public void effect() {
-                    ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
-                    plusMinusCommon();
-                    radialTweenStars.start(SpecialBullet.PLUS);
-                }
+
+
+            minus = () -> {
+                ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
+                handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
+                plusMinusCommon();
+                /*radialTweenStars*/starsContainer.getRadialTween().start(SpecialBullet.MINUS);
             };
 
-            bomb = new BulletEffect() {
-                @Override
-                public void effect() {
-                    affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
-                }
-            };
-
-            shieldDisabling = new BulletEffect() {
-                @Override
-                public void effect() {
-                    parent.getShield().shieldDisablingBullet();
-                }
-            };
+            heart = () -> affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
 
 
-
-
-            minus = new BulletEffect() {
-                @Override
-                public void effect() {
-                    ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
-                    plusMinusCommon();
-                    radialTweenStars.start(SpecialBullet.MINUS);
-                }
-            };
-
-            heart = new BulletEffect() {
-                @Override
-                public void effect() {
-                    affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
-                }
-            };
-
-
-            star = new BulletEffect() {
-                @Override
-                public void effect() {
-                    bulletsHandler.resetSpeed();
-                    Gdx.app.log(TAG, "STAR BULLET");
-                }
+            star = () -> {
+                bulletsHandler.resetSpeed();
+                starsContainer.getCurrentSpeedTweenStarBullet().start();
+                //starsContainer.getRadialTween().pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION);
+                Bullet.setStarExists(false);
+                Gdx.app.log(TAG, "STAR BULLET");
             };
 
 
@@ -433,7 +418,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
 
         private void plusMinusCommon() {
-            thereIsPlusOrMinus = false;
+            Bullet.setPlusOrMinusExists(false);
             gameplayScreen.getBulletsHandler().startPlusMinusBulletsTween();
         }
     }
