@@ -426,14 +426,15 @@ public final class MyMath {
         return chooseFromProbabilityArray(arr, 0, arr.length-1);
     }
 
-    public static <T> T chooseFromProbabilityArray(T[] arr, T... excludeItems) {
-        int arrLen = arr.length;
-        for (int i = 0, exLen = excludeItems.length; i < arrLen; i++) {
-            int j;
-            for (j = 0; j < exLen; j++) {
-                if (arr[i] == excludeItems[j]) {
+    public static <T> T chooseFromProbabilityArray(T[] arr, T... itemsToExclude) {
+        T[] tempArr = arr.clone();
+        int arrLen = arr.length, exLen = itemsToExclude.length;
+
+        for (int i = 0; i < arrLen; i++) {
+            for (int j = 0; j < exLen; j++) {
+                if (tempArr[i] == itemsToExclude[j]) {
                     // delete arr[i]
-                    arr[i] = arr[arrLen-1]; // move it to the end
+                    tempArr[i] = arr[arrLen-1]; // replace it with the last element
                     arrLen--;
                     i--;
                     break;
@@ -441,7 +442,7 @@ public final class MyMath {
             }
         }
 
-        return chooseFromProbabilityArray(arr, 0, arrLen-1);
+        return chooseFromProbabilityArray(tempArr, 0, arrLen-1);
     }
 
     public static float roundTo(float val, int numOfDigitsAfterTheDecimalPoint) {
