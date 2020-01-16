@@ -38,7 +38,7 @@ public class SimpleText extends Actor {
 
     public SimpleText(MyBitmapFont myBitmapFont, String charSequence) {
         this.myBitmapFont = myBitmapFont;
-        glyphs = new Array<BitmapFont.Glyph>(true, 50);
+        glyphs = new Array<>(true, 50);
         setCharSequence(charSequence, true);
         this.aspectRatioLocked = true;
 
@@ -70,9 +70,12 @@ public class SimpleText extends Actor {
                 //Gdx.app.log(TAG, "" + glyphs.get(i-1).id + ", " + glyph.id + ", " + glyphs.get(i-1).getKerning((char) glyph.id) + ", " + kerning);
             }
 
-            if (aspectRatioLocked)
-                batch.draw(_temp, getX() + cursorX + xoffset, getY() + myYOffsetWorldUnits, w, w * glyph.height / glyph.width);
-            else batch.draw(_temp, getX() + cursorX + xoffset,getY() + myYOffsetWorldUnits, w, getHeight() * glyph.height / heightPixelUnits);
+            if (glyph.id != ' ') {
+                if (aspectRatioLocked)
+                    batch.draw(_temp, getX() + cursorX + xoffset, getY() + myYOffsetWorldUnits, w, w * glyph.height / glyph.width);
+                else
+                    batch.draw(_temp, getX() + cursorX + xoffset, getY() + myYOffsetWorldUnits, w, getHeight() * glyph.height / heightPixelUnits);
+            }
 
             cursorX += xadvance;
             i++;
@@ -110,7 +113,6 @@ public class SimpleText extends Actor {
         BitmapFont.Glyph firstCharInSeq = myBitmapFont.data.getGlyph(charSequence.charAt(0));
 
         yoffsetPlusHeightMax = (firstCharInSeq.yoffset) + firstCharInSeq.height;
-        int yoffsetPlusHeightMaxID = firstCharInSeq.id;
         int yoffsetMin = (firstCharInSeq.yoffset);
 
         char c;
@@ -140,7 +142,6 @@ public class SimpleText extends Actor {
             int yoffsetPlusHeight = (glyph.yoffset) + glyph.height;
             if (yoffsetPlusHeight > yoffsetPlusHeightMax) {
                 yoffsetPlusHeightMax = yoffsetPlusHeight;
-                yoffsetPlusHeightMaxID = glyph.id;
             }
             if ((glyph.yoffset) < yoffsetMin)
                 yoffsetMin = (glyph.yoffset);
