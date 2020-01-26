@@ -10,9 +10,13 @@ public class Timer implements Updatable {
     private boolean paused = false;
 
     //private long delayTimeStart;
-    private double delayCurrentTime;
-    private float delayMillis = 0;
-    private boolean inDelay = false;
+    private double startDelayCurrentTime;
+    private float startDelayMillis = 0;
+    private boolean inStartDelay = false;
+
+    private double pauseDelayCurrentTime;
+    private float pauseDelayMillis = 0;
+    private boolean inPauseDelay = false;
 
     /**
      * When calling this constructor, you don't need to call {@link #update(float)} by yourself. It's called automatically by the {@link AdvancedStage} class.
@@ -42,15 +46,19 @@ public class Timer implements Updatable {
         percentage = 0;
         started = true;
         finished = false;
-        if (isPaused()) paused = false;
+        inStartDelay = false;
+        if (isPaused()) {
+            paused = false;
+            inPauseDelay = false;
+        }
         onStart();
     }
 
     public final void start(float delayMillis) {
-        this.delayMillis = delayMillis;
+        this.startDelayMillis = delayMillis;
         //delayTimeStart = TimeUtils.nanoTime();
-        delayCurrentTime = 0;
-        inDelay = true;
+        startDelayCurrentTime = 0;
+        inStartDelay = true;
         finished = false;
     }
 
@@ -62,13 +70,22 @@ public class Timer implements Updatable {
 
     @Override
     public final void update(float delta) {
+
+        if (inPauseDelay) {
+            pauseDelayCurrentTime += delta*MyMath.secondsToMillis;
+            if(pauseDelayCurrentTime >= pauseDelayMillis) {
+                inPauseDelay = false;
+                resume();
+            } else return;
+        }
+
         if (paused) return;
 
-        if (inDelay) {
+        if (inStartDelay) {
             //float currentDelayTime = MyMath.millisSince(delayTimeStart);
-            delayCurrentTime += delta*MyMath.secondsToMillis;
-            if(/*currentDelayTime*/ delayCurrentTime >= delayMillis) {
-                inDelay = false;
+            startDelayCurrentTime += delta*MyMath.secondsToMillis;
+            if(/*currentDelayTime*/ startDelayCurrentTime >= startDelayMillis) {
+                inStartDelay = false;
                 start();
             } else return;
         }
@@ -128,6 +145,9 @@ public class Timer implements Updatable {
     }
 
     public final void finish() {
+        percentage = 1;
+        currentTime = durationMillis;
+
         started = false;
         finished = true;
         inPauseDelay = false;
@@ -181,5 +201,13 @@ public class Timer implements Updatable {
 
     public boolean isPaused() {
         return paused;
+    }
+
+    public boolean isInStartDelay() {
+        return inStartDelay;
+    }
+
+    public boolean isInPauseDelay() {
+        return inPauseDelay;
     }
 }
