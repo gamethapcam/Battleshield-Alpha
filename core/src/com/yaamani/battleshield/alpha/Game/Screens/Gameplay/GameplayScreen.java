@@ -10,10 +10,13 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
+import static com.yaamani.battleshield.alpha.MyEngine.MyMath.millisToSeconds;
 
 public class GameplayScreen extends AdvancedScreen {
 
@@ -35,9 +38,14 @@ public class GameplayScreen extends AdvancedScreen {
 
     public enum State {PLAYING, PAUSED, LOST}
     private State state;
+    private boolean inStarAnimation = false;
 
     private float timePlayedThisTurnSoFar;
     private Score score;
+    private MyTween timePlayedThisTurnSoFarTweenStarBullet;
+
+    private Image whiteTextureHidesEveryThingSecondStageStarBullet;
+    private MyTween whiteTextureHidesEveryThingSecondStageTweenStarBullet;
 
     private PauseStuff pauseStuff;
 
@@ -62,21 +70,26 @@ public class GameplayScreen extends AdvancedScreen {
         this.myBitmapFont = myBitmapFont;
         this.starsContainer = starsContainer;
 
-        pauseWhenPausingFinishWhenLosing = new Array<Timer>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
+        pauseWhenPausingFinishWhenLosing = new Array<>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
 
         initializeHandlers(game, starsContainer.getRadialTween());
 
         initializeTurret();
         initializeBulletsAndShieldArray();
+        initializeTimePlayedThisTurnSoFarTweenStarBullet();
+
         //initializeBullets(starsContainer.getRadialTween());
 
         //bulletsHandler.newWave();
 
         healthBar = new HealthBar(this);
 
-        // HUD ----
-        score = new Score(this, myBitmapFont);
         speedMultiplierStuff = new SpeedMultiplierStuff(this);
+
+        initializeWhiteTextureHidesEveryThingSecondStageStarBullet();
+        initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet();
+
+        score = new Score(this, myBitmapFont);
 
         //initializeControllers();
 
@@ -106,10 +119,11 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (getState() == GameplayScreen.State.PLAYING) {
             speedMultiplierStuff.update(delta);
-            timePlayedThisTurnSoFar += delta;
+            if (!inStarAnimation) timePlayedThisTurnSoFar += delta;
         }
 
-
+        timePlayedThisTurnSoFarTweenStarBullet.update(delta);
+        whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
 
 
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
@@ -212,6 +226,8 @@ public class GameplayScreen extends AdvancedScreen {
         gameOverLayer.resize(width, height, worldWidth, worldHeight);
 
         speedMultiplierStuff.resize(width, height, worldWidth, worldHeight);
+
+        whiteTextureHidesEveryThingSecondStageStarBullet.setBounds(-worldWidth, -worldHeight, worldWidth*4, worldHeight*4);
     }
 
     //------------------------------ initializers ------------------------------
@@ -276,6 +292,49 @@ public class GameplayScreen extends AdvancedScreen {
         bulletsHandler = new BulletsHandler(game, this);
         healthHandler = new HealthHandler(this);
     }
+
+    private void initializeTimePlayedThisTurnSoFarTweenStarBullet() {
+        timePlayedThisTurnSoFarTweenStarBullet = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT) {
+            @Override
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+                timePlayedThisTurnSoFar = myInterpolation.apply(startX, endX, startY, endY, currentX);
+            }
+        };
+
+        addToPauseWhenPausingFinishWhenLosing(timePlayedThisTurnSoFarTweenStarBullet);
+    }
+
+    private void initializeWhiteTextureHidesEveryThingSecondStageStarBullet() {
+        whiteTextureHidesEveryThingSecondStageStarBullet = new Image(Assets.instance.gameplayAssets.gameOverBG);
+        whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(false);
+        whiteTextureHidesEveryThingSecondStageStarBullet.setColor(1, 1, 1, 0);
+        addActor(whiteTextureHidesEveryThingSecondStageStarBullet);
+    }
+    
+    private void initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet() {
+        float duration = STAR_BULLET_SECOND_STAGE_DURATION*(1-STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE);
+
+        whiteTextureHidesEveryThingSecondStageTweenStarBullet = new MyTween(duration,
+                MyInterpolation.myLinear,
+                0, 
+                1) {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(true);
+            }
+
+            @Override
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+                float alpha = myInterpolation.apply(startX, endX, startY, endY, currentX);
+                whiteTextureHidesEveryThingSecondStageStarBullet.setColor(1, 1, 1, alpha);
+            }
+        };
+        
+        addToPauseWhenPausingFinishWhenLosing(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
+    }
+
 
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
@@ -363,6 +422,14 @@ public class GameplayScreen extends AdvancedScreen {
         return pauseWhenPausingFinishWhenLosing.items;
     }
 
+    public boolean isInStarAnimation() {
+        return inStarAnimation;
+    }
+
+    public void setInStarAnimation(boolean inStarAnimation) {
+        this.inStarAnimation = inStarAnimation;
+    }
+
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
@@ -374,5 +441,15 @@ public class GameplayScreen extends AdvancedScreen {
 
     public void addToPauseWhenPausingFinishWhenLosing(Timer timer) {
         pauseWhenPausingFinishWhenLosing.add(timer);
+    }
+
+    public void startScoreTimePlayedThisTurnSoFarTweenStarBullet() {
+        timePlayedThisTurnSoFarTweenStarBullet.setInitialVal(timePlayedThisTurnSoFar);
+        timePlayedThisTurnSoFarTweenStarBullet.setFinalVal(timePlayedThisTurnSoFar + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) millisToSeconds);
+        timePlayedThisTurnSoFarTweenStarBullet.start();
+    }
+
+    public void startWhiteTextureHidesEveryThingSecondStageTweenStarBullet() {
+        whiteTextureHidesEveryThingSecondStageTweenStarBullet.start(STAR_BULLET_SECOND_STAGE_DURATION*STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE);
     }
 }

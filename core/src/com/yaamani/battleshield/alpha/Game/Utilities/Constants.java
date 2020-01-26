@@ -2,6 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Utilities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 
 import java.math.MathContext;
 
@@ -179,7 +180,7 @@ public final class Constants {
 
     public static final float BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
 
-    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = 50/*5f*//*1f*/; //sec
+    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = 50/*3*/; //sec
 
     public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
 
@@ -208,31 +209,31 @@ public final class Constants {
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
             SpecialBullet.HEART,
+            /*SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
+            SpecialBullet.HEART,*/
 
+            /*SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,*/
 
             SpecialBullet.STAR,
 
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,
+            /*SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,*/
             SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = {
             SpecialBullet.HEART,
-            SpecialBullet.HEART,
+            /*SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
@@ -245,48 +246,48 @@ public final class Constants {
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
-            SpecialBullet.HEART,
+            SpecialBullet.HEART,*/
 
             SpecialBullet.STAR,
 
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,
+            /*SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,*/
             SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {
             SpecialBullet.BOMB,
+           /* SpecialBullet.BOMB,
             SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,*/
 
+            /*SpecialBullet.PLUS,
             SpecialBullet.PLUS,
             SpecialBullet.PLUS,
-            SpecialBullet.PLUS,
-            SpecialBullet.PLUS,
+            SpecialBullet.PLUS,*/
 
             SpecialBullet.SHIELD_DISABLING,
-            SpecialBullet.SHIELD_DISABLING,
+            //SpecialBullet.SHIELD_DISABLING,
 
-            SpecialBullet.QUESTION_MARK,
+            //SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = {
             SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
+            /*SpecialBullet.BOMB,
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
 
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,*/
+
+            //SpecialBullet.SHIELD_DISABLING,
             SpecialBullet.SHIELD_DISABLING,
-            SpecialBullet.SHIELD_DISABLING,
 
-            SpecialBullet.QUESTION_MARK,
+            //SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
@@ -301,9 +302,9 @@ public final class Constants {
             WaveBulletsType.SPECIAL_BAD
     };
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -/*0.04f*/0;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -/*0.2f*/0;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -381,11 +382,11 @@ public final class Constants {
 
 
 
-    public static final float STARS_MAX_SPEED = WORLD_SIZE / 70.0f;
+    public static final float STARS_SPEED = WORLD_SIZE / 70.0f;
 
     public static final float STARS_MAX_OFFSET_DISTANCE = WORLD_SIZE / 10.0f;
 
-    public static final float STARS_MAX_RADIUS = WORLD_SIZE / 200.0f;
+    public static final float STARS_MAX_RADIUS = WORLD_SIZE / 350.0f;
 
     public static final float STARS_MOVING_ANGLE = 40f * MathUtils.degRad;
 
@@ -470,7 +471,27 @@ public final class Constants {
 
 
 
-    public static final int STAR_BULLET_FIRST_STAGE_DURATION = 2000;
+    public static final int STAR_BULLET_FIRST_STAGE_DURATION = 1500;
+
+    public static final int STAR_BULLET_SECOND_STAGE_DURATION = 3500;
+
+    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 2000;
+
+    public static final int STAR_BULLET_TOTAL_DURATION = STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION + STAR_BULLET_THIRD_STAGE_DURATION;
+
+    /*public static final float STAR_BULLET_TRAIL_WARP_VELOCITY_MULTIPLIER_INITIAL_VALUE = 3;
+
+    public static final float STAR_BULLET_TRAIL_WARP_VELOCITY_MULTIPLIER_FINAL_VALUE = 60;*/
+
+    public static final float STAR_BULLET_TRAIL_WARP_TOTAL_DISTANCE = WORLD_SIZE / 6f;
+
+    public static final MyInterpolation STAR_BULLET_FIRST_STAGE_INTERPOLATION = MyInterpolation.myLinear;
+
+    public static final MyInterpolation STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT = MyInterpolation.myPow2Out;
+
+    public static final MyInterpolation STAR_BULLET_SECOND_STAGE_INTERPOLATION = MyInterpolation.myReciprocal_950In;
+
+    public static final float STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE = 0.95f;
 
 
 
@@ -538,6 +559,8 @@ public final class Constants {
     public static final String ASSETS_FONT_FNT_INTERNAL = "Uni Neue Bold Italic.fnt";
 
     public static final String ASSETS_GAME_OVER_BG = "Big Circle";
+
+    public static final String ASSETS_STAR_GLOW = "Star Glow";
 
     public static final String ASSETS_RESTRICTED = "RESTRICTED";
 

@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class AdvancedStage extends Stage implements Resizable{
+public class AdvancedStage extends Stage implements Resizable {
 
     public static final String TAG = AdvancedStage.class.getSimpleName();
 

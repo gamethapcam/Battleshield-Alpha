@@ -11,9 +11,10 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 720;
+		config.height = 550;
         config.width = (int) (config.height * (3f/2f));
         config.useHDPI = true;
+        //config.samples = 16;
 
 		new LwjglApplication(new BattleshieldGame(), config);
     }

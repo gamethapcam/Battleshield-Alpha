@@ -78,7 +78,7 @@ public class Shield extends Actor {
             this.on = on;
 
         if (on) setColor(1, 1, 1, 1);
-        else setColor(1, 1, 1, 0.5f);
+        else setColor(0.5f, 0.5f, 0.5f, 1f);
     }
 
     public void shieldDisablingBullet() {

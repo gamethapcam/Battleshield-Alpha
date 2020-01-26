@@ -14,6 +14,7 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -81,7 +82,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         return R;
     }
 
-
     public static boolean isPlusOrMinusExists() {
         return plusOrMinusExists;
     }
@@ -93,8 +93,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     public static boolean isStarExists() {
         return starExists;
     }
-
-
 
     public static void setStarExists(boolean starExists) {
         Bullet.starExists = starExists;
@@ -363,44 +361,83 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         private BulletEffect heart;
         private BulletEffect star;
 
+
+
         //private BulletEffect questionMark;
 
         private Effects() {
 
-            ordinary = () -> affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
 
-
-
-            plus = () -> {
-                ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
-                plusMinusCommon();
-                starsContainer.getRadialTween().start(SpecialBullet.PLUS);
+            ordinary = new BulletEffect() {
+                @Override
+                public void effect() {
+                    affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
+                }
             };
 
-            bomb = () -> affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
-
-            shieldDisabling = () -> parent.getShield().shieldDisablingBullet();
 
 
-
-
-            minus = () -> {
-                ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
-                plusMinusCommon();
-                /*radialTweenStars*/starsContainer.getRadialTween().start(SpecialBullet.MINUS);
+            plus = new BulletEffect() {
+                @Override
+                public void effect() {
+                    ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
+                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
+                    plusMinusCommon();
+                    starsContainer.getRadialTween().start(SpecialBullet.PLUS);
+                }
             };
 
-            heart = () -> affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
+            bomb = new BulletEffect() {
+                @Override
+                public void effect() {
+                    affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
+                }
+            };
+
+            shieldDisabling = new BulletEffect() {
+                @Override
+                public void effect() {
+                    parent.getShield().shieldDisablingBullet();
+                }
+            };
 
 
-            star = () -> {
-                bulletsHandler.resetSpeed();
-                starsContainer.getCurrentSpeedTweenStarBullet().start();
-                //starsContainer.getRadialTween().pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION);
-                Bullet.setStarExists(false);
-                Gdx.app.log(TAG, "STAR BULLET");
+
+
+            minus = new BulletEffect() {
+                @Override
+                public void effect() {
+                    ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
+                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
+                    plusMinusCommon();
+                    /*radialTweenStars*/starsContainer.getRadialTween().start(SpecialBullet.MINUS);
+                }
+            };
+
+            heart = new BulletEffect() {
+                @Override
+                public void effect() {
+                    affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
+                }
+            };
+
+
+            star = new BulletEffect() {
+                @Override
+                public void effect() {
+                    bulletsHandler.resetSpeed();
+
+                    bulletsHandler.getCurrentBulletsWaveTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    bulletsHandler.getCurrentSpeedMultiplierTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    bulletsHandler.getDecreaseBulletsPerAttackTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+
+                    bulletsHandler.startStarBulletStages();
+
+                    //starsContainer.getRadialTween().pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION);
+                    Bullet.setStarExists(false);
+                    gameplayScreen.setInStarAnimation(true);
+                    Gdx.app.log(TAG, "STAR BULLET");
+                }
             };
 
 
@@ -421,6 +458,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             Bullet.setPlusOrMinusExists(false);
             gameplayScreen.getBulletsHandler().startPlusMinusBulletsTween();
         }
+
+
+
+
     }
 
 }

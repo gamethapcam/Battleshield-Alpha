@@ -187,6 +187,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             healthBar = atlas.findRegion(ASSETS_HEALTH_BAR);
 
             gameOverBG = atlas.findRegion(ASSETS_GAME_OVER_BG);
+
         }
 
         private void initializeShieldsWithVariousAngles(TextureAtlas atlas) {
@@ -209,11 +210,14 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
     public class MutualAssets {
 
         public final TextureRegion star;
+        public final TextureRegion starGlow;
 
         public final TextureRegion font;
 
         private MutualAssets(TextureAtlas atlas) {
             star = atlas.findRegion(ASSETS_STAR);
+            starGlow = atlas.findRegion(ASSETS_STAR_GLOW);
+
 
             font = atlas.findRegion(ASSETS_FONT);
         }

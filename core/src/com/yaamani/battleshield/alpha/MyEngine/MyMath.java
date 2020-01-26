@@ -11,6 +11,7 @@ public final class MyMath {
     public static final String TAG = MyMath.class.getSimpleName();
 
     public static final double secondsToMillis = 1000f;
+    public static final double millisToSeconds = 1f/1000f;
 
     //The next 2 methods for calculating the aspect ratio. from (https://codereview.stackexchange.com/a/26698)
     private static int gcd(int p, int q) {
@@ -204,6 +205,8 @@ public final class MyMath {
                 j++;
             }
             arr = arrExcludingNulls;
+            if (arrLengthExcludingNulls == 0)
+                return 0;
             if (!sorted) Arrays.sort(arrExcludingNulls, 0, arrLengthExcludingNulls-1);
         }
 
@@ -276,6 +279,8 @@ public final class MyMath {
                 j++;
             }
             arr = arrExcludingNulls;
+            if (arrLengthExcludingNulls == 0)
+                return 0;
             if (!sorted) Arrays.sort(arrExcludingNulls, 0, arrLengthExcludingNulls-1);
         }
         return maxOfArray(arr, arrLengthExcludingNulls);
@@ -300,6 +305,8 @@ public final class MyMath {
                 j++;
             }
             arr = arrExcludingNulls;
+            if (arrLengthExcludingNulls == 0)
+                return 0;
             if (!sorted) Arrays.sort(arrExcludingNulls, 0, arrLengthExcludingNulls-1);
         }
         return minOfArray(arr);
@@ -352,6 +359,8 @@ public final class MyMath {
                 j++;
             }
             arr = arrExcludingNulls;
+            if (arrLengthExcludingNulls == 0)
+                return "";
             if (!sorted) Arrays.sort(arrExcludingNulls, 0, arrLengthExcludingNulls-1);
         }
 
@@ -640,4 +649,59 @@ public final class MyMath {
             this.myDouble = myDouble;
         }
     }
+
+    public static float[] gaussianWeights(int kernelSize) {
+        if (kernelSize <= 0)
+            throw new ValueOutOfRangeException("kernelSize must be a positive value.");
+
+        if (kernelSize%2 == 0)
+            throw new RuntimeException("kernelSize must be an odd number.");
+
+        float sigma = kernelSize * 0.137915254237f; //This ensures that the blurred image won't be darker than the original.
+        float c = 2*sigma*sigma;
+
+        float[] weights = new float[(kernelSize+1)/2];
+
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = (float) (Math.exp((-i*i)/c)/Math.sqrt(PI*c));
+        }
+
+        return weights;
+    }
+
+    /*public static float[] gaussianWeightsLinearlySampledTexture(int kernelSize) {
+        if (kernelSize <= 3)
+            throw new RuntimeException("kernelSize should be greater than 3.");
+
+        float[] weights = gaussianWeights(kernelSize);
+
+        float[] newWeights = new float[(kernelSize)/4 + 1];
+
+        newWeights[0] = weights[0];
+
+        for (int i = 1, j = 1; i < weights.length-1; i+=2) {
+            newWeights[j] = weights[i] + weights[i+1];
+            j++;
+        }
+
+        return newWeights;
+    }
+
+    public static float[] gaussianOffsetsLinearlySampledTexture(int kernelSize) {
+        if (kernelSize <= 3)
+            throw new RuntimeException("kernelSize should be greater than 3.");
+
+        float[] weights = gaussianWeights(kernelSize);
+
+        float[] newWeights = new float[(kernelSize)/4 + 1];
+
+        newWeights[0] = 0;
+
+        for (int i = 1, j = 1; i < weights.length-1; i+=2) {
+            newWeights[j] = (i*weights[i] + (i+1)*weights[i+1]) / (weights[i] + weights[i+1]);
+            j++;
+        }
+
+        return newWeights;
+    }*/
 }

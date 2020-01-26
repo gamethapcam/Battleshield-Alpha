@@ -5,7 +5,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
+import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
@@ -29,9 +31,14 @@ public class BulletsHandler implements Updatable {
 
     private Timer plusMinusBulletsTimer;
 
+    private float currentBulletSpeed;
     private float currentSpeedMultiplier;
     private Timer currentSpeedMultiplierTimer;
-    private float speedResetTime = 0;
+    //private float speedResetTime = 0;
+    private MyTween currentBulletSpeedTweenStarBullet;
+    private Timer starBulletFirstStage;
+    private Timer starBulletSecondStage;
+    private Timer starBulletThirdStage;
 
     private int roundStart;
     private Integer roundTurn = null;
@@ -68,22 +75,38 @@ public class BulletsHandler implements Updatable {
 
         //initializeIsThereDoubleWaveTimer();
 
-        currentSpeedMultiplier = 1;
+        setCurrentSpeedMultiplier(1);
         initializeCurrentSpeedMultiplierTimer();
+
+        initializeCurrentBulletSpeedTweenStarBullet();
+        initializeStarBulletFirstStage();
+        initializeStarBulletSecondStage();
+        initializeStarBulletThirdStage();
 
         resetWaveTimer();
 
+        //currentBulletSpeed = BULLETS_SPEED_INITIAL;
     }
 
     @Override
     public void update(float delta) {
         if (!gameplayScreen.isVisible()) return;
 
+        /*Gdx.app.log(TAG, "isStarted() = " + currentBulletsWaveTimer.isStarted() +
+                ", isPaused() = " + currentBulletsWaveTimer.isPaused() +
+                ", isInPauseDelay() = " + currentBulletsWaveTimer.isInPauseDelay() +
+                ", isInStartDelay() = " + currentBulletsWaveTimer.isInStartDelay() +
+                ", percentage = " + currentBulletsWaveTimer.getPercentage());*/
+
         currentBulletsWaveTimer.update(delta);
         plusMinusBulletsTimer.update(delta);
         decreaseBulletsPerAttackTimer.update(delta);
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
             currentSpeedMultiplierTimer.update(delta);
+        currentBulletSpeedTweenStarBullet.update(delta);
+        starBulletFirstStage.update(delta);
+        starBulletSecondStage.update(delta);
+        starBulletThirdStage.update(delta);
 
         //isThereDoubleWaveTimer.update(delta);
 
@@ -100,6 +123,8 @@ public class BulletsHandler implements Updatable {
 
     public void setBulletsPerAttack(int bulletsPerAttack) {
         this.bulletsPerAttack = bulletsPerAttack;
+        if (!currentBulletSpeedTweenStarBullet.isStarted())
+            gameplayScreen.getStarsContainer().updateCurrentStarSpeed(bulletsPerAttack);
     }
 
     public int getBulletsPerAttack() {
@@ -150,32 +175,40 @@ public class BulletsHandler implements Updatable {
         return currentSpeedMultiplier;
     }
 
+    public void setCurrentSpeedMultiplier(float currentSpeedMultiplier) {
+        this.currentSpeedMultiplier = currentSpeedMultiplier;
+        if (gameplayScreen != null)
+            if (gameplayScreen.getSpeedMultiplierStuff() != null)
+                gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
+
+        currentBulletSpeed = BULLETS_SPEED_INITIAL * currentSpeedMultiplier;
+    }
+
     public Timer getCurrentSpeedMultiplierTimer() {
         return currentSpeedMultiplierTimer;
     }
 
-    public void resetSpeedResetTime() {
+    /*public void resetSpeedResetTime() {
         speedResetTime = 0;
-    }
+    }*/
 
     public void resetCurrentSpeedMultiplier() {
-        currentSpeedMultiplier = 1;
-        gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
+        setCurrentSpeedMultiplier(1);
     }
 
     public void resetSpeed() {
-        speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
+        //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
         gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
         currentSpeedMultiplierTimer.start();
         resetCurrentSpeedMultiplier();
     }
 
-    public float getSpeedResetTime() {
+    /*public float getSpeedResetTime() {
         return speedResetTime;
-    }
+    }*/
 
     public float getBulletSpeed() {
-        int i = (int) /*floor*/ ((gameplayScreen.getTimePlayedThisTurnSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
+        /*int i = (int) *//*floor*//* ((gameplayScreen.getTimePlayedThisTurnSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
         float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
         if (currentMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
@@ -184,7 +217,19 @@ public class BulletsHandler implements Updatable {
         }
 
         //Gdx.app.log(TAG, "Speed Multiplier = " + BULLETS_SPEED_MULTIPLIER_MAX);
-        return BULLETS_SPEED_INITIAL * BULLETS_SPEED_MULTIPLIER_MAX;
+        return BULLETS_SPEED_INITIAL * BULLETS_SPEED_MULTIPLIER_MAX;*/
+        return currentBulletSpeed;
+    }
+
+    public void startCurrentBulletSpeedTweenStarBullet() {
+        currentBulletSpeedTweenStarBullet.setInitialVal(getBulletSpeed());
+        currentBulletSpeedTweenStarBullet.start();
+    }
+
+    public void startStarBulletStages() {
+        starBulletFirstStage.start();
+        starBulletSecondStage.start(STAR_BULLET_FIRST_STAGE_DURATION);
+        starBulletThirdStage.start(STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION);
     }
 
     //----------------------------------------------------------------------------------------------------------
@@ -205,6 +250,7 @@ public class BulletsHandler implements Updatable {
             initializeCurrentBulletWave(Math.max(duration, duration1));
         else currentBulletsWaveTimer.setDurationMillis(Math.max(duration, duration1));
 
+        //Gdx.app.log(TAG, "duration = " + duration + ", duration1 = " + duration1);
         //Gdx.app.log(TAG, "waveTimer Duration = " + currentBulletsWaveTimer.getDurationMillis());
         currentBulletsWaveTimer.start();
     }
@@ -258,6 +304,7 @@ public class BulletsHandler implements Updatable {
 
         if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_GOOD) {
             currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
+            //Gdx.app.log(TAG, MyMath.arrayToString(GOOD_BULLETS_PROBABILITY));
 
             if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
                 currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
@@ -265,7 +312,7 @@ public class BulletsHandler implements Updatable {
                 Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
             } else {
                 questionMark = false;
-                //Gdx.app.log(TAG, "" + currentSpecialBullet);
+                Gdx.app.log(TAG, "" + currentSpecialBullet);
             }
 
             if (currentSpecialBullet == SpecialBullet.STAR) {
@@ -313,7 +360,7 @@ public class BulletsHandler implements Updatable {
                 Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
             } else {
                 questionMark = false;
-                //Gdx.app.log(TAG, "" + currentSpecialBullet);
+                Gdx.app.log(TAG, "" + currentSpecialBullet);
             }
 
             if (currentSpecialBullet == SpecialBullet.PLUS) {
@@ -579,7 +626,7 @@ public class BulletsHandler implements Updatable {
                 super.onFinish();
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
                     if (bulletsPerAttack > BULLETS_MIN_NUMBER_PER_ATTACK) {
-                        bulletsPerAttack--;
+                        setBulletsPerAttack(bulletsPerAttack-1);
                         decreaseBulletsPerAttackTimer.start();
                         //Gdx.app.log(TAG, "decreaseBulletsPerAttackTimer isFinished");
                     }
@@ -599,9 +646,10 @@ public class BulletsHandler implements Updatable {
                 float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier + BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING &
                         nextSpeedMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
-                    currentSpeedMultiplier = nextSpeedMultiplier;
+                    setCurrentSpeedMultiplier(nextSpeedMultiplier);
+                    //currentSpeedMultiplier = nextSpeedMultiplier;
                     //currentSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier, 5);
-                    gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
+                    //gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
                 }
                 if (currentSpeedMultiplier < BULLETS_SPEED_MULTIPLIER_MAX) {
                     gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
@@ -614,6 +662,73 @@ public class BulletsHandler implements Updatable {
 
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedMultiplierTimer);
     }
+
+    private void initializeCurrentBulletSpeedTweenStarBullet() {
+        currentBulletSpeedTweenStarBullet = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION, BULLETS_SPEED_INITIAL, 0) {
+            @Override
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+                currentBulletSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
+            }
+        };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentBulletSpeedTweenStarBullet);
+    }
+
+    private void initializeStarBulletFirstStage() {
+        starBulletFirstStage = new Timer(STAR_BULLET_FIRST_STAGE_DURATION) {
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                startCurrentBulletSpeedTweenStarBullet();
+                gameplayScreen.getStarsContainer().startCurrentSpeedTweenStarBullet();
+                gameplayScreen.startScoreTimePlayedThisTurnSoFarTweenStarBullet();
+            }
+        };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(starBulletFirstStage);
+    }
+
+    private void initializeStarBulletSecondStage() {
+        starBulletSecondStage = new Timer(STAR_BULLET_SECOND_STAGE_DURATION) {
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                gameplayScreen.getStarsContainer().setInWarpTrailAnimation(true);
+                gameplayScreen.getStarsContainer().getWarpStretchFactorTweenStarBullet().start();
+                gameplayScreen.startWhiteTextureHidesEveryThingSecondStageTweenStarBullet();
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                //gameplayScreen.getStarsContainer().setInWarpTrailAnimation(false);
+                Array<Float> fpss = gameplayScreen.getStarsContainer().getFpss();
+                //Gdx.app.log(TAG, ""+MyMath.arrayToString(fpss.items));
+                //if (fpss.size > 0)
+                Gdx.app.log(TAG, MyMath.arrayStatistics(fpss.items, false));
+
+                //gameplayScreen.getStarsContainer().clearBlurBuffers();
+            }
+        };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(starBulletSecondStage);
+    }
+
+    private void initializeStarBulletThirdStage() {
+        starBulletThirdStage = new Timer(STAR_BULLET_THIRD_STAGE_DURATION) {
+            @Override
+            public void onStart() {
+                super.onStart();
+
+            }
+        };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(starBulletThirdStage);
+    }
+
 
     /*private void initializeIsThereDoubleWaveTimer() {
         isThereDoubleWaveTimer = new Timer(0 *//*It doesn't matter. The duration will be changed during the gameplay*//*) {

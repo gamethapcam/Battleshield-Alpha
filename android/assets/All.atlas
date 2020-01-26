@@ -13,7 +13,7 @@ Big Circle
   index: -1
 Bomb
   rotate: false
-  xy: 1229, 1271
+  xy: 1028, 255
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
@@ -41,14 +41,14 @@ Free Controller BG
   index: -1
 Free Controller Stick
   rotate: false
-  xy: 1028, 331
+  xy: 1434, 1347
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 Heart
   rotate: false
-  xy: 1221, 399
+  xy: 1434, 1285
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
@@ -83,7 +83,7 @@ Plus
   index: -1
 Question Mark
   rotate: false
-  xy: 1662, 1415
+  xy: 1719, 1415
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
@@ -104,21 +104,21 @@ Restricted Controller Right BG
   index: -1
 Shield Disabling
   rotate: false
-  xy: 1053, 269
+  xy: 1090, 255
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Shields102
   rotate: false
-  xy: 1416, 1326
+  xy: 1215, 310
   size: 39, 149
   orig: 39, 149
   offset: 0, 0
   index: -1
 Shields105
   rotate: false
-  xy: 1373, 1322
+  xy: 1172, 306
   size: 41, 153
   orig: 41, 153
   offset: 0, 0
@@ -160,63 +160,63 @@ Shields120
   index: -1
 Shields45
   rotate: false
-  xy: 2572, 2500
+  xy: 957, 158
   size: 16, 62
   orig: 16, 62
   offset: 0, 0
   index: -1
 Shields48
   rotate: false
-  xy: 2572, 2564
+  xy: 2572, 2480
   size: 16, 67
   orig: 16, 67
   offset: 0, 0
   index: -1
 Shields51
   rotate: false
-  xy: 2572, 2633
+  xy: 2572, 2549
   size: 17, 72
   orig: 17, 72
   offset: 0, 0
   index: -1
 Shields54
   rotate: false
-  xy: 2596, 2712
+  xy: 2572, 2623
   size: 18, 77
   orig: 18, 77
   offset: 0, 0
   index: -1
 Shields57
   rotate: false
-  xy: 2575, 2707
+  xy: 2597, 2707
   size: 19, 82
   orig: 19, 82
   offset: 0, 0
   index: -1
 Shields60
   rotate: false
-  xy: 4063, 3510
+  xy: 2575, 2702
   size: 20, 87
   orig: 20, 87
   offset: 0, 0
   index: -1
 Shields63
   rotate: false
-  xy: 1396, 477
+  xy: 4064, 3505
   size: 21, 92
   orig: 21, 92
   offset: 0, 0
   index: -1
 Shields66
   rotate: false
-  xy: 4039, 3501
+  xy: 1396, 473
   size: 22, 96
   orig: 22, 96
   offset: 0, 0
   index: -1
 Shields69
   rotate: false
-  xy: 1028, 228
+  xy: 4039, 3496
   size: 23, 101
   orig: 23, 101
   offset: 0, 0
@@ -230,7 +230,7 @@ Shields72
   index: -1
 Shields75
   rotate: false
-  xy: 1635, 1365
+  xy: 1692, 1365
   size: 25, 110
   orig: 25, 110
   offset: 0, 0
@@ -244,63 +244,70 @@ Shields78
   index: -1
 Shields81
   rotate: false
-  xy: 1191, 339
+  xy: 1662, 1355
   size: 28, 120
   orig: 28, 120
   offset: 0, 0
   index: -1
 Shields84
   rotate: false
-  xy: 1604, 1351
+  xy: 1631, 1351
   size: 29, 124
   orig: 29, 124
   offset: 0, 0
   index: -1
 Shields87
   rotate: false
-  xy: 1158, 331
+  xy: 1598, 1347
   size: 31, 128
   orig: 31, 128
   offset: 0, 0
   index: -1
 Shields90
   rotate: false
-  xy: 1570, 1342
+  xy: 1564, 1342
   size: 32, 133
   orig: 32, 133
   offset: 0, 0
   index: -1
 Shields93
   rotate: false
-  xy: 1534, 1338
+  xy: 1333, 322
   size: 34, 137
   orig: 34, 137
   offset: 0, 0
   index: -1
 Shields96
   rotate: false
-  xy: 1496, 1334
+  xy: 1295, 318
   size: 36, 141
   orig: 36, 141
   offset: 0, 0
   index: -1
 Shields99
   rotate: false
-  xy: 1457, 1330
+  xy: 1256, 314
   size: 37, 145
   orig: 37, 145
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 1291, 1271
+  xy: 1496, 1285
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
+Star Glow
+  rotate: false
+  xy: 1229, 1271
+  size: 203, 204
+  orig: 203, 204
+  offset: 0, 0
+  index: -1
 Turret
   rotate: false
-  xy: 1229, 1333
+  xy: 1028, 317
   size: 142, 142
   orig: 142, 142
   offset: 0, 0

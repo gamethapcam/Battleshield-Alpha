@@ -6,7 +6,10 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -33,6 +36,8 @@ public class Score extends SimpleText implements Resizable{
     private GameplayScreen.BulletsHandler bulletsHandler;*/
 
     private GameplayScreen gameplayScreen;
+
+
 
 
     public Score(GameplayScreen gameplayScreen, MyBitmapFont font) {
@@ -110,6 +115,8 @@ public class Score extends SimpleText implements Resizable{
         score = 0;
         playerScoredBest = false;
     }
+
+
 
     private void loadBestFromHardDrive() {
         currentBest = preferences.getFloat(SCORE_BEST_KEY);

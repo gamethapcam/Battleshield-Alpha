@@ -5,14 +5,12 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.MyTweenTesting;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.ResumeGraduallyTesting;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.TweenAndMyTweenTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
-import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
@@ -40,6 +38,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     private MyBitmapFont myBitmapFont;
     private BitmapFont font;
 
+    private TweenAndMyTweenTesting tweenAndMyTweenTesting;
+
     @Override
 	public void create () {
         initializeStage(new ExtendViewport(WORLD_SIZE, WORLD_SIZE, WORLD_SIZE*MAX_ASPECT_RATIO_SUPPORTED, WORLD_SIZE),
@@ -55,10 +55,11 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         //saveProgrammaticallyGeneratedTextures(1080);
 
-        /*ResumeGraduallyTesting resumeGraduallyTesting = new ResumeGraduallyTesting();
-        resumeGraduallyTesting.compareFunctions(MyInterpolation.myPow5Out, 1, 0, 1, 0.4f, 0.01f, 71, 1/100f, 4, 2);*/
+        tweenAndMyTweenTesting = new TweenAndMyTweenTesting(game);
 
-        new MyTweenTesting(game);
+        /*Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianOffsetsLinearlySampledTexture(11)));
+        Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianWeightsLinearlySampledTexture(11)));
+        Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianWeights(11)));*/
     }
 
     @Override
@@ -67,9 +68,12 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         initializeWhenAssetsReady();
 
-        SolidBG.instance.draw();
-
-
+        //if (gameplayScreen != null) {
+            //Gdx.app.log(TAG, "" + gameplayScreen.getStarsContainer().isInWarpTrailAnimation());
+            //if (!gameplayScreen.getStarsContainer().isInWarpTrailAnimation())
+                SolidBG.instance.draw();
+        //} else
+            //SolidBG.instance.draw();
 
         super.render();
 
@@ -88,6 +92,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         if (starsContainer != null)
             starsContainer.resize(game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
+
+        tweenAndMyTweenTesting.resize(width, height, game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
     }
 
     @Override
