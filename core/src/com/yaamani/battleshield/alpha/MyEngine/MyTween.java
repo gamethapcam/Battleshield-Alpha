@@ -1,5 +1,6 @@
 package com.yaamani.battleshield.alpha.MyEngine;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -191,6 +192,25 @@ public abstract class MyTween extends Tween {
 
     public void onResumingGradually() {
 
+    }
+
+    @Deprecated
+    @Override
+    public void setReversed(boolean reversed) {
+        Gdx.app.setLogLevel(Application.LOG_ERROR);
+        Gdx.app.log(TAG, "The reverse feature isn't supported on MyTween yet.");
+        Gdx.app.setLogLevel(Application.LOG_NONE);
+        //super.setReversed(reversed);
+    }
+
+    @Deprecated
+    @Override
+    public boolean isReversed() {
+        Gdx.app.setLogLevel(Application.LOG_ERROR);
+        Gdx.app.log(TAG, "The reverse feature isn't supported on MyTween yet.");
+        Gdx.app.setLogLevel(Application.LOG_NONE);
+        //return super.isReversed();
+        return false;
     }
 
     @Override

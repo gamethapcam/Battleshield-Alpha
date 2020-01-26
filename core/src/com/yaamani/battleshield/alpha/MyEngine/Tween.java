@@ -1,6 +1,5 @@
 package com.yaamani.battleshield.alpha.MyEngine;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 
 public abstract class Tween extends Timer implements Updatable {
@@ -9,6 +8,8 @@ public abstract class Tween extends Timer implements Updatable {
     public static final String TAG = Tween.class.getSimpleName();
 
     private Interpolation interpolation;
+
+    private boolean reversed = false;
 
     public Tween(float durationMillis, Interpolation interpolation, Transition transition) {
         super(durationMillis);
@@ -44,14 +45,18 @@ public abstract class Tween extends Timer implements Updatable {
     @Override
     public boolean onUpdate(float delta) {
         //pausingResumingGradually(delta);
-        if (isStarted() & getPercentage() < 1) tween(getPercentage(), interpolation);
+        if (isStarted() & (getPercentage() < 1 & !reversed | getPercentage() > 0 & reversed))
+            tween(getPercentage(), interpolation);
         return false;
     }
 
     @Override
     public void onFinish() {
-        tween(1, interpolation);
+        if (!reversed)
+            tween(1, interpolation);
+        else tween(0, interpolation);
     }
+
 
     public void setInterpolation(Interpolation interpolation) {
         this.interpolation = interpolation;
@@ -62,8 +67,30 @@ public abstract class Tween extends Timer implements Updatable {
     }
 
     @Override
+    public float getPercentage() {
+        if (!reversed)
+            return super.getPercentage();
+        else
+            return 1-super.getPercentage();
+    }
+
+    public void setReversed(boolean reversed) {
+        if (this.reversed == reversed) return;
+
+        this.reversed = reversed;
+        setPercentage(1-getPercentage());
+    }
+
+    public boolean isReversed() {
+        return reversed;
+    }
+
+    @Override
     public void setPercentage(float percentage) {
-        super.setPercentage(percentage);
-        if (isFinished() | isPaused()) tween(percentage, interpolation);
+        if (!reversed)
+            super.setPercentage(percentage);
+        else super.setPercentage(1-percentage);
+
+        if (isFinished() | isPaused()) tween(getPercentage(), interpolation);
     }
 }
