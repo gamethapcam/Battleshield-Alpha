@@ -102,7 +102,15 @@ public class Timer implements Updatable {
 
     public final void pause() {
         paused = true;
+        if (inPauseDelay) inPauseDelay = false;
         onPause();
+    }
+
+    public final void pauseFor(float millis) {
+        this.pauseDelayMillis = millis;
+        pauseDelayCurrentTime = 0;
+        pause();
+        inPauseDelay = true;
     }
 
     public void onPause() {
@@ -111,6 +119,7 @@ public class Timer implements Updatable {
 
     public final void resume() {
         paused = false;
+        inPauseDelay = false;
         onResume();
     }
 
@@ -121,6 +130,8 @@ public class Timer implements Updatable {
     public final void finish() {
         started = false;
         finished = true;
+        inPauseDelay = false;
+        inStartDelay = false;
         //if (isPaused()) paused = false;
         onFinish();
         //tween(1);
