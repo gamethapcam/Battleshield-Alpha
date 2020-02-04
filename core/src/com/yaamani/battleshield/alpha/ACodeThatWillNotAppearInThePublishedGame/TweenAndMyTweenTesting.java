@@ -80,7 +80,10 @@ public class TweenAndMyTweenTesting extends Group implements Resizable {
         else if (Gdx.input.isKeyJustPressed(Input.Keys.R)) tween.resume();
         else if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) tween.setReversed(true);
         else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) tween.setReversed(false);
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) tween.setPercentage(0.6f);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            tween.setDurationMillis(7000);
+        }
+        Gdx.app.log(TAG, "" + tween.isFinished());
     }
 
     private void initializeTestObject() {
@@ -114,6 +117,5 @@ public class TweenAndMyTweenTesting extends Group implements Resizable {
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         rightPos = worldWidth - testObject.getWidth();
-
     }
 }

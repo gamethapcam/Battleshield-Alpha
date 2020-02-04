@@ -53,7 +53,7 @@ public class HealthHandler {
 
         Bullet.setPlusOrMinusExists(false);
         Bullet.setStarExists(false);
-        gameplayScreen.setInStarAnimation(false);
+        gameplayScreen.setInStarBulletAnimation(false);
 
         gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
@@ -65,6 +65,9 @@ public class HealthHandler {
         }
 
         gameplayScreen.getStarsContainer().setThetaForRadialTween(5 * MathUtils.degreesToRadians);
+
+        gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
+        gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setVisible(false);
     }
 
     public void newGame() {

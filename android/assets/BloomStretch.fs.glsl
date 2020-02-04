@@ -6,7 +6,7 @@ varying vec4 v_color;
 varying vec2 v_texCoords;
 
 uniform sampler2D u_texture;
-uniform vec2 worldSizeInPixelCoordinates;
+uniform vec2 sizeInPixelUnits;
 
 uniform sampler2D u_textureBlurred;
 
@@ -16,7 +16,7 @@ vec2 stretch(float);
 
 void main() {
 
-    vec2 pixelSize = 1.0/worldSizeInPixelCoordinates;
+    vec2 pixelSize = 1.0/sizeInPixelUnits;
 
     vec2 newPoint = stretch(warpStretchFactor);
 

@@ -4,7 +4,7 @@ varying vec4 v_color;
 varying vec2 v_texCoords;
 
 uniform sampler2D u_texture;
-uniform vec2 worldSizeInPixelCoordinates;
+uniform vec2 sizeInPixelUnits;
 
 uniform bool horizontalPass;
 uniform int kernelSize;
@@ -13,7 +13,7 @@ float weight(float x, float c);
 
 void main() {
 
-    vec2 pixelSize = 1.0/worldSizeInPixelCoordinates;
+    vec2 pixelSize = 1.0/sizeInPixelUnits;
 
     float sigma = float(kernelSize) * 0.137915254237; //This ensures that the blurred image won't be darker than the original.
     float c = 2.0*sigma*sigma;

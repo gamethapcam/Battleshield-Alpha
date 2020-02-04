@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -14,6 +15,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.millisToSeconds;
@@ -38,14 +40,15 @@ public class GameplayScreen extends AdvancedScreen {
 
     public enum State {PLAYING, PAUSED, LOST}
     private State state;
-    private boolean inStarAnimation = false;
+    private boolean inStarBulletAnimation = false;
 
     private float timePlayedThisTurnSoFar;
     private Score score;
-    private MyTween timePlayedThisTurnSoFarTweenStarBullet;
+    private MyTween timePlayedThisTurnSoFarTweenStarBullet_FirstStage;
+    private Tween timePlayedThisTurnSoFarTweenStarBullet_ThirdStage;
 
     private Image whiteTextureHidesEveryThingSecondStageStarBullet;
-    private MyTween whiteTextureHidesEveryThingSecondStageTweenStarBullet;
+    private Tween whiteTextureHidesEveryThingSecondStageTweenStarBullet;
 
     private PauseStuff pauseStuff;
 
@@ -76,7 +79,8 @@ public class GameplayScreen extends AdvancedScreen {
 
         initializeTurret();
         initializeBulletsAndShieldArray();
-        initializeTimePlayedThisTurnSoFarTweenStarBullet();
+        initializeTimePlayedThisTurnSoFarTweenStarBullet_FirstStage();
+        initializeTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage();
 
         //initializeBullets(starsContainer.getRadialTween());
 
@@ -119,11 +123,12 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (getState() == GameplayScreen.State.PLAYING) {
             speedMultiplierStuff.update(delta);
-            if (!inStarAnimation) timePlayedThisTurnSoFar += delta;
+            if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
         }
 
-        timePlayedThisTurnSoFarTweenStarBullet.update(delta);
+        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.update(delta);
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
+        timePlayedThisTurnSoFarTweenStarBullet_ThirdStage.update(delta);
 
 
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
@@ -293,17 +298,32 @@ public class GameplayScreen extends AdvancedScreen {
         healthHandler = new HealthHandler(this);
     }
 
-    private void initializeTimePlayedThisTurnSoFarTweenStarBullet() {
-        timePlayedThisTurnSoFarTweenStarBullet = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT) {
+    private void initializeTimePlayedThisTurnSoFarTweenStarBullet_FirstStage() {
+        timePlayedThisTurnSoFarTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
                 timePlayedThisTurnSoFar = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
-        addToPauseWhenPausingFinishWhenLosing(timePlayedThisTurnSoFarTweenStarBullet);
+        addToPauseWhenPausingFinishWhenLosing(timePlayedThisTurnSoFarTweenStarBullet_FirstStage);
     }
 
+
+    private float timePlayedSoFarStarBulletThirdStageInitialValue;
+    private float timePlayedSoFarStarBulletThirdStageFinalValue;
+    private void initializeTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage() {
+        timePlayedThisTurnSoFarTweenStarBullet_ThirdStage = new Tween(STAR_BULLET_THIRD_STAGE_DURATION, STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION/*MyInterpolation.myLinear*/) {
+
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                timePlayedThisTurnSoFar = interpolation.apply(timePlayedSoFarStarBulletThirdStageInitialValue, timePlayedSoFarStarBulletThirdStageFinalValue, percentage);
+            }
+        };
+
+        addToPauseWhenPausingFinishWhenLosing(timePlayedThisTurnSoFarTweenStarBullet_ThirdStage);
+    }
+    
     private void initializeWhiteTextureHidesEveryThingSecondStageStarBullet() {
         whiteTextureHidesEveryThingSecondStageStarBullet = new Image(Assets.instance.gameplayAssets.gameOverBG);
         whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(false);
@@ -314,21 +334,31 @@ public class GameplayScreen extends AdvancedScreen {
     private void initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet() {
         float duration = STAR_BULLET_SECOND_STAGE_DURATION*(1-STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE);
 
-        whiteTextureHidesEveryThingSecondStageTweenStarBullet = new MyTween(duration,
-                MyInterpolation.myLinear,
-                0, 
-                1) {
+        whiteTextureHidesEveryThingSecondStageTweenStarBullet = new Tween(duration, Interpolation.linear) {
 
             @Override
             public void onStart() {
                 super.onStart();
-                whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(true);
+                //whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(true);
+            }
+
+            public void tween(float percentage, Interpolation interpolation) {
+                float alpha = interpolation.apply(0, 1, percentage);
+                whiteTextureHidesEveryThingSecondStageStarBullet.setColor(1, 1, 1, alpha);
+
+                if (alpha == 0)
+                    whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(false);
+                else
+                    whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(true);
             }
 
             @Override
-            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
-                float alpha = myInterpolation.apply(startX, endX, startY, endY, currentX);
-                whiteTextureHidesEveryThingSecondStageStarBullet.setColor(1, 1, 1, alpha);
+            public void onFinish() {
+                super.onFinish();
+
+                /*if (!isReversed() & getPercentage() != 1) {
+                    tween(0, getInterpolation());
+                }*/
             }
         };
         
@@ -422,12 +452,16 @@ public class GameplayScreen extends AdvancedScreen {
         return pauseWhenPausingFinishWhenLosing.items;
     }
 
-    public boolean isInStarAnimation() {
-        return inStarAnimation;
+    public Image getWhiteTextureHidesEveryThingSecondStageStarBullet() {
+        return whiteTextureHidesEveryThingSecondStageStarBullet;
     }
 
-    public void setInStarAnimation(boolean inStarAnimation) {
-        this.inStarAnimation = inStarAnimation;
+    public boolean isInStarBulletAnimation() {
+        return inStarBulletAnimation;
+    }
+
+    public void setInStarBulletAnimation(boolean inStarBulletAnimation) {
+        this.inStarBulletAnimation = inStarBulletAnimation;
     }
 
     //------------------------------ Other methods ------------------------------
@@ -443,13 +477,54 @@ public class GameplayScreen extends AdvancedScreen {
         pauseWhenPausingFinishWhenLosing.add(timer);
     }
 
-    public void startScoreTimePlayedThisTurnSoFarTweenStarBullet() {
-        timePlayedThisTurnSoFarTweenStarBullet.setInitialVal(timePlayedThisTurnSoFar);
-        timePlayedThisTurnSoFarTweenStarBullet.setFinalVal(timePlayedThisTurnSoFar + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) millisToSeconds);
-        timePlayedThisTurnSoFarTweenStarBullet.start();
+    public void startScoreTimePlayedThisTurnSoFarTweenStarBullet_FirstStage() {
+        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.setInitialVal(timePlayedThisTurnSoFar);
+        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.setFinalVal(timePlayedThisTurnSoFar + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) millisToSeconds);
+        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.start();
     }
 
-    public void startWhiteTextureHidesEveryThingSecondStageTweenStarBullet() {
-        whiteTextureHidesEveryThingSecondStageTweenStarBullet.start(STAR_BULLET_SECOND_STAGE_DURATION*STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE);
+    public void startScoreTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage() {
+        timePlayedSoFarStarBulletThirdStageInitialValue = timePlayedThisTurnSoFar;
+        timePlayedSoFarStarBulletThirdStageFinalValue = timePlayedThisTurnSoFar + STAR_BULLET_SCORE_BONUS;
+        timePlayedThisTurnSoFarTweenStarBullet_ThirdStage.start();
+    }
+
+    public void startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(boolean reversed, boolean delay) {
+        whiteTextureHidesEveryThingSecondStageTweenStarBullet.setReversed(reversed);
+        float delayAmount = STAR_BULLET_SECOND_STAGE_DURATION*STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE;
+        whiteTextureHidesEveryThingSecondStageTweenStarBullet.start(delay ? delayAmount : 0);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static class TimePlayedSoFarStarBulletThirdStageInterpolation extends Interpolation {
+
+        @Override
+        public float apply(float a) {
+
+            float T8 = 26.7301674743f   * a*a*a*a*a*a*a*a;
+            float T7 = -149.801712332f  * a*a*a*a*a*a*a;
+            float T6 = 338.685260991f   * a*a*a*a*a*a;
+            float T5 = -393.442712938f  * a*a*a*a*a;
+            float T4 = 247.824289679f   * a*a*a*a;
+            float T3 = -82.702738645f   * a*a*a;
+            float T2 = 13.1655331616f   * a*a;
+            float T1 = 0.540199230611f  * a;
+
+            return (T8 + T7 + T6 + T5 + T4 + T3 + T2 + T1) / 0.998286620477f;
+        }
     }
 }

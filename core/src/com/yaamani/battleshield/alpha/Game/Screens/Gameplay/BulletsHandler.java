@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -15,7 +16,7 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsHandler implements Updatable {
 
-    public final String TAG = GameplayScreen.TAG + "." + BulletsHandler.class.getSimpleName();
+    public final String TAG = BulletsHandler.class.getSimpleName();
 
     private GameplayScreen gameplayScreen;
 
@@ -35,7 +36,9 @@ public class BulletsHandler implements Updatable {
     private float currentSpeedMultiplier;
     private Timer currentSpeedMultiplierTimer;
     //private float speedResetTime = 0;
-    private MyTween currentBulletSpeedTweenStarBullet;
+    private MyTween currentBulletSpeedTweenStarBullet_FirstStage;
+    private MyTween currentBulletSpeedTweenStarBullet_ThirdStage;
+
     private Timer starBulletFirstStage;
     private Timer starBulletSecondStage;
     private Timer starBulletThirdStage;
@@ -78,7 +81,9 @@ public class BulletsHandler implements Updatable {
         setCurrentSpeedMultiplier(1);
         initializeCurrentSpeedMultiplierTimer();
 
-        initializeCurrentBulletSpeedTweenStarBullet();
+        initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
+        initializeCurrentBulletSpeedTweenStarBullet_ThirdStage();
+
         initializeStarBulletFirstStage();
         initializeStarBulletSecondStage();
         initializeStarBulletThirdStage();
@@ -103,7 +108,8 @@ public class BulletsHandler implements Updatable {
         decreaseBulletsPerAttackTimer.update(delta);
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
             currentSpeedMultiplierTimer.update(delta);
-        currentBulletSpeedTweenStarBullet.update(delta);
+        currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
+        currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
         starBulletFirstStage.update(delta);
         starBulletSecondStage.update(delta);
         starBulletThirdStage.update(delta);
@@ -123,7 +129,7 @@ public class BulletsHandler implements Updatable {
 
     public void setBulletsPerAttack(int bulletsPerAttack) {
         this.bulletsPerAttack = bulletsPerAttack;
-        if (!currentBulletSpeedTweenStarBullet.isStarted())
+        if (!currentBulletSpeedTweenStarBullet_FirstStage.isStarted())
             gameplayScreen.getStarsContainer().updateCurrentStarSpeed(bulletsPerAttack);
     }
 
@@ -175,13 +181,14 @@ public class BulletsHandler implements Updatable {
         return currentSpeedMultiplier;
     }
 
-    public void setCurrentSpeedMultiplier(float currentSpeedMultiplier) {
-        this.currentSpeedMultiplier = currentSpeedMultiplier;
-        if (gameplayScreen != null)
+    public void setCurrentSpeedMultiplier(float newSpeedMultiplier) {
+        this.currentSpeedMultiplier = newSpeedMultiplier;
+        if (gameplayScreen != null) {
             if (gameplayScreen.getSpeedMultiplierStuff() != null)
-                gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
+                gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(newSpeedMultiplier);
+        }
 
-        currentBulletSpeed = BULLETS_SPEED_INITIAL * currentSpeedMultiplier;
+        currentBulletSpeed = BULLETS_SPEED_INITIAL * newSpeedMultiplier;
     }
 
     public Timer getCurrentSpeedMultiplierTimer() {
@@ -203,6 +210,14 @@ public class BulletsHandler implements Updatable {
         resetCurrentSpeedMultiplier();
     }
 
+    public void decrementCurrentSpeedMultiplier() {
+        gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
+        currentSpeedMultiplierTimer.start();
+
+        if (getCurrentSpeedMultiplier() != 1)
+            setCurrentSpeedMultiplier(getCurrentSpeedMultiplier() - BULLETS_SPEED_MULTIPLIER_INCREMENT);
+    }
+
     /*public float getSpeedResetTime() {
         return speedResetTime;
     }*/
@@ -221,9 +236,19 @@ public class BulletsHandler implements Updatable {
         return currentBulletSpeed;
     }
 
-    public void startCurrentBulletSpeedTweenStarBullet() {
-        currentBulletSpeedTweenStarBullet.setInitialVal(getBulletSpeed());
-        currentBulletSpeedTweenStarBullet.start();
+    public void startCurrentBulletSpeedTweenStarBullet_FirstStage() {
+        currentBulletSpeedTweenStarBullet_FirstStage.setInitialVal(getBulletSpeed());
+        currentBulletSpeedTweenStarBullet_FirstStage.setFinalVal(0);
+        currentBulletSpeedTweenStarBullet_FirstStage.start();
+    }
+
+    public void startCurrentBulletSpeedTweenStarBullet_ThirdStage() {
+        setCurrentSpeedMultiplier(getCurrentSpeedMultiplier());
+        float bulletSpeedAfterStarBullet = getBulletSpeed();
+
+        currentBulletSpeedTweenStarBullet_ThirdStage.setInitialVal(0);
+        currentBulletSpeedTweenStarBullet_ThirdStage.setFinalVal(bulletSpeedAfterStarBullet);
+        currentBulletSpeedTweenStarBullet_ThirdStage.start();
     }
 
     public void startStarBulletStages() {
@@ -663,15 +688,32 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedMultiplierTimer);
     }
 
-    private void initializeCurrentBulletSpeedTweenStarBullet() {
-        currentBulletSpeedTweenStarBullet = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION, BULLETS_SPEED_INITIAL, 0) {
+    private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
+        currentBulletSpeedTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+
+                if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
+
                 currentBulletSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentBulletSpeedTweenStarBullet);
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentBulletSpeedTweenStarBullet_FirstStage);
+    }
+
+    private void initializeCurrentBulletSpeedTweenStarBullet_ThirdStage() {
+        currentBulletSpeedTweenStarBullet_ThirdStage = new MyTween(STAR_BULLET_THIRD_STAGE_DURATION, STAR_BULLET_THIRD_STAGE_INTERPOLATION_IN) {
+            @Override
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+
+                if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
+
+                currentBulletSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
+            }
+        };
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentBulletSpeedTweenStarBullet_ThirdStage);
     }
 
     private void initializeStarBulletFirstStage() {
@@ -680,9 +722,9 @@ public class BulletsHandler implements Updatable {
             public void onStart() {
                 super.onStart();
 
-                startCurrentBulletSpeedTweenStarBullet();
+                startCurrentBulletSpeedTweenStarBullet_FirstStage();
                 gameplayScreen.getStarsContainer().startCurrentSpeedTweenStarBullet();
-                gameplayScreen.startScoreTimePlayedThisTurnSoFarTweenStarBullet();
+                gameplayScreen.startScoreTimePlayedThisTurnSoFarTweenStarBullet_FirstStage();
             }
         };
 
@@ -696,21 +738,30 @@ public class BulletsHandler implements Updatable {
                 super.onStart();
 
                 gameplayScreen.getStarsContainer().setInWarpTrailAnimation(true);
-                gameplayScreen.getStarsContainer().getWarpStretchFactorTweenStarBullet().start();
-                gameplayScreen.startWhiteTextureHidesEveryThingSecondStageTweenStarBullet();
+                gameplayScreen.getStarsContainer().getWarpStretchFactorTweenStarBullet_SecondStage().start();
+
+                gameplayScreen.startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(false, true);
             }
 
             @Override
             public void onFinish() {
                 super.onFinish();
 
-                //gameplayScreen.getStarsContainer().setInWarpTrailAnimation(false);
-                Array<Float> fpss = gameplayScreen.getStarsContainer().getFpss();
-                //Gdx.app.log(TAG, ""+MyMath.arrayToString(fpss.items));
-                //if (fpss.size > 0)
-                Gdx.app.log(TAG, MyMath.arrayStatistics(fpss.items, false));
+                if (gameplayScreen.getState() != GameplayScreen.State.LOST) {
+                    StarsContainer starsContainer = gameplayScreen.getStarsContainer();
 
-                //gameplayScreen.getStarsContainer().clearBlurBuffers();
+                    //gameplayScreen.getStarsContainer().setInWarpTrailAnimation(false);
+                    Array<Float> fpss = starsContainer.getFpss();
+                    //Gdx.app.log(TAG, ""+MyMath.arrayToString(fpss.items));
+                    //if (fpss.size > 0)
+                    Gdx.app.log(TAG, MyMath.arrayStatistics(fpss.items, false));
+
+                    fpss.clear();
+
+                    gameplayScreen.getStarsContainer().setInWarpTrailAnimation(false);
+                    starsContainer.setInWarpFastForwardAnimation(true);
+                    starsContainer.getWarpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage().start();
+                }
             }
         };
 
@@ -722,7 +773,18 @@ public class BulletsHandler implements Updatable {
             @Override
             public void onStart() {
                 super.onStart();
+                gameplayScreen.startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(true, false);
+                gameplayScreen.startScoreTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage();
+                //gameplayScreen.getStarsContainer().setInWarpFastForwardAnimation(true);
+                startCurrentBulletSpeedTweenStarBullet_ThirdStage();
 
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                gameplayScreen.setInStarBulletAnimation(false);
+                gameplayScreen.getStarsContainer().setInWarpFastForwardAnimation(false);
             }
         };
 

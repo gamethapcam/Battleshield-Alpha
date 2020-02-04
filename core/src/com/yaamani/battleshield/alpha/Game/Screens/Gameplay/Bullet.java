@@ -14,7 +14,6 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -425,7 +424,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             star = new BulletEffect() {
                 @Override
                 public void effect() {
-                    bulletsHandler.resetSpeed();
+                    //bulletsHandler.resetSpeed();
+                    bulletsHandler.decrementCurrentSpeedMultiplier();
 
                     bulletsHandler.getCurrentBulletsWaveTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
                     bulletsHandler.getCurrentSpeedMultiplierTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
@@ -435,7 +435,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
                     //starsContainer.getRadialTween().pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION);
                     Bullet.setStarExists(false);
-                    gameplayScreen.setInStarAnimation(true);
+                    gameplayScreen.setInStarBulletAnimation(true);
                     Gdx.app.log(TAG, "STAR BULLET");
                 }
             };

@@ -1,7 +1,10 @@
 package com.yaamani.battleshield.alpha.Game.Utilities;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Starfield.Star;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 
 import java.math.MathContext;
@@ -386,17 +389,19 @@ public final class Constants {
 
     public static final float STARS_MAX_OFFSET_DISTANCE = WORLD_SIZE / 10.0f;
 
-    public static final float STARS_MAX_RADIUS = WORLD_SIZE / 350.0f;
+    public static final float STARS_MAX_RADIUS = WORLD_SIZE / 300.0f;
+
+    public static final float STARS_MIN_RADIUS = WORLD_SIZE / 1800.0f;
 
     public static final float STARS_MOVING_ANGLE = 40f * MathUtils.degRad;
 
-    public static final int STARS_COUNT = 500;
+    public static final int STARS_COUNT = 400;
 
-    public static final float STARS_RADIAL_TWEEN_DURATION = SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION;
+    public static final float STARS_POLAR_TWEEN_DURATION = SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION;
 
-    public static final float STARS_RADIAL_TWEEN_THETA_MAX = MathUtils.degreesToRadians * 200;
+    public static final float STARS_POLAR_TWEEN_THETA_MAX = MathUtils.degreesToRadians * 200;
 
-    public static final float STARS_RADIAL_TWEEN_THETA_MINIMUM_MULTIPLIER = 0.17f;
+    public static final float STARS_POLAR_TWEEN_THETA_MINIMUM_MULTIPLIER = 0.17f;
 
 
 
@@ -471,11 +476,13 @@ public final class Constants {
 
 
 
+    public static final float STAR_BULLET_SCORE_BONUS = 50f; //seconds
+
     public static final int STAR_BULLET_FIRST_STAGE_DURATION = 1500;
 
-    public static final int STAR_BULLET_SECOND_STAGE_DURATION = 3500;
+    public static final int STAR_BULLET_SECOND_STAGE_DURATION = 2500;
 
-    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 2000;
+    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 5000;
 
     public static final int STAR_BULLET_TOTAL_DURATION = STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION + STAR_BULLET_THIRD_STAGE_DURATION;
 
@@ -483,15 +490,35 @@ public final class Constants {
 
     public static final float STAR_BULLET_TRAIL_WARP_VELOCITY_MULTIPLIER_FINAL_VALUE = 60;*/
 
-    public static final float STAR_BULLET_TRAIL_WARP_TOTAL_DISTANCE = WORLD_SIZE / 6f;
+    public static final int STAR_BULLET_TRAIL_WARP_BLUR_KERNEL_SIZE = 11;
+
+    public static final float STAR_BULLET_TRAIL_WARP_BLUR_RESOLUTION_DIVISOR = 6f;
+
+    public static final float STAR_BULLET_TRAIL_WARP_TOTAL_DISTANCE = WORLD_SIZE / 8f;
 
     public static final MyInterpolation STAR_BULLET_FIRST_STAGE_INTERPOLATION = MyInterpolation.myLinear;
 
     public static final MyInterpolation STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT = MyInterpolation.myPow2Out;
 
-    public static final MyInterpolation STAR_BULLET_SECOND_STAGE_INTERPOLATION = MyInterpolation.myReciprocal_950In;
+    // The further the star from the center, the faster it'll travel. That's why we have STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MAX and STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MIN.
+    public static final float STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MAX = WORLD_SIZE * 9f;
+
+    public static final float STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MIN = STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MAX / 3.5f;
+
+    public static final MyInterpolation STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_POLAR_INTERPOLATION = MyInterpolation.myPow3In;
+
+    // The further the star from the center, the bigger its size will be. That's why we have STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MAX and STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MIN.
+    public static final float STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MAX = STARS_MAX_RADIUS * 1.1f;
+
+    public static final float STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MIN = STARS_MIN_RADIUS / 1f;
+
+    public static final Interpolation STAR_BULLET_SECOND_STAGE_INTERPOLATION = /*MyInterpolation.myReciprocal_950In*/new Star.TrailWarpInterpolation(0.9f, 22);
 
     public static final float STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE = 0.95f;
+
+    public static final MyInterpolation STAR_BULLET_THIRD_STAGE_INTERPOLATION_IN = new MyInterpolation.MyInterpolationIn(new MyInterpolation.MyPow(20));
+
+    public static final Interpolation STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION = new GameplayScreen.TimePlayedSoFarStarBulletThirdStageInterpolation();
 
 
 

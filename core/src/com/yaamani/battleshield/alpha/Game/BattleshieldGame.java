@@ -38,7 +38,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     private MyBitmapFont myBitmapFont;
     private BitmapFont font;
 
-    private TweenAndMyTweenTesting tweenAndMyTweenTesting;
+    //private TweenAndMyTweenTesting tweenAndMyTweenTesting;
 
     @Override
 	public void create () {
@@ -55,7 +55,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         //saveProgrammaticallyGeneratedTextures(1080);
 
-        tweenAndMyTweenTesting = new TweenAndMyTweenTesting(game);
+        //tweenAndMyTweenTesting = new TweenAndMyTweenTesting(game);
 
         /*Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianOffsetsLinearlySampledTexture(11)));
         Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianWeightsLinearlySampledTexture(11)));
@@ -93,7 +93,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         if (starsContainer != null)
             starsContainer.resize(game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
 
-        tweenAndMyTweenTesting.resize(width, height, game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
+        //tweenAndMyTweenTesting.resize(width, height, game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
     }
 
     @Override
