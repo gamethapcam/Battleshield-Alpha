@@ -411,17 +411,30 @@ public final class MyMath {
     }
 
     public enum Dimension {X, Y}
-    public static float toWorldCoordinates(float screenCoordinates, Dimension dimension, Viewport viewport) {
-        float worldCoordinates = 0;
+    public static float toWorldCoordinates(float screenCoordinate, Dimension dimension, Viewport viewport) {
+        float worldCoordinate = 0;
         switch (dimension) {
             case X:
-                worldCoordinates = (screenCoordinates / viewport.getScreenWidth()) * viewport.getWorldWidth();
+                worldCoordinate = (screenCoordinate / viewport.getScreenWidth()) * viewport.getWorldWidth();
                 break;
             case Y:
-                worldCoordinates = (screenCoordinates / viewport.getScreenHeight()) * viewport.getWorldHeight();
+                worldCoordinate = (screenCoordinate / viewport.getScreenHeight()) * viewport.getWorldHeight();
                 break;
         }
-        return worldCoordinates;
+        return worldCoordinate;
+    }
+
+    public static int toScreenCoordinates(float worldCoordinate, Dimension dimension, Viewport viewport) {
+        int screenCoordinate = 0;
+        switch (dimension) {
+            case X:
+                screenCoordinate = Math.round((worldCoordinate / viewport.getWorldWidth()) * viewport.getScreenWidth());
+                break;
+            case Y:
+                screenCoordinate = Math.round((worldCoordinate / viewport.getWorldHeight()) * viewport.getScreenHeight());
+                break;
+        }
+        return screenCoordinate;
     }
 
     public static <T> T chooseFromProbabilityArray(T[] arr, int rangeStartIndex, int rangeEndIndex) {

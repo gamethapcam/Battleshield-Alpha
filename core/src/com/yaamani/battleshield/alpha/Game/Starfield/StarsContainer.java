@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -17,7 +16,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsHandler;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
-import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.TrailWarpPostProcessingEffect;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
@@ -38,9 +37,6 @@ public class StarsContainer extends Group implements Disposable{
 
     private Viewport viewport;
     private FrameBuffer originalFrameBuffer;
-    private FrameBuffer hBlurFrameBuffer;
-    private FrameBuffer vBlurFrameBuffer;
-    private boolean blurBuffersCleared = false;
 
     //private final Vector2 distanceOffset = new Vector2(Wo)
     private Vector2 transitionVelocity = new Vector2(0, 0);
@@ -50,12 +46,11 @@ public class StarsContainer extends Group implements Disposable{
     private float starsSpeedBeforStarBullet;
     private MyTween currentSpeedTweenStarBullet_FirstStage; //First stage
 
+    private TrailWarpPostProcessingEffect trailWarpPostProcessingEffect;
+
     private boolean inWarpTrailAnimation = false;
     private boolean inWarpFastForwardAnimation = false;
 
-    private ShaderProgram gaussianBlurShader;
-    private ShaderProgram bloomStretchShader;
-    private float warpStretchFactor = 0;
     private Tween warpStretchFactorTweenStarBullet_SecondStage; //Second stage
     private float warpFastForwardSpeed = 1;
     private Tween warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage; //Third stage
@@ -92,26 +87,13 @@ public class StarsContainer extends Group implements Disposable{
 
         originalFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (viewport.getScreenWidth()), (viewport.getScreenHeight()), false);
         
-        float resDivisor = STAR_BULLET_TRAIL_WARP_BLUR_RESOLUTION_DIVISOR;
-        hBlurFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)(viewport.getScreenWidth()/resDivisor), (int)(viewport.getScreenHeight()/resDivisor), false);
-        vBlurFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)(viewport.getScreenWidth()/resDivisor), (int)(viewport.getScreenHeight()/resDivisor), false);
+        trailWarpPostProcessingEffect = new TrailWarpPostProcessingEffect(viewport, viewport.getWorldWidth(), viewport.getWorldHeight(), STAR_BULLET_TRAIL_WARP_BLUR_RESOLUTION_DIVISOR, STAR_BULLET_TRAIL_WARP_BLUR_KERNEL_SIZE);
+
 
         initializeCurrentSpeedTweenStarBullet_FirstStage();
 
         initializeRadialTween();
 
-        /*originalFrameBuffer.begin();
-        getBatch().begin();
-        for (Star star : stars) {
-            star.draw(getBatch(), 1.0f);
-        }
-
-        getBatch().end();
-        originalFrameBuffer.end();
-        originalFrameBuffer.dispose();*/
-
-        initializeStretchWarpShader();
-        initializeGaussianBlurShader();
         initializeWarpStretchFactorTweenStarBullet_SecondStage();
         initializeWarpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage();
 
@@ -162,14 +144,10 @@ public class StarsContainer extends Group implements Disposable{
         Texture starsFrameBufferTexture = renderStarsToOriginalFrameBuffer(batch);
 
         if (inWarpTrailAnimation) {
-            Texture blurFrameBufferTexture = renderToBlurFrameBuffers(batch, starsFrameBufferTexture);
-
-            batch.begin();
-            drawBloomStretch(batch, starsFrameBufferTexture, blurFrameBufferTexture);
-
+            trailWarpPostProcessingEffect.draw(batch, starsFrameBufferTexture, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
         } else {
-            if (!blurBuffersCleared)
-                clearBlurBuffers(batch);
+            if (!trailWarpPostProcessingEffect.isBlurBuffersCleared())
+                trailWarpPostProcessingEffect.clearBlurBuffers(batch);
 
             batch.begin();
             batch.draw(starsFrameBufferTexture,
@@ -186,10 +164,6 @@ public class StarsContainer extends Group implements Disposable{
         }
 
         if (inWarpTrailAnimation)
-            batch.setShader(null);
-
-
-        if (inWarpTrailAnimation)
             fpss.add(1/Gdx.graphics.getDeltaTime());
 
     }
@@ -199,13 +173,15 @@ public class StarsContainer extends Group implements Disposable{
         for (Star star : stars) {
             star.resize(wWidth, wHeight);
         }
+
+        trailWarpPostProcessingEffect.setInputTextureWidthWorldUnits(viewport.getWorldWidth());
+        trailWarpPostProcessingEffect.setInputTextureHeightWorldUnits(viewport.getWorldHeight());
     }
 
     @Override
     public void dispose() {
         originalFrameBuffer.dispose();
-        hBlurFrameBuffer.dispose();
-        vBlurFrameBuffer.dispose();
+        trailWarpPostProcessingEffect.dispose();
     }
 
     // ------------------------ methods ------------------------
@@ -257,114 +233,6 @@ public class StarsContainer extends Group implements Disposable{
         starsFrameBuffer.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         return starsFrameBuffer;
-    }
-
-    private Texture renderToBlurFrameBuffers(Batch batch, Texture originalFrameBufferTexture) {
-
-        blurBuffersCleared = false;
-
-        Texture hBlurFrameBufferTexture = gaussianBlurSinglePass(batch, hBlurFrameBuffer, originalFrameBufferTexture, STAR_BULLET_TRAIL_WARP_BLUR_KERNEL_SIZE, true);
-        hBlurFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
-        Texture blurFrameBufferTexture = gaussianBlurSinglePass(batch, vBlurFrameBuffer, hBlurFrameBufferTexture/*originalFrameBufferTexture*/, STAR_BULLET_TRAIL_WARP_BLUR_KERNEL_SIZE, false);
-        blurFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
-        return blurFrameBufferTexture;
-    }
-
-    private Texture gaussianBlurSinglePass(Batch batch, FrameBuffer out, Texture in, int kernelSize, boolean horizontalPass) {
-        boolean batchWasDrawing = batch.isDrawing();
-        if (batchWasDrawing)
-            batch.end();
-
-        out.begin();
-
-        batch.begin();
-
-        batch.setShader(gaussianBlurShader);
-        gaussianBlurShader.setUniformf("sizeInPixelUnits", out.getWidth(), out.getHeight());
-        gaussianBlurShader.setUniformi("horizontalPass", horizontalPass ? 1 : 0);
-        gaussianBlurShader.setUniformi("kernelSize", kernelSize);
-
-
-        //Gdx.gl.glClearColor(1, 1, 1, 0f);
-        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        //batch.draw(badlogic, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
-
-        batch.draw(in,
-                0,
-                0,
-                viewport.getWorldWidth(),
-                viewport.getWorldHeight(),
-                0,
-                0,
-                in.getWidth(),
-                in.getHeight(),
-                false,
-                true);
-
-        batch.end();
-
-        if (batchWasDrawing)
-            batch.begin();
-
-        out.end();
-
-        return out.getColorBufferTexture();
-    }
-
-    private void drawBloomStretch(Batch batch, Texture originalStars, Texture blurredStars) {
-        batch.setShader(bloomStretchShader);
-
-        bloomStretchShader.setUniformf("sizeInPixelUnits", originalStars.getWidth(), originalStars.getHeight());
-
-        blurredStars.bind(1);
-        bloomStretchShader.setUniformi("u_textureBlurred", 1);
-        bloomStretchShader.setUniformf("warpStretchFactor", warpStretchFactor);
-
-        Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
-
-        batch.draw(originalStars,
-                0,
-                0,
-                viewport.getWorldWidth(),
-                viewport.getWorldHeight(),
-                0,
-                0,
-                originalStars.getWidth(),
-                originalStars.getHeight(),
-                false,
-                true);
-    }
-
-    private void clearBlurBuffers(Batch batch) {
-
-        hBlurFrameBuffer.begin();
-        batch.begin();
-
-        Gdx.gl20.glClearColor(1, 1, 1,0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        batch.end();
-        hBlurFrameBuffer.end();
-
-
-
-
-        vBlurFrameBuffer.begin();
-        batch.begin();
-
-        Gdx.gl20.glClearColor(1, 1, 1,0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        batch.end();
-        vBlurFrameBuffer.end();
-
-
-
-
-        blurBuffersCleared = true;
     }
 
     /*private void calculateFastForwardWarpStuff() {
@@ -492,36 +360,12 @@ public class StarsContainer extends Group implements Disposable{
         //gameplayScreen.addToPauseWhenPausingFinishWhenLosing(radialTween);
     }
 
-    private void initializeStretchWarpShader() {
-
-        String fragmentShader = Gdx.files.internal("BloomStretch.fs.glsl").readString();
-
-        bloomStretchShader = new ShaderProgram(AdvancedApplicationAdapter.DEFAULT_VERTEX_SHADER, fragmentShader);
-
-        if (!bloomStretchShader.isCompiled())
-            Gdx.app.error("Shader Compile Error : ", bloomStretchShader.getLog());
-
-
-    }
-
-    private void initializeGaussianBlurShader() {
-
-        String fragmentShader = Gdx.files.internal("GaussianBlur.fs.glsl").readString();
-
-        gaussianBlurShader = new ShaderProgram(AdvancedApplicationAdapter.DEFAULT_VERTEX_SHADER, fragmentShader);
-
-        if (!gaussianBlurShader.isCompiled())
-            Gdx.app.error("Shader Compile Error : ", gaussianBlurShader.getLog());
-
-
-    }
-
     private void initializeWarpStretchFactorTweenStarBullet_SecondStage() {
         warpStretchFactorTweenStarBullet_SecondStage = new Tween(STAR_BULLET_SECOND_STAGE_DURATION, STAR_BULLET_SECOND_STAGE_INTERPOLATION) {
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                warpStretchFactor = interpolation.apply(percentage);
+                trailWarpPostProcessingEffect.setWarpStretchFactor(interpolation.apply(percentage));
             }
         };
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -23,6 +24,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
@@ -57,21 +59,6 @@ public class MainMenuScreen extends AdvancedScreen {
     private MyEarthEntity frontGrass;
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
-
-    //private MyTween _dummy;
-    //private float _dummyInitialX;
-    //private float _dummyFinalX;
-    private Array<Float> _xPoints, _yPoints;
-    private float currentTime;
-    private boolean isRecording;
-
-    //private RoundedArch arch;
-
-    /*private Image bg;
-    private MyBitmapFont myBitmapFontOCR;
-    private FrameBuffer fboOCR;
-    private SpriteBatch spriteBatchOCR;
-    private Image fboImg;*/
 
 
     public MainMenuScreen(final AdvancedStage game, GameplayScreen gameplayScreen, boolean transform) {
@@ -162,184 +149,24 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(free);
         addActor(start);
         addActor(restricted);
-
-
-        /*bg = new Image(Assets.instance.gameplayAssets.gameOverBG);
-        bg.setBounds(-100, -100, 500, 500);
-        bg.setColor(Color.BLACK);
-        //addActor(bg);
-
-        myBitmapFontOCR = new MyBitmapFont(Gdx.files.internal(ASSETS_FONT_FNT_INTERNAL), Assets.instance.mutualAssets.font);
-        fboOCR = new FrameBuffer(Pixmap.Format.RGBA8888, 512, 512, false);
-        spriteBatchOCR = new SpriteBatch(100);
-
-        fboImg = new Image();*/
-        /*addActor(fboImg);
-        fboImg.setBounds(0, 0, 100, 100);*/
-
-
-        /*Pixmap pix = new Pixmap(10, 10, Pixmap.Format.RGBA4444);
-        pix.setColor(Color.WHITE);
-        for (int i = 0; i < pix.getWidth(); i++)
-            for (int j = 0; j < pix.getHeight(); j++)
-                pix.drawPixel(i, j);
-
-        arch = new RoundedArch(*//*new TextureRegion(new Texture(pix))*//*Assets.instance.gameplayAssets.healthBar, Arch.AngleIncreaseDirection.THE_POSITIVE_DIRECTION_OF_THE_X_AXIS, WORLD_SIZE/4f);
-        addActor(arch);
-        arch.setColor(1, 1, 1, 0.5f);
-        arch.setInnerRadiusRatio(WORLD_SIZE/16f);
-        arch.setAngle(60*MathUtils.degRad);*/
-
-
-        /*_dummyInitialX = 0;
-        _dummyFinalX = 0;
-        _dummy = new MyTween(2000, *//*MyInterpolation.myExp10Out*//*MyInterpolation.myExp10, _dummyInitialX, _dummyFinalX) {
-            @Override
-            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX) {
-                start.setX(myInterpolation.apply(startX, endX, startY, endY, currentX));
-            }
-
-            @Override
-            public void onUpdate(float delta) {
-                super.onUpdate(delta);
-                //Gdx.app.log(MainMenuScreen.TAG, getPercentage() + ", isStarted() = " + isStarted() + ", getX() = " + start.getX());
-            }
-        };*/
     }
 
-    private void printXY() {
-        StringBuilder x = new StringBuilder("[");
-        for (int i = 0; i < _xPoints.size; i++) {
-            if (i < _xPoints.size-1) {
-                x.append(_xPoints.get(i));
-                x.append(", ");
-            } else
-                x.append(_xPoints.get(i));
-        }
-        x.append("]");
-        Gdx.app.log(TAG, _xPoints.size + ", " + x.toString());
-
-        StringBuilder y = new StringBuilder("[");
-        for (int i = 0; i < _yPoints.size; i++) {
-            if (i < _yPoints.size-1) {
-                y.append(_yPoints.get(i));
-                y.append(", ");
-            } else
-                y.append(_yPoints.get(i));
-        }
-        y.append("]");
-        Gdx.app.log(TAG, y.toString());
-    }
 
     @Override
     public void act(float delta) {
         if (!isVisible()) return;
         super.act(delta);
 
-        /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-
-            SimpleText _dummyOCR = new SimpleText(myBitmapFontOCR, "I want to OCR.");
-            _dummyOCR.setHeight(WORLD_SIZE / 10f);
-            _dummyOCR.setColor(Color.WHITE);
-            _dummyOCR.setPosition(0, 0);
-
-            fboOCR.begin();
-
-            Gdx.gl.glClearColor(0f, 0f, 0f, 0f); //transparent black
-            Gdx.gl.glClear(GL_COLOR_BUFFER_BIT); //clear the color buffer
-
-            //spriteBatchOCR.begin();
-
-            Batch spriteBatch = getStage().getBatch();
-            spriteBatch.begin();
-
-            bg.draw(spriteBatch, 1);
-            _dummyOCR.draw(spriteBatch, 1);
-
-            spriteBatch.end();
-
-            Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 512, 512);
-
-            //spriteBatchOCR.end();
-
-            fboOCR.end();
-
-
-
-            *//*byte[] pixels = ScreenUtils.getFrameBufferPixels(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), true);
-
-            // this loop makes sure the whole screenshot is opaque and looks exactly like what the user is seeing
-            for(int i = 4; i < pixels.length; i += 4) {
-                pixels[i - 1] = (byte) 255;
-            }
-
-            Pixmap pixmap = new Pixmap(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), Pixmap.Format.RGBA8888);
-            BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
-            PixmapIO.writePNG(Gdx.files.external("mypixmap1.png"), pixmap);
-            pixmap.dispose();*//*
-
-            *//*fboImg = new Image(fboOCR.getColorBufferTexture());
-            addActor(fboImg);
-            fboImg.setBounds(0, 0, 10, 10);*//*
-
-            *//*Texture texture = fboOCR.getColorBufferTexture();
-
-            TextureData textureData = texture.getTextureData());
-            if (!textureData.isPrepared()) {
-                textureData.prepare();
-            }*//*
-
-            PixmapIO.writePNG(Gdx.files.external("mypixmap1.png"), pixmap);
-        }
-
-        fboImg.setY(fboImg.getY() - 0.5f);*/
-
-        /*_dummy.update(delta);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            _dummy.start();
-            _dummy.resume();
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.P))
-            _dummy.pause();
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.G))
-            //_dummy.pauseGradually(1000, start.getX() - 15);
-            _dummy.pauseGradually(1500);
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-            _dummy.resumeGradually(1500);
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
-            _dummy.resume();
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
-            isRecording = !isRecording;
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            printXY();*/
-
-        /*else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
-            _dummy.resumeGradually(400, MyInterpolation.myExp10In);*/
-
-        currentTime += delta * MyMath.secondsToMillis;
-
-        if (isRecording) {
-            if (_xPoints == null) _xPoints = new Array<Float>(1000);
-            if (_yPoints == null) _yPoints = new Array<Float>(1000);
-            _xPoints.add(currentTime);
-            _yPoints.add(start.getX());
-        }
 
         cycleAspectRatios();
 
         gamePadPooling();
 
-        /*if (Gdx.input.isKeyPressed(Input.Keys.EQUALS))
-            arch.setAngle(arch.getAngle() + 1 * MathUtils.degRad);
-        if (Gdx.input.isKeyPressed(Input.Keys.MINUS))
-            arch.setAngle(arch.getAngle() - 1 * MathUtils.degRad);
+    }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0))
-            arch.setInnerRadiusRatio(arch.getInnerRadiusRatio() * 1.01f);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_9))
-            arch.setInnerRadiusRatio(arch.getInnerRadiusRatio() * 0.99f);*/
-
-
-        //Gdx.app.log(TAG, "" + Controllers.getControllers().peek().getAxis(2));
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
     }
 
     private void gamePadPooling() {
