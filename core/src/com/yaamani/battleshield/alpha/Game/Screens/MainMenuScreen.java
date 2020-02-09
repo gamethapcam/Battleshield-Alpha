@@ -5,41 +5,24 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.BufferUtils;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
-import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
-import com.yaamani.battleshield.alpha.MyEngine.MyTween;
-import com.yaamani.battleshield.alpha.MyEngine.Timer;
-import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import java.util.Random;
 
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class MainMenuScreen extends AdvancedScreen {
@@ -60,6 +43,7 @@ public class MainMenuScreen extends AdvancedScreen {
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
 
+    //private MyInterpolation.ExponentialOutDifficultiesWithRest _dummy;
 
     public MainMenuScreen(final AdvancedStage game, GameplayScreen gameplayScreen, boolean transform) {
         super(game, transform);
@@ -149,6 +133,8 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(free);
         addActor(start);
         addActor(restricted);
+
+        //_dummy = new MyInterpolation.ExponentialOutDifficultiesWithRest(60, 0.15f, 5);
     }
 
 
@@ -157,16 +143,39 @@ public class MainMenuScreen extends AdvancedScreen {
         if (!isVisible()) return;
         super.act(delta);
 
-
         cycleAspectRatios();
 
         gamePadPooling();
-
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
+
+        /*batch.setColor(Color.MAGENTA);
+
+        int num = 3500;
+        for (int i = 0; i <= num; i++) {
+            batch.draw(Assets.instance.mutualAssets.star,
+                    (WORLD_SIZE/4f) + i*((WORLD_SIZE/2f)/num),
+                    _dummy.apply((WORLD_SIZE/4f), WORLD_SIZE*(3f/4f), (float)i/num),
+                    STARS_MAX_RADIUS,
+                    STARS_MAX_RADIUS);
+        }
+
+        batch.setColor(Color.LIME);
+
+        batch.draw(Assets.instance.mutualAssets.star,
+                (WORLD_SIZE/4f),
+                (WORLD_SIZE/4f),
+                STARS_MAX_RADIUS*1,
+                STARS_MAX_RADIUS*1);
+
+        batch.draw(Assets.instance.mutualAssets.star,
+                (WORLD_SIZE*(3f/4f)),
+                (WORLD_SIZE*(3f/4f)),
+                STARS_MAX_RADIUS*1,
+                STARS_MAX_RADIUS*1);*/
     }
 
     private void gamePadPooling() {

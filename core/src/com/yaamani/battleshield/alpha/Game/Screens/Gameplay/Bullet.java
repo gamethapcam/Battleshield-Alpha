@@ -425,11 +425,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     //bulletsHandler.resetSpeed();
-                    bulletsHandler.decrementCurrentSpeedMultiplier();
+                    //bulletsHandler.decrementCurrentSpeedMultiplier();
 
                     bulletsHandler.getCurrentBulletsWaveTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    bulletsHandler.getCurrentSpeedMultiplierTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    bulletsHandler.getDecreaseBulletsPerAttackTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    bulletsHandler.getCurrentDifficultyLevelTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    bulletsHandler.getBulletSpeedMultiplierTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    //bulletsHandler.getDecreaseBulletsPerAttackTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    bulletsHandler.getBulletsPerAttackNumberTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
 
                     bulletsHandler.startStarBulletStages();
 

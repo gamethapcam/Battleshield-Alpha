@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -10,6 +11,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -28,13 +30,15 @@ public class BulletsHandler implements Updatable {
     private BulletsAndShieldContainer current;
 
     private int bulletsPerAttack = BULLETS_DEFAULT_NO_PER_ATTACK;
-    private Timer decreaseBulletsPerAttackTimer;
+    //private Timer decreaseBulletsPerAttackTimer;
+    private Tween bulletsPerAttackNumberTween; // Difficulty
 
     private Timer plusMinusBulletsTimer;
 
     private float currentBulletSpeed;
     private float currentSpeedMultiplier;
-    private Timer currentSpeedMultiplierTimer;
+    private Timer currentDifficultyLevelTimer;
+    private Tween bulletSpeedMultiplierTween; // Difficulty
     //private float speedResetTime = 0;
     private MyTween currentBulletSpeedTweenStarBullet_FirstStage;
     private MyTween currentBulletSpeedTweenStarBullet_ThirdStage;
@@ -74,12 +78,14 @@ public class BulletsHandler implements Updatable {
 
         initializePlusMinusBulletsTimer();
 
-        initializeDecreaseBulletsPerAttackTimer();
+        initializeBulletsPerAttackNumberTween();
 
         //initializeIsThereDoubleWaveTimer();
 
         setCurrentSpeedMultiplier(1);
         initializeCurrentSpeedMultiplierTimer();
+
+        initializeCurrentDifficultLevelTimer();
 
         initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
         initializeCurrentBulletSpeedTweenStarBullet_ThirdStage();
@@ -105,9 +111,12 @@ public class BulletsHandler implements Updatable {
 
         currentBulletsWaveTimer.update(delta);
         plusMinusBulletsTimer.update(delta);
-        decreaseBulletsPerAttackTimer.update(delta);
-        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-            currentSpeedMultiplierTimer.update(delta);
+        //decreaseBulletsPerAttackTimer.update(delta);
+        bulletsPerAttackNumberTween.update(delta);
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
+            currentDifficultyLevelTimer.update(delta);
+            bulletSpeedMultiplierTween.update(delta);
+        }
         currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
         currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
         starBulletFirstStage.update(delta);
@@ -149,8 +158,12 @@ public class BulletsHandler implements Updatable {
         return currentBulletsWaveTimer;
     }
 
-    public Timer getDecreaseBulletsPerAttackTimer() {
+    /*public Timer getDecreaseBulletsPerAttackTimer() {
         return decreaseBulletsPerAttackTimer;
+    }*/
+
+    public Tween getBulletsPerAttackNumberTween() {
+        return bulletsPerAttackNumberTween;
     }
 
     public BulletsAndShieldContainer getPrevious() {
@@ -183,16 +196,21 @@ public class BulletsHandler implements Updatable {
 
     public void setCurrentSpeedMultiplier(float newSpeedMultiplier) {
         this.currentSpeedMultiplier = newSpeedMultiplier;
-        if (gameplayScreen != null) {
-            if (gameplayScreen.getSpeedMultiplierStuff() != null)
-                gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(newSpeedMultiplier);
-        }
+        /*if (gameplayScreen != null) {
+            if (gameplayScreen.getScoreStuff() != null)
+                if (gameplayScreen.getScoreStuff().getScoreMultiplierStuff() != null)
+                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().updateCharSequence(newSpeedMultiplier);
+        }*/
 
         currentBulletSpeed = BULLETS_SPEED_INITIAL * newSpeedMultiplier;
     }
 
-    public Timer getCurrentSpeedMultiplierTimer() {
-        return currentSpeedMultiplierTimer;
+    public Timer getCurrentDifficultyLevelTimer() {
+        return currentDifficultyLevelTimer;
+    }
+
+    public Tween getBulletSpeedMultiplierTween() {
+        return bulletSpeedMultiplierTween;
     }
 
     /*public void resetSpeedResetTime() {
@@ -205,14 +223,16 @@ public class BulletsHandler implements Updatable {
 
     public void resetSpeed() {
         //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
-        gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
-        currentSpeedMultiplierTimer.start();
+        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
+        currentDifficultyLevelTimer.start();
+        bulletSpeedMultiplierTween.start();
         resetCurrentSpeedMultiplier();
     }
 
     public void decrementCurrentSpeedMultiplier() {
-        gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
-        currentSpeedMultiplierTimer.start();
+        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
+        currentDifficultyLevelTimer.start();
+        bulletSpeedMultiplierTween.start();
 
         if (getCurrentSpeedMultiplier() != 1)
             setCurrentSpeedMultiplier(getCurrentSpeedMultiplier() - BULLETS_SPEED_MULTIPLIER_INCREMENT);
@@ -643,8 +663,8 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(plusMinusBulletsTimer);
     }
 
-    private void initializeDecreaseBulletsPerAttackTimer() {
-        decreaseBulletsPerAttackTimer = new Timer(BULLETS_DECREASE_NO_PER_ATTACK_EVERY) {
+    private void initializeBulletsPerAttackNumberTween() {
+        /*decreaseBulletsPerAttackTimer = new Timer(BULLETS_DECREASE_NUMBER_PER_ATTACK_EVERY * 1000) {
 
             @Override
             public void onFinish() {
@@ -660,32 +680,61 @@ public class BulletsHandler implements Updatable {
 
         decreaseBulletsPerAttackTimer.start();
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(decreaseBulletsPerAttackTimer);
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(decreaseBulletsPerAttackTimer);*/
+
+
+
+        bulletsPerAttackNumberTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
+                BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setBulletsPerAttack((int) interpolation.apply(BULLETS_MAX_NUMBER_PER_ATTACK, BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+            }
+        };
+
+        bulletsPerAttackNumberTween.start();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(bulletsPerAttackNumberTween);
     }
 
-    private void initializeCurrentSpeedMultiplierTimer() {
-        currentSpeedMultiplierTimer = new Timer(BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY * 1000f) {
+    private void initializeCurrentDifficultLevelTimer() {
+        currentDifficultyLevelTimer = new Timer(BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY * 1000f) {
             @Override
             public void onFinish() {
                 //float nextSpeedMultiplier = getBulletSpeed() / BULLETS_SPEED_INITIAL;
-                float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier + BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
+                /*float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier + BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING &
                         nextSpeedMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
                     setCurrentSpeedMultiplier(nextSpeedMultiplier);
                     //currentSpeedMultiplier = nextSpeedMultiplier;
                     //currentSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier, 5);
                     //gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
-                }
+                }*/
                 if (currentSpeedMultiplier < BULLETS_SPEED_MULTIPLIER_MAX) {
-                    gameplayScreen.getSpeedMultiplierStuff().getMyProgressBarTween().start();
+                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
                     start();
                 }
             }
         };
 
-        currentSpeedMultiplierTimer.start();
+        currentDifficultyLevelTimer.start();
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedMultiplierTimer);
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentDifficultyLevelTimer);
+    }
+
+    private void initializeCurrentSpeedMultiplierTimer() {
+
+        bulletSpeedMultiplierTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
+                BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setCurrentSpeedMultiplier(interpolation.apply(BULLETS_SPEED_MULTIPLIER_INITIAL, BULLETS_SPEED_MULTIPLIER_MAX, percentage));
+            }
+        };
+
+        bulletSpeedMultiplierTween.start();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(bulletSpeedMultiplierTween);
     }
 
     private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
@@ -724,7 +773,7 @@ public class BulletsHandler implements Updatable {
 
                 startCurrentBulletSpeedTweenStarBullet_FirstStage();
                 gameplayScreen.getStarsContainer().startCurrentSpeedTweenStarBullet();
-                gameplayScreen.startScoreTimePlayedThisTurnSoFarTweenStarBullet_FirstStage();
+                gameplayScreen.getScoreStuff().startScoreTweenStarBullet_FirstStage();
             }
         };
 
@@ -774,7 +823,7 @@ public class BulletsHandler implements Updatable {
             public void onStart() {
                 super.onStart();
                 gameplayScreen.startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(true, false);
-                gameplayScreen.startScoreTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage();
+                gameplayScreen.getScoreStuff().startScoreTweenStarBullet_ThirdStage();
                 //gameplayScreen.getStarsContainer().setInWarpFastForwardAnimation(true);
                 startCurrentBulletSpeedTweenStarBullet_ThirdStage();
 

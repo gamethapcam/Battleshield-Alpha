@@ -48,14 +48,14 @@ public class HealthHandler {
             bullet.stopUsingTheBullet(worldWidth, worldHeight);
         }
 
-        gameplayScreen.getScore().getFadeOutTween().start();
+        gameplayScreen.getScoreStuff().getFadeOutTween().start();
         gameplayScreen.getPauseStuff().getPauseSymbolFadesOutWhenLosing().start();
 
         Bullet.setPlusOrMinusExists(false);
         Bullet.setStarExists(false);
         gameplayScreen.setInStarBulletAnimation(false);
 
-        gameplayScreen.getScore().updateBestScoreButDontRegisterToHardDriveYet();
+        gameplayScreen.getScoreStuff().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
 
         Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
@@ -79,19 +79,22 @@ public class HealthHandler {
 
             gameplayScreen.setState(GameplayScreen.State.PLAYING);
             setHealth(1f);
-            gameplayScreen.resetTimePlayedThisTurnSoFar();
+            gameplayScreen.getScoreStuff().resetScore();
             //gameplayScreen.getBulletsHandler().resetSpeedResetTime();
-            gameplayScreen.getScore().resetScore();
-            SimpleText scoreText = gameplayScreen.getScore();
+            gameplayScreen.getScoreStuff().resetScore();
+            SimpleText scoreText = gameplayScreen.getScoreStuff().getScoreText();
             scoreText.setColor(scoreText.getColor().r, scoreText.getColor().g, scoreText.getColor().b, 1);
             Image pauseSymbol = gameplayScreen.getPauseStuff().getPauseSymbol();
             pauseSymbol.setColor(pauseSymbol.getColor().r, pauseSymbol.getColor().g, pauseSymbol.getColor().b, 1);
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(BULLETS_DEFAULT_NO_PER_ATTACK);
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().newWave();
-            gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
-            gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().start();
+            //gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
+            gameplayScreen.getBulletsHandler().getBulletsPerAttackNumberTween().start();
+            //gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().start();
+            gameplayScreen.getBulletsHandler().getBulletSpeedMultiplierTween().start();
             gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().start();
+            gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
             gameplayScreen.getStarsContainer().resetCurrentSpeed();

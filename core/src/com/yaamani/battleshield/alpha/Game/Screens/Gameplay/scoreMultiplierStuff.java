@@ -14,21 +14,28 @@ import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
 
-public class SpeedMultiplierStuff implements Resizable, Updatable {
+public class scoreMultiplierStuff implements Resizable, Updatable {
 
     private GameplayScreen gameplayScreen;
 
-    private SimpleText bulletSpeedMultiplierText;
+    private SimpleText scoreMultiplierText;
 
     private MyProgressBar myProgressBar;
     private Tween myProgressBarTween;
 
-    public SpeedMultiplierStuff(GameplayScreen gameplayScreen) {
+    //private Tween scoreMultiplier;
+
+    private float scoreMultiplier = 1;
+
+    private Tween scoreMultiplierTween;
+
+    public scoreMultiplierStuff(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
-        initializeBulletSpeedMultiplierText(gameplayScreen.getMyBitmapFont());
+        initializeScoreMultiplierText(gameplayScreen.getMyBitmapFont());
         initializeProgressBar();
         initializeMyProgressBarTween();
+        initializeScoreMultiplierTween();
     }
 
     @Override
@@ -63,57 +70,68 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
 
             if (myProgressBarTween.isFinished()) {
                 if (bulletSpeed < BULLETS_SPEED_MULTIPLIER_MAX * BULLETS_SPEED_INITIAL)
-                    myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().getPercentage()/*(gameplayScreen.getTimePlayedThisTurnSoFar() - gameplayScreen.getBulletsHandler().getSpeedResetTime()) % BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*/);
+                    myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().getPercentage()/*(gameplayScreen.getTimePlayedThisTurnSoFar() - gameplayScreen.getBulletsHandler().getSpeedResetTime()) % BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*/);
                 else myProgressBar.setPercentage(1);
             }
 
             myProgressBarTween.update(delta);
+            scoreMultiplierTween.update(delta);
         }
     }
 
-    public void updateCharSequence(float currentSpeedMultiplier) {
-        bulletSpeedMultiplierText.setCharSequence("x" + currentSpeedMultiplier, true);
+    private void updateCharSequence(float currentMultiplier) {
+        scoreMultiplierText.setCharSequence("x" + currentMultiplier, true);
 
         bulletSpeedMultiplierTextUpdatePosition();
         progressBarUpdatePosition();
     }
 
     private void bulletSpeedMultiplierTextUpdatePosition() {
-        float bulletSpeedMultiplierTextWidth2 = bulletSpeedMultiplierText.getWidth()/2f;
-        float bulletSpeedMultiplierTextHeight2 = bulletSpeedMultiplierText.getHeight()/2f;
+        float bulletSpeedMultiplierTextWidth2 = scoreMultiplierText.getWidth()/2f;
+        float bulletSpeedMultiplierTextHeight2 = scoreMultiplierText.getHeight()/2f;
         Viewport viewport = gameplayScreen.getStage().getViewport();
-        bulletSpeedMultiplierText.setPosition(viewport.getWorldWidth()/2f - bulletSpeedMultiplierTextWidth2,
-                viewport.getWorldHeight()/2f - bulletSpeedMultiplierTextHeight2 / 1.7f);
+        /*scoreMultiplierText.setPosition(viewport.getWorldWidth()/2f - bulletSpeedMultiplierTextWidth2,
+                viewport.getWorldHeight()/2f - bulletSpeedMultiplierTextHeight2 / 1.7f);*/
+        scoreMultiplierText.setPosition(SCORE_TXT_MARGIN, gameplayScreen.getScoreStuff().getScoreText().getY() - SCORE_TXT_MARGIN - bulletSpeedMultiplierTextHeight2);
     }
 
     private void progressBarUpdatePosition() {
-        myProgressBar.setWidth(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_WIDTH);
-        myProgressBar.setX(gameplayScreen.getStage().getViewport().getWorldWidth()/2f - BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_WIDTH/2f);
-        myProgressBar.setY(bulletSpeedMultiplierText.getY() - BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TXT_DIFF_Y - BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_HEIGHT);
+        myProgressBar.setWidth(/*BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_WIDTH*/scoreMultiplierText.getWidth());
+        //myProgressBar.setX(gameplayScreen.getStage().getViewport().getWorldWidth()/2f - BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_WIDTH/2f);
+        myProgressBar.setX(scoreMultiplierText.getX());
+        myProgressBar.setY(scoreMultiplierText.getY() - BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TXT_DIFF_Y - BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_HEIGHT);
     }
 
     public Tween getMyProgressBarTween() {
         return myProgressBarTween;
     }
 
-    public SimpleText getBulletSpeedMultiplierText() {
-        return bulletSpeedMultiplierText;
+    public SimpleText getScoreMultiplierText() {
+        return scoreMultiplierText;
     }
 
     public MyProgressBar getMyProgressBar() {
         return myProgressBar;
     }
 
+    public float getScoreMultiplier() {
+        return scoreMultiplier;
+    }
+
+    public Tween getScoreMultiplierTween() {
+        return scoreMultiplierTween;
+    }
+
     //---------------------------------------- Initializers ---------------------------------------
     //---------------------------------------- Initializers ---------------------------------------
     //---------------------------------------- Initializers ---------------------------------------
 
-    private void initializeBulletSpeedMultiplierText(MyBitmapFont myBitmapFont) {
-        bulletSpeedMultiplierText = new SimpleText(myBitmapFont, "x" + "1.0");
-        bulletSpeedMultiplierText.setColor(BULLET_SPEED_MULTIPLIER_TXT_COLOR);
-        bulletSpeedMultiplierText.setHeight(BULLET_SPEED_MULTIPLIER_TXT_HEIGHT);
+    private void initializeScoreMultiplierText(MyBitmapFont myBitmapFont) {
+        scoreMultiplierText = new SimpleText(myBitmapFont, "x" + "1.0");
+        scoreMultiplierText.setColor(BULLET_SPEED_MULTIPLIER_TXT_COLOR);
+        scoreMultiplierText.setHeight(BULLET_SPEED_MULTIPLIER_TXT_HEIGHT);
 
-        gameplayScreen.addActor(bulletSpeedMultiplierText);
+        gameplayScreen.addActor(scoreMultiplierText);
     }
 
     private void initializeProgressBar() {
@@ -148,5 +166,23 @@ public class SpeedMultiplierStuff implements Resizable, Updatable {
         myProgressBarTween.finish();
 
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(myProgressBarTween);
+    }
+
+    private void initializeScoreMultiplierTween() {
+        scoreMultiplierTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                float newScoreMultiplier = interpolation.apply(SCORE_MULTIPLIER_MIN, SCORE_MULTIPLIER_MAX, percentage);
+                if (newScoreMultiplier != scoreMultiplier) {
+                    scoreMultiplier = newScoreMultiplier;
+                    updateCharSequence(newScoreMultiplier);
+                }
+            }
+        };
+
+        scoreMultiplierTween.start();
+
+        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(scoreMultiplierTween);
+
     }
 }

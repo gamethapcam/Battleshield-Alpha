@@ -7,8 +7,6 @@ import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Starfield.Star;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 
-import java.math.MathContext;
-
 public final class Constants {
 
     public static final float WORLD_SIZE = 100.0f/*300.0f*/;
@@ -153,13 +151,33 @@ public final class Constants {
 
     public static final float TURRET_RADIUS = WORLD_SIZE / 15f;
 
-    public static final int BULLETS_MAX_NUMBER_PER_ATTACK = 10;
+    public static final int BULLETS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
+    public static final float BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL = 50/*3*/; //sec
+
+    public static final int BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+
+    public static final int BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
+
+    public static final int BULLETS_MAX_NUMBER_PER_ATTACK = BULLETS_MIN_NUMBER_PER_ATTACK + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * BULLETS_NUMBER_PER_ATTACK_DECREMENT;
 
     public static final int BULLETS_DEFAULT_NO_PER_ATTACK = BULLETS_MAX_NUMBER_PER_ATTACK;
 
-    public static final int BULLETS_MIN_NUMBER_PER_ATTACK = 3;
+    public static final float BULLETS_DECREASE_NUMBER_PER_ATTACK_EVERY = BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
 
-    public static final float BULLETS_DECREASE_NO_PER_ATTACK_EVERY = 3000/*000*/;
+    public static final Interpolation BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantLinearTimeLinearDifficulty(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
+
+    public static final float BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
+
+    public static final float BULLETS_SPEED_MULTIPLIER_INITIAL = 1f;
+
+    public static final float BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+
+    public static final float BULLETS_SPEED_MULTIPLIER_MAX = BULLETS_SPEED_MULTIPLIER_INITIAL + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
+
+    public static final Interpolation BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ExponentialInDifficultiesWithRest(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, 0.1f, 5);
 
     public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 27.69230769f;
 
@@ -174,16 +192,6 @@ public final class Constants {
     public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO) * /*BULLETS_MIN_NUMBER_PER_ATTACK*/5;
 
     public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1 * (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO);
-
-    public static final float BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
-
-    //public static final float BULLETS_SPEED_MULTIPLIER_INITIAL = 1f;
-
-    public static final float BULLETS_SPEED_MULTIPLIER_MAX = 2f;
-
-    public static final float BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
-
-    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = 50/*3*/; //sec
 
     public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
 
@@ -212,31 +220,31 @@ public final class Constants {
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
             SpecialBullet.HEART,
-            /*SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
-            SpecialBullet.HEART,*/
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
 
-            /*SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
-            SpecialBullet.MINUS,*/
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
 
             SpecialBullet.STAR,
 
-            /*SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,*/
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = {
             SpecialBullet.HEART,
-            /*SpecialBullet.HEART,
+            SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
@@ -249,48 +257,48 @@ public final class Constants {
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
-            SpecialBullet.HEART,*/
+            SpecialBullet.HEART,
 
             SpecialBullet.STAR,
 
-            /*SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,*/
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {
             SpecialBullet.BOMB,
-           /* SpecialBullet.BOMB,
             SpecialBullet.BOMB,
-            SpecialBullet.BOMB,*/
+            SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
 
-            /*SpecialBullet.PLUS,
             SpecialBullet.PLUS,
             SpecialBullet.PLUS,
-            SpecialBullet.PLUS,*/
+            SpecialBullet.PLUS,
+            SpecialBullet.PLUS,
 
             SpecialBullet.SHIELD_DISABLING,
-            //SpecialBullet.SHIELD_DISABLING,
+            SpecialBullet.SHIELD_DISABLING,
 
-            //SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = {
             SpecialBullet.BOMB,
-            /*SpecialBullet.BOMB,
+            SpecialBullet.BOMB,
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
 
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
-            SpecialBullet.BOMB,*/
+            SpecialBullet.BOMB,
 
-            //SpecialBullet.SHIELD_DISABLING,
+            SpecialBullet.SHIELD_DISABLING,
             SpecialBullet.SHIELD_DISABLING,
 
-            //SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
     };
 
@@ -415,6 +423,14 @@ public final class Constants {
 
     //public static final float SCORE_FONT_SCALE = 0.5f;
 
+    public static final float SCORE_MULTIPLIER_MIN = 1f;
+
+    public static final float SCORE_MULTIPLIER_INCREMENT = 0.5f;
+
+    public static final float SCORE_MULTIPLIER_MAX = SCORE_MULTIPLIER_MIN + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * SCORE_MULTIPLIER_INCREMENT;
+
+    public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantLinearTimeLinearDifficulty(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
+
     public static final float SCORE_TXT_HEIGHT = WORLD_SIZE / 9f;
 
     public static final float SCORE_TXT_MARGIN = WORLD_SIZE / 40f;
@@ -445,13 +461,13 @@ public final class Constants {
 
     public static final float BULLET_SPEED_MULTIPLIER_TXT_HEIGHT = WORLD_SIZE / 31.5f;
 
-    public static final Color BULLET_SPEED_MULTIPLIER_TXT_COLOR = new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
+    public static final Color BULLET_SPEED_MULTIPLIER_TXT_COLOR = /*new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1)*/Color.WHITE;
 
     public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_HEIGHT = WORLD_SIZE * 17f/1440f;
 
     public static final float BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_WIDTH = WORLD_SIZE * 130f/1440f;
 
-    public static final Color BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_BG_COLOR = BULLET_SPEED_MULTIPLIER_TXT_COLOR;
+    public static final Color BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_BG_COLOR = new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
 
     public static final Color BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_PERCENTAGE_BAR_COLOR = Color.WHITE;
 
@@ -482,7 +498,7 @@ public final class Constants {
 
     public static final int STAR_BULLET_SECOND_STAGE_DURATION = 2500;
 
-    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 5000;
+    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 1500;
 
     public static final int STAR_BULLET_TOTAL_DURATION = STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION + STAR_BULLET_THIRD_STAGE_DURATION;
 

@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.TweenAndMyTweenTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
@@ -101,8 +100,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         super.pause();
         //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (gameplayScreen != null)
-            if (gameplayScreen.getScore() != null)
-                    gameplayScreen.getScore().registerBestScoreToHardDrive();
+            if (gameplayScreen.getScoreStuff() != null)
+                    gameplayScreen.getScoreStuff().registerBestScoreToHardDrive();
     }
 
     @Override

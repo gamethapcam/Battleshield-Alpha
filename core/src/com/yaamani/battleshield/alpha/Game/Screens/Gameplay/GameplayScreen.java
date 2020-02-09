@@ -3,6 +3,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
+//import com.badlogic.gdx.controllers.
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -42,17 +43,12 @@ public class GameplayScreen extends AdvancedScreen {
     private State state;
     private boolean inStarBulletAnimation = false;
 
-    private float timePlayedThisTurnSoFar;
-    private Score score;
-    private MyTween timePlayedThisTurnSoFarTweenStarBullet_FirstStage;
-    private Tween timePlayedThisTurnSoFarTweenStarBullet_ThirdStage;
+    private ScoreStuff scoreStuff;
 
     private Image whiteTextureHidesEveryThingSecondStageStarBullet;
     private Tween whiteTextureHidesEveryThingSecondStageTweenStarBullet;
 
     private PauseStuff pauseStuff;
-
-    private SpeedMultiplierStuff speedMultiplierStuff;
 
     private Controller controllerLeft;
     private Controller controllerRight;
@@ -79,8 +75,6 @@ public class GameplayScreen extends AdvancedScreen {
 
         initializeTurret();
         initializeBulletsAndShieldArray();
-        initializeTimePlayedThisTurnSoFarTweenStarBullet_FirstStage();
-        initializeTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage();
 
         //initializeBullets(starsContainer.getRadialTween());
 
@@ -88,12 +82,11 @@ public class GameplayScreen extends AdvancedScreen {
 
         healthBar = new HealthBar(this);
 
-        speedMultiplierStuff = new SpeedMultiplierStuff(this);
 
         initializeWhiteTextureHidesEveryThingSecondStageStarBullet();
         initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet();
 
-        score = new Score(this, myBitmapFont);
+        scoreStuff = new ScoreStuff(this, myBitmapFont);
 
         //initializeControllers();
 
@@ -119,16 +112,14 @@ public class GameplayScreen extends AdvancedScreen {
         if (!isVisible()) return;
         super.act(delta);
 
+        scoreStuff.update(delta);
         pauseStuff.update(delta);
 
-        if (getState() == GameplayScreen.State.PLAYING) {
-            speedMultiplierStuff.update(delta);
+        /*if (getState() == GameplayScreen.State.PLAYING) {
             if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
-        }
+        }*/
 
-        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.update(delta);
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
-        timePlayedThisTurnSoFarTweenStarBullet_ThirdStage.update(delta);
 
 
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
@@ -226,11 +217,9 @@ public class GameplayScreen extends AdvancedScreen {
 
         healthBar.resize(width, height, worldWidth, worldHeight);
 
-        score.resize(width, height, worldWidth, worldHeight);
+        scoreStuff.resize(width, height, worldWidth, worldHeight);
 
         gameOverLayer.resize(width, height, worldWidth, worldHeight);
-
-        speedMultiplierStuff.resize(width, height, worldWidth, worldHeight);
 
         whiteTextureHidesEveryThingSecondStageStarBullet.setBounds(-worldWidth, -worldHeight, worldWidth*4, worldHeight*4);
     }
@@ -298,31 +287,7 @@ public class GameplayScreen extends AdvancedScreen {
         healthHandler = new HealthHandler(this);
     }
 
-    private void initializeTimePlayedThisTurnSoFarTweenStarBullet_FirstStage() {
-        timePlayedThisTurnSoFarTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT) {
-            @Override
-            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
-                timePlayedThisTurnSoFar = myInterpolation.apply(startX, endX, startY, endY, currentX);
-            }
-        };
 
-        addToPauseWhenPausingFinishWhenLosing(timePlayedThisTurnSoFarTweenStarBullet_FirstStage);
-    }
-
-
-    private float timePlayedSoFarStarBulletThirdStageInitialValue;
-    private float timePlayedSoFarStarBulletThirdStageFinalValue;
-    private void initializeTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage() {
-        timePlayedThisTurnSoFarTweenStarBullet_ThirdStage = new Tween(STAR_BULLET_THIRD_STAGE_DURATION, STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION/*MyInterpolation.myLinear*/) {
-
-            @Override
-            public void tween(float percentage, Interpolation interpolation) {
-                timePlayedThisTurnSoFar = interpolation.apply(timePlayedSoFarStarBulletThirdStageInitialValue, timePlayedSoFarStarBulletThirdStageFinalValue, percentage);
-            }
-        };
-
-        addToPauseWhenPausingFinishWhenLosing(timePlayedThisTurnSoFarTweenStarBullet_ThirdStage);
-    }
     
     private void initializeWhiteTextureHidesEveryThingSecondStageStarBullet() {
         whiteTextureHidesEveryThingSecondStageStarBullet = new Image(Assets.instance.gameplayAssets.gameOverBG);
@@ -400,8 +365,8 @@ public class GameplayScreen extends AdvancedScreen {
         return healthBar;
     }
 
-    public Score getScore() {
-        return score;
+    public ScoreStuff getScoreStuff() {
+        return scoreStuff;
     }
 
     public BulletsAndShieldContainer[] getBulletsAndShieldContainers() {
@@ -432,9 +397,9 @@ public class GameplayScreen extends AdvancedScreen {
         this.state = state;
     }
 
-    public float getTimePlayedThisTurnSoFar() {
+    /*public float getTimePlayedThisTurnSoFar() {
         return timePlayedThisTurnSoFar;
-    }
+    }*/
 
     public MyBitmapFont getMyBitmapFont() {
         return myBitmapFont;
@@ -442,10 +407,6 @@ public class GameplayScreen extends AdvancedScreen {
 
     public PauseStuff getPauseStuff() {
         return pauseStuff;
-    }
-
-    public SpeedMultiplierStuff getSpeedMultiplierStuff() {
-        return speedMultiplierStuff;
     }
 
     public Timer[] getPauseWhenPausingFinishWhenLosing() {
@@ -469,24 +430,12 @@ public class GameplayScreen extends AdvancedScreen {
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
 
-    public void resetTimePlayedThisTurnSoFar() {
+    /*public void resetTimePlayedThisTurnSoFar() {
         timePlayedThisTurnSoFar = 0;
-    }
+    }*/
 
     public void addToPauseWhenPausingFinishWhenLosing(Timer timer) {
         pauseWhenPausingFinishWhenLosing.add(timer);
-    }
-
-    public void startScoreTimePlayedThisTurnSoFarTweenStarBullet_FirstStage() {
-        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.setInitialVal(timePlayedThisTurnSoFar);
-        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.setFinalVal(timePlayedThisTurnSoFar + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) millisToSeconds);
-        timePlayedThisTurnSoFarTweenStarBullet_FirstStage.start();
-    }
-
-    public void startScoreTimePlayedThisTurnSoFarTweenStarBullet_ThirdStage() {
-        timePlayedSoFarStarBulletThirdStageInitialValue = timePlayedThisTurnSoFar;
-        timePlayedSoFarStarBulletThirdStageFinalValue = timePlayedThisTurnSoFar + STAR_BULLET_SCORE_BONUS;
-        timePlayedThisTurnSoFarTweenStarBullet_ThirdStage.start();
     }
 
     public void startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(boolean reversed, boolean delay) {

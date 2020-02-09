@@ -312,9 +312,6 @@ public abstract class MyInterpolation extends Interpolation {
 
 
 
-
-
-
     public static class MyExp extends MyInterpolationInOut {
         float power, min, scale;
 
@@ -622,4 +619,199 @@ public abstract class MyInterpolation extends Interpolation {
         }
     }
 
+
+
+
+
+
+    // Difficulty curves (https://www.desmos.com/calculator/kkmd5qnmw3)
+
+    public static abstract class StepsDifficultyCurve extends Interpolation {
+
+        protected int n;
+
+        public StepsDifficultyCurve(int n) {
+            this.n = n;
+        }
+
+        public int getN() {
+            return n;
+        }
+
+        public void setN(int n) {
+            if (n < 2)
+                throw new ValueOutOfRangeException("n must be greater than or equal to 2.");
+            this.n = n;
+        }
+
+        /**
+         * 0 <= currentN <= n-1
+         * @param a percentage (0 <= a <= 1)
+         * @return
+         */
+        public int getCurrentN(float a) {
+            if (a < 0 | a > 1)
+                throw new ValueOutOfRangeException("a must be greater than or equal to 0 and less than or equal to 1.");
+            return MathUtils.clamp(MathUtils.floor(n*a), 0, n-1);
+        }
+    }
+
+
+
+    public static class ConstantLinearTimeLinearDifficulty extends StepsDifficultyCurve {
+
+        public ConstantLinearTimeLinearDifficulty(int n) {
+            super(n);
+        }
+
+        @Override
+        public float apply(float a) {
+            //float c = 1f/n;
+            //return MathUtils.clamp(c*(MathUtils.floor(n*a)) / (1-c), 0, 1);
+            return getCurrentN(a)/(n-1f);
+        }
+    }
+
+    public static class ConstantExponentialInTimeLinearDifficulty extends StepsDifficultyCurve {
+
+        private MyInterpolationIn exp;
+        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
+
+        public ConstantExponentialInTimeLinearDifficulty(int n, float p) {
+            super(n);
+            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
+            exp = new MyInterpolationIn(new MyExp(p));
+        }
+
+        @Override
+        public float apply(float a) {
+            return constantLinearTimeLinearDifficulty.apply(exp.apply(a));
+        }
+
+        public float getP() {
+            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
+        }
+    }
+
+    public static class ConstantExponentialOutTimeLinearDifficulty extends StepsDifficultyCurve {
+
+        private MyInterpolationOut exp;
+        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
+
+        public ConstantExponentialOutTimeLinearDifficulty(int n, float p) {
+            super(n);
+            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
+            exp = new MyInterpolationOut(new MyExp(p));
+        }
+
+        @Override
+        public float apply(float a) {
+            return constantLinearTimeLinearDifficulty.apply(exp.apply(a));
+        }
+
+        public float getP() {
+            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
+        }
+    }
+
+    public static class ConstantLinearTimeExponentialInDifficulty extends StepsDifficultyCurve {
+
+        private MyInterpolationIn exp;
+        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
+
+        public ConstantLinearTimeExponentialInDifficulty(int n, float p) {
+            super(n);
+            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
+            exp = new MyInterpolationIn(new MyExp(p));
+        }
+
+        @Override
+        public float apply(float a) {
+            return exp.apply(constantLinearTimeLinearDifficulty.apply(a));
+        }
+
+        public float getP() {
+            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
+        }
+    }
+
+    public static class ConstantLinearTimeExponentialOutDifficulty extends StepsDifficultyCurve {
+
+        private MyInterpolationOut exp;
+        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
+
+        public ConstantLinearTimeExponentialOutDifficulty(int n, float p) {
+            super(n);
+            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
+            exp = new MyInterpolationOut(new MyExp(p));
+        }
+
+        @Override
+        public float apply(float a) {
+            return exp.apply(constantLinearTimeLinearDifficulty.apply(a));
+        }
+
+        public float getP() {
+            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
+        }
+    }
+
+    public static class RepeatedCurveWithRest extends StepsDifficultyCurve {
+
+        protected MyInterpolation myInterpolation;
+        protected float rest;
+
+        public RepeatedCurveWithRest(int n, float rest, MyInterpolation myInterpolation) {
+            super(n);
+            this.rest = rest;
+            this.myInterpolation = myInterpolation;
+        }
+
+        private float calculateLowerY(float a) {
+            return (1-rest)/n * getCurrentN(a);
+        }
+
+        private float calculateUpperY(float a) {
+            float m =1+rest*(n-1);
+            return calculateLowerY(a) + m/n;
+        }
+
+        @Override
+        public float apply(float a) {
+            float currentStartX = getCurrentN(a)/(n-1f) * (1 - 1f/(n));
+            float currentStartY = calculateLowerY(a);
+            float currentEndX = currentStartX + 1f/n;
+            float currentEndY = calculateUpperY(a);
+            return myInterpolation.apply(currentStartX, currentEndX, currentStartY, currentEndY, a);
+        }
+    }
+
+    public static class LinearDifficultiesWithRest extends RepeatedCurveWithRest {
+
+        public LinearDifficultiesWithRest(int n, float rest) {
+            super(n, rest, myLinear);
+        }
+    }
+
+    public static class ExponentialInDifficultiesWithRest extends RepeatedCurveWithRest {
+
+        public ExponentialInDifficultiesWithRest(int n, float rest, float p) {
+            super(n, rest, new MyInterpolationIn(new MyExp(p)));
+        }
+
+        public float getP() {
+            return ((MyExp)(myInterpolation)).getPower();
+        }
+    }
+
+    public static class ExponentialOutDifficultiesWithRest extends RepeatedCurveWithRest {
+
+        public ExponentialOutDifficultiesWithRest(int n, float rest, float p) {
+            super(n, rest, new MyInterpolationOut(new MyExp(p)));
+        }
+
+        public float getP() {
+            return ((MyExp)(myInterpolation)).getPower();
+        }
+    }
 }
