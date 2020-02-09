@@ -9,9 +9,10 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.6'
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.9'
+        //classpath 'com.android.tools.build:gradle:3.0.1'
         //classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.4.1'
     }
 }
 
@@ -38,15 +39,17 @@ allprojects {
 }
 
 project(":desktop") {
-    apply plugin: "java"
+    apply plugin: "java-library"
 
 
     dependencies {
         implementation project(":core")
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        //implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
     }
@@ -99,7 +102,7 @@ project(":html") {
 }
 
 project(":core") {
-    apply plugin: "java"
+    apply plugin: "java-library"
 
 
     dependencies {

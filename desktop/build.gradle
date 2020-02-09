@@ -1,6 +1,6 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-apply plugin: "java"
+apply plugin: "java-library"
 
 sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
@@ -29,10 +29,10 @@ task debug(dependsOn: classes, type: JavaExec) {
 }
 
 task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
+    from {configurations.compileClasspath.collect {it.isDirectory() ? it : zipTree(it)}}
+    from files(project.assetsDir)
  
     manifest {
         attributes 'Main-Class': project.mainClassName
