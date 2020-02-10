@@ -158,7 +158,7 @@ public class ScoreStuff implements Resizable, Updatable {
 
     public void startScoreTweenStarBullet_ThirdStage() {
         timePlayedSoFarStarBulletThirdStageInitialValue = score;
-        timePlayedSoFarStarBulletThirdStageFinalValue = score + STAR_BULLET_SCORE_BONUS;
+        timePlayedSoFarStarBulletThirdStageFinalValue = score + STAR_BULLET_SCORE_BONUS * scoreMultiplierStuff.getScoreMultiplier();
         scoreTweenStarBullet_ThirdStage.start();
     }
 
@@ -168,8 +168,16 @@ public class ScoreStuff implements Resizable, Updatable {
         fadeOutTween = new Tween(SCORE_FADE_OUT_TWEEN_DURATION, linear) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                Color color = scoreText.getColor();
-                scoreText.setColor(color.r, color.g, color.b, interpolation.apply(1 - percentage));
+                Color scoreTextColor = scoreText.getColor();
+                Color scoreMultiplierTextColor = scoreMultiplierStuff.getScoreMultiplierText().getColor();
+                //Color scoreMultiplierProgressBarColor = scoreMultiplierStuff.getMyProgressBar().getColor();
+
+                float alpha = interpolation.apply(1 - percentage);
+
+                scoreText.setColor(scoreTextColor.r, scoreTextColor.g, scoreTextColor.b, alpha);
+                scoreMultiplierStuff.getScoreMultiplierText().setColor(scoreMultiplierTextColor.r, scoreMultiplierTextColor.g, scoreMultiplierTextColor.b, alpha);
+                //scoreMultiplierStuff.getMyProgressBar().setColor(scoreMultiplierProgressBarColor.r, scoreMultiplierProgressBarColor.g, scoreMultiplierProgressBarColor.b, alpha);
+                scoreMultiplierStuff.getMyProgressBar().setAlpha(alpha);
             }
 
             @Override
@@ -184,7 +192,8 @@ public class ScoreStuff implements Resizable, Updatable {
         scoreTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
-                score = myInterpolation.apply(startX, endX, startY, endY, currentX);
+                if (gameplayScreen.isInStarBulletAnimation())
+                    score = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
@@ -199,7 +208,8 @@ public class ScoreStuff implements Resizable, Updatable {
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                score = interpolation.apply(timePlayedSoFarStarBulletThirdStageInitialValue, timePlayedSoFarStarBulletThirdStageFinalValue, percentage);
+                if (gameplayScreen.isInStarBulletAnimation())
+                    score = interpolation.apply(timePlayedSoFarStarBulletThirdStageInitialValue, timePlayedSoFarStarBulletThirdStageFinalValue, percentage);
             }
         };
 

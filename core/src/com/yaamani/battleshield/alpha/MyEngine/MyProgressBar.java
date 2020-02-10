@@ -54,6 +54,30 @@ public class MyProgressBar extends Actor {
                 getRotation());
     }
 
+    @Deprecated
+    @Override
+    public void setColor(Color color) {
+        super.setColor(color);
+    }
+
+    @Deprecated
+    @Override
+    public void setColor(float r, float g, float b, float a) {
+        super.setColor(r, g, b, a);
+    }
+
+    @Deprecated
+    @Override
+    public Color getColor() {
+        return super.getColor();
+    }
+
+    public void setAlpha(float a) {
+        bg.getColor().a = a;
+        percentageBar.getColor().a = a;
+        //bg.setColor(c.r, c.g, c.b, a);
+    }
+
     public void setBgColor(Color color) {
         bg.setColor(color);
     }

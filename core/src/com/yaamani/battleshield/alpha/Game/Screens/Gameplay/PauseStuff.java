@@ -123,8 +123,8 @@ public class PauseStuff implements Resizable, Updatable {
                 pauseWhenPausingFinishWhenLosing[i].resume();
         }
 
-        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(true);
-        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(true);
+        //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(true);
+        //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(true);
     }
 
     private void _3_2_1_Tween(SimpleText text, float percentage, Interpolation interpolation) {
@@ -183,8 +183,8 @@ public class PauseStuff implements Resizable, Updatable {
             public void clicked(InputEvent event, float x, float y) {
                 resumeAfterCountDown.start();
                 _3Tween.start();
-                gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(false);
-                gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(false);
+                //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(false);
+                //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(false);
                 gameplayScreen.removeActor(resumeBounds);
             }
         });

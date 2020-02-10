@@ -91,7 +91,7 @@ public class HealthHandler {
             gameplayScreen.getBulletsHandler().newWave();
             //gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
             gameplayScreen.getBulletsHandler().getBulletsPerAttackNumberTween().start();
-            //gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplierTimer().start();
+            gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().start();
             gameplayScreen.getBulletsHandler().getBulletSpeedMultiplierTween().start();
             gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().start();
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().start();

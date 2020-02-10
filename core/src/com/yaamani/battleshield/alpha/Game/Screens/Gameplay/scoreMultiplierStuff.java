@@ -48,6 +48,7 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
     public void update(float delta) {
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
             float bulletSpeed = gameplayScreen.getBulletsHandler().getBulletSpeed();
+            //gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplier()
 
             /*String currentSpeedStr = bulletSpeedMultiplierText.getCharSequence().substring(1);
             if (!currentSpeedStr.isEmpty()) {
@@ -152,7 +153,8 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                myProgressBar.setPercentage(/*myExp10Out*/interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
+                if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+                    myProgressBar.setPercentage(/*myExp10Out*/interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
             }
 
             @Override
@@ -173,10 +175,11 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 float newScoreMultiplier = interpolation.apply(SCORE_MULTIPLIER_MIN, SCORE_MULTIPLIER_MAX, percentage);
-                if (newScoreMultiplier != scoreMultiplier) {
-                    scoreMultiplier = newScoreMultiplier;
-                    updateCharSequence(newScoreMultiplier);
-                }
+                if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+                    if (newScoreMultiplier != scoreMultiplier) {
+                        scoreMultiplier = newScoreMultiplier;
+                        updateCharSequence(newScoreMultiplier);
+                    }
             }
         };
 
