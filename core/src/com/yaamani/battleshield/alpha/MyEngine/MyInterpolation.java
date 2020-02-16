@@ -276,7 +276,7 @@ public abstract class MyInterpolation extends Interpolation {
 
 
 
-    public static final Interpolation threeSteps = new Interpolation() {
+    public static final Interpolation threePulses = new Interpolation() {
         @Override
         public float apply(float a) {
             if (a <= 1f/6f | (a > 2f/6f & a <= 3f/6f) | (a > 4f/6f & a <= 6f/6f)) return 1;
@@ -358,7 +358,7 @@ public abstract class MyInterpolation extends Interpolation {
 
         protected float inverseFunctionIn(float y01) {
             if (y01 == 0) return 0;
-            return (float) (1 + (Math.log(y01/scale)+min)/power);
+            return (float) (1 + (Math.log((y01/scale)+min))/power);
         }
 
         protected float inverseFunctionOut(float y01) {
@@ -624,13 +624,20 @@ public abstract class MyInterpolation extends Interpolation {
 
 
 
-    // Difficulty curves (https://www.desmos.com/calculator/kkmd5qnmw3)
+    // Difficulty curves (https://www.desmos.com/calculator/3m1wdcgaqp)
 
-    public static abstract class StepsDifficultyCurve extends Interpolation {
+    /**
+     * https://www.desmos.com/calculator/3m1wdcgaqp
+     */
+    public static abstract class StepsCurve extends Interpolation {
 
         protected int n;
 
-        public StepsDifficultyCurve(int n) {
+        /**
+         *
+         * @param n total number of steps or intervals.
+         */
+        public StepsCurve(int n) {
             this.n = n;
         }
 
@@ -644,174 +651,367 @@ public abstract class MyInterpolation extends Interpolation {
             this.n = n;
         }
 
+
+        /*public int getInterval(float a) {
+            if (a < 0 | a > 1)
+                throw new ValueOutOfRangeException("a must be greater than or equal to 0 and less than or equal to 1.");
+            //return MathUtils.clamp(MathUtils.floor(n*a), 0, n-1);
+            return (int) MathUtils.clamp(apply(a)/apply(1) * n, 0, n-1);
+        }*/
+
         /**
-         * 0 <= currentN <= n-1
+         * 0 <= interval <= n-1
          * @param a percentage (0 <= a <= 1)
          * @return
          */
-        public int getCurrentN(float a) {
-            if (a < 0 | a > 1)
-                throw new ValueOutOfRangeException("a must be greater than or equal to 0 and less than or equal to 1.");
+        public abstract int getInterval(float a);
+
+
+        public abstract float getIntervalStartTime(float a);
+        public abstract float getIntervalEndTime(float a);
+
+
+        public float getIntervalStartTime(float overallStartTime, float overallEndTime, float x01) {
+            return overallStartTime + (overallEndTime - overallStartTime) * getIntervalStartTime(x01);
+        }
+
+        public float getIntervalEndTime(float overallStartTime, float overallEndTime, float x01) {
+            return overallStartTime + (overallEndTime - overallStartTime) * getIntervalEndTime(x01);
+        }
+
+    }
+
+    /**
+     * https://www.desmos.com/calculator/3m1wdcgaqp
+     */
+    public static class ConstantLinearTimeLinearOutput extends StepsCurve {
+
+        public ConstantLinearTimeLinearOutput(int n) {
+            super(n);
+        }
+
+        public float apply(float a) {
+            return MathUtils.clamp(MathUtils.floor(n*a) / (n-1f), 0, 1);
+        }
+
+        @Override
+        public int getInterval(float a) {
             return MathUtils.clamp(MathUtils.floor(n*a), 0, n-1);
         }
+
+        @Override
+        public float getIntervalStartTime(float a) {
+            return apply(a) * (1-1f/n);
+        }
+
+        @Override
+        public float getIntervalEndTime(float a) {
+            return getIntervalStartTime(a) + 1f/n;
+        }
+
     }
 
+    /**
+     * https://www.desmos.com/calculator/3m1wdcgaqp
+     */
+    public static abstract class CustomScaleSteps extends StepsCurve {
 
+        protected MyInterpolation timeScale;
+        protected MyInterpolation outputScale;
 
-    public static class ConstantLinearTimeLinearDifficulty extends StepsDifficultyCurve {
+        protected ConstantLinearTimeLinearOutput constantLinearTimeLinearOutput;
 
-        public ConstantLinearTimeLinearDifficulty(int n) {
+        protected boolean useInverseFunctionTimeScale = false;
+        protected boolean useInverseFunctionOutputScale = false;
+
+        /**
+         *
+         * @param n total number of steps or intervals.
+         * @param timeScale
+         * @param outputScale
+         */
+        public CustomScaleSteps(int n, MyInterpolation timeScale, MyInterpolation outputScale) {
             super(n);
+            this.timeScale = timeScale;
+            this.outputScale = outputScale;
+            constantLinearTimeLinearOutput = new ConstantLinearTimeLinearOutput(n);
+        }
+
+        @Override
+        public int getInterval(float a) {
+            return MathUtils.round(constantLinearTimeLinearOutput.apply(0, n-1, timeScale.apply(a)));
+        }
+
+        public Interpolation getTimeScale() {
+            return timeScale;
+        }
+
+        public void setTimeScale(MyInterpolation timeScale) {
+            this.timeScale = timeScale;
+        }
+
+        public MyInterpolation getOutputScale() {
+            return outputScale;
+        }
+
+        public void setOutputScale(MyInterpolation outputScale) {
+            this.outputScale = outputScale;
+        }
+
+        public boolean isUseInverseFunctionTimeScale() {
+            return useInverseFunctionTimeScale;
+        }
+
+        public void setUseInverseFunctionTimeScale(boolean useInverseFunctionTimeScale) {
+            this.useInverseFunctionTimeScale = useInverseFunctionTimeScale;
+        }
+
+        public boolean isUseInverseFunctionOutputScale() {
+            return useInverseFunctionOutputScale;
+        }
+
+        public void setUseInverseFunctionOutputScale(boolean useInverseFunctionOutputScale) {
+            this.useInverseFunctionOutputScale = useInverseFunctionOutputScale;
+        }
+    }
+
+    /**
+     * https://www.desmos.com/calculator/3m1wdcgaqp
+     */
+    public static class ConstantCustomScaleSteps extends CustomScaleSteps {
+
+        public ConstantCustomScaleSteps(int n, MyInterpolation timeScale, MyInterpolation outputScale) {
+            super(n, timeScale, outputScale);
         }
 
         @Override
         public float apply(float a) {
-            //float c = 1f/n;
-            //return MathUtils.clamp(c*(MathUtils.floor(n*a)) / (1-c), 0, 1);
-            return getCurrentN(a)/(n-1f);
+            float x = useInverseFunctionTimeScale ? timeScale.inverseFunction(a) : timeScale.apply(a);
+            float steps = constantLinearTimeLinearOutput.apply(x);
+            return useInverseFunctionOutputScale ? outputScale.inverseFunction(steps) : outputScale.apply(steps);
+        }
+
+        @Override
+        public float getIntervalStartTime(float a) {
+            float val1 = useInverseFunctionTimeScale ? timeScale.inverseFunction(a) : timeScale.apply(a);
+            float val2 = (1-1f/n) * constantLinearTimeLinearOutput.apply(val1);
+            return useInverseFunctionTimeScale ? timeScale.apply(val2) : timeScale.inverseFunction(val2);
+        }
+
+        @Override
+        public float getIntervalEndTime(float a) {
+            float val1 = useInverseFunctionTimeScale ? timeScale.inverseFunction(a) : timeScale.apply(a);
+            float val2 = (1-1f/n) * constantLinearTimeLinearOutput.apply(val1);
+            float val3 = val2 + 1f/n;
+            return useInverseFunctionTimeScale ? timeScale.apply(val3) : timeScale.inverseFunction(val3);
         }
     }
 
-    public static class ConstantExponentialInTimeLinearDifficulty extends StepsDifficultyCurve {
+    public static class ConstantExponentialInTimeLinearOutput extends ConstantCustomScaleSteps {
 
-        private MyInterpolationIn exp;
-        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
+        public ConstantExponentialInTimeLinearOutput(int n, float p) {
+            super(n, new MyInterpolationIn(new MyExp(p)), myLinear);
+        }
+    }
 
-        public ConstantExponentialInTimeLinearDifficulty(int n, float p) {
-            super(n);
-            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
-            exp = new MyInterpolationIn(new MyExp(p));
+    public static class ConstantExponentialOutTimeLinearOutput extends ConstantCustomScaleSteps {
+
+        public ConstantExponentialOutTimeLinearOutput(int n, float p) {
+            super(n, new MyInterpolationOut(new MyExp(p)), myLinear);
+        }
+    }
+
+    public static class ConstantLinearTimeExponentialInOutput extends ConstantCustomScaleSteps {
+
+        public ConstantLinearTimeExponentialInOutput(int n, float p) {
+            super(n, myLinear, new MyInterpolationIn(new MyExp(p)));
+        }
+    }
+
+    public static class ConstantLinearTimeExponentialOutOutput extends ConstantCustomScaleSteps {
+
+        public ConstantLinearTimeExponentialOutOutput(int n, float p) {
+            super(n, myLinear, new MyInterpolationOut(new MyExp(p)));
+        }
+    }
+
+    public static class ConstantInverseExponentialInTimeExponentialInOutput extends ConstantCustomScaleSteps {
+
+        public ConstantInverseExponentialInTimeExponentialInOutput(int n, float p) {
+            super(n, new MyInterpolationIn(new MyExp(p)), new MyInterpolationIn(new MyExp(p)));
+            setUseInverseFunctionOutputScale(true);
+        }
+    }
+
+    public static class ConstantInverseExponentialOutTimeExponentialOutOutput extends ConstantCustomScaleSteps {
+
+        public ConstantInverseExponentialOutTimeExponentialOutOutput(int n, float p) {
+            super(n, new MyInterpolationOut(new MyExp(p)), new MyInterpolationOut(new MyExp(p)));
+            setUseInverseFunctionOutputScale(true);
+        }
+    }
+
+    /**
+     * https://www.desmos.com/calculator/3m1wdcgaqp
+     */
+    public static class RepeatedCurveCustomScaleSteps extends CustomScaleSteps {
+
+        /**
+         * how much the function will drop each interval. 0 <= drop <= 1. 0 = no drop at all. 1 = drop from the max y value to the min y value.
+         */
+        protected float drop;
+        protected MyInterpolation toBeRepeatedCurve;
+        /**
+         *
+         * @param n total number of intervals.
+         * @param drop how much the function will drop each interval. 0 <= drop <= 1. 0 = no drop at all. 1 = drop from the max y value to the min y value.
+         * @param toBeRepeatedCurve
+         * @param timeScale
+         * @param outputScale
+         */
+        public RepeatedCurveCustomScaleSteps(int n, float drop, MyInterpolation toBeRepeatedCurve, MyInterpolation timeScale, MyInterpolation outputScale) {
+            super(n, timeScale, outputScale);
+            setDrop(drop);
+            this.toBeRepeatedCurve = toBeRepeatedCurve;
+        }
+
+        public RepeatedCurveCustomScaleSteps(int n, MyInterpolation toBeRepeatedCurve, MyInterpolation timeScale, MyInterpolation outputScale) {
+            super(n, timeScale, outputScale);
+            setDrop(drop);
+            this.toBeRepeatedCurve = toBeRepeatedCurve;
+        }
+
+        public RepeatedCurveCustomScaleSteps(int n, MyInterpolation toBeRepeatedCurve) {
+            super(n, myLinear, myLinear);
+            this.drop = 0;
+            this.toBeRepeatedCurve = toBeRepeatedCurve;
+        }
+
+        protected float calculateStartC(float a) {
+            float val = useInverseFunctionTimeScale ? timeScale.inverseFunction(a) : timeScale.apply(a);
+            return (1-1f/n) * constantLinearTimeLinearOutput.apply(val);
+        }
+
+        protected float calculateEndC(float startC) {
+            return startC + 1f/n;
+        }
+
+        protected float calculateCurrentStartX(float startC) {
+            return useInverseFunctionTimeScale ? timeScale.apply(startC) : timeScale.inverseFunction(startC);
+        }
+
+        protected float calculateCurrentEndX(float endC) {
+            return useInverseFunctionTimeScale ? timeScale.apply(endC) : timeScale.inverseFunction(endC);
+        }
+
+        protected float calculateLowerY(float startC) {
+            return (1- drop) * startC;
+        }
+
+        protected float calculateUpperY(float endC) {
+            return calculateLowerY(endC)+ drop;
+        }
+
+        protected float calculateStartY(float startC) {
+            float val = calculateLowerY(startC);
+            return useInverseFunctionOutputScale ? outputScale.inverseFunction(val) : outputScale.apply(val);
+        }
+
+        protected float calculateEndY(float endC) {
+            float val = calculateUpperY(endC);
+            return useInverseFunctionOutputScale ? outputScale.inverseFunction(val) : outputScale.apply(val);
         }
 
         @Override
         public float apply(float a) {
-            return constantLinearTimeLinearDifficulty.apply(exp.apply(a));
-        }
+            float startC = calculateStartC(a);
+            float endC = calculateEndC(startC);
 
-        public float getP() {
-            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
-        }
-    }
+            float currentStartX = calculateCurrentStartX(startC);
+            float currentEndX = calculateCurrentEndX(endC);
+            float currentStartY = calculateStartY(startC);
+            float currentEndY = calculateEndY(endC);
 
-    public static class ConstantExponentialOutTimeLinearDifficulty extends StepsDifficultyCurve {
-
-        private MyInterpolationOut exp;
-        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
-
-        public ConstantExponentialOutTimeLinearDifficulty(int n, float p) {
-            super(n);
-            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
-            exp = new MyInterpolationOut(new MyExp(p));
+            return toBeRepeatedCurve.apply(currentStartX, currentEndX, currentStartY, currentEndY, a);
         }
 
         @Override
-        public float apply(float a) {
-            return constantLinearTimeLinearDifficulty.apply(exp.apply(a));
-        }
+        public float getIntervalStartTime(float a) {
+            float startC = calculateStartC(a);
+            float currentStartX = calculateCurrentStartX(startC);
 
-        public float getP() {
-            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
-        }
-    }
-
-    public static class ConstantLinearTimeExponentialInDifficulty extends StepsDifficultyCurve {
-
-        private MyInterpolationIn exp;
-        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
-
-        public ConstantLinearTimeExponentialInDifficulty(int n, float p) {
-            super(n);
-            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
-            exp = new MyInterpolationIn(new MyExp(p));
+            return currentStartX;
         }
 
         @Override
-        public float apply(float a) {
-            return exp.apply(constantLinearTimeLinearDifficulty.apply(a));
+        public float getIntervalEndTime(float a) {
+            float startC = calculateStartC(a);
+            float endC = calculateEndC(startC);
+            float currentEndX = calculateCurrentEndX(endC);
+
+            return currentEndX;
         }
 
-        public float getP() {
-            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
-        }
-    }
-
-    public static class ConstantLinearTimeExponentialOutDifficulty extends StepsDifficultyCurve {
-
-        private MyInterpolationOut exp;
-        private ConstantLinearTimeLinearDifficulty constantLinearTimeLinearDifficulty;
-
-        public ConstantLinearTimeExponentialOutDifficulty(int n, float p) {
-            super(n);
-            constantLinearTimeLinearDifficulty = new ConstantLinearTimeLinearDifficulty(n);
-            exp = new MyInterpolationOut(new MyExp(p));
+        public float getDrop() {
+            return drop;
         }
 
-        @Override
-        public float apply(float a) {
-            return exp.apply(constantLinearTimeLinearDifficulty.apply(a));
+        public void setDrop(float drop) {
+            if (drop < 0 | drop > 1)
+                throw new ValueOutOfRangeException("drop must be greater than or equal 0 and less than or equal 1 (0 <= drop <= 1).");
+            this.drop = drop;
         }
 
-        public float getP() {
-            return ((MyExp)(exp.getMyInterpolationInOut())).getPower();
+        public MyInterpolation getToBeRepeatedCurve() {
+            return toBeRepeatedCurve;
+        }
+
+        public void setToBeRepeatedCurve(MyInterpolation toBeRepeatedCurve) {
+            this.toBeRepeatedCurve = toBeRepeatedCurve;
         }
     }
 
-    public static class RepeatedCurveWithRest extends StepsDifficultyCurve {
+    public static class LinearCurvesLinearTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
 
-        protected MyInterpolation myInterpolation;
-        protected float rest;
-
-        public RepeatedCurveWithRest(int n, float rest, MyInterpolation myInterpolation) {
-            super(n);
-            this.rest = rest;
-            this.myInterpolation = myInterpolation;
-        }
-
-        private float calculateLowerY(float a) {
-            return (1-rest)/n * getCurrentN(a);
-        }
-
-        private float calculateUpperY(float a) {
-            float m =1+rest*(n-1);
-            return calculateLowerY(a) + m/n;
-        }
-
-        @Override
-        public float apply(float a) {
-            float currentStartX = getCurrentN(a)/(n-1f) * (1 - 1f/(n));
-            float currentStartY = calculateLowerY(a);
-            float currentEndX = currentStartX + 1f/n;
-            float currentEndY = calculateUpperY(a);
-            return myInterpolation.apply(currentStartX, currentEndX, currentStartY, currentEndY, a);
+        public LinearCurvesLinearTimeLinearOutput(int n, float drop) {
+            super(n, drop, myLinear, myLinear, myLinear);
         }
     }
 
-    public static class LinearDifficultiesWithRest extends RepeatedCurveWithRest {
+    public static class LinearCurvesExponentialInTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
 
-        public LinearDifficultiesWithRest(int n, float rest) {
-            super(n, rest, myLinear);
+        public LinearCurvesExponentialInTimeLinearOutput(int n, float drop, float p) {
+            super(n, drop, myLinear, new MyInterpolationIn(new MyExp(p)), myLinear);
         }
     }
 
-    public static class ExponentialInDifficultiesWithRest extends RepeatedCurveWithRest {
+    public static class LinearCurvesExponentialOutTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
 
-        public ExponentialInDifficultiesWithRest(int n, float rest, float p) {
-            super(n, rest, new MyInterpolationIn(new MyExp(p)));
-        }
-
-        public float getP() {
-            return ((MyExp)(myInterpolation)).getPower();
+        public LinearCurvesExponentialOutTimeLinearOutput(int n, float drop, float p) {
+            super(n, drop, myLinear, new MyInterpolationOut(new MyExp(p)), myLinear);
         }
     }
 
-    public static class ExponentialOutDifficultiesWithRest extends RepeatedCurveWithRest {
+    public static class LinearCurvesLinearTimeExponentialInOutput extends RepeatedCurveCustomScaleSteps {
 
-        public ExponentialOutDifficultiesWithRest(int n, float rest, float p) {
-            super(n, rest, new MyInterpolationOut(new MyExp(p)));
+        public LinearCurvesLinearTimeExponentialInOutput(int n, float drop, float p) {
+            super(n, drop, myLinear, myLinear, new MyInterpolationIn(new MyExp(p)));
+        }
+    }
+
+    public static class LinearCurvesLinearTimeExponentialOutOutput extends RepeatedCurveCustomScaleSteps {
+
+        public LinearCurvesLinearTimeExponentialOutOutput(int n, float drop, float p) {
+            super(n, drop, myLinear, myLinear, new MyInterpolationOut(new MyExp(p)));
+        }
+    }
+
+
+    public static class ExponentialInCurvesLinearTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
+
+        public ExponentialInCurvesLinearTimeLinearOutput(int n, float drop, float p) {
+            super(n, drop, new MyInterpolationIn(new MyExp(p)), myLinear, myLinear);
         }
 
-        public float getP() {
-            return ((MyExp)(myInterpolation)).getPower();
-        }
     }
 }
