@@ -176,7 +176,6 @@ public class ScoreStuff implements Resizable, Updatable {
 
                 scoreText.setColor(scoreTextColor.r, scoreTextColor.g, scoreTextColor.b, alpha);
                 scoreMultiplierStuff.getScoreMultiplierText().setColor(scoreMultiplierTextColor.r, scoreMultiplierTextColor.g, scoreMultiplierTextColor.b, alpha);
-                //scoreMultiplierStuff.getMyProgressBar().setColor(scoreMultiplierProgressBarColor.r, scoreMultiplierProgressBarColor.g, scoreMultiplierProgressBarColor.b, alpha);
                 scoreMultiplierStuff.getMyProgressBar().setAlpha(alpha);
             }
 

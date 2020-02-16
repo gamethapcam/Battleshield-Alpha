@@ -47,31 +47,10 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
     @Override
     public void update(float delta) {
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
-            float bulletSpeed = gameplayScreen.getBulletsHandler().getBulletSpeed();
-            //gameplayScreen.getBulletsHandler().getCurrentSpeedMultiplier()
-
-            /*String currentSpeedStr = bulletSpeedMultiplierText.getCharSequence().substring(1);
-            if (!currentSpeedStr.isEmpty()) {
-                float currentSpeed;
-                currentSpeed = Float.parseFloat(currentSpeedStr);
-                if (currentSpeed != bulletSpeed) {
-                    bulletSpeedMultiplierText.setCharSequence("x" + bulletSpeed / BULLETS_SPEED_INITIAL, true);
-
-                    bulletSpeedMultiplierTextUpdatePosition();
-                    progressBarUpdatePosition();
-
-                    //myProgressBarTween.start();
-                }
-            } else {
-                bulletSpeedMultiplierText.setCharSequence("x" + bulletSpeed / BULLETS_SPEED_INITIAL, true);
-
-                bulletSpeedMultiplierTextUpdatePosition();
-                progressBarUpdatePosition();
-            }*/
 
             if (myProgressBarTween.isFinished()) {
-                if (bulletSpeed < BULLETS_SPEED_MULTIPLIER_MAX * BULLETS_SPEED_INITIAL)
-                    myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().getPercentage()/*(gameplayScreen.getTimePlayedThisTurnSoFar() - gameplayScreen.getBulletsHandler().getSpeedResetTime()) % BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY*/);
+                if (scoreMultiplier < SCORE_MULTIPLIER_MAX)
+                    myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().getPercentage());
                 else myProgressBar.setPercentage(1);
             }
 
@@ -159,6 +138,7 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
 
             @Override
             public void onStart() {
+                if (scoreMultiplier >= SCORE_MULTIPLIER_MAX-SCORE_MULTIPLIER_INCREMENT) finish();
                 progressBarPercentageOnStart = myProgressBar.getPercentage();
                 progressBarPercentageOnFinish = myProgressBarTween.getDurationMillis() / 1000f / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY;
                 //setDurationMillis(Math.abs((progressBarPercentageOnFinish-progressBarPercentageOnStart) * BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION));
@@ -188,4 +168,22 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(scoreMultiplierTween);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //public class
 }

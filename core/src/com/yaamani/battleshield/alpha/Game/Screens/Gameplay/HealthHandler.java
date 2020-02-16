@@ -84,6 +84,9 @@ public class HealthHandler {
             gameplayScreen.getScoreStuff().resetScore();
             SimpleText scoreText = gameplayScreen.getScoreStuff().getScoreText();
             scoreText.setColor(scoreText.getColor().r, scoreText.getColor().g, scoreText.getColor().b, 1);
+            SimpleText scoreMultiplierText = gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText();
+            scoreMultiplierText.setColor(scoreMultiplierText.getColor().r, scoreMultiplierText.getColor().g, scoreMultiplierText.getColor().b, 1);
+            gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setAlpha(1);
             Image pauseSymbol = gameplayScreen.getPauseStuff().getPauseSymbol();
             pauseSymbol.setColor(pauseSymbol.getColor().r, pauseSymbol.getColor().g, pauseSymbol.getColor().b, 1);
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(BULLETS_DEFAULT_NO_PER_ATTACK);
