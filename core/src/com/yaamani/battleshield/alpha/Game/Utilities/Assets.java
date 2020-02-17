@@ -110,6 +110,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion tallGrass;
         public final TextureRegion manyTrees;
         public final TextureRegion start;
+        public final TextureRegion survival;
         public final TextureRegion restricted;
         public final TextureRegion free;
 
@@ -121,6 +122,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             tallGrass = atlas.findRegion(ASSETS_TALL_GRASS);
             manyTrees = atlas.findRegion(ASSETS_MANY_TREES);
             start = atlas.findRegion(ASSETS_START);
+            survival = atlas.findRegion(ASSETS_SURVIVAL);
             restricted = atlas.findRegion(ASSETS_RESTRICTED);
             free = atlas.findRegion(ASSETS_FREE);
         }
@@ -145,6 +147,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion starBullet;
         public final TextureRegion questionMarkBullet;
         public final TextureRegion shieldDisablingBullet;
+        public final TextureRegion mirrorBullet;
 
         public final TextureRegion pauseText;
         public final TextureRegion pauseSymbol;
@@ -176,6 +179,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             starBullet = atlas.findRegion(ASSETS_STAR_BULLET);
             questionMarkBullet = atlas.findRegion(ASSETS_QUESTION_MARK_BULLET);
             shieldDisablingBullet = atlas.findRegion(ASSETS_SHIELD_DISABLING_BULLET);
+            mirrorBullet = atlas.findRegion(ASSETS_MIRROR_BULLET);
 
             pauseText = atlas.findRegion(ASSETS_PAUSE_TEXT);
             pauseSymbol = atlas.findRegion(ASSETS_PAUSE_SYMBOL);

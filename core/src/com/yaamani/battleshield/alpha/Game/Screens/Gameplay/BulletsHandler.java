@@ -37,7 +37,7 @@ public class BulletsHandler implements Updatable {
 
     private float currentBulletSpeed;
     private float currentSpeedMultiplier;
-    private Timer currentDifficultyLevelTimer;
+    //private Timer currentDifficultyLevelTimer;
     private Tween bulletSpeedMultiplierTween; // Difficulty
     //private float speedResetTime = 0;
     private MyTween currentBulletSpeedTweenStarBullet_FirstStage;
@@ -85,7 +85,7 @@ public class BulletsHandler implements Updatable {
         setCurrentSpeedMultiplier(1);
         initializeCurrentSpeedMultiplierTimer();
 
-        initializeCurrentDifficultLevelTimer();
+        //initializeCurrentDifficultLevelTimer();
 
         initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
         initializeCurrentBulletSpeedTweenStarBullet_ThirdStage();
@@ -114,7 +114,7 @@ public class BulletsHandler implements Updatable {
         //decreaseBulletsPerAttackTimer.update(delta);
         bulletsPerAttackNumberTween.update(delta);
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
-            currentDifficultyLevelTimer.update(delta);
+            //currentDifficultyLevelTimer.update(delta);
             bulletSpeedMultiplierTween.update(delta);
         }
         currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
@@ -205,9 +205,9 @@ public class BulletsHandler implements Updatable {
         currentBulletSpeed = BULLETS_SPEED_INITIAL * newSpeedMultiplier;
     }
 
-    public Timer getCurrentDifficultyLevelTimer() {
+    /*public Timer getCurrentDifficultyLevelTimer() {
         return currentDifficultyLevelTimer;
-    }
+    }*/
 
     public Tween getBulletSpeedMultiplierTween() {
         return bulletSpeedMultiplierTween;
@@ -224,14 +224,14 @@ public class BulletsHandler implements Updatable {
     public void resetSpeed() {
         //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
-        currentDifficultyLevelTimer.start();
+        //currentDifficultyLevelTimer.start();
         bulletSpeedMultiplierTween.start();
         resetCurrentSpeedMultiplier();
     }
 
     public void decrementCurrentSpeedMultiplier() {
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
-        currentDifficultyLevelTimer.start();
+        //currentDifficultyLevelTimer.start();
         bulletSpeedMultiplierTween.start();
 
         if (getCurrentSpeedMultiplier() != 1)
@@ -380,13 +380,13 @@ public class BulletsHandler implements Updatable {
                         Bullet.isPlusOrMinusExists() + ", " +
                         Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
-                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED));
+                        (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED));
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT |
                         Bullet.isPlusOrMinusExists() |
                         Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished() |
-                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED/* & indexForDoubleWave == 0)|
+                        (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED/* & indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/)) {
 
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
@@ -414,13 +414,13 @@ public class BulletsHandler implements Updatable {
                         Bullet.isPlusOrMinusExists() + ", " +
                         Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
-                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED));
+                        (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED));
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT |
                         Bullet.isPlusOrMinusExists() |
                         Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished() |
-                        (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED /*& indexForDoubleWave == 0)|
+                        (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED /*& indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/)) {
 
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
@@ -451,6 +451,7 @@ public class BulletsHandler implements Updatable {
             //resetWaveTimer();
             return;
         }
+
         WaveAttackType waveAttackType = MyMath.chooseFromProbabilityArray(WAVE_TYPES_PROBABILITY);
 
         switch (waveAttackType) {
@@ -462,7 +463,7 @@ public class BulletsHandler implements Updatable {
                 //newSingleWave();
                 //Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isPlusOrMinusExists() + ", " + plusMinusBulletsTimer.isFinished());
 
-                if (gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
+                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
                     if (MathUtils.random(1) == 0) newRoundWave();
                     else newSingleWave();
                 } else newDoubleWave();
@@ -502,7 +503,7 @@ public class BulletsHandler implements Updatable {
 
         Array<BulletsAndShieldContainer> probability = gameplayScreen.getShieldsAndContainersHandler().getProbability();
 
-        if (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED & angleDoubleRestricted != null) {
+        if (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & angleDoubleRestricted != null) {
             chooseContainerOnTheOtherSide(probability);
 
             angleDoubleRestricted = null;
@@ -512,7 +513,7 @@ public class BulletsHandler implements Updatable {
 
             angleDoubleRestricted = null;
 
-            if (isDouble & gameplayScreen.getGameplayType() == GameplayType.RESTRICTED)
+            if (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED)
                 angleDoubleRestricted = MyMath.deg_0_to_360(current.getRotation());
         }
 
@@ -697,19 +698,19 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(bulletsPerAttackNumberTween);
     }
 
-    private void initializeCurrentDifficultLevelTimer() {
+    /*private void initializeCurrentDifficultLevelTimer() {
         currentDifficultyLevelTimer = new Timer(BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY * 1000f) {
             @Override
             public void onFinish() {
                 //float nextSpeedMultiplier = getBulletSpeed() / BULLETS_SPEED_INITIAL;
-                /*float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier + BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
+                *//*float nextSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier + BULLETS_SPEED_MULTIPLIER_INCREMENT, 5);
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING &
                         nextSpeedMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {
                     setCurrentSpeedMultiplier(nextSpeedMultiplier);
                     //currentSpeedMultiplier = nextSpeedMultiplier;
                     //currentSpeedMultiplier = MyMath.roundTo(currentSpeedMultiplier, 5);
                     //gameplayScreen.getSpeedMultiplierStuff().updateCharSequence(currentSpeedMultiplier);
-                }*/
+                }*//*
                 if (currentSpeedMultiplier < BULLETS_SPEED_MULTIPLIER_MAX) {
                     gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
                     start();
@@ -720,7 +721,7 @@ public class BulletsHandler implements Updatable {
         currentDifficultyLevelTimer.start();
 
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentDifficultyLevelTimer);
-    }
+    }*/
 
     private void initializeCurrentSpeedMultiplierTimer() {
 

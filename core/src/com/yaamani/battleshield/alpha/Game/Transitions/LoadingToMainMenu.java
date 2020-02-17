@@ -1,6 +1,5 @@
 package com.yaamani.battleshield.alpha.Game.Transitions;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
@@ -26,19 +25,20 @@ public class LoadingToMainMenu extends Transition {
     private Tween starsUpwards;
     private Tween mmEarthEntitiesUpwards; //mm = main menu
     private Tween logoFadesOut;
-    private Tween startTxtAppear;
+
+    private Tween menuTxtAppear;
 
     public LoadingToMainMenu(AdvancedStage game, AdvancedScreen out, AdvancedScreen in, StarsContainer starsContainer) {
         super(game, out, in);
 
-        ((MainMenuScreen) in).setStartsAlpha(0);
+        ((MainMenuScreen) in).setSurvivalAlpha(0);
 
         initializePinkToGreyBG();
         initializeStarsFadeIn(starsContainer);
         initializeStarsUpwards(starsContainer);
         initializeEntitiesUpwards();
         initializeLogoFadesOut();
-        initializeStartTxtAppear();
+        initializeSurvivalTxtAppear();
 
         setAutomaticallyEndAfterAllTweensFinish(true);
     }
@@ -110,7 +110,7 @@ public class LoadingToMainMenu extends Transition {
             @Override
             public void onFinish() {
                 super.onFinish();
-                startTxtAppear.start();
+                menuTxtAppear.start();
             }
         };
     }
@@ -124,16 +124,18 @@ public class LoadingToMainMenu extends Transition {
         };
     }
 
-    private void initializeStartTxtAppear() {
-        startTxtAppear = new Tween(START_TXT_APPEAR_DURATION, threeSteps, this) {
+    private void initializeSurvivalTxtAppear() {
+        menuTxtAppear = new Tween(MENU_TXT_APPEAR_DURATION, threePulses, this) {
             @Override
             public void onStart() {
-                ((MainMenuScreen) in).setStartVisibility(/*false*/true);
+                ((MainMenuScreen) in).setSurvivalVisibility(/*false*/true);
+                ((MainMenuScreen) in).setPlanetsVisibility(/*false*/true);
             }
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                ((MainMenuScreen) in).setStartsAlpha(interpolation.apply(percentage));
+                ((MainMenuScreen) in).setSurvivalAlpha(interpolation.apply(percentage));
+                ((MainMenuScreen) in).setPlanetsAlpha(interpolation.apply(percentage));
             }
         };
     }

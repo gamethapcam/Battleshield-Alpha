@@ -3,6 +3,7 @@ package com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.scoreMultiplierStuff;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 
@@ -14,6 +15,8 @@ public class DifficultyCurveTesting {
     public static final String TAG = DifficultyCurveTesting.class.getSimpleName();
 
     private MyInterpolation.LinearCurvesLinearTimeExponentialOutOutput _dummy;
+    //private scoreMultiplierStuff.ProgressBarSingleDifficultyInterpolation _dummy;
+    //private scoreMultiplierStuff.ProgressBarTweenInterpolation _dummy;
 
     private float startX;
     private float startY;
@@ -22,7 +25,8 @@ public class DifficultyCurveTesting {
 
     public DifficultyCurveTesting() {
         _dummy = new MyInterpolation.LinearCurvesLinearTimeExponentialOutOutput(6, 0.254f, 3f);
-
+        //_dummy = new scoreMultiplierStuff.ProgressBarSingleDifficultyInterpolation(0.1f, 3);
+        //_dummy = new scoreMultiplierStuff.ProgressBarTweenInterpolation(6, 0.1f, 3, MyInterpolation.myLinear, MyInterpolation.myLinear);
 
         startX = WORLD_SIZE/4f;
         startY = WORLD_SIZE/4f;
@@ -30,14 +34,14 @@ public class DifficultyCurveTesting {
         endY = startY + WORLD_SIZE/2f;
 
 
-        float a = 0.9f;
+        /*float a = 0.9f;
         Gdx.app.log(TAG, "a = " + a);
         Gdx.app.log(TAG, "apply(a) = " + _dummy.apply(a));
         Gdx.app.log(TAG, "getInterval(a) = " + _dummy.getInterval(a));
         Gdx.app.log(TAG, "getIntervalStartTime(a)                                   = " + _dummy.getIntervalStartTime(a));
         Gdx.app.log(TAG, "getIntervalStartTime(overallStartTime, overallEndTime, a) = " + _dummy.getIntervalStartTime(startX, endX, a));
         Gdx.app.log(TAG, "getIntervalEndTime(a)                                     = " + _dummy.getIntervalEndTime(a));
-        Gdx.app.log(TAG, "getIntervalEndTime(overallStartTime, overallEndTime, a)   = " + _dummy.getIntervalEndTime(startX, endX, a));
+        Gdx.app.log(TAG, "getIntervalEndTime(overallStartTime, overallEndTime, a)   = " + _dummy.getIntervalEndTime(startX, endX, a));*/
 
     }
 

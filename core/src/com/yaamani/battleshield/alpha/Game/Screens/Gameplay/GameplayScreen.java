@@ -12,14 +12,11 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
-import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
-import static com.yaamani.battleshield.alpha.MyEngine.MyMath.millisToSeconds;
 
 public class GameplayScreen extends AdvancedScreen {
 
@@ -27,7 +24,8 @@ public class GameplayScreen extends AdvancedScreen {
 
     private Image turret;
 
-    private GameplayType gameplayType;
+    private GameplayControllerType gameplayControllerType;
+    private GameplayMode gameplayMode;
 
     private Array<Timer> pauseWhenPausingFinishWhenLosing;
 
@@ -236,8 +234,8 @@ public class GameplayScreen extends AdvancedScreen {
         turret.setColor(1, 1, 1, 1f);
     }
 
-    private void initializeControllers(GameplayType gameplayType) {
-        if (gameplayType == GameplayType.FREE) {
+    private void initializeControllers(GameplayControllerType gameplayControllerType) {
+        if (gameplayControllerType == GameplayControllerType.FREE) {
             controllerLeft = new FreeController(this,
                     new Image(Assets.instance.gameplayAssets.freeControllerBG),
                     new Image(Assets.instance.gameplayAssets.controllerStick),
@@ -337,16 +335,24 @@ public class GameplayScreen extends AdvancedScreen {
     //------------------------------ Getters And Setters ------------------------------
 
 
-    public GameplayType getGameplayType() {
-        return gameplayType;
+    public GameplayControllerType getGameplayControllerType() {
+        return gameplayControllerType;
     }
 
-    public void setGameplayType(GameplayType gameplayType) {
-        this.gameplayType = gameplayType;
+    public void setGameplayControllerType(GameplayControllerType gameplayControllerType) {
+        this.gameplayControllerType = gameplayControllerType;
         //shieldsAndContainersHandler.setGameplayType(gameplayType);
-        initializeControllers(gameplayType);
+        initializeControllers(gameplayControllerType);
         pauseStuff = new PauseStuff(this, myBitmapFont); // must be called after initializeControllers() because pauseSymbol.addActor() and some other actors must be called after controllerRight.addActor() so that touch gestures for the pauseSymbol have a higher priority for triggering input events.
 
+    }
+
+    public GameplayMode getGameplayMode() {
+        return gameplayMode;
+    }
+
+    public void setGameplayMode(GameplayMode gameplayMode) {
+        this.gameplayMode = gameplayMode;
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {

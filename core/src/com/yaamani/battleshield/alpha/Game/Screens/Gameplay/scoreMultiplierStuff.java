@@ -1,15 +1,18 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
+import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
@@ -48,11 +51,11 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
     public void update(float delta) {
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
 
-            if (myProgressBarTween.isFinished()) {
+            /*if (myProgressBarTween.isFinished()) {
                 if (scoreMultiplier < SCORE_MULTIPLIER_MAX)
                     myProgressBar.setPercentage(gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().getPercentage());
                 else myProgressBar.setPercentage(1);
-            }
+            }*/
 
             myProgressBarTween.update(delta);
             scoreMultiplierTween.update(delta);
@@ -126,14 +129,14 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
     }
 
     private void initializeMyProgressBarTween() {
-        myProgressBarTween = new Tween(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION, fadeOut) {
+        /*myProgressBarTween = new Tween(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION, fadeOut) {
             private float progressBarPercentageOnStart;
             private float progressBarPercentageOnFinish;
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-                    myProgressBar.setPercentage(/*myExp10Out*/interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
+                    myProgressBar.setPercentage(interpolation.apply(progressBarPercentageOnStart, progressBarPercentageOnFinish, percentage));
             }
 
             @Override
@@ -141,11 +144,19 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
                 if (scoreMultiplier >= SCORE_MULTIPLIER_MAX-SCORE_MULTIPLIER_INCREMENT) finish();
                 progressBarPercentageOnStart = myProgressBar.getPercentage();
                 progressBarPercentageOnFinish = myProgressBarTween.getDurationMillis() / 1000f / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY;
-                //setDurationMillis(Math.abs((progressBarPercentageOnFinish-progressBarPercentageOnStart) * BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_TWEEN_DURATION));
+            }
+        };*/
+
+        myProgressBarTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                myProgressBar.setPercentage(interpolation.apply(percentage));
+                //Gdx.app.log(TAG, "" + myProgressBar.getPercentage());
             }
         };
 
-        myProgressBarTween.finish();
+        //myProgressBarTween.finish();
+        myProgressBarTween.start();
 
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(myProgressBarTween);
     }
@@ -185,5 +196,64 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
 
 
 
-    //public class
+    public static class ProgressBarTweenSingleDifficultyInterpolation extends MyInterpolation {
+
+        private float x0;
+        private float p;
+
+        private float m;
+        private float c;
+
+        public ProgressBarTweenSingleDifficultyInterpolation(float x0, float p) {
+            if (x0 > 1 | x0 < 0) throw new ValueOutOfRangeException("0 <= x0 <= 1.");
+            this.x0 = x0;
+            this.p = p;
+
+            m = 1f/(1-x0);
+            c = (float) (1 / Math.pow(x0, p));
+        }
+
+
+        @Override
+        public float apply(float a) {
+            if (a > x0)
+                return 1 + m*(a-1);
+            else return (float) (c * Math.pow(x0 - a, p));
+        }
+
+        @Override
+        public float slopeAt(float x01) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public float inverseFunction(float y01) {
+            throw new UnsupportedOperationException();
+
+        }
+    }
+
+    public static class ProgressBarTweenInterpolation extends RepeatedCurveCustomScaleSteps {
+
+        ProgressBarTweenSingleDifficultyInterpolation progressBarTweenSingleDifficultyInterpolation;
+
+
+        public ProgressBarTweenInterpolation(int n, float x0, float p, MyInterpolation timeScale, MyInterpolation outputScale) {
+            super(n, 1, myLinear, timeScale, outputScale);
+            progressBarTweenSingleDifficultyInterpolation = new ProgressBarTweenSingleDifficultyInterpolation(x0, p);
+        }
+
+        @Override
+        public float apply(float a) {
+            if (getInterval(a) == n-1)
+                return 1;
+            else if (getInterval(a) == 0) {
+                toBeRepeatedCurve = myLinear;
+                return super.apply(a);
+            } else {
+                toBeRepeatedCurve = progressBarTweenSingleDifficultyInterpolation;
+                return super.apply(a);
+            }
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
@@ -37,7 +36,7 @@ public class ShieldsAndContainersHandler {
     private void setRotationForContainers() {
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
             if (i < activeShieldsNum)
-                if (gameplayScreen.getGameplayType() == GameplayType.FREE) {
+                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.FREE) {
                     gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
                 } else {
                     gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);

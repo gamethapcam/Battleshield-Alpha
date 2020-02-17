@@ -1,5 +1,6 @@
 package com.yaamani.battleshield.alpha.MyEngine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -101,7 +102,7 @@ public final class MyMath {
         StringBuilder string = new StringBuilder();
         string.append('{');
         for(int i = 0, len = arr.length; i < len; i++) {
-            string.append(arr[i]);
+            string.append(arr[i].toString());
             if (i <len-1) string.append(", ");
         }
         string.append('}');
@@ -465,6 +466,46 @@ public final class MyMath {
         }
 
         return chooseFromProbabilityArray(tempArr, 0, arrLen-1);
+    }
+
+    public static <T> void replaceItem(T[] arr, T itemToReplace, T itemToReplaceWith) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == itemToReplace)
+                arr[i] = itemToReplaceWith;
+        }
+    }
+
+    /**
+     * The original array isn't affected.
+     * @param arr
+     * @param itemToReplace
+     * @param itemToReplaceWith
+     * @param <T>
+     * @return
+     */
+    public static <T> T[] cloneAndReplace(T[] arr, T itemToReplace, T itemToReplaceWith) {
+        T[] clone = arr.clone();
+        replaceItem(clone, itemToReplace, itemToReplaceWith);
+        return clone;
+    }
+
+    public static int randomCustomProbability(float... probabilities) throws Exception {
+        float sumOfProbabilities = 0;
+        for (int i = 0; i < probabilities.length; i++) {
+            sumOfProbabilities += probabilities[i];
+        }
+        if (sumOfProbabilities != 1.0f)
+            throw new Exception("Sum of probabilities must equal to 1.");
+
+
+        float random = MathUtils.random();
+        float currentProbability = 0;
+        for (int i = 0; i < probabilities.length; i++) {
+            currentProbability += probabilities[i];
+            if (random < currentProbability)
+                return i;
+        }
+        return probabilities.length-1;
     }
 
     public static float roundTo(float val, int numOfDigitsAfterTheDecimalPoint) {

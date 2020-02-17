@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DifficultyCurveTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
@@ -141,7 +142,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
             initializeStarsContainer();
 
             gameplayScreen = new GameplayScreen(game, myBitmapFont, starsContainer, false);
-            mainMenuScreen = new MainMenuScreen(game, gameplayScreen, false);
+            mainMenuScreen = new MainMenuScreen(game, myBitmapFont, gameplayScreen, false);
 
             starsContainer.setBulletsHandler(gameplayScreen.getBulletsHandler());
             starsContainer.setGameplayScreen(gameplayScreen);

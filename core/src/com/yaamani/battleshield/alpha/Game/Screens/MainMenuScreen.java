@@ -13,13 +13,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DifficultyCurveTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
-import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
 import java.util.Random;
 
@@ -30,8 +32,12 @@ public class MainMenuScreen extends AdvancedScreen {
     public static final String TAG = MainMenuScreen.class.getSimpleName();
 
     private Image start;
+    private Image survival;
     private Image free;
     private Image restricted;
+
+    private SimpleText planets;
+    private SimpleText crystal;
 
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
@@ -43,12 +49,15 @@ public class MainMenuScreen extends AdvancedScreen {
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
 
-    //private MyInterpolation.ExponentialOutDifficultiesWithRest _dummy;
+    private MyBitmapFont myBitmapFont;
 
-    public MainMenuScreen(final AdvancedStage game, GameplayScreen gameplayScreen, boolean transform) {
+    //private DifficultyCurveTesting difficultyCurveTesting;
+
+
+    public MainMenuScreen(final AdvancedStage game, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, boolean transform) {
         super(game, transform);
 
-
+        this.myBitmapFont = myBitmapFont;
         this.gameplayScreen = gameplayScreen;
 
         Random random = new Random();
@@ -118,9 +127,11 @@ public class MainMenuScreen extends AdvancedScreen {
                 true,
                 earthEntities);
 
-        initializeStart(game);
+        initializeSurvival();
         initializeRestricted(game);
         initializeFree(game);
+        initializePlanets();
+        initializeCrystal(game);
 
         //start.setLayoutEnabled(false, earthEntities); //for performance.
 
@@ -130,11 +141,14 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(manyTrees);
         addActor(frontTree);
         addActor(frontGrass);
-        addActor(free);
-        addActor(start);
+        //addActor(start);
+        addActor(survival);
         addActor(restricted);
+        addActor(free);
+        addActor(planets);
+        addActor(crystal);
 
-        //_dummy = new MyInterpolation.ExponentialOutDifficultiesWithRest(60, 0.15f, 5);
+        //difficultyCurveTesting = new DifficultyCurveTesting();
     }
 
 
@@ -152,30 +166,7 @@ public class MainMenuScreen extends AdvancedScreen {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
 
-        /*batch.setColor(Color.MAGENTA);
-
-        int num = 3500;
-        for (int i = 0; i <= num; i++) {
-            batch.draw(Assets.instance.mutualAssets.star,
-                    (WORLD_SIZE/4f) + i*((WORLD_SIZE/2f)/num),
-                    _dummy.apply((WORLD_SIZE/4f), WORLD_SIZE*(3f/4f), (float)i/num),
-                    STARS_MAX_RADIUS,
-                    STARS_MAX_RADIUS);
-        }
-
-        batch.setColor(Color.LIME);
-
-        batch.draw(Assets.instance.mutualAssets.star,
-                (WORLD_SIZE/4f),
-                (WORLD_SIZE/4f),
-                STARS_MAX_RADIUS*1,
-                STARS_MAX_RADIUS*1);
-
-        batch.draw(Assets.instance.mutualAssets.star,
-                (WORLD_SIZE*(3f/4f)),
-                (WORLD_SIZE*(3f/4f)),
-                STARS_MAX_RADIUS*1,
-                STARS_MAX_RADIUS*1);*/
+        //difficultyCurveTesting.draw(batch);
     }
 
     private void gamePadPooling() {
@@ -198,21 +189,32 @@ public class MainMenuScreen extends AdvancedScreen {
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         super.resize(width, height, worldWidth, worldHeight);
-        start.setSize(MM_START_TXT_WIDTH, MM_START_TXT_HEIGHT);
-        if (start != null) {
-            start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT - start.getWidth(),
-                    start.getY());
-            //_dummy.setFinalVal(start.getX());
-            Gdx.app.log(TAG, "" + start.getX());
+        survival.setSize(MM_SURVIVAL_TXT_WIDTH, MM_SURVIVAL_TXT_HEIGHT);
+
+        if (survival != null) {
+            survival.setPosition(getStage().getViewport().getWorldWidth() - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - survival.getWidth(),
+                    survival.getY());
+            //_dummy.setFinalVal(survival.getX());
+            //Gdx.app.log(TAG, "" + survival.getX());
         }
 
         TextureRegion _restricted = Assets.instance.mainMenuAssets.restricted;
-        restricted.setSize(MM_START_TXT_HEIGHT * _restricted.getRegionWidth() / _restricted.getRegionHeight(), MM_START_TXT_HEIGHT);
-        if (restricted != null) restricted.setX(worldWidth - MM_START_TXT_X_MARGIN_FROM_RIGHT - restricted.getWidth());
+        restricted.setSize(MM_SURVIVAL_TXT_HEIGHT * _restricted.getRegionWidth() / _restricted.getRegionHeight(), MM_SURVIVAL_TXT_HEIGHT);
+        if (restricted != null) restricted.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - restricted.getWidth());
 
         TextureRegion _free = Assets.instance.mainMenuAssets.free;
-        free.setSize(MM_START_TXT_HEIGHT * _free.getRegionWidth() / _free.getRegionHeight(), MM_START_TXT_HEIGHT);
-        if (free != null) free.setX(worldWidth - MM_START_TXT_X_MARGIN_FROM_RIGHT - free.getWidth());
+        free.setSize(MM_SURVIVAL_TXT_HEIGHT * _free.getRegionWidth() / _free.getRegionHeight(), MM_SURVIVAL_TXT_HEIGHT);
+        if (free != null) free.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - free.getWidth());
+
+        if (planets != null) {
+            planets.setHeight(MM_PLANETS_TXT_HEIGHT);
+            planets.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - planets.getWidth());
+        }
+
+        if (crystal != null) {
+            crystal.setHeight(MM_CRYSTAL_TXT_HEIGHT);
+            crystal.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - crystal.getWidth());
+        }
     }
 
     private void cycleAspectRatios() {
@@ -266,8 +268,8 @@ public class MainMenuScreen extends AdvancedScreen {
 
 
 
-    private void initializeStart(final AdvancedStage game) {
-        start = new Image(Assets.instance.mainMenuAssets.start) {
+    private void initializeSurvival() {
+        survival = new Image(Assets.instance.mainMenuAssets.survival) {
             @Override
             public void draw(Batch batch, float parentAlpha) {
 
@@ -281,15 +283,15 @@ public class MainMenuScreen extends AdvancedScreen {
             }
         };
 
-        //game.setKeyboardFocus(start);
-        start.setVisible(false);
+        //game.setKeyboardFocus(survival);
+        survival.setVisible(false);
 
-        start.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
-                MM_START_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
+        survival.setPosition(getStage().getViewport().getWorldWidth() - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT,
+                MM_SURVIVAL_TXT_FINAL_Y /*WORLD_SIZE*0.2f*/);
 
-        //start.setBounds(start.getX(), start.getY(), start.getWidth(), start.getHeight());
+        //survival.setBounds(survival.getX(), survival.getY(), survival.getWidth(), survival.getHeight());
 
-        start.addListener(new InputListener() {
+        survival.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -298,9 +300,10 @@ public class MainMenuScreen extends AdvancedScreen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 //game.switchScreens(mainMenuToGameplay);
-                start.setVisible(false);
+                survival.setVisible(false);
                 free.setVisible(true);
                 restricted.setVisible(true);
+                planets.setVisible(false);
                 //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
             }
         });
@@ -324,7 +327,7 @@ public class MainMenuScreen extends AdvancedScreen {
         game.setKeyboardFocus(restricted);
         restricted.setVisible(/*true*/false);
 
-        restricted.setY(MM_START_TXT_FINAL_Y);
+        restricted.setY(MM_RESTRICTED_TXT_FINAL_Y);
 
         restricted.addListener(new InputListener() {
             @Override
@@ -340,7 +343,8 @@ public class MainMenuScreen extends AdvancedScreen {
     }
 
     private void startRestricted(final AdvancedStage game) {
-        gameplayScreen.setGameplayType(GameplayType.RESTRICTED);
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+        gameplayScreen.setGameplayMode(GameplayMode.SURVIVAL);
         //gameplayScreen.setState(GameplayScreen.State.PLAYING);
         gameplayScreen.getHealthHandler().newGame();
         game.switchScreens(mainMenuToGameplay);
@@ -367,7 +371,7 @@ public class MainMenuScreen extends AdvancedScreen {
 
         free.setY(MM_FREE_TXT_FINAL_Y);
 
-        /*free.setPosition(getStage().getViewport().getWorldWidth() - MM_START_TXT_X_MARGIN_FROM_RIGHT,
+        /*free.setPosition(getStage().getViewport().getWorldWidth() - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT,
                 MM_FREE_TXT_FINAL_Y);
 
         free.setBounds(free.getX(), free.getY(), 2*free.getImageWidth(), free.getImageHeight());*/
@@ -386,17 +390,86 @@ public class MainMenuScreen extends AdvancedScreen {
     }
 
     private void startFree(final AdvancedStage game) {
-        gameplayScreen.setGameplayType(GameplayType.FREE);
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.FREE);
+        gameplayScreen.setGameplayMode(GameplayMode.SURVIVAL);
         game.switchScreens(mainMenuToGameplay);
         //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
     }
 
-    public void setStartsAlpha(float a) {
-        start.setColor(a, a, a, a);
+    private void initializePlanets() {
+        planets = new SimpleText(myBitmapFont, "PLANETS");
+
+        planets.setVisible(false);
+
+        planets.setY(MM_PLANETS_TXT_FINAL_Y);
+
+        planets.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        planets.addListener(
+                new InputListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        return true;
+                    }
+
+                    @Override
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        //super.touchUp(event, x, y, pointer, button);
+                        survival.setVisible(false);
+                        planets.setVisible(false);
+                        crystal.setVisible(true);
+                    }
+                }
+        );
     }
 
-    public void setStartVisibility(boolean visibility) {
-        start.setVisible(visibility);
+    private void initializeCrystal(final AdvancedStage game) {
+        crystal = new SimpleText(myBitmapFont, "CRYSTAL");
+
+        crystal.setVisible(false);
+
+        crystal.setY(MM_CRYSTAL_TXT_FINAL_Y);
+
+        crystal.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        crystal.addListener(
+                new InputListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        return true;
+                    }
+
+                    @Override
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        //super.touchUp(event, x, y, pointer, button);
+                        startCrystal(game);
+                    }
+                }
+        );
+    }
+
+    private void startCrystal(final AdvancedStage game) {
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+        gameplayScreen.setGameplayMode(GameplayMode.CRYSTAL);
+        game.switchScreens(mainMenuToGameplay);
+        //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
+    }
+
+    public void setSurvivalAlpha(float a) {
+        survival.setColor(a, a, a, a);
+    }
+
+    public void setSurvivalVisibility(boolean visibility) {
+        survival.setVisible(visibility);
+    }
+
+    public void setPlanetsAlpha(float a) {
+        Color c = planets.getColor();
+        planets.setColor(c.r, c.g, c.b, a);
+    }
+
+    public void setPlanetsVisibility(boolean visibility) {
+        planets.setVisible(visibility);
     }
 
     private float randomInitialX(Random random, float width, boolean tileable) {

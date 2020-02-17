@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -25,7 +24,8 @@ public abstract class Controller extends Group implements Resizable {
 
     private float marginInWorldUnits;
 
-    protected Float angle;
+    protected Float stickAngle;
+    protected Float outputAngle;
 
     private boolean usingTouch;
 
@@ -55,7 +55,7 @@ public abstract class Controller extends Group implements Resizable {
     public void act(float delta) {
         super.act(delta);
 
-        //if (!usingTouch) gamePadPooling();
+        if (!usingTouch) gamePadPooling();
     }
 
     @Override
@@ -80,7 +80,7 @@ public abstract class Controller extends Group implements Resizable {
 
     protected abstract void calculateNewPositionsInWorldUnits(float marginInWorldUnits);
 
-    protected abstract void moveTheStickAccordingToTheAngle();
+    protected abstract void moveTheStickAccordingToTheStickAngle();
 
 
     protected abstract void touchDragged(InputEvent event, float x, float y, int pointer);
@@ -101,31 +101,31 @@ public abstract class Controller extends Group implements Resizable {
                 "leftStick = (" + leftStickFirstAxis + ", " + leftStickSecondAxis + ")");
 
         if (getControllerPosition() == Constants.Direction.RIGHT) {
-            angle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
+            outputAngle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
         } else
-            angle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
+            outputAngle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
 
         gamePadPooling(rightStickFirstAxis, rightStickSecondAxis, leftStickFirstAxis, leftStickSecondAxis);
     }
 
-    protected void gamePadPooling(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
+    protected abstract void gamePadPooling(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis);
 
-    }
-
-    protected boolean gamepadUsingRightOrLeftAxis(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
+    protected boolean gamePadUsingRightOrLeftAxis(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
         if (usingTouch) return false;
         return ((rightStickFirstAxis != 0 | rightStickSecondAxis != 0) & getControllerPosition() == Constants.Direction.RIGHT |
                 (leftStickFirstAxis != 0 | leftStickSecondAxis != 0) & getControllerPosition() == Constants.Direction.LEFT);
     }
 
-
-    public Float getAngle() {
-        return angle;
+    public Float getOutputAngle() {
+        /*if (outputAngle >= 0)
+            Gdx.app*/
+        return outputAngle;
     }
 
     public Float getAngleDeg() {
-        if (getAngle() == null) return null;
-        return getAngle()*MathUtils.radiansToDegrees;
+        if (getOutputAngle() == null) return null;
+        Gdx.app.log(TAG, "" + getOutputAngle()*MathUtils.radiansToDegrees);
+        return getOutputAngle()*MathUtils.radiansToDegrees;
     }
 
     /*public Float getAngleDegNoNegative() {
@@ -166,7 +166,7 @@ public abstract class Controller extends Group implements Resizable {
         @Override
         public void touchDragged(InputEvent event, float x, float y, int pointer) {
             Controller.this.touchDragged(event, x, y, pointer);
-            moveTheStickAccordingToTheAngle();
+            moveTheStickAccordingToTheStickAngle();
         }
 
         @Override

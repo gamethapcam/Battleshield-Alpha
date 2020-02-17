@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.scoreMultiplierStuff;
 import com.yaamani.battleshield.alpha.Game.Starfield.Star;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
 public final class Constants {
 
@@ -51,7 +53,7 @@ public final class Constants {
 
     public static final float LOGO_FADES_OUT_DELAY = 0.3f*STARS_UPWARDS_DURATION;
 
-    public static final float START_TXT_APPEAR_DURATION = 25/*0*/;
+    public static final float MENU_TXT_APPEAR_DURATION = 250;
 
 
 
@@ -76,6 +78,14 @@ public final class Constants {
     public static final float MM_START_TXT_HEIGHT = WORLD_SIZE * 0.1f;
 
     public static final float MM_START_TXT_WIDTH = MM_START_TXT_HEIGHT * 3.98480139f;
+
+    public static final float MM_SURVIVAL_TXT_HEIGHT = WORLD_SIZE * 0.1f;
+
+    public static final float MM_SURVIVAL_TXT_WIDTH = MM_SURVIVAL_TXT_HEIGHT * 658.266f/108.484f;
+
+    public static final float MM_PLANETS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
+
+    public static final float MM_CRYSTAL_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
     //-------
     public static final float MM_MOUNTAIN_INITIAL_Y = -MM_MOUNTAIN_HEIGHT;
 
@@ -107,7 +117,17 @@ public final class Constants {
 
     public static final float MM_START_TXT_FINAL_Y = WORLD_SIZE * 0.80679167f;
 
+    public static final float MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT = /*MM_START_TXT_WIDTH + */WORLD_SIZE * 0.12592593f;
+
+    public static final float MM_SURVIVAL_TXT_FINAL_Y = WORLD_SIZE * 0.80679167f;
+
+    public static final float MM_RESTRICTED_TXT_FINAL_Y = MM_SURVIVAL_TXT_FINAL_Y;
+
     public static final float MM_FREE_TXT_FINAL_Y = WORLD_SIZE * 0.67679167f;
+
+    public static final float MM_PLANETS_TXT_FINAL_Y = MM_FREE_TXT_FINAL_Y;
+
+    public static final float MM_CRYSTAL_TXT_FINAL_Y = MM_SURVIVAL_TXT_FINAL_Y;
     //-------
     public static final float MM_MOUNTAIN_X_MOVING_AMOUNT = WORLD_SIZE * 0.02f;
 
@@ -125,7 +145,8 @@ public final class Constants {
     //-------
 
 
-    public enum GameplayType {FREE, RESTRICTED}
+    public enum GameplayControllerType {FREE, RESTRICTED}
+    public enum GameplayMode {SURVIVAL, CRYSTAL}
 
 
     public enum Direction {RIGHT, LEFT}
@@ -153,7 +174,13 @@ public final class Constants {
 
     public static final int BULLETS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
-    public static final float BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL = 50/*3*/; //sec
+    public static final float BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL = 5/*0*/; //sec
+
+    public static final float BULLETS_DIFFICULTY_INCREASE_DURATION = 300f; //sec
+
+    public static final MyInterpolation BULLETS_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
+
+    public static final MyInterpolation BULLETS_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
     public static final int BULLETS_MIN_NUMBER_PER_ATTACK = 1;
 
@@ -165,7 +192,12 @@ public final class Constants {
 
     public static final float BULLETS_DECREASE_NUMBER_PER_ATTACK_EVERY = BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
 
-    public static final Interpolation BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantLinearTimeLinearDifficulty(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
+    //public static final Interpolation BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
+    public static final Interpolation BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleSteps(
+            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
+            BULLETS_DIFFICULTY_TIME_SCALE,
+            BULLETS_DIFFICULTY_OUTPUT_SCALE
+    );
 
     public static final float BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
 
@@ -177,8 +209,14 @@ public final class Constants {
 
     public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
 
-    public static final Interpolation BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ExponentialInDifficultiesWithRest(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, 0.1f, 5);
-
+    /*public static final Interpolation BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ExponentialInCurvesLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, 0.1f, 5);*/
+    public static final Interpolation BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleSteps(
+            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.06f,
+            new MyInterpolation.MyInterpolationIn.MyInterpolationIn(new MyInterpolation.MyExp(3)),
+            BULLETS_DIFFICULTY_TIME_SCALE,
+            BULLETS_DIFFICULTY_OUTPUT_SCALE
+    );
     public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 27.69230769f;
 
     public static final float BULLETS_ORDINARY_WIDTH_RATIO = 1f/3f;
@@ -212,9 +250,20 @@ public final class Constants {
 
     public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
 
+    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {
+            WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+            WaveBulletsType.ORDINARY,
+
+            WaveBulletsType.SPECIAL_GOOD,
+
+            WaveBulletsType.SPECIAL_BAD
+    };
+
     public enum SpecialBullet {
         MINUS, HEART, STAR, // Good
-        PLUS, BOMB, SHIELD_DISABLING, // Bad
+        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal planet only*/, // Bad
         QUESTION_MARK
     }
 
@@ -242,29 +291,7 @@ public final class Constants {
             SpecialBullet.QUESTION_MARK
     };
 
-    public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = {
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-
-            SpecialBullet.STAR,
-
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK
-    };
+    public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = MyMath.cloneAndReplace(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS, SpecialBullet.HEART);
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY = {
             SpecialBullet.BOMB,
@@ -284,34 +311,7 @@ public final class Constants {
             SpecialBullet.QUESTION_MARK
     };
 
-    public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = {
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-            SpecialBullet.BOMB,
-
-            SpecialBullet.SHIELD_DISABLING,
-            SpecialBullet.SHIELD_DISABLING,
-
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK
-    };
-
-    public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {
-            WaveBulletsType.ORDINARY,
-            WaveBulletsType.ORDINARY,
-            WaveBulletsType.ORDINARY,
-            WaveBulletsType.ORDINARY,
-
-            WaveBulletsType.SPECIAL_GOOD,
-
-            WaveBulletsType.SPECIAL_BAD
-    };
+    public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = MyMath.cloneAndReplace(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS, SpecialBullet.BOMB);
 
     public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -/*0.04f*/0;
 
@@ -429,7 +429,20 @@ public final class Constants {
 
     public static final float SCORE_MULTIPLIER_MAX = SCORE_MULTIPLIER_MIN + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * SCORE_MULTIPLIER_INCREMENT;
 
-    public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantLinearTimeLinearDifficulty(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
+    //public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
+    public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleSteps(
+            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
+            BULLETS_DIFFICULTY_TIME_SCALE,
+            BULLETS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+    public static final Interpolation SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION = new scoreMultiplierStuff.ProgressBarTweenInterpolation(
+            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.3f/BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL,
+            5,
+            BULLETS_DIFFICULTY_TIME_SCALE,
+            BULLETS_DIFFICULTY_OUTPUT_SCALE
+    );
 
     public static final float SCORE_TXT_HEIGHT = WORLD_SIZE / 9f;
 
@@ -498,7 +511,7 @@ public final class Constants {
 
     public static final int STAR_BULLET_SECOND_STAGE_DURATION = 2500;
 
-    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 1500;
+    public static final int STAR_BULLET_THIRD_STAGE_DURATION = 2000;
 
     public static final int STAR_BULLET_TOTAL_DURATION = STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION + STAR_BULLET_THIRD_STAGE_DURATION;
 
@@ -559,6 +572,8 @@ public final class Constants {
 
     public static final String ASSETS_START = "START";
 
+    public static final String ASSETS_SURVIVAL = "SURVIVAL";
+
     public static final String ASSETS_STAR = /*"Star"*/"Big Circle";
 
     public static final String ASSETS_MANY_TREES = "Too Many Trees";
@@ -588,6 +603,8 @@ public final class Constants {
     public static final String ASSETS_QUESTION_MARK_BULLET = "Question Mark";
 
     public static final String ASSETS_SHIELD_DISABLING_BULLET = "Shield Disabling";
+
+    public static final String ASSETS_MIRROR_BULLET = "Mirror";
 
     public static final String ASSETS_PAUSE_TEXT = "Pause Text";
 

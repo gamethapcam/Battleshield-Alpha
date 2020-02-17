@@ -1,7 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -53,28 +52,29 @@ public class FreeController extends Controller {
     }
 
     @Override
-    protected void moveTheStickAccordingToTheAngle() {
+    protected void moveTheStickAccordingToTheStickAngle() {
 
         float bgRadius = BG.getWidth()/2f;
         float bgCentrePointX = BG.getX() + bgRadius;
         float bgCentrePointY = BG.getY() + bgRadius;
 
         float stickRadius = stick.getWidth()/2f;
-        stick.setPosition(bgRadius*MyMath.cos(angle) - stickRadius + bgCentrePointX,
-                bgRadius*MyMath.sin(angle) - stickRadius + bgCentrePointY);
+        stick.setPosition(bgRadius*MyMath.cos(stickAngle) - stickRadius + bgCentrePointX,
+                bgRadius*MyMath.sin(stickAngle) - stickRadius + bgCentrePointY);
     }
 
     private void centerTheStick() {
         float bgRadius = BG.getWidth()/2f;
         float stickRadius = stick.getWidth()/2f;
         stick.setPosition(BG.getX() + bgRadius - stickRadius, BG.getY() + bgRadius - stickRadius);
-        angle = null;
+        outputAngle = null;
+        stickAngle = outputAngle;
     }
 
     @Override
     protected void gamePadPooling(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
 
-        if (gamepadUsingRightOrLeftAxis(rightStickFirstAxis, rightStickSecondAxis, leftStickFirstAxis, leftStickSecondAxis)) moveTheStickAccordingToTheAngle();
+        if (gamePadUsingRightOrLeftAxis(rightStickFirstAxis, rightStickSecondAxis, leftStickFirstAxis, leftStickSecondAxis)) moveTheStickAccordingToTheStickAngle();
         else centerTheStick();
 
     }
@@ -88,7 +88,8 @@ public class FreeController extends Controller {
         float xAccordingToTheCenterToTheBG = x - bgCentrePointX;
         float yAccordingToTheCenterToTheBG = y - bgCentrePointY;
 
-        angle = MathUtils.atan2(yAccordingToTheCenterToTheBG, xAccordingToTheCenterToTheBG);
+        outputAngle = MathUtils.atan2(yAccordingToTheCenterToTheBG, xAccordingToTheCenterToTheBG);
+        stickAngle = outputAngle;
         //Gdx.app.log(TAG, "" + (angle * MathUtils.radiansToDegrees));
 
     }

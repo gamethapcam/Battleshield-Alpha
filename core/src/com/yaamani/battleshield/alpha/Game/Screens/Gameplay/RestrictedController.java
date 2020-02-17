@@ -1,18 +1,14 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
-import com.yaamani.battleshield.alpha.MyEngine.Arch;
-import com.yaamani.battleshield.alpha.MyEngine.RoundedArch;
 
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
-import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.resolutionIntoWorldUnits;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class RestrictedController extends Controller {
@@ -40,7 +36,7 @@ public class RestrictedController extends Controller {
 
         //initializeShieldsRepresentation();
 
-        moveTheStickAccordingToTheAngle();
+        moveTheStickAccordingToTheStickAngle();
     }
 
     //------------------------------ super class methods ------------------------------
@@ -86,8 +82,8 @@ public class RestrictedController extends Controller {
     }
 
     @Override
-    protected void moveTheStickAccordingToTheAngle() {
-        if (angle == null) {
+    protected void moveTheStickAccordingToTheStickAngle() {
+        if (stickAngle == null) {
             stick.setY(-getStage().getViewport().getWorldHeight()); //Hide the stick
             return;
         }
@@ -100,14 +96,14 @@ public class RestrictedController extends Controller {
         if (getControllerPosition() == Direction.RIGHT) {
             bgCentrePointX = /*bg.getX() + bgRadius*/ bg.getX() + bg.getWidth() - bgRadius;
 
-            stick.setPosition((bgRadius-stickRadius/2f)* MathUtils.cos(angle) - stickRadius + bgCentrePointX,
-                    (bgRadius-stickRadius/2f)*MathUtils.sin(angle) - stickRadius + bgCentrePointY);
+            stick.setPosition((bgRadius-stickRadius/2f)* MathUtils.cos(stickAngle) - stickRadius + bgCentrePointX,
+                    (bgRadius-stickRadius/2f)*MathUtils.sin(stickAngle) - stickRadius + bgCentrePointY);
         }
         else {
             bgCentrePointX = /*bg.getX() + bgRadius*/ bg.getX() - bg.getWidth() + bgRadius;
 
-            stick.setPosition((bgRadius-stickRadius/2f)* MathUtils.cos(angle) + stickRadius + bgCentrePointX,
-                    (bgRadius-stickRadius/2f)*MathUtils.sin(angle) - stickRadius + bgCentrePointY);
+            stick.setPosition((bgRadius-stickRadius/2f)* MathUtils.cos(stickAngle) + stickRadius + bgCentrePointX,
+                    (bgRadius-stickRadius/2f)*MathUtils.sin(stickAngle) - stickRadius + bgCentrePointY);
         }
 
     }
@@ -127,59 +123,63 @@ public class RestrictedController extends Controller {
         float xAccordingToTheCenterToTheBG = x - bgCentrePointX;
         float yAccordingToTheCenterToTheBG = y - bgCentrePointY;
 
-        angle = MathUtils.atan2(yAccordingToTheCenterToTheBG, xAccordingToTheCenterToTheBG);
-        angleCorrection();
+        stickAngle = MathUtils.atan2(yAccordingToTheCenterToTheBG, xAccordingToTheCenterToTheBG);
+        stickAngleCorrection();
+        calculateOutputAngleFromStickAngle();
     }
 
     @Override
     protected void gamePadPooling(float rightStickFirstAxis, float rightStickSecondAxis, float leftStickFirstAxis, float leftStickSecondAxis) {
-        if (!gamepadUsingRightOrLeftAxis(rightStickFirstAxis, rightStickSecondAxis, leftStickFirstAxis, leftStickSecondAxis)) {
-            angle = null;
-            moveTheStickAccordingToTheAngle();
+        if (!gamePadUsingRightOrLeftAxis(rightStickFirstAxis, rightStickSecondAxis, leftStickFirstAxis, leftStickSecondAxis)) {
+            stickAngle = null;
+            moveTheStickAccordingToTheStickAngle();
             return;
         }
 
         if (getControllerPosition() == Direction.RIGHT) {
-            angle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
-            angle = MathUtils.clamp(angle, -MathUtils.PI/2f * 0.9999f, MathUtils.PI/2f * 0.9999f);
+            stickAngle = MathUtils.atan2(rightStickSecondAxis, rightStickFirstAxis);
+            stickAngle = MathUtils.clamp(stickAngle, -MathUtils.PI/2f * 0.9999f, MathUtils.PI/2f * 0.9999f);
         } else {
-            angle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
-            if (angle > 0) {
-                angle = MathUtils.clamp(angle, MathUtils.PI/2f * 1.00001f, MathUtils.PI);
+            stickAngle = MathUtils.atan2(leftStickSecondAxis, leftStickFirstAxis);
+            if (stickAngle > 0) {
+                stickAngle = MathUtils.clamp(stickAngle, MathUtils.PI/2f * 1.00001f, MathUtils.PI);
             }
-            else angle = MathUtils.clamp(angle, -MathUtils.PI, -MathUtils.PI/2f);
+            else stickAngle = MathUtils.clamp(stickAngle, -MathUtils.PI, -MathUtils.PI/2f);
         }
 
-        moveTheStickAccordingToTheAngle();
+        calculateOutputAngleFromStickAngle();
+
+        moveTheStickAccordingToTheStickAngle();
     }
 
     @Override
     protected void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        angle = null;
-        moveTheStickAccordingToTheAngle();
+        stickAngle = null;
+        outputAngle = null;
+        moveTheStickAccordingToTheStickAngle();
     }
 
-    @Override
-    public Float getAngle() {
+    /*@Override
+    public Float getOutputAngle() {
         if (!isUsingTouch()) // using gamepad
-            return super.getAngle();
+            return super.getOutputAngle();
 
 
-        if (angle == null) {
-            return angle;
+        if (outputAngle == null) {
+            return outputAngle;
         }
 
 
         if (getControllerPosition() == Direction.RIGHT) {
-            if (angle >= 0)
-                return MathUtils.lerp(0, MathUtils.PI / 2f * 0.9999f, angle / (archAngle / 2f));
-            return MathUtils.lerp(0, -MathUtils.PI / 2f * 0.9999f, -angle / (archAngle / 2f));
+            if (outputAngle >= 0)
+                return MathUtils.lerp(0, MathUtils.PI / 2f * 0.9999f, outputAngle / (archAngle / 2f));
+            return MathUtils.lerp(0, -MathUtils.PI / 2f * 0.9999f, -outputAngle / (archAngle / 2f));
         } else {
-            if (angle >= 0)
-                return MathUtils.lerp(MathUtils.PI/2f * 1.00001f, MathUtils.PI, (angle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
-            return MathUtils.lerp(-MathUtils.PI/2f, -MathUtils.PI, (-angle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            if (outputAngle >= 0)
+                return MathUtils.lerp(MathUtils.PI/2f * 1.00001f, MathUtils.PI, (outputAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            return MathUtils.lerp(-MathUtils.PI/2f, -MathUtils.PI, (-outputAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
         }
-    }
+    }*/
 
     //------------------------------ utility methods ------------------------------
     //------------------------------ utility methods ------------------------------
@@ -191,18 +191,30 @@ public class RestrictedController extends Controller {
         roundedArch.setRadius(toWorldCoordinates(Gdx.graphics.getPpiX() * archRadius, Dimension.X, viewport));
     }*/
 
-    private void angleCorrection() {
+    private void stickAngleCorrection() {
         if (getControllerPosition() == Direction.RIGHT)
-            angle = MathUtils.clamp(angle, -archAngle/2f, archAngle/2f);
+            stickAngle = MathUtils.clamp(stickAngle, -archAngle/2f, archAngle/2f);
         else {
-            if (angle > 0)
-                angle = MathUtils.clamp(angle, MathUtils.PI-archAngle/2f, MathUtils.PI);
-            else angle = MathUtils.clamp(angle, -MathUtils.PI, -(MathUtils.PI-archAngle/2f));
+            if (stickAngle > 0)
+                stickAngle = MathUtils.clamp(stickAngle, MathUtils.PI-archAngle/2f, MathUtils.PI);
+            else stickAngle = MathUtils.clamp(stickAngle, -MathUtils.PI, -(MathUtils.PI-archAngle/2f));
         }
 
        /* Gdx.app.log(TAG, "angle = " + angle*MathUtils.radDeg
                 + ", getAngle() = " + getAngle()*MathUtils.radDeg
                 + ", progress = " + (angle - (MathUtils.PI - archAngle/2f)) / (archAngle / 2f));*/
+    }
+
+    private void calculateOutputAngleFromStickAngle() {
+        if (getControllerPosition() == Direction.RIGHT) {
+            if (stickAngle >= 0)
+                outputAngle = MathUtils.lerp(0, MathUtils.PI / 2f * 0.9999f, stickAngle / (archAngle / 2f));
+            else outputAngle = MathUtils.lerp(0, -MathUtils.PI / 2f * 0.9999f, -stickAngle / (archAngle / 2f));
+        } else {
+            if (stickAngle >= 0)
+                outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.00001f, MathUtils.PI, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            else outputAngle = MathUtils.lerp(-MathUtils.PI/2f, -MathUtils.PI, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+        }
     }
 
     private void setBgSize() {
