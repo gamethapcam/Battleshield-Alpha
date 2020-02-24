@@ -208,10 +208,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private void whenTheShieldStartsToDisappear() {
         if (parent.getColor().a < 0.95f) {
-            if (currentEffect == effects.minus | currentEffect == effects.plus)
-                setPlusOrMinusExists(false);
-            else if (currentEffect == effects.star)
-                setStarExists(false);
+            handlePlusMinusStarExists();
         }
     }
 
@@ -233,6 +230,15 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         detachFromBulletsAndShieldObject();
         bulletPool.free(this);
         activeBullets.removeValue(this, true);
+
+        handlePlusMinusStarExists();
+    }
+
+    private void handlePlusMinusStarExists() {
+        if (currentEffect == effects.minus | currentEffect == effects.plus)
+            setPlusOrMinusExists(false);
+        else if (currentEffect == effects.star)
+            setStarExists(false);
     }
 
     /*private void decideSpecialType() {
