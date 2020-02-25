@@ -1,8 +1,15 @@
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP
+#endif
+
 #define PI 3.1415926
-#define scaleFactor 0.25
+#define scaleFactor 0.7
 #define bloomBightness 3.0
 
-varying vec4 v_color;
+varying LOWP vec4 v_color;
 varying vec2 v_texCoords;
 
 uniform sampler2D u_texture;

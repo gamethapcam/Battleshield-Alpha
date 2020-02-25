@@ -1,9 +1,16 @@
-//#version 100
+#ifdef GL_ES
+#define LOWP lowp
+precision mediump float;
+#else
+#define LOWP
+#endif
+
 #define kernel_size 0.0025
 #define p 1.1
 //#define scaleFactor 1/p
 #define scaleFactor 0.3
 
+varying LOWP vec4 v_color;
 varying vec4 v_color;
 varying vec2 v_texCoords;
 
