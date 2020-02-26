@@ -385,11 +385,11 @@ public class BulletsHandler implements Updatable {
 
             }
         } else {
-            for (BulletsAndShieldContainer container:gameplayScreen.getBulletsAndShieldContainers()) {
+            /*for (BulletsAndShieldContainer container:gameplayScreen.getBulletsAndShieldContainers()) {
                 Gdx.app.log(TAG, "index = " + container.getIndex() + ", a = " + container.getColor().a);
-            }
+            }*/
             newWave();
-            Gdx.app.log(TAG, "null");
+            //Gdx.app.log(TAG, "null");
         }
     }
 

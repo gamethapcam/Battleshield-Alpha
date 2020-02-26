@@ -44,7 +44,7 @@ public class Star {
     private float radius;
     //private float glowRadius;
 
-    private float radiusBeforeFastForwardWarp;
+    private float originalRadius;
     private float fastForwardWarpMinRadius;
     private float fastForwardWarpMaxRadius;
     private float fastForwardWarpVelocityMultiplier;
@@ -139,6 +139,13 @@ public class Star {
             }
         }
 
+        /*if (radius > STARS_MAX_RADIUS | radius < STARS_MIN_RADIUS)
+            Gdx.app.log(TAG, "" + i
+                    + ", maxRadius = " + fastForwardWarpMaxRadius
+                    + ", minRadius = " + fastForwardWarpMinRadius
+                    + ", originalRadius = " + originalRadius
+                    + ", radius = " + radius);*/
+
         // additionalVelocity is a parameter by the gameplayScreen to achieve the cool effect of the intro
         linearPosition.x += additionalVelocity.x * delta * z;
         linearPosition.y += additionalVelocity.y * delta * z;
@@ -201,7 +208,7 @@ public class Star {
     }
 
     private float calculateRadiusFastForwardWarp(float r) {
-        float rRatio = r/(wWidth/2f);
+        float rRatio = MathUtils.clamp(r/(wWidth/2f), 0, 1);
 
         radius = STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_POLAR_INTERPOLATION.apply(fastForwardWarpMinRadius, fastForwardWarpMaxRadius, rRatio);
 
@@ -214,7 +221,8 @@ public class Star {
     private void generateRandomness(Viewport viewport) {
         Random random = new Random();
 
-        radius = MathUtils.lerp(STARS_MIN_RADIUS, STARS_MAX_RADIUS, random.nextFloat());
+        originalRadius = MathUtils.lerp(STARS_MIN_RADIUS, STARS_MAX_RADIUS, random.nextFloat());
+        radius = originalRadius;
         //Gdx.app.log(TAG, "" + radius + ",\t" + radius/STARS_MAX_RADIUS);
         //glowRadius = radius * 17;
 
@@ -325,7 +333,7 @@ public class Star {
         finalPosition.x = linearPosition.x = wWidth/2f - wWidth/(divisionFactor*2) + MathUtils.random() * wWidth/divisionFactor;
         finalPosition.y = linearPosition.y = wHeight/2f - wHeight/(divisionFactor*2) + MathUtils.random() * wHeight/divisionFactor;*/
 
-        radiusBeforeFastForwardWarp = radius;
+        //originalRadius = radius;
         fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage.start();
 
         float theta = MathUtils.random() * MathUtils.PI2;
@@ -460,8 +468,20 @@ public class Star {
 
                 if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
 
-                fastForwardWarpMinRadius = interpolation.apply(STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MIN, radiusBeforeFastForwardWarp, percentage);
-                fastForwardWarpMaxRadius = interpolation.apply(STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MAX, radiusBeforeFastForwardWarp, percentage);
+                fastForwardWarpMinRadius = interpolation.apply(STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MIN, originalRadius, percentage);
+                fastForwardWarpMaxRadius = interpolation.apply(STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MAX, originalRadius, percentage);
+
+                /*if (i == 0) {
+                    Gdx.app.log(Star.this.TAG, "" + percentage);
+                }*/
+
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                radius = originalRadius;
             }
         };
     }
