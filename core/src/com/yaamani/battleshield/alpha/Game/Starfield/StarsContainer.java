@@ -104,6 +104,8 @@ public class StarsContainer extends Group implements Disposable{
 
     @Override
     public void act(float delta) {
+        if (gameplayScreen.getState() == GameplayScreen.State.PAUSED) return;
+
         currentSpeedTweenStarBullet_FirstStage.update(delta);
         radialTween.update(delta);
         warpStretchFactorTweenStarBullet_SecondStage.update(delta);
@@ -139,6 +141,8 @@ public class StarsContainer extends Group implements Disposable{
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        //if (gameplayScreen.getState() == GameplayScreen.State.PAUSED) return;
+
         //super.draw(batch, parentAlpha);
         batch.end();
         Texture starsFrameBufferTexture = renderStarsToOriginalFrameBuffer(batch);
@@ -299,10 +303,16 @@ public class StarsContainer extends Group implements Disposable{
 
     public void setGameplayScreen(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(radialTween);
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedTweenStarBullet_FirstStage);
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(warpStretchFactorTweenStarBullet_SecondStage);
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenLosing(radialTween);
+
+        gameplayScreen.addToFinishWhenLosing(currentSpeedTweenStarBullet_FirstStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(currentSpeedTweenStarBullet_FirstStage);
+
+        gameplayScreen.addToFinishWhenLosing(warpStretchFactorTweenStarBullet_SecondStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(warpStretchFactorTweenStarBullet_SecondStage);
+
+        gameplayScreen.addToFinishWhenLosing(warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage);
 
         for (Star star : stars) {
             star.setGameplayScreen(gameplayScreen);
@@ -363,9 +373,19 @@ public class StarsContainer extends Group implements Disposable{
     private void initializeWarpStretchFactorTweenStarBullet_SecondStage() {
         warpStretchFactorTweenStarBullet_SecondStage = new Tween(STAR_BULLET_SECOND_STAGE_DURATION, STAR_BULLET_SECOND_STAGE_INTERPOLATION) {
 
+
+
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 trailWarpPostProcessingEffect.setWarpStretchFactor(interpolation.apply(percentage));
+                //Gdx.app.log(StarsContainer.this.TAG, "percentage = " + percentage);
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                trailWarpPostProcessingEffect.setWarpStretchFactor(0);
+                //Gdx.app.log(TAG, "finished.");
             }
         };
 

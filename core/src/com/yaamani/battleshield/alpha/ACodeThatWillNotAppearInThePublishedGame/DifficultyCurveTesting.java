@@ -1,9 +1,7 @@
 package com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.scoreMultiplierStuff;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 

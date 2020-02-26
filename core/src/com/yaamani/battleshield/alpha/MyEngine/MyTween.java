@@ -318,7 +318,7 @@ public abstract class MyTween extends Tween {
         protected float ey;
 
         private void updateGradualTween(float delta) {
-            gradualCurrentX += delta * MyMath.secondsToMillis;
+            gradualCurrentX += delta * MyMath.SECONDS_TO_MILLIS;
 
             if (gradualCurrentX < ex) {
 

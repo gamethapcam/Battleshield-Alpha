@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.scoreMultiplierStuff;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreMultiplierStuff;
 import com.yaamani.battleshield.alpha.Game.Starfield.Star;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -269,26 +269,26 @@ public final class Constants {
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
             SpecialBullet.HEART,
+            /*SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
+            SpecialBullet.HEART,*/
 
             SpecialBullet.MINUS,
+            /*SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,*/
 
             SpecialBullet.STAR,
 
             SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK
+            /*SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK*/
     };
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = MyMath.cloneAndReplace(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS, SpecialBullet.HEART);
@@ -436,7 +436,7 @@ public final class Constants {
             BULLETS_DIFFICULTY_OUTPUT_SCALE
     );
 
-    public static final Interpolation SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION = new scoreMultiplierStuff.ProgressBarTweenInterpolation(
+    public static final Interpolation SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierStuff.ProgressBarTweenInterpolation(
             BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
             0.3f/BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL,
             5,
@@ -551,7 +551,15 @@ public final class Constants {
 
 
 
+    public static final float CRYSTAL_LEVEL_TIME = 5f; //minutes
+
+
+
+
+
     public static final int PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY = 24;
+
+    public static final int PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY = 16;
 
 
     public static final String ASSETS_LOGO_ALONE = "Logo.png";

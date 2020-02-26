@@ -37,7 +37,7 @@ public class PauseStuff implements Resizable, Updatable {
     private SimpleText _1;
 
     private Tween pauseSymbolFadesOutWhenLosing;
-    private Timer resumeAfterCountDown; // 3 seconds
+    //private Timer resumeAfterCountDown; // 3 seconds
     private Tween _3Tween;
     private Tween _2Tween;
     private Tween _1Tween;
@@ -60,7 +60,7 @@ public class PauseStuff implements Resizable, Updatable {
 
         initializePauseSymbolFadesOutWhenLosing();
 
-        initializeResumeAfterCountDown();
+        //initializeResumeAfterCountDown();
 
         initialize_3_2_1_SimpleText();
 
@@ -76,20 +76,20 @@ public class PauseStuff implements Resizable, Updatable {
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         pauseSymbol.setPosition(worldWidth - pauseSymbol.getWidth() - PAUSE_SYMBOL_MARGIN_RIGHT,
                 worldHeight - pauseSymbol.getHeight() - PAUSE_SYMBOL_MARGIN_UP);
-        pauseText.setPosition(worldWidth/2f - pauseText.getWidth()/2f, worldHeight/2f - pauseText.getHeight()/2f);
+        pauseText.setPosition(worldWidth / 2f - pauseText.getWidth() / 2f, worldHeight / 2f - pauseText.getHeight() / 2f);
 
         dimmingOverlay.setBounds(0, 0, worldWidth, worldHeight);
         resumeBounds.setBounds(0, 0, worldWidth, worldHeight);
 
-        _3.setPosition(worldWidth/2f - _3.getWidth()/2f, worldHeight/2f - _3.getHeight()/2f);
-        _2.setPosition(worldWidth/2f - _2.getWidth()/2f, worldHeight/2f - _2.getHeight()/2f);
-        _1.setPosition(worldWidth/2f - _1.getWidth()/2f, worldHeight/2f - _1.getHeight()/2f);
+        _3.setPosition(worldWidth / 2f - _3.getWidth() / 2f, worldHeight / 2f - _3.getHeight() / 2f);
+        _2.setPosition(worldWidth / 2f - _2.getWidth() / 2f, worldHeight / 2f - _2.getHeight() / 2f);
+        _1.setPosition(worldWidth / 2f - _1.getWidth() / 2f, worldHeight / 2f - _1.getHeight() / 2f);
     }
 
     @Override
     public void update(float delta) {
         pauseSymbolFadesOutWhenLosing.update(delta);
-        resumeAfterCountDown.update(delta);
+        //resumeAfterCountDown.update(delta);
         _3Tween.update(delta);
         _2Tween.update(delta);
         _1Tween.update(delta);
@@ -101,27 +101,48 @@ public class PauseStuff implements Resizable, Updatable {
     //------------------------------ Utility ------------------------------
 
     private void pauseTheGame() {
-        if (pauseSymbol.getColor().a != 1) return;
+        if (pauseSymbol.getColor().a != 1/* | gameplayScreen.getState() != GameplayScreen.State.PLAYING*/) return;
+
+        _3Tween.finish();
+        _2Tween.finish();
+        _1Tween.finish();
 
         gameplayScreen.setState(GameplayScreen.State.PAUSED);
 
-        Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
-        for (int i = 0; i < pauseWhenPausingFinishWhenLosing.length; i++) {
-            if (pauseWhenPausingFinishWhenLosing[i] != null)
-                pauseWhenPausingFinishWhenLosing[i].pause();
-        }
+        /*Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
+        for (Timer timer : pauseWhenPausingFinishWhenLosing) {
+            if (timer != null)
+                timer.pause();
+        }*/
 
         gameplayScreen.addActor(resumeBounds);
     }
 
     private void resumeTheGame() {
-        gameplayScreen.setState(GameplayScreen.State.PLAYING);
+        //gameplayScreen.setState(GameplayScreen.State.PLAYING);
 
-        Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
-        for (int i = 0; i < pauseWhenPausingFinishWhenLosing.length; i++) {
-            if (pauseWhenPausingFinishWhenLosing[i] != null)
-                pauseWhenPausingFinishWhenLosing[i].resume();
-        }
+        //resumeAfterCountDown.start();
+        _3Tween.start();
+        gameplayScreen.removeActor(resumeBounds);
+
+        /*if (gameplayScreen.isInStarBulletAnimation()) {
+
+            Timer[] resumeWhenResumingStarBullet = gameplayScreen.getResumeWhenResumingStarBullet();
+            for (Timer timer : resumeWhenResumingStarBullet) {
+                if (timer != null)
+                    timer.resume();
+            }
+
+        } else {
+
+            Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
+            for (Timer timer : pauseWhenPausingFinishWhenLosing) {
+                if (timer != null)
+                    timer.resume();
+            }
+
+        }*/
+
 
         //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(true);
         //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(true);
@@ -130,7 +151,7 @@ public class PauseStuff implements Resizable, Updatable {
     private void _3_2_1_Tween(SimpleText text, float percentage, Interpolation interpolation) {
         Color color = text.getColor();
         if (percentage < 0.3f)
-            text.setColor(color.r, color.g, color.b, interpolation.apply(percentage) * 10f/3f);
+            text.setColor(color.r, color.g, color.b, interpolation.apply(percentage) * 10f / 3f);
     }
 
     //------------------------------ Getters And Setters ------------------------------
@@ -181,11 +202,12 @@ public class PauseStuff implements Resizable, Updatable {
         resumeBounds.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                resumeAfterCountDown.start();
-                _3Tween.start();
+                resumeTheGame();
+                //resumeAfterCountDown.start();
+                //_3Tween.start();
                 //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(false);
                 //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(false);
-                gameplayScreen.removeActor(resumeBounds);
+                //gameplayScreen.removeActor(resumeBounds);
             }
         });
     }
@@ -220,7 +242,7 @@ public class PauseStuff implements Resizable, Updatable {
         };
     }
 
-    private void initializeResumeAfterCountDown() {
+    /*private void initializeResumeAfterCountDown() {
         resumeAfterCountDown = new Timer(3000) {
             @Override
             public void onFinish() {
@@ -228,7 +250,7 @@ public class PauseStuff implements Resizable, Updatable {
                 resumeTheGame();
             }
         };
-    }
+    }*/
 
     private void initialize_3_2_1_SimpleText() {
         _3 = new SimpleText(myBitmapFont, "3");
@@ -314,6 +336,8 @@ public class PauseStuff implements Resizable, Updatable {
             public void onFinish() {
                 super.onFinish();
                 _1.setVisible(false);
+
+                gameplayScreen.setState(GameplayScreen.State.PLAYING);
             }
         };
     }
@@ -323,7 +347,7 @@ public class PauseStuff implements Resizable, Updatable {
     // --------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------
-    // -------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
 
 
 }

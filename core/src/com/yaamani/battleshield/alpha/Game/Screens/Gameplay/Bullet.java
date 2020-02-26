@@ -25,6 +25,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private static boolean starExists = false;
     private static float R = 0;
 
+    public enum BulletType {ORDINARY, SPECIAL}
+    private BulletType bulletType;
+
     private Pool<Bullet> bulletPool;
     private Array<Bullet> activeBullets;
 
@@ -101,6 +104,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         return inUse;
     }
 
+    public BulletType getBulletType() {
+        return bulletType;
+    }
+
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
         attach(parent);
 
@@ -157,7 +164,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
-        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha/* * 0.3f*/);
         batch.draw(region, getX() - getWidth()/2f, getY()/* - getHeight()/2f*/, getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
@@ -172,7 +179,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             return;
 
 
+
         if (inUse) {
+            /*Gdx.app.log(TAG, "bullet = " + this + ", parentIndex = " + parent.getIndex() + ", parent'sParent = " + (parent.getParent()!=null ? "notNull":"null") + ", getY() = " + getY());*/
+
             setY(getY() - bulletsHandler.getBulletSpeed() * delta);
             //bulletMovement.update(delta);
             //type.setColor(1, 1, 1, type.getColor().a - 0.001f);
@@ -257,6 +267,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }*/
 
     public void notSpecial() {
+        bulletType = BulletType.ORDINARY;
+
         setSize(BULLETS_ORDINARY_WIDTH, BULLETS_ORDINARY_HEIGHT);
         setOrigin(0, 0);
         setRotation(0);
@@ -267,6 +279,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void setSpecial(SpecialBullet specialType, boolean questionMark) {
+        bulletType = BulletType.SPECIAL;
+
         setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
         setOrigin(Align.center);
         setY(getY() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_HEIGHT)/2f);
@@ -433,13 +447,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     //bulletsHandler.resetSpeed();
                     //bulletsHandler.decrementCurrentSpeedMultiplier();
 
-                    bulletsHandler.getCurrentBulletsWaveTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    //bulletsHandler.getCurrentDifficultyLevelTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    bulletsHandler.getBulletSpeedMultiplierTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    //bulletsHandler.getDecreaseBulletsPerAttackTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    bulletsHandler.getBulletsPerAttackNumberTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
-                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    //bulletsHandler.getCurrentBulletsWaveTimer().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    //bulletsHandler.getBulletSpeedMultiplierTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    //bulletsHandler.getBulletsPerAttackNumberTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
+                    //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().pauseFor(STAR_BULLET_TOTAL_DURATION);
 
                     bulletsHandler.startStarBulletStages();
 

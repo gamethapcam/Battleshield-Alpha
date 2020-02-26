@@ -133,6 +133,9 @@ public class Star {
                 float rRatio = calculateRadiusFastForwardWarp(r);
 
                 linearPosition.mulAdd(warpVelocityUnity, delta * (STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_POLAR_INTERPOLATION.apply(rRatio)+0.1f) * fastForwardWarpVelocityMultiplier * warpFastForwardSpeed);
+
+                /*if (i == 0)
+                    Gdx.app.log(TAG, "inWarpFastForwardAnimation");*/
             }
         }
 
@@ -262,8 +265,11 @@ public class Star {
     void setGameplayScreen(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(trailWarpTweenStarBullet_SecondStage);
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenLosing(trailWarpTweenStarBullet_SecondStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(trailWarpTweenStarBullet_SecondStage);
+
+        gameplayScreen.addToFinishWhenLosing(fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage);
     }
 
     public void startTrailWarpTween() {

@@ -21,6 +21,9 @@ public class ScoreStuff implements Resizable, Updatable {
 
     public static final String TAG = ScoreStuff.class.getSimpleName();
 
+    /**
+     * The score variable always stores the seconds played this turn so far. It doesn't matter whether survival mode is being played or a level is being played.
+     */
     private float score;
     private float currentBest;
     private boolean playerScoredBest = false;
@@ -31,7 +34,7 @@ public class ScoreStuff implements Resizable, Updatable {
 
     private Tween fadeOutTween;
 
-    private scoreMultiplierStuff scoreMultiplierStuff;
+    private ScoreMultiplierStuff scoreMultiplierStuff;
 
     private MyTween scoreTweenStarBullet_FirstStage;
     private Tween scoreTweenStarBullet_ThirdStage;
@@ -57,7 +60,7 @@ public class ScoreStuff implements Resizable, Updatable {
         initializeScoreTweenStarBullet_FirstStage();
         initializeScoreTweenStarBullet_ThirdStage();
 
-        scoreMultiplierStuff = new scoreMultiplierStuff(gameplayScreen);
+        scoreMultiplierStuff = new ScoreMultiplierStuff(gameplayScreen);
     }
 
     @Override
@@ -75,15 +78,12 @@ public class ScoreStuff implements Resizable, Updatable {
         scoreTweenStarBullet_FirstStage.update(delta);
         scoreTweenStarBullet_ThirdStage.update(delta);
 
-        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
-            scoreMultiplierStuff.update(delta);
+        scoreMultiplierStuff.update(delta);
 
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
             if (!gameplayScreen.isInStarBulletAnimation()) score += delta * scoreMultiplierStuff.getScoreMultiplier();
-            
-            /*score += activeShields*delta;
-            score += BULLETS_MAX_NUMBER_PER_ATTACK / (float) bulletsPerAttack * delta;*/
-            checkBestScore();
-        }
+
+        checkBestScore();
 
         fadeOutTween.update(delta);
 
@@ -94,7 +94,33 @@ public class ScoreStuff implements Resizable, Updatable {
             currentBest = 0;
         }
 
-        scoreText.setCharSequence("" + roundTo(score, 2), true);
+        setCharSequenceForScoreText();
+    }
+
+    private void setCharSequenceForScoreText() {
+        if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+            // If SURVIVAL -> display the score variable.
+            scoreText.setCharSequence("" + roundTo(score, 2), true);
+        else {
+            // If not SURVIVAL -> display a timer counting down.
+            float levelTime = 0;
+
+            switch (gameplayScreen.getGameplayMode()) {
+                case CRYSTAL:
+                    levelTime = CRYSTAL_LEVEL_TIME;
+                    break;
+            }
+
+            scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) ((levelTime * MINUTES_TO_SECONDS - score) * SECONDS_TO_MINUTES)), true);
+        }
+    }
+
+    private void checkBestScore() {
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING & gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+            if ((currentBest == 0.0 | currentBest < score) & !playerScoredBest) {
+                playerScoredBest = true;
+                scoreText.setColor(SCORE_BEST_COLOR);
+            }
     }
 
     public void updateBestScoreButDontRegisterToHardDriveYet() {
@@ -107,13 +133,6 @@ public class ScoreStuff implements Resizable, Updatable {
         if (currentBest > preferences.getFloat(SCORE_BEST_KEY)) {
             preferences.putFloat(SCORE_BEST_KEY, score);
             preferences.flush();
-        }
-    }
-
-    private void checkBestScore() {
-        if ((currentBest == 0.0 | currentBest < score) & !playerScoredBest) {
-            playerScoredBest = true;
-            scoreText.setColor(SCORE_BEST_COLOR);
         }
     }
 
@@ -146,13 +165,13 @@ public class ScoreStuff implements Resizable, Updatable {
         return fadeOutTween;
     }
 
-    public scoreMultiplierStuff getScoreMultiplierStuff() {
+    public ScoreMultiplierStuff getScoreMultiplierStuff() {
         return scoreMultiplierStuff;
     }
 
     public void startScoreTweenStarBullet_FirstStage() {
         scoreTweenStarBullet_FirstStage.setInitialVal(score);
-        scoreTweenStarBullet_FirstStage.setFinalVal(score + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) millisToSeconds);
+        scoreTweenStarBullet_FirstStage.setFinalVal(score + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) MILLIS_TO_SECONDS);
         scoreTweenStarBullet_FirstStage.start();
     }
 
@@ -196,7 +215,8 @@ public class ScoreStuff implements Resizable, Updatable {
             }
         };
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(scoreTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenLosing(scoreTweenStarBullet_FirstStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(scoreTweenStarBullet_FirstStage);
     }
 
 
@@ -212,7 +232,8 @@ public class ScoreStuff implements Resizable, Updatable {
             }
         };
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(scoreTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenLosing(scoreTweenStarBullet_ThirdStage);
+        //gameplayScreen.addToResumeWhenResumingStarBullet(scoreTweenStarBullet_ThirdStage);
     }
 
 }

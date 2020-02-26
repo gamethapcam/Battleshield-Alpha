@@ -11,8 +11,11 @@ public final class MyMath {
 
     public static final String TAG = MyMath.class.getSimpleName();
 
-    public static final double secondsToMillis = 1000f;
-    public static final double millisToSeconds = 1f/1000f;
+    public static final double SECONDS_TO_MILLIS = 1000d;
+    public static final double MILLIS_TO_SECONDS = 1d/1000d;
+
+    public static final double SECONDS_TO_MINUTES = 1d/60d;
+    public static final double MINUTES_TO_SECONDS = 60d;
 
     //The next 2 methods for calculating the aspect ratio. from (https://codereview.stackexchange.com/a/26698)
     private static int gcd(int p, int q) {
@@ -506,6 +509,17 @@ public final class MyMath {
                 return i;
         }
         return probabilities.length-1;
+    }
+
+    /**
+     * For example if the input is 5.5, the output is gonna be "5:30".
+     * @param minutesDecimalTimeFormat
+     * @return
+     */
+    public static String toMinutesDigitalTimeFormat(float minutesDecimalTimeFormat) {
+        int minutes = MathUtils.floor(minutesDecimalTimeFormat);
+        float seconds = minutesDecimalTimeFormat - minutes;
+        return minutes + ":" + (int)(seconds*60);
     }
 
     public static float roundTo(float val, int numOfDigitsAfterTheDecimalPoint) {

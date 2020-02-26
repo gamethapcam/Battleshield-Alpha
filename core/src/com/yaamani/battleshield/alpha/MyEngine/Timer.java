@@ -72,7 +72,7 @@ public class Timer implements Updatable {
     public final void update(float delta) {
 
         if (inPauseDelay) {
-            pauseDelayCurrentTime += delta*MyMath.secondsToMillis;
+            pauseDelayCurrentTime += delta*MyMath.SECONDS_TO_MILLIS;
             if(pauseDelayCurrentTime >= pauseDelayMillis) {
                 inPauseDelay = false;
                 resume();
@@ -83,7 +83,7 @@ public class Timer implements Updatable {
 
         if (inStartDelay) {
             //float currentDelayTime = MyMath.millisSince(delayTimeStart);
-            startDelayCurrentTime += delta*MyMath.secondsToMillis;
+            startDelayCurrentTime += delta*MyMath.SECONDS_TO_MILLIS;
             if(/*currentDelayTime*/ startDelayCurrentTime >= startDelayMillis) {
                 inStartDelay = false;
                 start();
@@ -96,7 +96,7 @@ public class Timer implements Updatable {
             //float currentTime = MyMath.millisSince(startTime);
             percentage = currentTime / durationMillis;
 
-            if (!onUpdate(delta)) currentTime += delta*MyMath.secondsToMillis;
+            if (!onUpdate(delta)) currentTime += delta*MyMath.SECONDS_TO_MILLIS;
 
             if (currentTime >= durationMillis) {
                 finish();

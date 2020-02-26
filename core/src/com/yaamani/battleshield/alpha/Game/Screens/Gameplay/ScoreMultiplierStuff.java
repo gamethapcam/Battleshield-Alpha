@@ -1,6 +1,5 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -17,7 +16,7 @@ import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
 
-public class scoreMultiplierStuff implements Resizable, Updatable {
+public class ScoreMultiplierStuff implements Resizable, Updatable {
 
     private GameplayScreen gameplayScreen;
 
@@ -30,9 +29,9 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
 
     private float scoreMultiplier = 1;
 
-    private Tween scoreMultiplierTween;
+    private Tween scoreMultiplierTween; // The higher the difficulty the higher the score multiplier.
 
-    public scoreMultiplierStuff(GameplayScreen gameplayScreen) {
+    public ScoreMultiplierStuff(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
         initializeScoreMultiplierText(gameplayScreen.getMyBitmapFont());
@@ -49,7 +48,7 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
 
     @Override
     public void update(float delta) {
-        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING & gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL) {
 
             /*if (myProgressBarTween.isFinished()) {
                 if (scoreMultiplier < SCORE_MULTIPLIER_MAX)
@@ -105,6 +104,11 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
         return scoreMultiplierTween;
     }
 
+    public void setVisible(boolean visible) {
+        scoreMultiplierText.setVisible(visible);
+        myProgressBar.setVisible(visible);
+    }
+
     //---------------------------------------- Initializers ---------------------------------------
     //---------------------------------------- Initializers ---------------------------------------
     //---------------------------------------- Initializers ---------------------------------------
@@ -158,7 +162,7 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
         //myProgressBarTween.finish();
         myProgressBarTween.start();
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(myProgressBarTween);
+        gameplayScreen.addToFinishWhenLosing(myProgressBarTween);
     }
 
     private void initializeScoreMultiplierTween() {
@@ -176,7 +180,7 @@ public class scoreMultiplierStuff implements Resizable, Updatable {
 
         scoreMultiplierTween.start();
 
-        gameplayScreen.addToPauseWhenPausingFinishWhenLosing(scoreMultiplierTween);
+        gameplayScreen.addToFinishWhenLosing(scoreMultiplierTween);
 
     }
 

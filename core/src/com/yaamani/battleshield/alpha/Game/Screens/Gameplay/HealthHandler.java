@@ -58,7 +58,7 @@ public class HealthHandler {
         gameplayScreen.getScoreStuff().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
 
-        Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getPauseWhenPausingFinishWhenLosing();
+        Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getFinishWhenLosing();
         for (int i = 0; i < pauseWhenPausingFinishWhenLosing.length; i++) {
             if (pauseWhenPausingFinishWhenLosing[i] != null)
                 pauseWhenPausingFinishWhenLosing[i].finish();
@@ -96,8 +96,9 @@ public class HealthHandler {
             gameplayScreen.getBulletsHandler().getBulletsPerAttackNumberTween().start();
             //gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().start();
             gameplayScreen.getBulletsHandler().getBulletSpeedMultiplierTween().start();
-            gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().start();
+            //gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().start();
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().start();
+            gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
             gameplayScreen.getStarsContainer().resetCurrentSpeed();

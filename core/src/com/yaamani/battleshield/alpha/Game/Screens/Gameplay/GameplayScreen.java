@@ -27,7 +27,8 @@ public class GameplayScreen extends AdvancedScreen {
     private GameplayControllerType gameplayControllerType;
     private GameplayMode gameplayMode;
 
-    private Array<Timer> pauseWhenPausingFinishWhenLosing;
+    private Array<Timer> finishWhenLosing;
+    //private Array<Timer> resumeWhenResumingStarBullet;
 
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
@@ -67,7 +68,8 @@ public class GameplayScreen extends AdvancedScreen {
         this.myBitmapFont = myBitmapFont;
         this.starsContainer = starsContainer;
 
-        pauseWhenPausingFinishWhenLosing = new Array<>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
+        finishWhenLosing = new Array<>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
+        //resumeWhenResumingStarBullet = new Array<>(false, PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY, Timer.class);
 
         initializeHandlers(game, starsContainer.getRadialTween());
 
@@ -108,14 +110,20 @@ public class GameplayScreen extends AdvancedScreen {
     @Override
     public void act(float delta) {
         if (!isVisible()) return;
+
+        pauseStuff.update(delta);
+
+        if (state == State.PAUSED) return;
+
         super.act(delta);
 
         scoreStuff.update(delta);
-        pauseStuff.update(delta);
 
         /*if (getState() == GameplayScreen.State.PLAYING) {
             if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
         }*/
+
+        bulletsHandler.update(delta);
 
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
 
@@ -275,6 +283,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
 
+
         /*bulletsAndShieldContainers[0].getShield().setDebug(true);
         bulletsAndShieldContainers[0].getShield().getSemiCircle0().setDebug(true);*/
     }
@@ -325,7 +334,8 @@ public class GameplayScreen extends AdvancedScreen {
             }
         };
         
-        addToPauseWhenPausingFinishWhenLosing(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
+        addToFinishWhenLosing(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
+        //addToResumeWhenResumingStarBullet(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
     }
 
 
@@ -353,6 +363,11 @@ public class GameplayScreen extends AdvancedScreen {
 
     public void setGameplayMode(GameplayMode gameplayMode) {
         this.gameplayMode = gameplayMode;
+
+        if (gameplayMode == GameplayMode.SURVIVAL)
+            scoreStuff.getScoreMultiplierStuff().setVisible(true);
+        else
+            scoreStuff.getScoreMultiplierStuff().setVisible(false);
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {
@@ -415,9 +430,13 @@ public class GameplayScreen extends AdvancedScreen {
         return pauseStuff;
     }
 
-    public Timer[] getPauseWhenPausingFinishWhenLosing() {
-        return pauseWhenPausingFinishWhenLosing.items;
+    public Timer[] getFinishWhenLosing() {
+        return finishWhenLosing.items;
     }
+
+    /*public Timer[] getResumeWhenResumingStarBullet() {
+        return resumeWhenResumingStarBullet.items;
+    }*/
 
     public Image getWhiteTextureHidesEveryThingSecondStageStarBullet() {
         return whiteTextureHidesEveryThingSecondStageStarBullet;
@@ -440,9 +459,13 @@ public class GameplayScreen extends AdvancedScreen {
         timePlayedThisTurnSoFar = 0;
     }*/
 
-    public void addToPauseWhenPausingFinishWhenLosing(Timer timer) {
-        pauseWhenPausingFinishWhenLosing.add(timer);
+    public void addToFinishWhenLosing(Timer timer) {
+        finishWhenLosing.add(timer);
     }
+
+    /*public void addToResumeWhenResumingStarBullet(Timer timer) {
+        resumeWhenResumingStarBullet.add(timer);
+    }*/
 
     public void startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(boolean reversed, boolean delay) {
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.setReversed(reversed);
