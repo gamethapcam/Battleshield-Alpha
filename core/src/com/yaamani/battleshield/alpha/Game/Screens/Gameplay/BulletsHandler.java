@@ -14,6 +14,8 @@ import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
+import java.util.Random;
+
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsHandler implements Updatable {
@@ -33,14 +35,14 @@ public class BulletsHandler implements Updatable {
 
     private int bulletsPerAttack = BULLETS_DEFAULT_NO_PER_ATTACK;
     //private Timer decreaseBulletsPerAttackTimer;
-    private Tween bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween bulletsPerAttackNumberDifficultyTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
 
     private Timer plusMinusBulletsTimer;
 
     private float currentBulletSpeed;
     private float currentSpeedMultiplier;
     //private Timer currentDifficultyLevelTimer;
-    private Tween bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween bulletSpeedMultiplierDifficultyTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
     //private float speedResetTime = 0;
     private MyTween currentBulletSpeedTweenStarBullet_FirstStage;
     private MyTween currentBulletSpeedTweenStarBullet_ThirdStage;
@@ -59,6 +61,12 @@ public class BulletsHandler implements Updatable {
     private Float angleDoubleRestricted;
     private SpecialBullet currentSpecialBullet;
     private boolean questionMark = false;
+
+
+    private SpecialBullet[] currentPlanetSpecialBullets;
+    // private SpecialBulletType[] currentPlanetSpecialBulletsType;
+    private float currentPlanetSpecialBulletsProbability;
+
 
     /*private final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS;
     private final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS;*/
@@ -114,10 +122,10 @@ public class BulletsHandler implements Updatable {
         //currentBulletsWaveTimer.update(delta);
         plusMinusBulletsTimer.update(delta);
         //decreaseBulletsPerAttackTimer.update(delta);
-        bulletsPerAttackNumberTween.update(delta);
+        bulletsPerAttackNumberDifficultyTween.update(delta);
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
             //currentDifficultyLevelTimer.update(delta);
-            bulletSpeedMultiplierTween.update(delta);
+            bulletSpeedMultiplierDifficultyTween.update(delta);
         }
         currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
         currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
@@ -166,8 +174,8 @@ public class BulletsHandler implements Updatable {
         return decreaseBulletsPerAttackTimer;
     }*/
 
-    public Tween getBulletsPerAttackNumberTween() {
-        return bulletsPerAttackNumberTween;
+    public Tween getBulletsPerAttackNumberDifficultyTween() {
+        return bulletsPerAttackNumberDifficultyTween;
     }
 
     public BulletsAndShieldContainer getPrevious() {
@@ -213,8 +221,28 @@ public class BulletsHandler implements Updatable {
         return currentDifficultyLevelTimer;
     }*/
 
-    public Tween getBulletSpeedMultiplierTween() {
-        return bulletSpeedMultiplierTween;
+    public Tween getBulletSpeedMultiplierDifficultyTween() {
+        return bulletSpeedMultiplierDifficultyTween;
+    }
+
+    /*public SpecialBullet[] getCurrentPlanetSpecialBullets() {
+        return currentPlanetSpecialBullets;
+    }
+
+    public SpecialBulletType[] getCurrentPlanetSpecialBulletsType() {
+        return currentPlanetSpecialBulletsType;
+    }*/
+
+    void setCurrentPlanetSpecialBullets(SpecialBullet[] currentPlanetSpecialBullets) {
+        this.currentPlanetSpecialBullets = currentPlanetSpecialBullets;
+    }
+
+    /*void setCurrentPlanetSpecialBulletsType(SpecialBulletType[] currentPlanetSpecialBulletsType) {
+        this.currentPlanetSpecialBulletsType = currentPlanetSpecialBulletsType;
+    }*/
+
+    public void setCurrentPlanetSpecialBulletsProbability(float currentPlanetSpecialBulletsProbability) {
+        this.currentPlanetSpecialBulletsProbability = currentPlanetSpecialBulletsProbability;
     }
 
     /*public void resetSpeedResetTime() {
@@ -229,14 +257,14 @@ public class BulletsHandler implements Updatable {
         //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
-        bulletSpeedMultiplierTween.start();
+        bulletSpeedMultiplierDifficultyTween.start();
         resetCurrentSpeedMultiplier();
     }
 
     public void decrementCurrentSpeedMultiplier() {
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
-        bulletSpeedMultiplierTween.start();
+        bulletSpeedMultiplierDifficultyTween.start();
 
         if (getCurrentSpeedMultiplier() != 1)
             setCurrentSpeedMultiplier(getCurrentSpeedMultiplier() - BULLETS_SPEED_MULTIPLIER_INCREMENT);
@@ -281,8 +309,8 @@ public class BulletsHandler implements Updatable {
         //starBulletThirdStage.start(STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION);
 
         //getCurrentBulletsWaveTimer().pause();
-        getBulletSpeedMultiplierTween().pause();
-        getBulletsPerAttackNumberTween().pause();
+        getBulletSpeedMultiplierDifficultyTween().pause();
+        getBulletsPerAttackNumberDifficultyTween().pause();
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().pause();
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().pause();
     }
@@ -396,17 +424,27 @@ public class BulletsHandler implements Updatable {
     private /*int*/SpecialBullet determineSpecialBullet(int indexForDoubleWave) {
         SpecialBullet currentSpecialBullet = null;
 
+
         /*if (bulletsHandler.getBulletsPerAttack() > 1)*/
-        waveBulletsType[indexForDoubleWave] = MyMath.chooseFromProbabilityArray(WAVE_BULLETS_TYPE_PROBABILITY);
+        waveBulletsType[indexForDoubleWave] = MyMath.pickRandomElement(WAVE_BULLETS_TYPE_PROBABILITY);
         //if (!isDouble | (/*isDouble &*/ indexForDoubleWave == 1)) resetWaveTimer();
         //else waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_BAD;
 
         if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_GOOD) {
-            currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY);
+            if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+                currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY);
+            else {
+                currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.STAR);
+            }
             //Gdx.app.log(TAG, MyMath.arrayToString(GOOD_BULLETS_PROBABILITY));
 
             if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
-                currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+
+                if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+                    currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+                else
+                    currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
+
                 questionMark = true;
                 Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
             } else {
@@ -424,7 +462,7 @@ public class BulletsHandler implements Updatable {
                 if (Bullet.isPlusOrMinusExists() |
                         Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished()) {
-                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
+                    currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
                 } else Bullet.setStarExists(true);
             }
 
@@ -447,14 +485,32 @@ public class BulletsHandler implements Updatable {
                         currentSpecialBullet = SpecialBullet.PLUS;*/
 
                     //currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS);
-                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(GOOD_BULLETS_PROBABILITY_NO_MINUS, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
+                    currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY_NO_MINUS, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
                 }
             }
         } else if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.SPECIAL_BAD) {
-            currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY);
+
+            if (gameplayScreen.getGameplayMode() != GameplayMode.SURVIVAL) {
+                Random random = new Random();
+                if (random.nextFloat() <= currentPlanetSpecialBulletsProbability) {
+                    currentSpecialBullet = MyMath.pickRandomElement(currentPlanetSpecialBullets);
+                    return currentSpecialBullet;
+                }
+            }
+
+            currentSpecialBullet = MyMath.pickRandomElement(BAD_BULLETS_PROBABILITY);
 
             if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
-                currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+                if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+                    currentSpecialBullet = MyMath.pickRandomElement(BAD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+                else {
+                    Random random = new Random();
+                    if (random.nextFloat() <= currentPlanetSpecialBulletsProbability) {
+                        currentSpecialBullet = MyMath.pickRandomElement(currentPlanetSpecialBullets);
+                    } else
+                        currentSpecialBullet = MyMath.pickRandomElement(BAD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK);
+                }
+
                 questionMark = true;
                 Gdx.app.log(TAG, "Question Mark (" + currentSpecialBullet + ").");
             } else {
@@ -480,7 +536,7 @@ public class BulletsHandler implements Updatable {
                     /*waveBulletsType[indexForDoubleWave] = WaveBulletsType.SPECIAL_GOOD;
                         currentSpecialBullet = SpecialBullet.MINUS;*/
                     //currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS);
-                    currentSpecialBullet = MyMath.chooseFromProbabilityArray(BAD_BULLETS_PROBABILITY_NO_PLUS, SpecialBullet.QUESTION_MARK);
+                    currentSpecialBullet = MyMath.pickRandomElement(BAD_BULLETS_PROBABILITY_NO_PLUS, SpecialBullet.QUESTION_MARK);
                 }
             }
         }
@@ -506,7 +562,7 @@ public class BulletsHandler implements Updatable {
             return;
         }
 
-        WaveAttackType waveAttackType = MyMath.chooseFromProbabilityArray(WAVE_TYPES_PROBABILITY);
+        WaveAttackType waveAttackType = MyMath.pickRandomElement(WAVE_TYPES_PROBABILITY);
 
         switch (waveAttackType) {
             case SINGLE:
@@ -743,7 +799,7 @@ public class BulletsHandler implements Updatable {
 
 
 
-        bulletsPerAttackNumberTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
+        bulletsPerAttackNumberDifficultyTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
                 BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
@@ -751,9 +807,9 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        bulletsPerAttackNumberTween.start();
+        bulletsPerAttackNumberDifficultyTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(bulletsPerAttackNumberTween);
+        gameplayScreen.addToFinishWhenLosing(bulletsPerAttackNumberDifficultyTween);
     }
 
     /*private void initializeCurrentDifficultLevelTimer() {
@@ -783,7 +839,7 @@ public class BulletsHandler implements Updatable {
 
     private void initializeCurrentSpeedMultiplierTimer() {
 
-        bulletSpeedMultiplierTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
+        bulletSpeedMultiplierDifficultyTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
                 BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
@@ -791,9 +847,9 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        bulletSpeedMultiplierTween.start();
+        bulletSpeedMultiplierDifficultyTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(bulletSpeedMultiplierTween);
+        gameplayScreen.addToFinishWhenLosing(bulletSpeedMultiplierDifficultyTween);
     }
 
     private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
@@ -912,8 +968,8 @@ public class BulletsHandler implements Updatable {
 
                 if (gameplayScreen.getState() != GameplayScreen.State.LOST) {
                     //getCurrentBulletsWaveTimer().resume();
-                    getBulletSpeedMultiplierTween().resume();
-                    getBulletsPerAttackNumberTween().resume();
+                    getBulletSpeedMultiplierDifficultyTween().resume();
+                    getBulletsPerAttackNumberDifficultyTween().resume();
                     gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().resume();
                     gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().resume();
                 }

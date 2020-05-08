@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DifficultyCurveTesting;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.ResumeGraduallyTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
+import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
@@ -60,6 +62,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         /*Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianOffsetsLinearlySampledTexture(11)));
         Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianWeightsLinearlySampledTexture(11)));
         Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianWeights(11)));*/
+
+        //new ResumeGraduallyTesting().compareFunctions(MyInterpolation.myExp10, 1000, 10, 50, 100, 1, 4, 0.001f, 5, 2);
     }
 
     @Override
@@ -96,13 +100,15 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         //tweenAndMyTweenTesting.resize(width, height, game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
     }
 
+
+
     @Override
     public void pause() {
         super.pause();
         //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        if (gameplayScreen != null)
+        /*if (gameplayScreen != null)
             if (gameplayScreen.getScoreStuff() != null)
-                    gameplayScreen.getScoreStuff().registerBestScoreToHardDrive();
+                    gameplayScreen.getScoreStuff().registerBestScoreToHardDrive();*/
     }
 
     @Override
@@ -113,6 +119,11 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
     @Override
     public void dispose() {
+        /*if (gameplayScreen != null)
+            if (gameplayScreen.getScoreStuff() != null)
+                gameplayScreen.getScoreStuff().registerBestScoreToHardDrive();*/
+
+
         if (starsContainer != null) starsContainer.dispose();
         //gameplayScreen.getScore().registerBestScoreToHardDrive();
         super.dispose();

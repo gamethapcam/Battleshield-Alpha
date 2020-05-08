@@ -308,6 +308,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!questionMark) region = Assets.instance.gameplayAssets.starBullet;
                 currentEffect = effects.star;
                 break;
+            case MIRROR:
+                if (!questionMark) region = Assets.instance.gameplayAssets.mirrorBullet;
+                currentEffect = effects.mirror;
+                break;
             case SHIELD_DISABLING:
                 if (!questionMark) region = Assets.instance.gameplayAssets.shieldDisablingBullet;
                 currentEffect = effects.shieldDisabling;
@@ -379,6 +383,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         private BulletEffect minus;
         private BulletEffect heart;
         private BulletEffect star;
+
+        private BulletEffect mirror;
 
 
 
@@ -459,6 +465,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     Bullet.setStarExists(false);
                     gameplayScreen.setInStarBulletAnimation(true);
                     Gdx.app.log(TAG, "STAR BULLET");
+                }
+            };
+
+            mirror = new BulletEffect() {
+                @Override
+                public void effect() {
+                    gameplayScreen.getShieldsAndContainersHandler().startMirrorTimer();
                 }
             };
 

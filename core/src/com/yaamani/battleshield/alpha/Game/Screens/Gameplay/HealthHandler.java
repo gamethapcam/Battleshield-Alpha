@@ -55,7 +55,7 @@ public class HealthHandler {
         Bullet.setStarExists(false);
         gameplayScreen.setInStarBulletAnimation(false);
 
-        gameplayScreen.getScoreStuff().updateBestScoreButDontRegisterToHardDriveYet();
+        //gameplayScreen.getScoreStuff().updateBestScoreButDontRegisterToHardDriveYet();
         gameplayScreen.getGameOverLayer().thePlayerLost();
 
         Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getFinishWhenLosing();
@@ -68,6 +68,11 @@ public class HealthHandler {
 
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setVisible(false);
+
+
+        if (gameplayScreen != null)
+            if (gameplayScreen.getScoreStuff() != null)
+                gameplayScreen.getScoreStuff().registerBestScoreToHardDrive();
     }
 
     public void newGame() {
@@ -93,9 +98,9 @@ public class HealthHandler {
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().newWave();
             //gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
-            gameplayScreen.getBulletsHandler().getBulletsPerAttackNumberTween().start();
+            gameplayScreen.getBulletsHandler().getBulletsPerAttackNumberDifficultyTween().start();
             //gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().start();
-            gameplayScreen.getBulletsHandler().getBulletSpeedMultiplierTween().start();
+            gameplayScreen.getBulletsHandler().getBulletSpeedMultiplierDifficultyTween().start();
             //gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().start();
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().start();
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();

@@ -250,6 +250,8 @@ public final class Constants {
 
     public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
 
+    public enum SpecialBulletType {GOOD, BAD}
+
     public static final WaveBulletsType[] WAVE_BULLETS_TYPE_PROBABILITY = {
             WaveBulletsType.ORDINARY,
             WaveBulletsType.ORDINARY,
@@ -268,27 +270,27 @@ public final class Constants {
     }
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
-            SpecialBullet.HEART,
-            /*SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,*/
-
-            SpecialBullet.MINUS,
-            /*SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,*/
-
             SpecialBullet.STAR,
 
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+
             SpecialBullet.QUESTION_MARK,
-            /*SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK*/
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK
     };
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = MyMath.cloneAndReplace(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS, SpecialBullet.HEART);
@@ -551,7 +553,21 @@ public final class Constants {
 
 
 
-    public static final float CRYSTAL_LEVEL_TIME = 5f; //minutes
+    public static final float PLANETS_TIMER_FLASHES_WHEN_ZERO_DURATION = 0.5f/*0.1f*/; //sec
+
+    public static final Interpolation PLANETS_TIMER_FLASHES_WHEN_ZERO_INTERPOLATION = new MyInterpolation.ConstantLinearTimeLinearOutput(2);
+
+    public static final float PLANETS_QUESTION_MARK_SPECIAL_BULLETS_PROBABILITY = 0.2f;
+
+
+
+    public static final float CRYSTAL_LEVEL_TIME = 5; //minutes
+
+    public static final SpecialBullet[] CRYSTAL_PLANET_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
+
+    public static final float CRYSTAL_PLANET_SPECIAL_BULLETS_PROBABILITY = 0.3f;
+
+    public static final float CRYSTAL_MIRROR_CONTROLS_DURATION = 2000; //ms
 
 
 
@@ -559,7 +575,7 @@ public final class Constants {
 
     public static final int PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY = 24;
 
-    public static final int PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY = 16;
+    //public static final int PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY = 16;
 
 
     public static final String ASSETS_LOGO_ALONE = "Logo.png";

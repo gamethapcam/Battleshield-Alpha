@@ -1,11 +1,14 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class ShieldsAndContainersHandler {
+public class ShieldsAndContainersHandler implements Updatable {
 
     public static final String TAG = ShieldsAndContainersHandler.class.getSimpleName();
 
@@ -16,11 +19,21 @@ public class ShieldsAndContainersHandler {
     private int activeShieldsNum;
     private Array<BulletsAndShieldContainer> probability;
 
+    private Timer mirrorControlsTimer;
+
     public ShieldsAndContainersHandler(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
+
+        initializeMirrorControlsTimer();
+    }
+
+    @Override
+    public void update(float delta) {
+        mirrorControlsTimer.update(delta);
     }
 
     // TODO: [FIX A BUG] Sometimes (only sometimes which is really weird) when the gameplay begins the shields and the bullets won't be displayed (But they do exist, meaning that the bullets reduce the health and the shield can be on and block the bullets). And get displayed after a plus or a minus bullet hit the turret. (Not sure if this is a desktop specific or happens on android too) [PATH TO VIDEO = Junk/Shield and bullets don't appear [BUG].mov] .. It looks like it always happen @ the first run of the program on desktop just after I open android studio
+
     private void setVisibilityAndAlphaForContainers() {
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
             if (i < activeShieldsNum) {
@@ -96,6 +109,10 @@ public class ShieldsAndContainersHandler {
         }
     }
 
+    public void startMirrorTimer() {
+        mirrorControlsTimer.start();
+    }
+
     public void setActiveShieldsNum(int activeShieldsNum) {
         if (activeShieldsNum > SHIELDS_MAX_COUNT) this.activeShieldsNum = SHIELDS_MAX_COUNT;
         else if (activeShieldsNum < SHIELDS_MIN_COUNT) this.activeShieldsNum = SHIELDS_MIN_COUNT;
@@ -137,4 +154,24 @@ public class ShieldsAndContainersHandler {
     void setGameplayType(GameplayType gameplayType) {
         this.gameplayType = gameplayType;
     }*/
+
+    private void initializeMirrorControlsTimer() {
+        mirrorControlsTimer = new Timer(Constants.CRYSTAL_MIRROR_CONTROLS_DURATION) {
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(true);
+                ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
+                ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
+            }
+        };
+    }
 }

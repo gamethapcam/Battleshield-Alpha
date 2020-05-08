@@ -1,7 +1,7 @@
 package com.yaamani.battleshield.alpha.MyEngine;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -441,24 +441,46 @@ public final class MyMath {
         return screenCoordinate;
     }
 
-    public static <T> T chooseFromProbabilityArray(T[] arr, int rangeStartIndex, int rangeEndIndex) {
+    /**
+     * randomly returns an element from an array.
+     * @param arr
+     * @param rangeStartIndex
+     * @param rangeEndIndex
+     * @param <T>
+     * @return
+     */
+    public static <T> T pickRandomElement(T[] arr, int rangeStartIndex, int rangeEndIndex) {
         if (rangeStartIndex < 0) throw new ArrayIndexOutOfBoundsException("rangeStartIndex can't be less than zero");
         if (rangeEndIndex > arr.length-1) throw new ArrayIndexOutOfBoundsException("rangeEndIndex can't be greater than the array's length - 1");
 
         return arr[MathUtils.random(rangeStartIndex, rangeEndIndex)];
     }
 
-    public static <T> T chooseFromProbabilityArray(T[] arr) {
-        return chooseFromProbabilityArray(arr, 0, arr.length-1);
+    /**
+     * randomly returns an element from an array.
+     * @param arr
+     * @param <T>
+     * @return
+     */
+    public static <T> T pickRandomElement(T[] arr) {
+        return pickRandomElement(arr, 0, arr.length-1);
     }
 
-    public static <T> T chooseFromProbabilityArray(T[] arr, T... itemsToExclude) {
+    /**
+     * <p>randomly returns an element from an array.</p>
+     * @param arr
+     * @param elementsToExclude
+     * @param <T>
+     * @return
+     */
+    public static <T> T pickRandomElement(T[] arr, T... elementsToExclude) {
         T[] tempArr = arr.clone();
-        int arrLen = arr.length, exLen = itemsToExclude.length;
+        int arrLen = arr.length, exLen = elementsToExclude.length;
 
+        // TODO: Maybe not that efficient
         for (int i = 0; i < arrLen; i++) {
             for (int j = 0; j < exLen; j++) {
-                if (tempArr[i] == itemsToExclude[j]) {
+                if (tempArr[i].equals(elementsToExclude[j])) {
                     // delete arr[i]
                     tempArr[i] = arr[arrLen-1]; // replace it with the last element
                     arrLen--;
@@ -468,7 +490,7 @@ public final class MyMath {
             }
         }
 
-        return chooseFromProbabilityArray(tempArr, 0, arrLen-1);
+        return pickRandomElement(tempArr, 0, arrLen-1);
     }
 
     public static <T> void replaceItem(T[] arr, T itemToReplace, T itemToReplaceWith) {
@@ -492,6 +514,12 @@ public final class MyMath {
         return clone;
     }
 
+    /**
+     *
+     * @param probabilities example : {@code randomCustomProbability(0.1, 0.3, 0.5, 0.1)}.
+     * @return a number between 0 (inclusive) and {@code probabilities.length} (exclusive).
+     * @throws Exception if the sum of probabilities passed isn't equal to 1.
+     */
     public static int randomCustomProbability(float... probabilities) throws Exception {
         float sumOfProbabilities = 0;
         for (int i = 0; i < probabilities.length; i++) {
@@ -527,6 +555,8 @@ public final class MyMath {
         float multiplier = (float) Math.pow(10, numOfDigitsAfterTheDecimalPoint);
         return MathUtils.round(val*multiplier) / multiplier;
     }
+
+
 
     public interface BisectionFunction {
         float function(float x);

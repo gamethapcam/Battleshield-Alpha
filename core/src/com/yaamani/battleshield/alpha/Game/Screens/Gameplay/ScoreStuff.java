@@ -5,7 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -39,6 +41,8 @@ public class ScoreStuff implements Resizable, Updatable {
     private MyTween scoreTweenStarBullet_FirstStage;
     private Tween scoreTweenStarBullet_ThirdStage;
 
+    private Tween planetsTimerFlashesWhenZero;
+
     /*private GameplayScreen.ShieldsAndContainersHandler shieldsAndContainersHandler;
     private GameplayScreen.BulletsHandler bulletsHandler;*/
     private GameplayScreen gameplayScreen;
@@ -60,6 +64,8 @@ public class ScoreStuff implements Resizable, Updatable {
         initializeScoreTweenStarBullet_FirstStage();
         initializeScoreTweenStarBullet_ThirdStage();
 
+        initializePlanetsTimerFlashesWhenZero();
+
         scoreMultiplierStuff = new ScoreMultiplierStuff(gameplayScreen);
     }
 
@@ -79,6 +85,8 @@ public class ScoreStuff implements Resizable, Updatable {
         scoreTweenStarBullet_ThirdStage.update(delta);
 
         scoreMultiplierStuff.update(delta);
+
+        planetsTimerFlashesWhenZero.update(delta);
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
             if (!gameplayScreen.isInStarBulletAnimation()) score += delta * scoreMultiplierStuff.getScoreMultiplier();
@@ -111,7 +119,11 @@ public class ScoreStuff implements Resizable, Updatable {
                     break;
             }
 
-            scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) ((levelTime * MINUTES_TO_SECONDS - score) * SECONDS_TO_MINUTES)), true);
+            float secondsLeft = MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - score), 0, Float.MAX_VALUE);
+            scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) (secondsLeft * SECONDS_TO_MINUTES)), true);
+
+            if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.LOST)
+                planetsTimerFlashesWhenZero.start();
         }
     }
 
@@ -187,6 +199,10 @@ public class ScoreStuff implements Resizable, Updatable {
         fadeOutTween = new Tween(SCORE_FADE_OUT_TWEEN_DURATION, linear) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
+
+                if (gameplayScreen.getGameplayMode() != GameplayMode.SURVIVAL)
+                    return;
+
                 Color scoreTextColor = scoreText.getColor();
                 Color scoreMultiplierTextColor = scoreMultiplierStuff.getScoreMultiplierText().getColor();
                 //Color scoreMultiplierProgressBarColor = scoreMultiplierStuff.getMyProgressBar().getColor();
@@ -202,6 +218,8 @@ public class ScoreStuff implements Resizable, Updatable {
             public void onFinish() {
                 super.onFinish();
                 scoreText.setColor(SCORE_COLOR.r, SCORE_COLOR.g, SCORE_COLOR.b, 0.0f);
+
+                planetsTimerFlashesWhenZero.finish();
             }
         };
     }
@@ -236,4 +254,29 @@ public class ScoreStuff implements Resizable, Updatable {
         //gameplayScreen.addToResumeWhenResumingStarBullet(scoreTweenStarBullet_ThirdStage);
     }
 
+    private void initializePlanetsTimerFlashesWhenZero() {
+        planetsTimerFlashesWhenZero = new Tween(PLANETS_TIMER_FLASHES_WHEN_ZERO_DURATION * (float) SECONDS_TO_MILLIS, PLANETS_TIMER_FLASHES_WHEN_ZERO_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                float a = interpolation.apply(percentage);
+
+                if (fadeOutTween.isStarted())
+                    a *= 1 - fadeOutTween.getPercentage();
+
+                scoreText.setColor(SCORE_COLOR.r, SCORE_COLOR.g, SCORE_COLOR.b, a);    
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                scoreText.setColor(SCORE_COLOR.r, SCORE_COLOR.g, SCORE_COLOR.b, 0);
+
+                if (!fadeOutTween.isFinished())
+                    start();
+            }
+        };
+
+        //gameplayScreen.addToFinishWhenLosing(planetsTimerFlashesWhenZero);
+    }
 }

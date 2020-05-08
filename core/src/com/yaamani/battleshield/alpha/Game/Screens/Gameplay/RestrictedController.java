@@ -1,6 +1,8 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,6 +25,8 @@ public class RestrictedController extends Controller {
     private float archInnerRadiusRatio;
     private float archAngle;
 
+    private boolean mirror;
+
     public RestrictedController(GameplayScreen gameplayScreen, Image stick, float archRadius, float archInnerRadiusRatio, float archAngle, Constants.Direction controllerPosition) {
         super(gameplayScreen, stick, controllerPosition);
 
@@ -39,6 +43,14 @@ public class RestrictedController extends Controller {
         moveTheStickAccordingToTheStickAngle();
     }
 
+    public boolean isMirror() {
+        return mirror;
+    }
+
+    public void setMirror(boolean mirror) {
+        this.mirror = mirror;
+    }
+
     //------------------------------ super class methods ------------------------------
     //------------------------------ super class methods ------------------------------
     //------------------------------ super class methods ------------------------------
@@ -50,6 +62,18 @@ public class RestrictedController extends Controller {
 
         //if (getControllerPosition() == Direction.RIGHT) bg.setX(bg.getX()-0.1f);a
         //bg.rotateBy(0.4f);
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        /*if (mirror)
+            batch.setColor(Color.BLUE);*/
+
+        super.draw(batch, parentAlpha);
+
+        /*if (mirror)
+            batch.setColor(Color.WHITE);*/
+
     }
 
     @Override
@@ -157,6 +181,18 @@ public class RestrictedController extends Controller {
         stickAngle = null;
         outputAngle = null;
         moveTheStickAccordingToTheStickAngle();
+    }
+
+    @Override
+    public Float getOutputAngle() {
+        Float oa = super.getOutputAngle();
+
+        if (oa == null) return null;
+
+        if (mirror)
+            return Math.signum(oa) * MathUtils.PI - oa;
+        else
+            return oa;
     }
 
     /*@Override

@@ -40,6 +40,11 @@ public class Timer implements Updatable {
         this(0);
     }
 
+    /**
+     * <p>Starts the timer.</p>
+     * <p>Unpauses the timer, if it's paused.</p>
+     * <p>Calls {@link #onStart()}.</p>
+     */
     public final void start() {
         //startTime = TimeUtils.nanoTime();
         currentTime = 0;
@@ -54,6 +59,10 @@ public class Timer implements Updatable {
         onStart();
     }
 
+    /**
+     * <p>Calls {@link #start()} after .</p>
+     * @param delayMillis
+     */
     public final void start(float delayMillis) {
         this.startDelayMillis = delayMillis;
         //delayTimeStart = TimeUtils.nanoTime();
@@ -62,6 +71,9 @@ public class Timer implements Updatable {
         finished = false;
     }
 
+    /**
+     * Gets called when starting the timer.
+     */
     public void onStart() {
 
     }

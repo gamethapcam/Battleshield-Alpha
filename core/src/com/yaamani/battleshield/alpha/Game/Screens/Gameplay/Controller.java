@@ -157,7 +157,7 @@ public abstract class Controller extends Group implements Resizable {
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             usingTouch = true;
 
-            touchDragged(event, x, y, pointer );
+            touchDragged(event, x, y, pointer);
 
             if (pointer <= 1) return true;
             else return super.touchDown(event, x, y, pointer, button);

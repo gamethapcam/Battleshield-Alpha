@@ -112,7 +112,7 @@ public class ResumeGraduallyTesting {
         Gdx.app.log(TAG, "============================================================================================");
 
 
-    }
+    /**/}
 
     private void initializeFunctions() {
         MyMath.BisectionFunction function0 = new MyMath.BisectionFunction() {

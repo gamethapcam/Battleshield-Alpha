@@ -27,6 +27,7 @@ public class GameplayScreen extends AdvancedScreen {
     private GameplayControllerType gameplayControllerType;
     private GameplayMode gameplayMode;
 
+
     private Array<Timer> finishWhenLosing;
     //private Array<Timer> resumeWhenResumingStarBullet;
 
@@ -123,6 +124,7 @@ public class GameplayScreen extends AdvancedScreen {
             if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
         }*/
 
+        shieldsAndContainersHandler.update(delta);
         bulletsHandler.update(delta);
 
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
@@ -361,13 +363,26 @@ public class GameplayScreen extends AdvancedScreen {
         return gameplayMode;
     }
 
+
+
     public void setGameplayMode(GameplayMode gameplayMode) {
         this.gameplayMode = gameplayMode;
 
-        if (gameplayMode == GameplayMode.SURVIVAL)
+        if (gameplayMode == GameplayMode.SURVIVAL) {
             scoreStuff.getScoreMultiplierStuff().setVisible(true);
-        else
+            bulletsHandler.setCurrentPlanetSpecialBullets(null);
+        } else {
             scoreStuff.getScoreMultiplierStuff().setVisible(false);
+
+            switch (gameplayMode) {
+                case CRYSTAL:
+                    bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_PLANET_SPECIAL_BULLETS);
+                    // bulletsHandler.setCurrentPlanetSpecialBulletsType(CRYSTAL_PLANET_SPECIAL_BULLET_TYPE);
+                    bulletsHandler.setCurrentPlanetSpecialBulletsProbability(CRYSTAL_PLANET_SPECIAL_BULLETS_PROBABILITY);
+                    break;
+            }
+
+        }
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {
