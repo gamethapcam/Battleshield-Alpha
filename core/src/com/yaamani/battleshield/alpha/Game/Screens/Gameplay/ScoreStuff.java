@@ -279,4 +279,35 @@ public class ScoreStuff implements Resizable, Updatable {
 
         //gameplayScreen.addToFinishWhenLosing(planetsTimerFlashesWhenZero);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static class TimePlayedSoFarStarBulletThirdStageInterpolation extends Interpolation {
+
+        @Override
+        public float apply(float a) {
+
+            float T8 = 26.7301674743f   * a*a*a*a*a*a*a*a;
+            float T7 = -149.801712332f  * a*a*a*a*a*a*a;
+            float T6 = 338.685260991f   * a*a*a*a*a*a;
+            float T5 = -393.442712938f  * a*a*a*a*a;
+            float T4 = 247.824289679f   * a*a*a*a;
+            float T3 = -82.702738645f   * a*a*a;
+            float T2 = 13.1655331616f   * a*a;
+            float T1 = 0.540199230611f  * a;
+
+            return (T8 + T7 + T6 + T5 + T4 + T3 + T2 + T1) / 0.998286620477f;
+        }
+    }
 }

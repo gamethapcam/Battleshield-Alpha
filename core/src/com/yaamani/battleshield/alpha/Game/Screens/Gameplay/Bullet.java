@@ -472,6 +472,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     gameplayScreen.getShieldsAndContainersHandler().startMirrorTimer();
+                    float millis = gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimerDuration();
+                    TextureRegion r = Assets.instance.gameplayAssets.mirrorBullet;
+                    gameplayScreen.displayTempProgressBar(r, millis);
                 }
             };
 

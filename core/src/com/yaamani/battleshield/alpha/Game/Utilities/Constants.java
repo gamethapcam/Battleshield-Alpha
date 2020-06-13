@@ -3,8 +3,8 @@ package com.yaamani.battleshield.alpha.Game.Utilities;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreMultiplierStuff;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreStuff;
 import com.yaamani.battleshield.alpha.Game.Starfield.Star;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -369,6 +369,16 @@ public final class Constants {
 
 
 
+    public static final float GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_WIDTH = TURRET_RADIUS*2 * 0.5f;
+
+    public static final float GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_HEIGHT = TURRET_RADIUS*2 * 0.5f;
+
+    public static final float GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_HEIGHT = TURRET_RADIUS/5;
+
+    public static final float GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_TOP_MARGIN = TURRET_RADIUS/10;
+
+
+
     //public static final float HEALTH_BAR_RADIUS = TURRET_RADIUS * 1.1f;
 
     //public static final float HEALTH_BAR_THICKNESS = TURRET_RADIUS * 1.2f - HEALTH_BAR_RADIUS;
@@ -421,6 +431,8 @@ public final class Constants {
 
     //public static final float FONT_THE_RESOLUTION_AT_WHICH_THE_SCALE_WAS_DECIDED = 720f; // For this game it's equal for all the text.
 
+
+    public static final float MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO = 0.6f;
 
 
     //public static final float SCORE_FONT_SCALE = 0.5f;
@@ -549,7 +561,7 @@ public final class Constants {
 
     public static final MyInterpolation STAR_BULLET_THIRD_STAGE_INTERPOLATION_IN = new MyInterpolation.MyInterpolationIn(new MyInterpolation.MyPow(20));
 
-    public static final Interpolation STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION = new GameplayScreen.TimePlayedSoFarStarBulletThirdStageInterpolation();
+    public static final Interpolation STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION = new ScoreStuff.TimePlayedSoFarStarBulletThirdStageInterpolation();
 
 
 
@@ -642,7 +654,9 @@ public final class Constants {
 
     public static final String ASSETS_FONT_FNT_INTERNAL = "Uni Neue Bold Italic.fnt";
 
-    public static final String ASSETS_GAME_OVER_BG = "Big Circle";
+    public static final String ASSETS_BIG_CIRCLE = "Big Circle";
+
+    public static final String ASSETS_GAME_OVER_BG = ASSETS_BIG_CIRCLE;
 
     public static final String ASSETS_STAR_GLOW = "Star Glow";
 

@@ -34,10 +34,11 @@ public abstract class Tween extends Timer implements Updatable {
 
     public Tween(float durationMillis) {
         super(durationMillis);
+        this.interpolation = Interpolation.linear;
     }
 
     public Tween() {
-        super(0);
+        this(0);
     }
 
     public abstract void tween(float percentage, Interpolation interpolation);

@@ -8,10 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class MyProgressBar extends Actor {
 
+    public static final float MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO = 0.6f;
+
     private NinePatch bg;
     private NinePatch percentageBar;
 
     private TextureRegion region;
+    /**
+     * It's (percentageBar.height)/(bg.height).
+     */
     private float percentageBarHeightRatio;
     private float percentageBarX, percentageBarY;
 
@@ -19,20 +24,21 @@ public class MyProgressBar extends Actor {
 
     /**
      *
-     * @param region a {@link TextureRegion} for a circle or rounded rectangle or rectangle. The class is designed to work best with these shapes.
+     * @param region a {@link TextureRegion} for a circle, rounded square or square. The class is designed to work best with these shapes.
+     * @param percentageBarHeightRatio must be < 1. It's (percentageBar.height)/(bg.height).
      */
     public MyProgressBar(TextureRegion region, float percentage, float percentageBarHeightRatio) {
         this.region = region;
         this.percentage = percentage;
         this.percentageBarHeightRatio = percentageBarHeightRatio;
 
-        int  regionWidth2 = region.getRegionWidth()/2, regionHeight2 = region.getRegionHeight()/2;
+        int regionWidth2 = region.getRegionWidth()/2, regionHeight2 = region.getRegionHeight()/2;
         bg = new NinePatch(region, regionWidth2-1, regionWidth2, regionHeight2-1, regionHeight2);
         percentageBar = new NinePatch(region, regionWidth2-1, regionWidth2, regionHeight2-1, regionHeight2);
     }
 
     public MyProgressBar(TextureRegion region, float percentage) {
-        this(region, percentage, 1);
+        this(region, percentage, MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO);
     }
 
     @Override

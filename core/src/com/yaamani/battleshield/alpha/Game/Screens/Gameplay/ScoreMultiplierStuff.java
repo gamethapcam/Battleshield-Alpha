@@ -122,9 +122,9 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
     }
 
     private void initializeProgressBar() {
-        TextureRegion reg = Assets.instance.gameplayAssets.gameOverBG;
+        TextureRegion reg = Assets.instance.mutualAssets.bigCircle;
 
-        myProgressBar = new MyProgressBar(reg, 0.5f, 0.6f);
+        myProgressBar = new MyProgressBar(reg, 0.5f, MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO);
         gameplayScreen.addActor(myProgressBar);
         myProgressBar.setHeight(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_HEIGHT);
 

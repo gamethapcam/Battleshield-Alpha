@@ -113,6 +113,10 @@ public class ShieldsAndContainersHandler implements Updatable {
         mirrorControlsTimer.start();
     }
 
+    public float getMirrorControlsTimerDuration() {
+        return mirrorControlsTimer.getDurationMillis();
+    }
+
     public void setActiveShieldsNum(int activeShieldsNum) {
         if (activeShieldsNum > SHIELDS_MAX_COUNT) this.activeShieldsNum = SHIELDS_MAX_COUNT;
         else if (activeShieldsNum < SHIELDS_MIN_COUNT) this.activeShieldsNum = SHIELDS_MIN_COUNT;

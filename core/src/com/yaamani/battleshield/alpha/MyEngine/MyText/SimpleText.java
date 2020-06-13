@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Array;
  * A One line text that extends {@link Actor} which means it has all the features of an Actor [x, y, width, height .....].
  * </p>
  * <p>
- * If {@code aspectRatioLocked == true}, the text can't be stretched and you can change one dimension at a time[width or height]
+ * If {@link #aspectRatioLocked} {@code == true}, the text can't be stretched and you can change one dimension at a time[width or height]
  * and the other will be changed automatically.
  * </p>
  * <p>

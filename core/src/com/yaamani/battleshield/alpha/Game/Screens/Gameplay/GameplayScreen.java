@@ -4,15 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 //import com.badlogic.gdx.controllers.
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
@@ -36,31 +40,37 @@ public class GameplayScreen extends AdvancedScreen {
 
     private BulletsHandler bulletsHandler;
 
-    private HealthBar healthBar;
     private HealthHandler healthHandler;
+
 
     public enum State {PLAYING, PAUSED, LOST}
     private State state;
     private boolean inStarBulletAnimation = false;
 
-    private ScoreStuff scoreStuff;
-
     private Image whiteTextureHidesEveryThingSecondStageStarBullet;
     private Tween whiteTextureHidesEveryThingSecondStageTweenStarBullet;
 
-    private PauseStuff pauseStuff;
-
-    private Controller controllerLeft;
-    private Controller controllerRight;
-
-    private GameOverLayer gameOverLayer;
-
     private StarsContainer starsContainer;
-
     private MyBitmapFont myBitmapFont;
     //private BitmapFont font;
 
+
     private int rotation;
+
+
+    // HUD
+    private Controller controllerLeft;
+    private Controller controllerRight;
+
+    private ScoreStuff scoreStuff;
+    private PauseStuff pauseStuff;
+
+    private GameOverLayer gameOverLayer;
+
+    private HealthBar healthBar;
+
+    private TempProgressBar tempProgressBar;
+
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
         super(game, transform);
@@ -101,6 +111,8 @@ public class GameplayScreen extends AdvancedScreen {
                 viewport.getScreenHeight(),
                 viewport.getWorldWidth(),
                 viewport.getWorldHeight());*/
+
+        initializeTempProgressBar();
     }
 
     //----------------------------- Super Class Methods -------------------------------
@@ -230,6 +242,8 @@ public class GameplayScreen extends AdvancedScreen {
         gameOverLayer.resize(width, height, worldWidth, worldHeight);
 
         whiteTextureHidesEveryThingSecondStageStarBullet.setBounds(-worldWidth, -worldHeight, worldWidth*4, worldHeight*4);
+
+        resizeTempProgressBar(worldWidth, worldHeight);
     }
 
     //------------------------------ initializers ------------------------------
@@ -340,6 +354,19 @@ public class GameplayScreen extends AdvancedScreen {
         //addToResumeWhenResumingStarBullet(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
     }
 
+    private void initializeTempProgressBar() {
+        tempProgressBar = new TempProgressBar(myBitmapFont);
+        tempProgressBar.setProgressBarPercentageBarHeightRatio(MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO);
+        addActor(tempProgressBar);
+    }
+
+    private void resizeTempProgressBar(float worldWidth, float worldHeight) {
+        tempProgressBar.setWidth(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_WIDTH);
+        tempProgressBar.setHeight(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_HEIGHT);
+        tempProgressBar.setX(worldWidth/2 - tempProgressBar.getWidth()/2);
+        tempProgressBar.setY(worldHeight/2 - tempProgressBar.getHeight()/2);
+        tempProgressBar.setProgressBarHeight(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_HEIGHT, GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_TOP_MARGIN);
+    }
 
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
@@ -488,36 +515,11 @@ public class GameplayScreen extends AdvancedScreen {
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.start(delay ? delayAmount : 0);
     }
 
+    public void displayTempProgressBar(TextureRegion region, float millis) {
+        tempProgressBar.display(region, millis);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public static class TimePlayedSoFarStarBulletThirdStageInterpolation extends Interpolation {
-
-        @Override
-        public float apply(float a) {
-
-            float T8 = 26.7301674743f   * a*a*a*a*a*a*a*a;
-            float T7 = -149.801712332f  * a*a*a*a*a*a*a;
-            float T6 = 338.685260991f   * a*a*a*a*a*a;
-            float T5 = -393.442712938f  * a*a*a*a*a;
-            float T4 = 247.824289679f   * a*a*a*a;
-            float T3 = -82.702738645f   * a*a*a;
-            float T2 = 13.1655331616f   * a*a;
-            float T1 = 0.540199230611f  * a;
-
-            return (T8 + T7 + T6 + T5 + T4 + T3 + T2 + T1) / 0.998286620477f;
-        }
+    public void displayTempProgressBar(String charSequence, float millis) {
+        tempProgressBar.display(charSequence, millis);
     }
 }
