@@ -225,6 +225,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void whenTheShieldCompletelyDisappears() {
         if (parent.getColor().a <= 0) {
             stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
+            if (gameplayScreen.getBulletsHandler().getCurrentWaveLastBullet() == this)
+                gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
         }
     }
 

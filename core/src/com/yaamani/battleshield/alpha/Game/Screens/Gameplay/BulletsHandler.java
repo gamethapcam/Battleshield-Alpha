@@ -323,6 +323,14 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().pause();
     }
 
+    public Bullet getCurrentWaveLastBullet() {
+        return currentWaveLastBullet;
+    }
+
+    public void nullifyCurrentWaveLastBullet() {
+        currentWaveLastBullet = null;
+    }
+
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
