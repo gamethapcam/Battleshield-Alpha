@@ -569,7 +569,7 @@ public final class MyMath {
      * Use it only in your game after you came up with your perfect mathematical model that ensures a unique solution with in the bounds.</p>
      * <p>The reason it doesn't output failure is I don't want the failure of it to interrupt or crash the game at any given moment.</p>
      * <p>If the function you're trying to solve have 2 solutions with in the given bounds, it'll (most likely) output the higher in value.
-     * If it has more than 2, it'll output one of them. Which one ?, you might ask, this only depends on the upper and lower bounds.</p>
+     * If it has 2 or more, it'll output one of them. Which one ?, you might ask, this only depends on the upper and lower bounds.</p>
      * <p>If both {@code function(lower bound)} and {@code function(upper bound)} have the same sign (This should output failure),
      * it'll continue to iterate blindly until it reaches the max number of iterations or reaches the min absolute error.
      * And it'll probably output a very wrong solution or maybe a very close one. If the solution is wrong, it'll produce a bug and bugs are always fun.
@@ -631,7 +631,7 @@ public final class MyMath {
      * Use it only in your game after you came up with your perfect mathematical model that ensures a unique solution with in the bounds.</p>
      * <p>The reason it doesn't output failure is I don't want the failure of it to interrupt or crash the game at any given moment.</p>
      * <p>If the function you're trying to solve have 2 solutions with in the given bounds, it'll (most likely) return the higher in value.
-     * If it has more than 2, it'll output one of them. Which one ?, you might ask, this only depends on the upper and lower bounds.</p>
+     * If it has 2 or more, it'll output one of them. Which one ?, you might ask, this only depends on the upper and lower bounds.</p>
      * <p>If both function(lower bound) and function(upper bound) have the same sign (This should output failure), it'll return the value of {@code failureOutput}.
      * And it'll probably output a very wrong solution or maybe a very close one. If the solution is wrong, it'll produce a bug and bugs are always fun.
      * Actually not always, but most of the time.</p>
