@@ -16,6 +16,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     private Shield shield;
     private byte index;
 
+
+
    /* private SimpleText rotationText;
     private SimpleText rotationNoMinusText;*/
 

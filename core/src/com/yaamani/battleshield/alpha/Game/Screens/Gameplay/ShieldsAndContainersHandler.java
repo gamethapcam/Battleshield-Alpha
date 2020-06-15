@@ -17,7 +17,7 @@ public class ShieldsAndContainersHandler implements Updatable {
     private GameplayScreen gameplayScreen;
 
     private int activeShieldsNum;
-    private Array<BulletsAndShieldContainer> probability;
+    private Array<BulletsAndShieldContainer> nonBusyContainers; // Containers with no bullets attached during the current wave.
 
     private Timer mirrorControlsTimer;
 
@@ -122,7 +122,7 @@ public class ShieldsAndContainersHandler implements Updatable {
         else if (activeShieldsNum < SHIELDS_MIN_COUNT) this.activeShieldsNum = SHIELDS_MIN_COUNT;
         else this.activeShieldsNum = activeShieldsNum;
 
-        newProbability();
+        newNonBusyContainer();
 
         setVisibilityAndAlphaForContainers();
         setRotationForContainers();
@@ -138,17 +138,18 @@ public class ShieldsAndContainersHandler implements Updatable {
         return activeShieldsNum;
     }
 
-    private void newProbability() {
-        probability = new Array<BulletsAndShieldContainer>(false,
+    private void newNonBusyContainer() {
+        nonBusyContainers = new Array<>(false,
                 gameplayScreen.getBulletsAndShieldContainers(),
                 0,
                 activeShieldsNum);
-        gameplayScreen.getBulletsHandler().setPrevious(null);
-        gameplayScreen.getBulletsHandler().setCurrent(null);
+        /*gameplayScreen.getBulletsHandler().setPrevious(null);
+        gameplayScreen.getBulletsHandler().setCurrent(null);*/
+        gameplayScreen.getBulletsHandler().clearBusyContainers();
     }
 
-    public Array<BulletsAndShieldContainer> getProbability() {
-        return probability;
+    public Array<BulletsAndShieldContainer> getNonBusyContainers() {
+        return nonBusyContainers;
     }
 
     /*public GameplayType getGameplayType() {

@@ -174,7 +174,7 @@ public final class Constants {
 
     public static final int BULLETS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
-    public static final float BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL = 5/*0*/; //sec
+    public static final float BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL = 50; //sec
 
     public static final float BULLETS_DIFFICULTY_INCREASE_DURATION = 300f; //sec
 
@@ -231,7 +231,7 @@ public final class Constants {
 
     public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1 * (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO);
 
-    public static final int BULLETS_POOL_INITIAL_CAPACITY = 50;
+    public static final int BULLETS_POOL_INITIAL_CAPACITY = 60;
 
     public enum WaveAttackType {SINGLE, DOUBLE, ROUND}
 
@@ -574,6 +574,8 @@ public final class Constants {
 
 
     public static final float CRYSTAL_LEVEL_TIME = 5; //minutes
+
+    public static final int CRYSTAL_LEVEL_DIFFICULTY_LEVELS = 6;
 
     public static final SpecialBullet[] CRYSTAL_PLANET_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
 

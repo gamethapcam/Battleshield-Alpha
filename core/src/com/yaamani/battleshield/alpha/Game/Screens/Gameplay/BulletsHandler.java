@@ -14,6 +14,7 @@ import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
+import java.util.Iterator;
 import java.util.Random;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -30,6 +31,7 @@ public class BulletsHandler implements Updatable {
     private Bullet currentWaveLastBullet;
 
     //private Timer currentBulletsWaveTimer; // Just a timer.
+    private Array<BulletsAndShieldContainer> busyContainers; // Containers with bullets attached during the current wave.
     private BulletsAndShieldContainer previous;
     private BulletsAndShieldContainer current;
 
@@ -83,6 +85,8 @@ public class BulletsHandler implements Updatable {
 
         waveBulletsType = new WaveBulletsType[2];
         waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
+
+        busyContainers = new Array<>(false, 8, BulletsAndShieldContainer.class);
 
         //initializeNoMinusNoPlusProbability();
 
@@ -192,6 +196,10 @@ public class BulletsHandler implements Updatable {
 
     public void setCurrent(BulletsAndShieldContainer current) {
         this.current = current;
+    }
+
+    public void clearBusyContainers() {
+        busyContainers.clear();
     }
 
     public void setRoundTurn(Integer roundTurn) {
@@ -556,6 +564,19 @@ public class BulletsHandler implements Updatable {
         //if (!isVisible()) return;
         isDouble = false;
 
+
+
+        Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
+        Iterator<BulletsAndShieldContainer> it = busyContainers.iterator();
+        while (it.hasNext()) {
+            BulletsAndShieldContainer container = it.next();
+            nonBusyContainers.add(container);
+            it.remove();
+        }
+
+
+
+
         if (roundTurn != null) {
             continueRoundWave();
             //resetWaveTimer();
@@ -595,68 +616,70 @@ public class BulletsHandler implements Updatable {
     private void newSingleWave() {
         Gdx.app.log(TAG, "NEW SINGLE WAVE");
 
-        attachBullets(handlePreviousCurrentContainers(), 0);
+        attachBullets(chooseContainer(), 0);
     }
 
     private void newDoubleWave() {
         isDouble = true;
         Gdx.app.log(TAG, "NEW DOUBLE WAVE");
-        attachBullets(handlePreviousCurrentContainers(), 0);
-        attachBullets(handlePreviousCurrentContainers(), 1);
+        attachBullets(chooseContainer(), 0);
+        attachBullets(chooseContainer(), 1);
         //resetIsThereDoubleWaveTimer();
 
         /*attachBullets(probability.removeIndex(MathUtils.random(activeShields-1)));
         attachBullets(probability.get(MathUtils.random(activeShields-2)));*/
     }
 
-    private BulletsAndShieldContainer handlePreviousCurrentContainers() {
+    private BulletsAndShieldContainer chooseContainer() {
 
-        Array<BulletsAndShieldContainer> probability = gameplayScreen.getShieldsAndContainersHandler().getProbability();
+        Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
 
         if (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & angleDoubleRestricted != null) {
-            chooseContainerOnTheOtherSide(probability);
+            chooseContainerOnTheOtherSide(nonBusyContainers);
 
             angleDoubleRestricted = null;
 
         } else {
-            chooseRandomContainer(probability);
+            chooseRandomContainer(nonBusyContainers);
 
             angleDoubleRestricted = null;
 
             if (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED)
-                angleDoubleRestricted = MyMath.deg_0_to_360(current.getRotation());
+                //angleDoubleRestricted = MyMath.deg_0_to_360(current.getRotation());
+                angleDoubleRestricted = MyMath.deg_0_to_360(busyContainers.peek().getRotation());
         }
 
-        /*for (BulletsAndShieldContainer container : probability) {
+        /*for (BulletsAndShieldContainer container : nonBusyContainers) {
             Gdx.app.log(TAG, "" + container.getRotation());
         }*/
 
         //Gdx.app.log(TAG, "" + angleDoubleRestricted);
 
-        previous = current;
-        return current/*probability.get(0)*/;
+        // previous = current;
+        // return current/*nonBusyContainers.get(0)*/;
+        return busyContainers.peek();
     }
 
-    private void chooseContainerOnTheOtherSide(Array<BulletsAndShieldContainer> probability) {
+    private void chooseContainerOnTheOtherSide(Array<BulletsAndShieldContainer> nonBusyContainers) {
         // If the current gameplay is restricted and the current wave is double, you must choose one container on the left (rotation > 180) and the other on the right (rotation < 180) (This is because of the restrictions of the controls). But if one container is chosen on the top (rotation = 0), the other container can be any other one.
         if (angleDoubleRestricted == 0)
-            chooseRandomContainer(probability);
+            chooseRandomContainer(nonBusyContainers);
         else if (angleDoubleRestricted < 180) {
 
-            for (int i = 0; i < probability.size; i++) {
-                if (MyMath.deg_0_to_360(probability.get(i).getRotation()) > 180) {
-                    current = probability.removeIndex(i);
-                    if (previous != null) probability.add(previous);
+            for (int i = 0; i < nonBusyContainers.size; i++) {
+                if (MyMath.deg_0_to_360(nonBusyContainers.get(i).getRotation()) > 180) {
+                    busyContainers.add(nonBusyContainers.removeIndex(i));
+                    // if (previous != null) nonBusyContainers.add(previous);
                     return;
                 }
             }
 
         } else {
 
-            for (int i = 0; i < probability.size; i++) {
-                if (MyMath.deg_0_to_360(probability.get(i).getRotation()) < 180) {
-                    current = probability.removeIndex(i);
-                    if (previous != null) probability.add(previous);
+            for (int i = 0; i < nonBusyContainers.size; i++) {
+                if (MyMath.deg_0_to_360(nonBusyContainers.get(i).getRotation()) < 180) {
+                    busyContainers.add(nonBusyContainers.removeIndex(i));
+                    // if (previous != null) nonBusyContainers.add(previous);
                     return;
                 }
             }
@@ -664,21 +687,24 @@ public class BulletsHandler implements Updatable {
         }
     }
 
-    private void chooseRandomContainer(Array<BulletsAndShieldContainer> probability) {
+    private void chooseRandomContainer(Array<BulletsAndShieldContainer> nonBusyContainers) {
         int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
 
-        if (previous == null) {
+        /*if (previous == null) {
             int rand = MathUtils.random(activeShieldsNum - 1);
-            current = probability.removeIndex(rand);
+            busyContainers.add(nonBusyContainers.removeIndex(rand));
             //Gdx.app.log(TAG, "" + rand);
 
         } else {
             int rand = MathUtils.random(activeShieldsNum - 2);
-            current = probability.removeIndex(rand);
-            //probability.insert(activeShieldsNum - 2, previous);
-            probability.add(previous);
+            busyContainers.add(nonBusyContainers.removeIndex(rand));
+            //nonBusyContainers.insert(activeShieldsNum - 2, previous);
+            nonBusyContainers.add(previous);
             //Gdx.app.log(TAG, "" + rand);
-        }
+        }*/
+
+        int rand = MathUtils.random(activeShieldsNum - busyContainers.size - 1);
+        busyContainers.add(nonBusyContainers.removeIndex(rand));
     }
 
     //--------------------------------------- Complex waves methods ---------------------------------------------
@@ -689,9 +715,11 @@ public class BulletsHandler implements Updatable {
         roundType = RoundType.values()[MathUtils.random(1)];
         roundStart = MathUtils.random(gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() - 1);
         roundTurn = roundStart;
-        current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
+        //current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
+        busyContainers.add(gameplayScreen.getBulletsAndShieldContainers()[roundTurn]);
         roundTurnPassedActiveShieldsMinusOne = false;
-        attachBullets(current, 0);
+        //attachBullets(current, 0);
+        attachBullets(busyContainers.peek(), 0);
         //Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 

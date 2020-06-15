@@ -366,6 +366,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     //------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
 
+    @FunctionalInterface
     private interface BulletEffect {
         void effect();
     }
@@ -384,7 +385,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         private BulletEffect heart;
         private BulletEffect star;
 
+        //Crystal
         private BulletEffect mirror;
+        private BulletEffect fake; // Does nothing
 
 
 
@@ -399,7 +402,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
                 }
             };
-
 
 
             plus = new BulletEffect() {
@@ -475,6 +477,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     float millis = gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimerDuration();
                     TextureRegion r = Assets.instance.gameplayAssets.mirrorBullet;
                     gameplayScreen.displayTempProgressBar(r, millis);
+                }
+            };
+
+            fake = new BulletEffect() {
+                @Override
+                public void effect() {
+                    // Nothing
                 }
             };
 
