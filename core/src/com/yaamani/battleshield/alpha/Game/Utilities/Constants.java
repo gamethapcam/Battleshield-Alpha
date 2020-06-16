@@ -279,15 +279,32 @@ public final class Constants {
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
 
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
+            SpecialBullet.HEART,
 
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK
@@ -361,7 +378,7 @@ public final class Constants {
     public static final float[] SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY = {60f, 0, /*18f*/360f/5f/2f, 0, /*-12.85714286f*/0, 0};
     //SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[0] is the shift angle when the number of shields = SHIELDS_MIN_COUNT ..... And SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[length-1] is the shift angle  when the number of shields = SHIELDS_MAX_COUNT.
 
-    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 360f/6f/2f, 360f/7f, 360f/8f};
+    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 0+360f/6f/2f, 360f/7f, 360f/7f+360f/8f/2f};
 
     public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 650/*3000*/;
 

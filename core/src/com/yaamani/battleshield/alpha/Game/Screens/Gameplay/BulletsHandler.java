@@ -31,9 +31,12 @@ public class BulletsHandler implements Updatable {
     private Bullet currentWaveLastBullet;
 
     //private Timer currentBulletsWaveTimer; // Just a timer.
+    public enum ContainerPositioning{RANDOM, RIGHT, LEFT}
     private Array<BulletsAndShieldContainer> busyContainers; // Containers with bullets attached during the current wave.
-    private BulletsAndShieldContainer previous;
-    private BulletsAndShieldContainer current;
+    private BulletsAndShieldContainer[] tempNonBusyLeftContainers;
+    private BulletsAndShieldContainer[] tempNonBusyRightContainers;
+    /*private BulletsAndShieldContainer previous;
+    private BulletsAndShieldContainer current;*/
 
     private int bulletsPerAttack = BULLETS_DEFAULT_NO_PER_ATTACK;
     //private Timer decreaseBulletsPerAttackTimer;
@@ -86,7 +89,10 @@ public class BulletsHandler implements Updatable {
         waveBulletsType = new WaveBulletsType[2];
         waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
 
-        busyContainers = new Array<>(false, 8, BulletsAndShieldContainer.class);
+        busyContainers = new Array<>(false, SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        tempNonBusyLeftContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
+        tempNonBusyRightContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
+
 
         //initializeNoMinusNoPlusProbability();
 
@@ -182,7 +188,7 @@ public class BulletsHandler implements Updatable {
         return bulletsPerAttackNumberDifficultyTween;
     }
 
-    public BulletsAndShieldContainer getPrevious() {
+   /* public BulletsAndShieldContainer getPrevious() {
         return previous;
     }
 
@@ -196,7 +202,7 @@ public class BulletsHandler implements Updatable {
 
     public void setCurrent(BulletsAndShieldContainer current) {
         this.current = current;
-    }
+    }*/
 
     public void clearBusyContainers() {
         busyContainers.clear();
@@ -568,22 +574,24 @@ public class BulletsHandler implements Updatable {
         return currentSpecialBullet;
     }
 
+    private void busyToNonBusy() {
+        Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
+        Iterator<BulletsAndShieldContainer> it = busyContainers.iterator();
+        // System.out.print("["+TAG+"] "+ "Busy : ");
+        while (it.hasNext()) {
+            BulletsAndShieldContainer container = it.next();
+            // System.out.print(MyMath.deg_0_to_360(container.getRotation()) + ", ");
+            nonBusyContainers.add(container);
+            it.remove();
+        }
+        // System.out.println();
+    }
+
     public void newWave() {
         //if (!isVisible()) return;
         isDouble = false;
 
-
-
-        Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
-        Iterator<BulletsAndShieldContainer> it = busyContainers.iterator();
-        while (it.hasNext()) {
-            BulletsAndShieldContainer container = it.next();
-            nonBusyContainers.add(container);
-            it.remove();
-        }
-
-
-
+        busyToNonBusy();
 
         if (roundTurn != null) {
             continueRoundWave();
@@ -624,22 +632,106 @@ public class BulletsHandler implements Updatable {
     private void newSingleWave() {
         Gdx.app.log(TAG, "NEW SINGLE WAVE");
 
-        attachBullets(chooseContainer(), 0);
+        BulletsAndShieldContainer container = chooseContainer(ContainerPositioning.RANDOM);
+        attachBullets(container, 0);
     }
 
     private void newDoubleWave() {
         isDouble = true;
         Gdx.app.log(TAG, "NEW DOUBLE WAVE");
-        attachBullets(chooseContainer(), 0);
-        attachBullets(chooseContainer(), 1);
-        //resetIsThereDoubleWaveTimer();
 
-        /*attachBullets(probability.removeIndex(MathUtils.random(activeShields-1)));
-        attachBullets(probability.get(MathUtils.random(activeShields-2)));*/
+        BulletsAndShieldContainer firstContainer = chooseContainer(ContainerPositioning.RANDOM);
+        BulletsAndShieldContainer secondContainer;
+
+        if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+            float firstContainerAngleDeg = MyMath.deg_0_to_360(firstContainer.getRotation());
+            if (firstContainerAngleDeg == 0)
+                secondContainer = chooseContainer(ContainerPositioning.RANDOM);
+            else if (firstContainerAngleDeg < 180) // Right
+                secondContainer = chooseContainer(ContainerPositioning.LEFT);
+            else // Left
+                secondContainer = chooseContainer(ContainerPositioning.RIGHT);
+        } else
+            secondContainer = chooseContainer(ContainerPositioning.RANDOM);
+
+
+        attachBullets(firstContainer, 0);
+        attachBullets(secondContainer, 1);
     }
 
-    private BulletsAndShieldContainer chooseContainer() {
+    private BulletsAndShieldContainer chooseContainer(ContainerPositioning positioning) {
+        BulletsAndShieldContainer chosenContainer;
 
+        int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
+        Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
+        int rand;
+
+        switch (positioning) {
+            case RIGHT:
+                // Gdx.app.log(TAG, "activeShieldsNum = " + activeShieldsNum);
+                int tempNonBusyRightContainersSize = populateTempNonBusyRightContainers(nonBusyContainers);
+                rand = MathUtils.random(tempNonBusyRightContainersSize - 1);
+                chosenContainer = tempNonBusyRightContainers[rand];
+                nonBusyContainers.removeValue(chosenContainer, true);
+                break;
+            case LEFT:
+                // Gdx.app.log(TAG, "activeShieldsNum = " + activeShieldsNum);
+                int tempNonBusyLeftContainersSize = populateTempNonBusyLeftContainers(nonBusyContainers);
+                rand = MathUtils.random(tempNonBusyLeftContainersSize - 1);
+                chosenContainer = tempNonBusyLeftContainers[rand];
+                nonBusyContainers.removeValue(chosenContainer, true);
+                break;
+            default: // ContainerPositioning.RANDOM
+                rand = MathUtils.random(activeShieldsNum - busyContainers.size - 1);
+                chosenContainer = nonBusyContainers.removeIndex(rand);
+                break;
+        }
+
+        busyContainers.add(chosenContainer);
+        return chosenContainer;
+    }
+
+    private int populateTempNonBusyRightContainers(Array<BulletsAndShieldContainer> nonBusyContainers) {
+        int size = 0;
+        // System.out.print('[' + TAG + "] " + "Non Busy : ");
+        for (BulletsAndShieldContainer container : nonBusyContainers) {
+            float angleDeg = MyMath.deg_0_to_360(container.getRotation());
+            // System.out.print(angleDeg + ", ");
+        }
+        // System.out.println();
+        // System.out.print("[" + TAG + "] " + "Temp Right : ");
+        for (BulletsAndShieldContainer container : nonBusyContainers) {
+            float angleDeg = MyMath.deg_0_to_360(container.getRotation());
+            if (angleDeg < 180) {
+                // System.out.print(angleDeg + ", ");
+                tempNonBusyRightContainers[size++] = container;
+            }
+        }
+        // System.out.println();
+        return size;
+    }
+
+    private int populateTempNonBusyLeftContainers(Array<BulletsAndShieldContainer> nonBusyContainers) {
+        int size = 0;
+        // System.out.print('[' + TAG + "] " + "Non Busy : ");
+        for (BulletsAndShieldContainer container : nonBusyContainers) {
+            float angleDeg = MyMath.deg_0_to_360(container.getRotation());
+            // System.out.print(angleDeg + ", ");
+        }
+        // System.out.println();
+        // System.out.print("[" + TAG + "] " + "Temp Left : ");
+        for (BulletsAndShieldContainer container : nonBusyContainers) {
+            float angleDeg = MyMath.deg_0_to_360(container.getRotation());
+            if (angleDeg > 180) {
+                // System.out.print(angleDeg + ", ");
+                tempNonBusyLeftContainers[size++] = container;
+            }
+        }
+        // System.out.println();
+        return size;
+    }
+
+    /*private BulletsAndShieldContainer chooseContainer() {
         Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
 
         if (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & angleDoubleRestricted != null) {
@@ -657,18 +749,18 @@ public class BulletsHandler implements Updatable {
                 angleDoubleRestricted = MyMath.deg_0_to_360(busyContainers.peek().getRotation());
         }
 
-        /*for (BulletsAndShieldContainer container : nonBusyContainers) {
+        *//*for (BulletsAndShieldContainer container : nonBusyContainers) {
             Gdx.app.log(TAG, "" + container.getRotation());
-        }*/
+        }*//*
 
         //Gdx.app.log(TAG, "" + angleDoubleRestricted);
 
         // previous = current;
-        // return current/*nonBusyContainers.get(0)*/;
+        // return current/*nonBusyContainers.get(0)*/;/*
         return busyContainers.peek();
-    }
+    }*/
 
-    private void chooseContainerOnTheOtherSide(Array<BulletsAndShieldContainer> nonBusyContainers) {
+    /*private void chooseContainerOnTheOtherSide(Array<BulletsAndShieldContainer> nonBusyContainers) {
         // If the current gameplay is restricted and the current wave is double, you must choose one container on the left (rotation > 180) and the other on the right (rotation < 180) (This is because of the restrictions of the controls). But if one container is chosen on the top (rotation = 0), the other container can be any other one.
         if (angleDoubleRestricted == 0)
             chooseRandomContainer(nonBusyContainers);
@@ -693,12 +785,12 @@ public class BulletsHandler implements Updatable {
             }
 
         }
-    }
+    }*/
 
-    private void chooseRandomContainer(Array<BulletsAndShieldContainer> nonBusyContainers) {
+    /*private void chooseRandomContainer(Array<BulletsAndShieldContainer> nonBusyContainers) {
         int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
 
-        /*if (previous == null) {
+        *//*if (previous == null) {
             int rand = MathUtils.random(activeShieldsNum - 1);
             busyContainers.add(nonBusyContainers.removeIndex(rand));
             //Gdx.app.log(TAG, "" + rand);
@@ -709,11 +801,13 @@ public class BulletsHandler implements Updatable {
             //nonBusyContainers.insert(activeShieldsNum - 2, previous);
             nonBusyContainers.add(previous);
             //Gdx.app.log(TAG, "" + rand);
-        }*/
+        }*//*
 
         int rand = MathUtils.random(activeShieldsNum - busyContainers.size - 1);
         busyContainers.add(nonBusyContainers.removeIndex(rand));
-    }
+    }*/
+
+
 
     //--------------------------------------- Complex waves methods ---------------------------------------------
     //--------------------------------------- Complex waves methods ---------------------------------------------
@@ -723,11 +817,10 @@ public class BulletsHandler implements Updatable {
         roundType = RoundType.values()[MathUtils.random(1)];
         roundStart = MathUtils.random(gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() - 1);
         roundTurn = roundStart;
-        //current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
-        busyContainers.add(gameplayScreen.getBulletsAndShieldContainers()[roundTurn]);
+        BulletsAndShieldContainer current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
         roundTurnPassedActiveShieldsMinusOne = false;
         //attachBullets(current, 0);
-        attachBullets(busyContainers.peek(), 0);
+        attachBullets(current, 0);
         //Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 

@@ -17,7 +17,9 @@ public class ShieldsAndContainersHandler implements Updatable {
     private GameplayScreen gameplayScreen;
 
     private int activeShieldsNum;
-    private Array<BulletsAndShieldContainer> nonBusyContainers; // Containers with no bullets attached during the current wave.
+
+    // Containers with no bullets attached during the current wave.
+    private Array<BulletsAndShieldContainer> nonBusyContainers = new Array<>(false, SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);;
 
     private Timer mirrorControlsTimer;
 
@@ -122,7 +124,7 @@ public class ShieldsAndContainersHandler implements Updatable {
         else if (activeShieldsNum < SHIELDS_MIN_COUNT) this.activeShieldsNum = SHIELDS_MIN_COUNT;
         else this.activeShieldsNum = activeShieldsNum;
 
-        newNonBusyContainer();
+        updateNonBusyContainer();
 
         setVisibilityAndAlphaForContainers();
         setRotationForContainers();
@@ -138,11 +140,17 @@ public class ShieldsAndContainersHandler implements Updatable {
         return activeShieldsNum;
     }
 
-    private void newNonBusyContainer() {
-        nonBusyContainers = new Array<>(false,
+    private void updateNonBusyContainer() {
+        /*nonBusyContainers = new Array<>(false,
                 gameplayScreen.getBulletsAndShieldContainers(),
                 0,
-                activeShieldsNum);
+                activeShieldsNum);*/
+
+        BulletsAndShieldContainer[] allContainers = gameplayScreen.getBulletsAndShieldContainers();
+        nonBusyContainers.size = activeShieldsNum;
+        for (int i = 0; i < activeShieldsNum; i++) {
+            nonBusyContainers.set(i, allContainers[i]);
+        }
         /*gameplayScreen.getBulletsHandler().setPrevious(null);
         gameplayScreen.getBulletsHandler().setCurrent(null);*/
         gameplayScreen.getBulletsHandler().clearBusyContainers();
