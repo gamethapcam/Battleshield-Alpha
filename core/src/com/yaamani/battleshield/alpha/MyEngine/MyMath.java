@@ -410,7 +410,7 @@ public final class MyMath {
 
     public static float deg_0_to_360(float deg) {
         if (deg < 0) return deg_0_to_360(deg + 360);
-        if (deg > 360) return deg_0_to_360(deg - 360);
+        if (deg >= 360) return deg_0_to_360(deg - 360);
         return deg;
     }
 
@@ -537,6 +537,22 @@ public final class MyMath {
                 return i;
         }
         return probabilities.length-1;
+    }
+
+    /**
+     * <p>The distribution of this function is approximately a right trapezium P(x) = 2*(p1-1)*x + 2-p1.</p>
+     * <a href="https://www.desmos.com/calculator/exqmf3edsj">https://www.desmos.com/calculator/exqmf3edsj</a>
+     * @param p1 p1 is P(1).
+     * @return A random number between 0 (inclusive) & 1 (exclusive) which approximately follows the distribution P(x) = 2*(p1-1)*x + 2-p1.
+     * @throws ValueOutOfRangeException if p1 >= 1 or p1 < 0.
+     */
+    public static float randomRightTrapezium(float p1) {
+        if (p1 >= 1 | p1 < 0)
+            throw new ValueOutOfRangeException("p1 must be greater than or equal 0 and less than 1.");
+        float r = MathUtils.random();
+        float _p1 = 1-p1;
+        return (float) (((1-Math.sqrt(r))%_p1)*(1/_p1));
+
     }
 
     /**

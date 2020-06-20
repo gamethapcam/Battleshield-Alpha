@@ -3,6 +3,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -16,13 +17,13 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     private Shield shield;
     private byte index;
 
-
-
    /* private SimpleText rotationText;
     private SimpleText rotationNoMinusText;*/
 
     /*private int minusBulletsCount = 0;
     private int plusBulletsCount = 0;*/
+
+    // private Array<Bullet> fakeWaveBullets;
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 

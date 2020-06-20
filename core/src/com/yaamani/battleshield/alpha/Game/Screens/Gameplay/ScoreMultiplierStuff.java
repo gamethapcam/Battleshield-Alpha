@@ -237,7 +237,7 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
         }
     }
 
-    public static class ProgressBarTweenInterpolation extends RepeatedCurveCustomScaleSteps {
+    public static class ProgressBarTweenInterpolation extends RepeatedCurveCustomScaleIntervals {
 
         ProgressBarTweenSingleDifficultyInterpolation progressBarTweenSingleDifficultyInterpolation;
 

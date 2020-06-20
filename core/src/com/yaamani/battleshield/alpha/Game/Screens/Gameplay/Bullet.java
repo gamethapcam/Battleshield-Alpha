@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
@@ -14,6 +15,7 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -48,6 +50,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private SimpleText type; // Debugging
 
+    private Tween fakeTween; // When the wave is fake.
+
     /*private Tween bulletMovement;
     private float initialY;
     private float finalY;*/
@@ -64,15 +68,19 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         this.viewport = viewport;
 
-        notSpecial();
-        //setDebug(true);
-        //bulletPool.getFree();
+        notSpecial(false);
+
+        // setDebug(true);
+        // bulletPool.getFree();
+
+        initializeFakeTween();
+
 
         initializeType();
 
-        //initializeBulletMovement();
+        // initializeBulletMovement();
 
-        //setColor(1, 1, 1, 0.2f); //Debugging
+        // setColor(1, 1, 1, 0.2f); //Debugging
     }
 
     @Override
@@ -106,6 +114,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public BulletType getBulletType() {
         return bulletType;
+    }
+
+    public Tween getFakeTween() {
+        return fakeTween;
     }
 
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
@@ -164,7 +176,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
-        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha/* * 0.3f*/);
+        /*if (currentEffect != effects.fake & currentEffect != effects.ordinaryFake)
+            batch.setColor(color.r, color.g, color.b, color.a * parentAlpha * 0.65f);
+        else
+            batch.setColor(color.r, color.g, color.b, parentAlpha * 0.15f);*/
+
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+
         batch.draw(region, getX() - getWidth()/2f, getY()/* - getHeight()/2f*/, getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
@@ -185,7 +203,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
             setY(getY() - bulletsHandler.getBulletSpeed() * delta);
             //bulletMovement.update(delta);
-            //type.setColor(1, 1, 1, type.getColor().a - 0.001f);
+            // type.setColor(1, 1, 1, type.getColor().a - 0.001f);
+            // type.setColor(1, 1, 1, 0.5f);
 
             correctSpecialBulletsRotation();
 
@@ -213,6 +232,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
                 stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
             }
+
+            if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
+                fakeTween.update(delta);
         }
     }
 
@@ -231,8 +253,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void correctSpecialBulletsRotation() {
-        if (currentEffect != effects.ordinary & getRotation() != -parent.getRight())
+        if (currentEffect != effects.ordinary &
+                currentEffect != effects.ordinaryFake &
+                getRotation() != -parent.getRight()) {
+
             setRotation(-parent.getRotation());
+        }
     }
 
     public void stopUsingTheBullet(float worldWidth, float worldHeight) {
@@ -268,19 +294,26 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
     }*/
 
-    public void notSpecial() {
+    public void notSpecial(boolean fake) {
         bulletType = BulletType.ORDINARY;
 
         setSize(BULLETS_ORDINARY_WIDTH, BULLETS_ORDINARY_HEIGHT);
         setOrigin(0, 0);
         setRotation(0);
         region = Assets.instance.gameplayAssets.bullet;
-        currentEffect = effects.ordinary;
+        if (fake)
+            currentEffect = effects.ordinaryFake;
+        else
+            currentEffect = effects.ordinary;
 
-        //if (type != null) type.setVisible(false);
+        if (type != null) {
+            type.setVisible(true);
+            type.setCharSequence("Ordinary", true);
+        }
+
     }
 
-    public void setSpecial(SpecialBullet specialType, boolean questionMark) {
+    public void setSpecial(SpecialBullet specialType, boolean questionMark, boolean fake) {
         bulletType = BulletType.SPECIAL;
 
         setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
@@ -324,6 +357,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         /*if (!questionMark) region = Assets.instance.gameplayAssets.starBullet;
         currentEffect = effects.star;*/
 
+        if (fake)
+            currentEffect = effects.fake;
 
         if (questionMark)
             region = Assets.instance.gameplayAssets.questionMarkBullet;
@@ -360,6 +395,17 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(bulletMovement);
     }*/
 
+    private void initializeFakeTween() {
+        fakeTween = new Tween(CRYSTAL_PLANET_FAKE_TWEEN_DURATION, CRYSTAL_PLANET_FAKE_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                float a = interpolation.apply(percentage);
+                setColor(1, 1, 1, a);
+                //Gdx.app.log(Bullet.TAG, "" + a);
+            }
+        };
+    }
+
     //------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
@@ -389,6 +435,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         //Crystal
         private BulletEffect mirror;
+        private BulletEffect ordinaryFake; // Does nothing
         private BulletEffect fake; // Does nothing
 
 
@@ -483,6 +530,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             };
 
             fake = new BulletEffect() {
+                @Override
+                public void effect() {
+                    // Nothing
+                }
+            };
+
+            ordinaryFake = new BulletEffect() {
                 @Override
                 public void effect() {
                     // Nothing

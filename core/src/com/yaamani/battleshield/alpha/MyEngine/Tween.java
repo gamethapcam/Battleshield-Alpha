@@ -45,7 +45,6 @@ public abstract class Tween extends Timer implements Updatable {
 
     @Override
     public boolean onUpdate(float delta) {
-        //pausingResumingGradually(delta);
         if (isStarted() & (getPercentage() < 1 & !reversed | getPercentage() > 0 & reversed))
             tween(getPercentage(), interpolation);
         return false;

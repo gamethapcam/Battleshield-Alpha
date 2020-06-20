@@ -69,6 +69,7 @@ public class HealthHandler {
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setVisible(false);
 
+        gameplayScreen.hideTempProgressBar();
 
         if (gameplayScreen != null)
             if (gameplayScreen.getScoreStuff() != null)
@@ -108,6 +109,7 @@ public class HealthHandler {
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
             gameplayScreen.getStarsContainer().resetCurrentSpeed();
             gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
+            gameplayScreen.showTempProgressBar();
 
         }
     }

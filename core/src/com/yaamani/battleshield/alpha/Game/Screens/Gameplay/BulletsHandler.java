@@ -21,7 +21,7 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsHandler implements Updatable {
 
-    public final String TAG = BulletsHandler.class.getSimpleName();
+    public static final String TAG = BulletsHandler.class.getSimpleName();
 
     private GameplayScreen gameplayScreen;
 
@@ -72,6 +72,7 @@ public class BulletsHandler implements Updatable {
     // private SpecialBulletType[] currentPlanetSpecialBulletsType;
     private float currentPlanetSpecialBulletsProbability;
 
+    private float crystalPlanetFakeWaveProbability;
 
     /*private final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS;
     private final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS;*/
@@ -93,6 +94,7 @@ public class BulletsHandler implements Updatable {
         tempNonBusyLeftContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
         tempNonBusyRightContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
 
+        crystalPlanetFakeWaveProbability = CRYSTAL_PLANET_FAKE_WAVE_PROBABILITY;
 
         //initializeNoMinusNoPlusProbability();
 
@@ -376,7 +378,7 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "doubleWaveTimer Duration = " + isThereDoubleWaveTimer.getDurationMillis());
         isThereDoubleWaveTimer.start();
     }*/
-    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave) {
+    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean fake) {
         waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
         //int specialBulletOrder = 0;
 
@@ -385,21 +387,29 @@ public class BulletsHandler implements Updatable {
 
         //------------------------------------------------------
 
+        float fakeTweenDelay = 0;
+        if (fake) {
+            fakeTweenDelay = (Bullet.getR() / currentBulletSpeed*1000)/1.25f - CRYSTAL_PLANET_FAKE_TWEEN_DURATION;
+        }
+
         Bullet bullet = null;
 
         if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.ORDINARY) {
             for (int i = 0; i < bulletsPerAttack; i++) {
                 bullet = bulletPool.obtain();
 
-                bullet.notSpecial();
+                bullet.notSpecial(fake);
                 bullet.attachNotSpecialToBulletsAndShieldContainer(parent, i);
+                if (fake)
+                    bullet.getFakeTween().start(fakeTweenDelay);
             }
         } else {
             bullet = bulletPool.obtain();
-            bullet.setSpecial(currentSpecialBullet, questionMark);
+            bullet.setSpecial(currentSpecialBullet, questionMark, fake);
             bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
+            if (fake)
+                bullet.getFakeTween().start(fakeTweenDelay);
         }
-
 
 
         if (bullet != null) {
@@ -409,7 +419,6 @@ public class BulletsHandler implements Updatable {
             } else
                 currentWaveLastBullet = bullet;
         }
-
     }
 
     private void handleNewWave() {
@@ -633,7 +642,11 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "NEW SINGLE WAVE");
 
         BulletsAndShieldContainer container = chooseContainer(ContainerPositioning.RANDOM);
-        attachBullets(container, 0);
+        attachBullets(container, 0, false);
+
+        if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL)
+            crystalPlanetFakeWave(container);
+
     }
 
     private void newDoubleWave() {
@@ -655,8 +668,13 @@ public class BulletsHandler implements Updatable {
             secondContainer = chooseContainer(ContainerPositioning.RANDOM);
 
 
-        attachBullets(firstContainer, 0);
-        attachBullets(secondContainer, 1);
+        attachBullets(firstContainer, 0, false);
+        attachBullets(secondContainer, 1, false);
+
+        if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL) {
+            crystalPlanetFakeWave(firstContainer);
+            crystalPlanetFakeWave(secondContainer);
+        }
     }
 
     private BulletsAndShieldContainer chooseContainer(ContainerPositioning positioning) {
@@ -728,7 +746,46 @@ public class BulletsHandler implements Updatable {
             }
         }
         // System.out.println();
+
         return size;
+    }
+
+    private void crystalPlanetFakeWave(BulletsAndShieldContainer container) {
+        if (MathUtils.random() > crystalPlanetFakeWaveProbability) return;
+
+
+        ContainerPositioning positioning;
+        float containerAngleDeg = MyMath.deg_0_to_360(container.getRotation());
+        if (containerAngleDeg == 0)
+            positioning = ContainerPositioning.RANDOM;
+        else if (containerAngleDeg < 180) // Right
+            positioning = ContainerPositioning.RIGHT;
+        else // Left
+            positioning = ContainerPositioning.LEFT;
+
+        Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
+        int tempNonBusyContainersSize;
+        switch (positioning) {
+            case RIGHT:
+                tempNonBusyContainersSize = populateTempNonBusyRightContainers(nonBusyContainers);
+                break;
+            case LEFT:
+                tempNonBusyContainersSize = populateTempNonBusyLeftContainers(nonBusyContainers);
+                break;
+            default:
+                tempNonBusyContainersSize = nonBusyContainers.size;
+                break;
+        }
+
+        CRYSTAL_PLANET_NUM_OF_FAKE_WAVES.setN(tempNonBusyContainersSize);
+        int numOfFakeWaves = (int) CRYSTAL_PLANET_NUM_OF_FAKE_WAVES.apply(1, tempNonBusyContainersSize, MathUtils.random());
+
+        Gdx.app.log(TAG, "tempNonBusyContainersSize = " + tempNonBusyContainersSize + ", numOfFakeWaves = " + numOfFakeWaves);
+
+        for (int i = 0; i < numOfFakeWaves; i++) {
+            BulletsAndShieldContainer c = chooseContainer(positioning);
+            attachBullets(c, 1, true); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
+        }
     }
 
     /*private BulletsAndShieldContainer chooseContainer() {
@@ -820,7 +877,7 @@ public class BulletsHandler implements Updatable {
         BulletsAndShieldContainer current = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
         roundTurnPassedActiveShieldsMinusOne = false;
         //attachBullets(current, 0);
-        attachBullets(current, 0);
+        attachBullets(current, 0, false);
         //Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 
@@ -834,7 +891,7 @@ public class BulletsHandler implements Updatable {
             if (roundTurn >= roundStart & roundTurnPassedActiveShieldsMinusOne) {
                 roundTurn = null;
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
-            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0);
+            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0, false);
         } else {
             roundTurn--;
             if (roundTurn < 0) {
@@ -844,7 +901,7 @@ public class BulletsHandler implements Updatable {
             if (roundTurn <= roundStart & roundTurnPassedActiveShieldsMinusOne) {
                 roundTurn = null;
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave();
-            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0);
+            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0, false);
         }
         //Gdx.app.log(TAG, "CONTINUE ROUND, " + roundTurn);
     }

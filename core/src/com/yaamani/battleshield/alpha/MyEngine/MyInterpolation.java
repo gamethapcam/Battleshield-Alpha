@@ -279,8 +279,10 @@ public abstract class MyInterpolation extends Interpolation {
     public static final Interpolation threePulses = new Interpolation() {
         @Override
         public float apply(float a) {
-            if (a <= 1f/6f | (a > 2f/6f & a <= 3f/6f) | (a > 4f/6f & a <= 6f/6f)) return 1;
-            else return 0;
+            /*if (a <= 1f/6f | (a > 2f/6f & a <= 3f/6f) | (a > 4f/6f & a <= 6f/6f)) return 1;
+            else return 0;*/
+            if ((a >= 1f/6f & a < 2f/6f) | (a >= 3f/6f & a < 4f/6f) | (a >= 5f/6f)) return 1;
+            return 0;
         }
     };
 
@@ -627,9 +629,10 @@ public abstract class MyInterpolation extends Interpolation {
     // Difficulty curves (https://www.desmos.com/calculator/3m1wdcgaqp)
 
     /**
-     * https://www.desmos.com/calculator/3m1wdcgaqp
+     * <a href="https://www.desmos.com/calculator/3m1wdcgaqp">https://www.desmos.com/calculator/3m1wdcgaqp</a>
+     * 
      */
-    public static abstract class StepsCurve extends Interpolation {
+    public static abstract class IntervalsCurve extends Interpolation {
 
         protected int n;
 
@@ -637,7 +640,7 @@ public abstract class MyInterpolation extends Interpolation {
          *
          * @param n total number of steps or intervals.
          */
-        public StepsCurve(int n) {
+        public IntervalsCurve(int n) {
             this.n = n;
         }
 
@@ -682,9 +685,9 @@ public abstract class MyInterpolation extends Interpolation {
     }
 
     /**
-     * https://www.desmos.com/calculator/3m1wdcgaqp
+     * <a href="https://www.desmos.com/calculator/3m1wdcgaqp">https://www.desmos.com/calculator/3m1wdcgaqp</a>
      */
-    public static class ConstantLinearTimeLinearOutput extends StepsCurve {
+    public static class ConstantLinearTimeLinearOutput extends IntervalsCurve {
 
         public ConstantLinearTimeLinearOutput(int n) {
             super(n);
@@ -712,9 +715,9 @@ public abstract class MyInterpolation extends Interpolation {
     }
 
     /**
-     * https://www.desmos.com/calculator/3m1wdcgaqp
+     * <a href="https://www.desmos.com/calculator/3m1wdcgaqp">https://www.desmos.com/calculator/3m1wdcgaqp</a>
      */
-    public static abstract class CustomScaleSteps extends StepsCurve {
+    public static abstract class CustomScaleIntervals extends IntervalsCurve {
 
         protected MyInterpolation timeScale;
         protected MyInterpolation outputScale;
@@ -730,7 +733,7 @@ public abstract class MyInterpolation extends Interpolation {
          * @param timeScale
          * @param outputScale
          */
-        public CustomScaleSteps(int n, MyInterpolation timeScale, MyInterpolation outputScale) {
+        public CustomScaleIntervals(int n, MyInterpolation timeScale, MyInterpolation outputScale) {
             super(n);
             this.timeScale = timeScale;
             this.outputScale = outputScale;
@@ -776,11 +779,11 @@ public abstract class MyInterpolation extends Interpolation {
     }
 
     /**
-     * https://www.desmos.com/calculator/3m1wdcgaqp
+     * <a href="https://www.desmos.com/calculator/3m1wdcgaqp">https://www.desmos.com/calculator/3m1wdcgaqp</a>
      */
-    public static class ConstantCustomScaleSteps extends CustomScaleSteps {
+    public static class ConstantCustomScaleIntervals extends CustomScaleIntervals {
 
-        public ConstantCustomScaleSteps(int n, MyInterpolation timeScale, MyInterpolation outputScale) {
+        public ConstantCustomScaleIntervals(int n, MyInterpolation timeScale, MyInterpolation outputScale) {
             super(n, timeScale, outputScale);
         }
 
@@ -807,35 +810,35 @@ public abstract class MyInterpolation extends Interpolation {
         }
     }
 
-    public static class ConstantExponentialInTimeLinearOutput extends ConstantCustomScaleSteps {
+    public static class ConstantExponentialInTimeLinearOutput extends ConstantCustomScaleIntervals {
 
         public ConstantExponentialInTimeLinearOutput(int n, float p) {
             super(n, new MyInterpolationIn(new MyExp(p)), myLinear);
         }
     }
 
-    public static class ConstantExponentialOutTimeLinearOutput extends ConstantCustomScaleSteps {
+    public static class ConstantExponentialOutTimeLinearOutput extends ConstantCustomScaleIntervals {
 
         public ConstantExponentialOutTimeLinearOutput(int n, float p) {
             super(n, new MyInterpolationOut(new MyExp(p)), myLinear);
         }
     }
 
-    public static class ConstantLinearTimeExponentialInOutput extends ConstantCustomScaleSteps {
+    public static class ConstantLinearTimeExponentialInOutput extends ConstantCustomScaleIntervals {
 
         public ConstantLinearTimeExponentialInOutput(int n, float p) {
             super(n, myLinear, new MyInterpolationIn(new MyExp(p)));
         }
     }
 
-    public static class ConstantLinearTimeExponentialOutOutput extends ConstantCustomScaleSteps {
+    public static class ConstantLinearTimeExponentialOutOutput extends ConstantCustomScaleIntervals {
 
         public ConstantLinearTimeExponentialOutOutput(int n, float p) {
             super(n, myLinear, new MyInterpolationOut(new MyExp(p)));
         }
     }
 
-    public static class ConstantInverseExponentialInTimeExponentialInOutput extends ConstantCustomScaleSteps {
+    public static class ConstantInverseExponentialInTimeExponentialInOutput extends ConstantCustomScaleIntervals {
 
         public ConstantInverseExponentialInTimeExponentialInOutput(int n, float p) {
             super(n, new MyInterpolationIn(new MyExp(p)), new MyInterpolationIn(new MyExp(p)));
@@ -843,7 +846,7 @@ public abstract class MyInterpolation extends Interpolation {
         }
     }
 
-    public static class ConstantInverseExponentialOutTimeExponentialOutOutput extends ConstantCustomScaleSteps {
+    public static class ConstantInverseExponentialOutTimeExponentialOutOutput extends ConstantCustomScaleIntervals {
 
         public ConstantInverseExponentialOutTimeExponentialOutOutput(int n, float p) {
             super(n, new MyInterpolationOut(new MyExp(p)), new MyInterpolationOut(new MyExp(p)));
@@ -852,9 +855,9 @@ public abstract class MyInterpolation extends Interpolation {
     }
 
     /**
-     * https://www.desmos.com/calculator/3m1wdcgaqp
+     * <a href="https://www.desmos.com/calculator/3m1wdcgaqp">https://www.desmos.com/calculator/3m1wdcgaqp</a>
      */
-    public static class RepeatedCurveCustomScaleSteps extends CustomScaleSteps {
+    public static class RepeatedCurveCustomScaleIntervals extends CustomScaleIntervals {
 
         /**
          * how much the function will drop each interval. 0 <= drop <= 1. 0 = no drop at all. 1 = drop from the max y value to the min y value.
@@ -869,19 +872,19 @@ public abstract class MyInterpolation extends Interpolation {
          * @param timeScale
          * @param outputScale
          */
-        public RepeatedCurveCustomScaleSteps(int n, float drop, MyInterpolation toBeRepeatedCurve, MyInterpolation timeScale, MyInterpolation outputScale) {
+        public RepeatedCurveCustomScaleIntervals(int n, float drop, MyInterpolation toBeRepeatedCurve, MyInterpolation timeScale, MyInterpolation outputScale) {
             super(n, timeScale, outputScale);
             setDrop(drop);
             this.toBeRepeatedCurve = toBeRepeatedCurve;
         }
 
-        public RepeatedCurveCustomScaleSteps(int n, MyInterpolation toBeRepeatedCurve, MyInterpolation timeScale, MyInterpolation outputScale) {
+        public RepeatedCurveCustomScaleIntervals(int n, MyInterpolation toBeRepeatedCurve, MyInterpolation timeScale, MyInterpolation outputScale) {
             super(n, timeScale, outputScale);
             setDrop(drop);
             this.toBeRepeatedCurve = toBeRepeatedCurve;
         }
 
-        public RepeatedCurveCustomScaleSteps(int n, MyInterpolation toBeRepeatedCurve) {
+        public RepeatedCurveCustomScaleIntervals(int n, MyInterpolation toBeRepeatedCurve) {
             super(n, myLinear, myLinear);
             this.drop = 0;
             this.toBeRepeatedCurve = toBeRepeatedCurve;
@@ -971,35 +974,35 @@ public abstract class MyInterpolation extends Interpolation {
         }
     }
 
-    public static class LinearCurvesLinearTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
+    public static class LinearCurvesLinearTimeLinearOutput extends RepeatedCurveCustomScaleIntervals {
 
         public LinearCurvesLinearTimeLinearOutput(int n, float drop) {
             super(n, drop, myLinear, myLinear, myLinear);
         }
     }
 
-    public static class LinearCurvesExponentialInTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
+    public static class LinearCurvesExponentialInTimeLinearOutput extends RepeatedCurveCustomScaleIntervals {
 
         public LinearCurvesExponentialInTimeLinearOutput(int n, float drop, float p) {
             super(n, drop, myLinear, new MyInterpolationIn(new MyExp(p)), myLinear);
         }
     }
 
-    public static class LinearCurvesExponentialOutTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
+    public static class LinearCurvesExponentialOutTimeLinearOutput extends RepeatedCurveCustomScaleIntervals {
 
         public LinearCurvesExponentialOutTimeLinearOutput(int n, float drop, float p) {
             super(n, drop, myLinear, new MyInterpolationOut(new MyExp(p)), myLinear);
         }
     }
 
-    public static class LinearCurvesLinearTimeExponentialInOutput extends RepeatedCurveCustomScaleSteps {
+    public static class LinearCurvesLinearTimeExponentialInOutput extends RepeatedCurveCustomScaleIntervals {
 
         public LinearCurvesLinearTimeExponentialInOutput(int n, float drop, float p) {
             super(n, drop, myLinear, myLinear, new MyInterpolationIn(new MyExp(p)));
         }
     }
 
-    public static class LinearCurvesLinearTimeExponentialOutOutput extends RepeatedCurveCustomScaleSteps {
+    public static class LinearCurvesLinearTimeExponentialOutOutput extends RepeatedCurveCustomScaleIntervals {
 
         public LinearCurvesLinearTimeExponentialOutOutput(int n, float drop, float p) {
             super(n, drop, myLinear, myLinear, new MyInterpolationOut(new MyExp(p)));
@@ -1007,7 +1010,7 @@ public abstract class MyInterpolation extends Interpolation {
     }
 
 
-    public static class ExponentialInCurvesLinearTimeLinearOutput extends RepeatedCurveCustomScaleSteps {
+    public static class ExponentialInCurvesLinearTimeLinearOutput extends RepeatedCurveCustomScaleIntervals {
 
         public ExponentialInCurvesLinearTimeLinearOutput(int n, float drop, float p) {
             super(n, drop, new MyInterpolationIn(new MyExp(p)), myLinear, myLinear);

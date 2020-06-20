@@ -43,7 +43,7 @@ public class StarsContainer extends Group implements Disposable{
     private Vector2 transitionVelocityMax = new Vector2(0, 0);
 
     private float currentStarSpeed;
-    private float starsSpeedBeforStarBullet;
+    private float starsSpeedBeforeStarBullet;
     private MyTween currentSpeedTweenStarBullet_FirstStage; //First stage
 
     private TrailWarpPostProcessingEffect trailWarpPostProcessingEffect;
@@ -200,7 +200,7 @@ public class StarsContainer extends Group implements Disposable{
     }
 
     public void startCurrentSpeedTweenStarBullet() {
-        starsSpeedBeforStarBullet = currentStarSpeed;
+        starsSpeedBeforeStarBullet = currentStarSpeed;
         currentSpeedTweenStarBullet_FirstStage.setInitialVal(currentStarSpeed);
         currentSpeedTweenStarBullet_FirstStage.start();
     }
@@ -398,7 +398,7 @@ public class StarsContainer extends Group implements Disposable{
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 warpFastForwardSpeed = interpolation.apply(1, 0, percentage);
-                currentStarSpeed = interpolation.apply(0, starsSpeedBeforStarBullet, percentage);
+                currentStarSpeed = interpolation.apply(0, starsSpeedBeforeStarBullet, percentage);
             }
         };
 

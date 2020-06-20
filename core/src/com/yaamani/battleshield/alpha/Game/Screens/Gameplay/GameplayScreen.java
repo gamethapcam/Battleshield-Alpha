@@ -522,4 +522,18 @@ public class GameplayScreen extends AdvancedScreen {
     public void displayTempProgressBar(String charSequence, float millis) {
         tempProgressBar.display(charSequence, millis);
     }
+
+    /**
+     * Calls {@code setVisible(false)}.
+     */
+    public void hideTempProgressBar() {
+        tempProgressBar.setVisible(false);
+    }
+
+    /**
+     * Calls {@code setVisible(true)}.
+     */
+    public void showTempProgressBar() {
+        tempProgressBar.setVisible(true);
+    }
 }
