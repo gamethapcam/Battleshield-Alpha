@@ -31,7 +31,11 @@ public class Star {
     private Vector2 linearPosition;
     private Vector2 linearVelocityUnity;
 
+    private Vector2 previousFinalPosition;
     private Vector2 finalPosition;
+
+    private boolean motionBlur;
+    private Vector2 linearVelocityUnityMotionBlur;
 
     //private MyTween linearMovementTween;
 
@@ -85,7 +89,12 @@ public class Star {
 
         //this.badlogic = new Texture(Gdx.files.internal("badlogic.jpg"));
 
+
+        previousFinalPosition = new Vector2();
         finalPosition = new Vector2();
+
+        motionBlur = STARS_MOTION_BLUR;
+        linearVelocityUnityMotionBlur = new Vector2();
 
         wWidth = viewport.getWorldWidth();
         wHeight = viewport.getWorldHeight();
@@ -110,6 +119,9 @@ public class Star {
 
         if (gameplayScreen.getState() == GameplayScreen.State.PAUSED)
             return;
+
+        previousFinalPosition.x = finalPosition.x;
+        previousFinalPosition.y = finalPosition.y;
 
 
         /*if (radius/STARS_MAX_RADIUS < 0.45f)
@@ -155,6 +167,7 @@ public class Star {
         whenTheStarExitTheScreenBingItBack(inTrailWarpAnimation, r, inWarpFastForwardAnimation);
 
 
+
         finalPosition.x = linearPosition.x;
         finalPosition.y = linearPosition.y;
     }
@@ -182,14 +195,18 @@ public class Star {
         if (!inTrailWarpAnimation & !inWarpFastForwardAnimation) {
             if (linearPosition.x >= wWidth) {
                 linearPosition.x = -2 * radius + (linearPosition.x - wWidth);
+                overwritePreviousPosition();
             } else if (linearPosition.x < -2 * radius) {
                 linearPosition.x = wWidth + (linearPosition.x);
+                overwritePreviousPosition();
             }
 
             if (linearPosition.y >= wHeight) {
                 linearPosition.y = 0 - 2 * radius + (linearPosition.y - wHeight);
+                overwritePreviousPosition();
             } else if (linearPosition.y < -2 * radius) {
                 linearPosition.y = wHeight + (linearPosition.y);
+                overwritePreviousPosition();
             }
         } else if (inWarpFastForwardAnimation) {
 
@@ -203,8 +220,16 @@ public class Star {
 
                 linearPosition.x = /*wWidth/2f*/  wWidth/2f + newR * warpVelocityUnity.x;
                 linearPosition.y = /*wHeight/2f*/wHeight/2f + newR * warpVelocityUnity.y;
+
+
+                overwritePreviousPosition();
             }
         }
+    }
+
+    private void overwritePreviousPosition() {
+        previousFinalPosition.x = linearPosition.x;
+        previousFinalPosition.y = linearPosition.y;
     }
 
     private float calculateRadiusFastForwardWarp(float r) {
@@ -233,6 +258,12 @@ public class Star {
         linearVelocityUnity = new Vector2(MathUtils.cos(STARS_MOVING_ANGLE), MathUtils.sin(STARS_MOVING_ANGLE));
 
         alpha = 0;
+
+        finalPosition.x = linearPosition.x;
+        finalPosition.y = linearPosition.y;
+
+        previousFinalPosition.x = finalPosition.x;
+        previousFinalPosition.y = finalPosition.y;
 
         /*if (i == 0) {;
             //Gdx.app.log(TAG, "Star0 " + "-------------------------------------------- Spawned --------------------------------------------");
@@ -364,23 +395,55 @@ public class Star {
     public void draw(Batch batch, float delta, boolean inWarpTrailAnimation, boolean inWarpFastForwardAnimation) {
         batch.setColor(1f, 1f, 1f, alpha);
         if (!inWarpTrailAnimation/* & !inWarpFastForwardAnimation*/) {
-            batch.draw(
-                    texture,
-                    finalPosition.x,
-                    finalPosition.y,
-                    0,
-                    0,
-                    radius*2,
-                    radius*2,
-                    1,
-                    1,
-                    0,
-                    regionX,
-                    regionY,
-                    regionWidth,
-                    regionHeight,
-                    false,
-                    false);
+
+            if (!motionBlur)
+                batch.draw(
+                        texture,
+                        finalPosition.x,
+                        finalPosition.y,
+                        0,
+                        0,
+                        radius*2,
+                        radius*2,
+                        1,
+                        1,
+                        0,
+                        regionX,
+                        regionY,
+                        regionWidth,
+                        regionHeight,
+                        false,
+                        false);
+
+            else { // Extremely inefficient. Try drawing a rectangle from the previous position to the current one.
+                float dst = Vector2.dst(previousFinalPosition.x, previousFinalPosition.y, finalPosition.x, finalPosition.y);
+                float velocity = dst / delta;
+                linearVelocityUnityMotionBlur.x = (finalPosition.x - previousFinalPosition.x) / dst;
+                linearVelocityUnityMotionBlur.y = (finalPosition.y - previousFinalPosition.y) / dst;
+
+                //Gdx.app.log(TAG, "velocity = " + velocity);
+                //batch.setColor(1f, 1f, 1f, alpha-MathUtils.clamp(velocity/200f, 0, 0.1f));
+                for (int i = 0; i < velocity; i+=1) {
+                    batch.draw(
+                            texture,
+                            previousFinalPosition.x + delta*i*linearVelocityUnityMotionBlur.x,
+                            previousFinalPosition.y + delta*i*linearVelocityUnityMotionBlur.y,
+                            0,
+                            0,
+                            radius*2,
+                            radius*2,
+                            1,
+                            1,
+                            0,
+                            regionX,
+                            regionY,
+                            regionWidth,
+                            regionHeight,
+                            false,
+                            false);
+                }
+            }
+
         }
         //batch.draw(badlogic, finalPosition.x, finalPosition.y, radius*2, radius*2);
             /*batch.draw(

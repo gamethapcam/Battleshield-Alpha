@@ -38,12 +38,13 @@ public final class Constants {
     public static final float STARS_UPWARDS_MAX_TRANSITION = WORLD_SIZE * 2f;
 
 
+    public static final boolean STARS_MOTION_BLUR = false;
 
-    public static final float PINK_TO_GREY_DURATION = 50/*0*/;
+    public static final float PINK_TO_GREY_DURATION = 500;
 
-    public static final float STARS_FADE_IN_DURATION = 30/*0*/;
+    public static final float STARS_FADE_IN_DURATION = 300;
 
-    public static final float STARS_UPWARDS_DURATION = 500/*0*/;
+    public static final float STARS_UPWARDS_DURATION = 5000;
 
     public static final float MM_EARTH_ENTITIES_UPWARDS_DURATION = STARS_UPWARDS_DURATION / 2f;
 
@@ -379,7 +380,7 @@ public final class Constants {
     public static final float[] SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY = {60f, 0, /*18f*/360f/5f/2f, 0, /*-12.85714286f*/0, 0};
     //SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[0] is the shift angle when the number of shields = SHIELDS_MIN_COUNT ..... And SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[length-1] is the shift angle  when the number of shields = SHIELDS_MAX_COUNT.
 
-    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 0+360f/6f/2f, 360f/7f, 360f/7f+360f/8f/2f};
+    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 0+360f/6f/2f, 360f/7f, 360f/7f+360f/8f/3f};
 
     public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 650/*3000*/;
 
