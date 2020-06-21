@@ -169,7 +169,7 @@ public class ShieldsAndContainersHandler implements Updatable {
     }*/
 
     private void initializeMirrorControlsTimer() {
-        mirrorControlsTimer = new Timer(Constants.CRYSTAL_MIRROR_CONTROLS_DURATION) {
+        mirrorControlsTimer = new Timer(Constants.D_CRYSTAL_MIRROR_CONTROLS_DURATION) {
             @Override
             public void onStart() {
                 super.onStart();

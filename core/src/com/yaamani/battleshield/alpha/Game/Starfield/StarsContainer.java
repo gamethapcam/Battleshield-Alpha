@@ -206,7 +206,7 @@ public class StarsContainer extends Group implements Disposable{
     }
 
     public void updateCurrentStarSpeed(float bulletsPerAttack) {
-        this.currentStarSpeed = (BULLETS_MAX_NUMBER_PER_ATTACK/(float) bulletsPerAttack) * STARS_SPEED;
+        this.currentStarSpeed = (D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK /(float) bulletsPerAttack) * STARS_SPEED;
     }
 
     public void resetCurrentSpeed() {

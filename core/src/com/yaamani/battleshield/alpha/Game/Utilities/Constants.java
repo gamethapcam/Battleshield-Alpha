@@ -172,50 +172,50 @@ public final class Constants {
 
     public static final float TURRET_RADIUS = WORLD_SIZE / 15f;
 
-    public static final int BULLETS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+    public static final int D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
-    public static final float BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL = 50; //sec
+    public static final float D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL = 50; //sec
 
     public static final float BULLETS_DIFFICULTY_INCREASE_DURATION = 300f; //sec
 
-    public static final MyInterpolation BULLETS_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
+    public static final MyInterpolation D_SURVIVAL_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
 
-    public static final MyInterpolation BULLETS_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
+    public static final MyInterpolation D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
-    public static final int BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+    public static final int D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
 
-    public static final int BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
+    public static final int D_SURVIVAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
 
-    public static final int BULLETS_MAX_NUMBER_PER_ATTACK = BULLETS_MIN_NUMBER_PER_ATTACK + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+    public static final int D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK + (D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_SURVIVAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
 
-    public static final int BULLETS_DEFAULT_NO_PER_ATTACK = BULLETS_MAX_NUMBER_PER_ATTACK;
+    public static final int D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK = D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK;
 
-    public static final float BULLETS_DECREASE_NUMBER_PER_ATTACK_EVERY = BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
+    public static final float BULLETS_DECREASE_NUMBER_PER_ATTACK_EVERY = D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
 
     //public static final Interpolation BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
-    public static final Interpolation BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
-            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
-            BULLETS_DIFFICULTY_TIME_SCALE,
-            BULLETS_DIFFICULTY_OUTPUT_SCALE
+    public static final Interpolation D_SURVIVAL_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
+            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
-    public static final float BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
+    public static final float D_SURVIVAL_BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
 
-    public static final float BULLETS_SPEED_MULTIPLIER_INITIAL = 1f;
+    public static final float D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL = 1f;
 
-    public static final float BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+    public static final float D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
 
-    public static final float BULLETS_SPEED_MULTIPLIER_MAX = BULLETS_SPEED_MULTIPLIER_INITIAL + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * BULLETS_SPEED_MULTIPLIER_INCREMENT;
+    public static final float D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_MAX = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
-    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
+    public static final float BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY = D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL; //sec
 
     /*public static final Interpolation BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ExponentialInCurvesLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, 0.1f, 5);*/
-    public static final Interpolation BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
-            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
+    public static final Interpolation D_SURVIVAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
+            D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS,
             0.06f,
             new MyInterpolation.MyInterpolationIn.MyInterpolationIn(new MyInterpolation.MyExp(3)),
-            BULLETS_DIFFICULTY_TIME_SCALE,
-            BULLETS_DIFFICULTY_OUTPUT_SCALE
+            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
+            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
     public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 27.69230769f;
@@ -458,21 +458,21 @@ public final class Constants {
 
     public static final float SCORE_MULTIPLIER_INCREMENT = 0.5f;
 
-    public static final float SCORE_MULTIPLIER_MAX = SCORE_MULTIPLIER_MIN + (BULLETS_NUMBER_OF_DIFFICULTY_LEVELS-1) * SCORE_MULTIPLIER_INCREMENT;
+    public static final float SCORE_MULTIPLIER_MAX = SCORE_MULTIPLIER_MIN + (D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS -1) * SCORE_MULTIPLIER_INCREMENT;
 
     //public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
     public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
-            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
-            BULLETS_DIFFICULTY_TIME_SCALE,
-            BULLETS_DIFFICULTY_OUTPUT_SCALE
+            D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
+            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
     public static final Interpolation SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierStuff.ProgressBarTweenInterpolation(
-            BULLETS_NUMBER_OF_DIFFICULTY_LEVELS,
-            0.3f/BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL,
+            D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.3f/ D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL,
             5,
-            BULLETS_DIFFICULTY_TIME_SCALE,
-            BULLETS_DIFFICULTY_OUTPUT_SCALE
+            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
+            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
 
@@ -594,21 +594,83 @@ public final class Constants {
 
     public static final float CRYSTAL_LEVEL_TIME = 5; //minutes
 
-    public static final int CRYSTAL_LEVEL_DIFFICULTY_LEVELS = 6;
+    public static final SpecialBullet[] CRYSTAL_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
 
-    public static final SpecialBullet[] CRYSTAL_PLANET_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
 
-    public static final float CRYSTAL_PLANET_SPECIAL_BULLETS_PROBABILITY = 0.3f;
+    public static final int D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
-    public static final float CRYSTAL_MIRROR_CONTROLS_DURATION = 2000; //ms
+    public static final MyInterpolation D_CRYSTAL_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
 
-    public static final float CRYSTAL_PLANET_FAKE_WAVE_PROBABILITY = /*0.3f*/0.8f;
+    public static final MyInterpolation D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
-    public static final MyInterpolation.ConstantExponentialInTimeLinearOutput CRYSTAL_PLANET_NUM_OF_FAKE_WAVES = new MyInterpolation.ConstantExponentialInTimeLinearOutput(SHIELDS_ACTIVE_DEFAULT, 2); // parameter n will be changed during the gameplay.
 
-    public static final float CRYSTAL_PLANET_FAKE_TWEEN_DURATION = 550; // ms
+    public static final int D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK;
 
-    public static final Interpolation CRYSTAL_PLANET_FAKE_TWEEN_INTERPOLATION = MyInterpolation.threePulses;
+    public static final int D_CRYSTAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT = D_SURVIVAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+
+    public static final int D_CRYSTAL_BULLETS_MAX_NUMBER_PER_ATTACK = D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK + (D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_CRYSTAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+
+    public static final int D_CRYSTAL_BULLETS_INITIAL_NO_PER_ATTACK = D_CRYSTAL_BULLETS_MAX_NUMBER_PER_ATTACK;
+
+    public static final Interpolation D_CRYSTAL_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INITIAL = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL;
+
+    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INCREMENT = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_MAX = D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final Interpolation D_CRYSTAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
+            D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.15f,
+            new MyInterpolation.MyInterpolationIn.MyInterpolationIn(new MyInterpolation.MyExp(3)),
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final float D_CRYSTAL_FAKE_WAVE_PROBABILITY_INITIAL = 0.1f;
+
+    public static final float D_CRYSTAL_FAKE_WAVE_PROBABILITY_MAX = 0.35f;
+
+    public static final Interpolation D_CRYSTAL_FAKE_WAVE_PROBABILITY_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
+            D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.15f,
+            new MyInterpolation.MyInterpolationIn(new MyInterpolation.MyExp(3)),
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
+    );
+
+    public static final MyInterpolation.ConstantExponentialInTimeLinearOutput D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY = new MyInterpolation.ConstantExponentialInTimeLinearOutput(SHIELDS_ACTIVE_DEFAULT, 2); // parameter n will be changed during the gameplay.
+
+    public static final float D_CRYSTAL_FAKE_TWEEN_DURATION = 550; // ms
+
+    public static final Interpolation CRYSTAL_FAKE_TWEEN_INTERPOLATION = MyInterpolation.threePulses;
+
+
+    public static final float D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY = 0.25f;
+
+    public static final float D_CRYSTAL_MIRROR_CONTROLS_DURATION = 1750; // ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

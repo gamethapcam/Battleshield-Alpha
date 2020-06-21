@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 //import com.badlogic.gdx.controllers.
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
@@ -163,13 +161,13 @@ public class GameplayScreen extends AdvancedScreen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
             healthHandler.setHealth(healthHandler.getHealth() - .05f);
 
-        for (int i = BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUM_0;
+        for (int i = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUM_0;
              i <= 9 + Input.Keys.NUM_0;
              i++) {
             if (Gdx.input.isKeyJustPressed(i)) bulletsHandler.setBulletsPerAttack(i - Input.Keys.NUM_0);
         }
 
-        for (int i = BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUMPAD_0;
+        for (int i = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUMPAD_0;
              i <= 9 + Input.Keys.NUMPAD_0;
              i++) {
             if (Gdx.input.isKeyJustPressed(i)) bulletsHandler.setBulletsPerAttack(i - Input.Keys.NUMPAD_0);
@@ -398,14 +396,16 @@ public class GameplayScreen extends AdvancedScreen {
         if (gameplayMode == GameplayMode.SURVIVAL) {
             scoreStuff.getScoreMultiplierStuff().setVisible(true);
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
+            // bulletsHandler.startSurvivalDifficultyTweens(); // No need as this line is being called in HealthHandler.newGame();
         } else {
             scoreStuff.getScoreMultiplierStuff().setVisible(false);
 
             switch (gameplayMode) {
                 case CRYSTAL:
-                    bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_PLANET_SPECIAL_BULLETS);
+                    bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     // bulletsHandler.setCurrentPlanetSpecialBulletsType(CRYSTAL_PLANET_SPECIAL_BULLET_TYPE);
-                    bulletsHandler.setCurrentPlanetSpecialBulletsProbability(CRYSTAL_PLANET_SPECIAL_BULLETS_PROBABILITY);
+                    bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
+                    // bulletsHandler.startCrystalDifficultyTweens(); // No need as this line is being called in HealthHandler.newGame();
                     break;
             }
 

@@ -95,14 +95,17 @@ public class HealthHandler {
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setAlpha(1);
             Image pauseSymbol = gameplayScreen.getPauseStuff().getPauseSymbol();
             pauseSymbol.setColor(pauseSymbol.getColor().r, pauseSymbol.getColor().g, pauseSymbol.getColor().b, 1);
-            gameplayScreen.getBulletsHandler().setBulletsPerAttack(BULLETS_DEFAULT_NO_PER_ATTACK);
+            gameplayScreen.getBulletsHandler().setBulletsPerAttack(D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK);
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().newWave();
-            //gameplayScreen.getBulletsHandler().getDecreaseBulletsPerAttackTimer().start();
-            gameplayScreen.getBulletsHandler().getBulletsPerAttackNumberDifficultyTween().start();
-            //gameplayScreen.getBulletsHandler().getCurrentDifficultyLevelTimer().start();
-            gameplayScreen.getBulletsHandler().getBulletSpeedMultiplierDifficultyTween().start();
-            //gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().start();
+            switch (gameplayScreen.getGameplayMode()) {
+                case SURVIVAL:
+                    gameplayScreen.getBulletsHandler().startSurvivalDifficultyTweens();
+                    break;
+                case CRYSTAL:
+                    gameplayScreen.getBulletsHandler().startCrystalDifficultyTweens();
+                    break;
+            }
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().start();
             gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();

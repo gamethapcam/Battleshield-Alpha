@@ -396,7 +396,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }*/
 
     private void initializeFakeTween() {
-        fakeTween = new Tween(CRYSTAL_PLANET_FAKE_TWEEN_DURATION, CRYSTAL_PLANET_FAKE_TWEEN_INTERPOLATION) {
+        fakeTween = new Tween(D_CRYSTAL_FAKE_TWEEN_DURATION, CRYSTAL_FAKE_TWEEN_INTERPOLATION) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 float a = interpolation.apply(percentage);

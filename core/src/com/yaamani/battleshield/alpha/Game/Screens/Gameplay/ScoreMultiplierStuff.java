@@ -151,7 +151,7 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
             }
         };*/
 
-        myProgressBarTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION) {
+        myProgressBarTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 myProgressBar.setPercentage(interpolation.apply(percentage));
@@ -166,7 +166,7 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
     }
 
     private void initializeScoreMultiplierTween() {
-        scoreMultiplierTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_TWEEN_INTERPOLATION) {
+        scoreMultiplierTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_TWEEN_INTERPOLATION) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 float newScoreMultiplier = interpolation.apply(SCORE_MULTIPLIER_MIN, SCORE_MULTIPLIER_MAX, percentage);

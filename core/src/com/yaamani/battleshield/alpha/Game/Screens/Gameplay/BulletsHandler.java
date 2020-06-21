@@ -38,16 +38,29 @@ public class BulletsHandler implements Updatable {
     /*private BulletsAndShieldContainer previous;
     private BulletsAndShieldContainer current;*/
 
-    private int bulletsPerAttack = BULLETS_DEFAULT_NO_PER_ATTACK;
+    private int bulletsPerAttack = D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK;
     //private Timer decreaseBulletsPerAttackTimer;
-    private Tween bulletsPerAttackNumberDifficultyTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
 
     private Timer plusMinusBulletsTimer;
 
     private float currentBulletSpeed;
     private float currentSpeedMultiplier;
     //private Timer currentDifficultyLevelTimer;
-    private Tween bulletSpeedMultiplierDifficultyTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
+
+    private Tween d_survival_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween d_survival_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
+    private Tween d_crystal_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween d_crystal_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween d_crystal_fakeWaveProbabilityTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
+
+
+
+
+
+
     //private float speedResetTime = 0;
     private MyTween currentBulletSpeedTweenStarBullet_FirstStage;
     private MyTween currentBulletSpeedTweenStarBullet_ThirdStage;
@@ -94,18 +107,23 @@ public class BulletsHandler implements Updatable {
         tempNonBusyLeftContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
         tempNonBusyRightContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
 
-        crystalPlanetFakeWaveProbability = CRYSTAL_PLANET_FAKE_WAVE_PROBABILITY;
+        crystalPlanetFakeWaveProbability = D_CRYSTAL_FAKE_WAVE_PROBABILITY_INITIAL;
 
         //initializeNoMinusNoPlusProbability();
 
         initializePlusMinusBulletsTimer();
 
-        initializeBulletsPerAttackNumberTween();
-
         //initializeIsThereDoubleWaveTimer();
 
         setCurrentSpeedMultiplier(1);
-        initializeCurrentSpeedMultiplierTimer();
+
+
+        initializeD_survival_bulletsPerAttackNumberTween();
+        initializeD_survival_bulletSpeedMultiplierTween();
+
+        initializeD_crystal_bulletsPerAttackNumberTween();
+        initializeD_crystal_bulletSpeedMultiplierTween();
+        initializeD_crystal_fakeWaveProbabilityTween();
 
         //initializeCurrentDifficultLevelTimer();
 
@@ -134,11 +152,17 @@ public class BulletsHandler implements Updatable {
         //currentBulletsWaveTimer.update(delta);
         plusMinusBulletsTimer.update(delta);
         //decreaseBulletsPerAttackTimer.update(delta);
-        bulletsPerAttackNumberDifficultyTween.update(delta);
-        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
+
+        d_survival_bulletsPerAttackNumberTween.update(delta);
+        // if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
             //currentDifficultyLevelTimer.update(delta);
-            bulletSpeedMultiplierDifficultyTween.update(delta);
-        }
+        d_survival_bulletSpeedMultiplierTween.update(delta);
+        // }
+
+        d_crystal_bulletsPerAttackNumberTween.update(delta);
+        d_crystal_bulletSpeedMultiplierTween.update(delta);
+        d_crystal_fakeWaveProbabilityTween.update(delta);
+
         currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
         currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
         starBulletFirstStage.update(delta);
@@ -186,11 +210,38 @@ public class BulletsHandler implements Updatable {
         return decreaseBulletsPerAttackTimer;
     }*/
 
-    public Tween getBulletsPerAttackNumberDifficultyTween() {
-        return bulletsPerAttackNumberDifficultyTween;
+    public Tween getD_survival_bulletsPerAttackNumberTween() {
+        return d_survival_bulletsPerAttackNumberTween;
     }
 
-   /* public BulletsAndShieldContainer getPrevious() {
+    public Tween getD_survival_bulletSpeedMultiplierTween() {
+        return d_survival_bulletSpeedMultiplierTween;
+    }
+
+    public void startSurvivalDifficultyTweens() {
+        d_survival_bulletsPerAttackNumberTween.start();
+        d_survival_bulletSpeedMultiplierTween.start();
+    }
+
+    public Tween getD_crystal_bulletsPerAttackNumberTween() {
+        return d_crystal_bulletsPerAttackNumberTween;
+    }
+
+    public Tween getD_crystal_bulletSpeedMultiplierTween() {
+        return d_crystal_bulletSpeedMultiplierTween;
+    }
+
+    public Tween getD_crystal_fakeWaveProbabilityTween() {
+        return d_crystal_fakeWaveProbabilityTween;
+    }
+
+    public void startCrystalDifficultyTweens() {
+        d_crystal_bulletsPerAttackNumberTween.start();
+        d_crystal_bulletSpeedMultiplierTween.start();
+        d_crystal_fakeWaveProbabilityTween.start();
+    }
+
+    /* public BulletsAndShieldContainer getPrevious() {
         return previous;
     }
 
@@ -230,16 +281,12 @@ public class BulletsHandler implements Updatable {
                     gameplayScreen.getScoreStuff().getScoreMultiplierStuff().updateCharSequence(newSpeedMultiplier);
         }*/
 
-        currentBulletSpeed = BULLETS_SPEED_INITIAL * newSpeedMultiplier;
+        currentBulletSpeed = D_SURVIVAL_BULLETS_SPEED_INITIAL * newSpeedMultiplier;
     }
 
     /*public Timer getCurrentDifficultyLevelTimer() {
         return currentDifficultyLevelTimer;
     }*/
-
-    public Tween getBulletSpeedMultiplierDifficultyTween() {
-        return bulletSpeedMultiplierDifficultyTween;
-    }
 
     /*public SpecialBullet[] getCurrentPlanetSpecialBullets() {
         return currentPlanetSpecialBullets;
@@ -273,17 +320,17 @@ public class BulletsHandler implements Updatable {
         //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
-        bulletSpeedMultiplierDifficultyTween.start();
+        d_survival_bulletSpeedMultiplierTween.start();
         resetCurrentSpeedMultiplier();
     }
 
     public void decrementCurrentSpeedMultiplier() {
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
-        bulletSpeedMultiplierDifficultyTween.start();
+        d_survival_bulletSpeedMultiplierTween.start();
 
         if (getCurrentSpeedMultiplier() != 1)
-            setCurrentSpeedMultiplier(getCurrentSpeedMultiplier() - BULLETS_SPEED_MULTIPLIER_INCREMENT);
+            setCurrentSpeedMultiplier(getCurrentSpeedMultiplier() - D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INCREMENT);
     }
 
     /*public float getSpeedResetTime() {
@@ -325,8 +372,14 @@ public class BulletsHandler implements Updatable {
         //starBulletThirdStage.start(STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION);
 
         //getCurrentBulletsWaveTimer().pause();
-        getBulletSpeedMultiplierDifficultyTween().pause();
-        getBulletsPerAttackNumberDifficultyTween().pause();
+        getD_survival_bulletSpeedMultiplierTween().pause();
+        getD_survival_bulletsPerAttackNumberTween().pause();
+
+        // Uncomment if you ever decided to make the star bullet available in crystal planet.
+        // getD_crystal_bulletsPerAttackNumberTween().pause();
+        // getD_crystal_bulletSpeedMultiplierTween().pause();
+        // getD_crystal_fakeWaveProbabilityTween().pause();
+
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().pause();
         gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().pause();
     }
@@ -389,7 +442,7 @@ public class BulletsHandler implements Updatable {
 
         float fakeTweenDelay = 0;
         if (fake) {
-            fakeTweenDelay = (Bullet.getR() / currentBulletSpeed*1000)/1.25f - CRYSTAL_PLANET_FAKE_TWEEN_DURATION;
+            fakeTweenDelay = (Bullet.getR() / currentBulletSpeed*1000)/1.25f - D_CRYSTAL_FAKE_TWEEN_DURATION;
         }
 
         Bullet bullet = null;
@@ -777,8 +830,8 @@ public class BulletsHandler implements Updatable {
                 break;
         }
 
-        CRYSTAL_PLANET_NUM_OF_FAKE_WAVES.setN(tempNonBusyContainersSize);
-        int numOfFakeWaves = (int) CRYSTAL_PLANET_NUM_OF_FAKE_WAVES.apply(1, tempNonBusyContainersSize, MathUtils.random());
+        D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY.setN(tempNonBusyContainersSize);
+        int numOfFakeWaves = (int) D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY.apply(1, tempNonBusyContainersSize, MathUtils.random());
 
         Gdx.app.log(TAG, "tempNonBusyContainersSize = " + tempNonBusyContainersSize + ", numOfFakeWaves = " + numOfFakeWaves);
 
@@ -964,7 +1017,7 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToFinishWhenLosing(plusMinusBulletsTimer);
     }
 
-    private void initializeBulletsPerAttackNumberTween() {
+    private void initializeD_survival_bulletsPerAttackNumberTween() {
         /*decreaseBulletsPerAttackTimer = new Timer(BULLETS_DECREASE_NUMBER_PER_ATTACK_EVERY * 1000) {
 
             @Override
@@ -985,17 +1038,17 @@ public class BulletsHandler implements Updatable {
 
 
 
-        bulletsPerAttackNumberDifficultyTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
-                BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
+        d_survival_bulletsPerAttackNumberTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
+                D_SURVIVAL_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                setBulletsPerAttack((int) interpolation.apply(BULLETS_MAX_NUMBER_PER_ATTACK, BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+                setBulletsPerAttack((int) interpolation.apply(D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK, D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
             }
         };
 
-        bulletsPerAttackNumberDifficultyTween.start();
+        // d_survival_bulletsPerAttackNumberTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(bulletsPerAttackNumberDifficultyTween);
+        gameplayScreen.addToFinishWhenLosing(d_survival_bulletsPerAttackNumberTween);
     }
 
     /*private void initializeCurrentDifficultLevelTimer() {
@@ -1023,19 +1076,55 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentDifficultyLevelTimer);
     }*/
 
-    private void initializeCurrentSpeedMultiplierTimer() {
+    private void initializeD_survival_bulletSpeedMultiplierTween() {
 
-        bulletSpeedMultiplierDifficultyTween = new Tween(BULLETS_DURATION_OF_EACH_DIFFICULTY_LEVEL * BULLETS_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
-                BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
+        d_survival_bulletSpeedMultiplierTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS * 1000,
+                D_SURVIVAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                setCurrentSpeedMultiplier(interpolation.apply(BULLETS_SPEED_MULTIPLIER_INITIAL, BULLETS_SPEED_MULTIPLIER_MAX, percentage));
+                setCurrentSpeedMultiplier(interpolation.apply(D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL, D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_MAX, percentage));
             }
         };
 
-        bulletSpeedMultiplierDifficultyTween.start();
+        // d_survival_bulletSpeedMultiplierTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(bulletSpeedMultiplierDifficultyTween);
+        gameplayScreen.addToFinishWhenLosing(d_survival_bulletSpeedMultiplierTween);
+    }
+
+    private void initializeD_crystal_bulletsPerAttackNumberTween() {
+
+        d_crystal_bulletsPerAttackNumberTween = new Tween(CRYSTAL_LEVEL_TIME*60*1000, D_CRYSTAL_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setBulletsPerAttack((int) interpolation.apply(D_CRYSTAL_BULLETS_INITIAL_NO_PER_ATTACK, D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_crystal_bulletsPerAttackNumberTween);
+    }
+
+    private void initializeD_crystal_bulletSpeedMultiplierTween() {
+
+        d_crystal_bulletSpeedMultiplierTween = new Tween(CRYSTAL_LEVEL_TIME*60*1000, D_CRYSTAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setCurrentSpeedMultiplier(interpolation.apply(D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INITIAL, D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_MAX, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_crystal_bulletSpeedMultiplierTween);
+    }
+
+    private void initializeD_crystal_fakeWaveProbabilityTween() {
+
+        d_crystal_fakeWaveProbabilityTween = new Tween(CRYSTAL_LEVEL_TIME*60*1000, D_CRYSTAL_FAKE_WAVE_PROBABILITY_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                crystalPlanetFakeWaveProbability = interpolation.apply(D_CRYSTAL_FAKE_WAVE_PROBABILITY_INITIAL, D_CRYSTAL_FAKE_WAVE_PROBABILITY_MAX, percentage);
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_crystal_fakeWaveProbabilityTween);
     }
 
     private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
@@ -1154,8 +1243,14 @@ public class BulletsHandler implements Updatable {
 
                 if (gameplayScreen.getState() != GameplayScreen.State.LOST) {
                     //getCurrentBulletsWaveTimer().resume();
-                    getBulletSpeedMultiplierDifficultyTween().resume();
-                    getBulletsPerAttackNumberDifficultyTween().resume();
+                    getD_survival_bulletSpeedMultiplierTween().resume();
+                    getD_survival_bulletsPerAttackNumberTween().resume();
+
+                    // Uncomment if you ever decided to make the star bullet available in crystal planet.
+                    // getD_crystal_bulletsPerAttackNumberTween().pause();
+                    // getD_crystal_bulletSpeedMultiplierTween().pause();
+                    // getD_crystal_fakeWaveProbabilityTween().pause();
+
                     gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().resume();
                     gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().resume();
                 }
