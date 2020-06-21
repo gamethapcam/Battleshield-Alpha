@@ -76,12 +76,12 @@ public class GameOverLayer extends Group implements Resizable {
     public void thePlayerLost() {
         setVisible(true);
 
-        scoreText.setCharSequence(gameplayScreen.getScoreStuff().getScoreText().getCharSequence(), true);
+        scoreText.setCharSequence(gameplayScreen.getScoreTimerStuff().getScoreText().getCharSequence(), true);
 
-        if (gameplayScreen.getScoreStuff().isPlayerScoredBest())
+        if (gameplayScreen.getScoreTimerStuff().isPlayerScoredBest())
             bestScoreText.setCharSequence("NEW BEST", true);
         else
-            bestScoreText.setCharSequence("Best : " + MyMath.roundTo(gameplayScreen.getScoreStuff().getCurrentBest(), 2), true);
+            bestScoreText.setCharSequence("Best : " + MyMath.roundTo(gameplayScreen.getScoreTimerStuff().getCurrentBest(), 2), true);
         updatePositions();
 
         tapAnyWhereToPlayAgainTextShowingTimer.start();

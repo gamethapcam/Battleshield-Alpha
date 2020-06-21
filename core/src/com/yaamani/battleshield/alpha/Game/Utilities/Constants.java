@@ -3,8 +3,8 @@ package com.yaamani.battleshield.alpha.Game.Utilities;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreMultiplierStuff;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreStuff;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreMultiplierDifficultyLevelStuff;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreTimerStuff;
 import com.yaamani.battleshield.alpha.Game.Starfield.Star;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -461,13 +461,13 @@ public final class Constants {
     public static final float SCORE_MULTIPLIER_MAX = SCORE_MULTIPLIER_MIN + (D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS -1) * SCORE_MULTIPLIER_INCREMENT;
 
     //public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantLinearTimeLinearOutput(BULLETS_NUMBER_OF_DIFFICULTY_LEVELS);
-    public static final Interpolation SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
+    public static final Interpolation SURVIVAL_SCORE_MULTIPLIER_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
             D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS,
             D_SURVIVAL_DIFFICULTY_TIME_SCALE,
             D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
-    public static final Interpolation SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierStuff.ProgressBarTweenInterpolation(
+    public static final Interpolation SURVIVAL_SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
             D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS,
             0.3f/ D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL,
             5,
@@ -580,7 +580,7 @@ public final class Constants {
 
     public static final MyInterpolation STAR_BULLET_THIRD_STAGE_INTERPOLATION_IN = new MyInterpolation.MyInterpolationIn(new MyInterpolation.MyPow(20));
 
-    public static final Interpolation STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION = new ScoreStuff.TimePlayedSoFarStarBulletThirdStageInterpolation();
+    public static final Interpolation STAR_BULLET_THIRD_STAGE_SCORE_INTERPOLATION = new ScoreTimerStuff.TimePlayedSoFarStarBulletThirdStageInterpolation();
 
 
 
@@ -592,9 +592,12 @@ public final class Constants {
 
 
 
-    public static final float CRYSTAL_LEVEL_TIME = 5; //minutes
+    public static final float CRYSTAL_LEVEL_TIME = 5/*0.5f*/; //minutes
 
     public static final SpecialBullet[] CRYSTAL_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
+
+
+    public static final String DIFFICULTY_PREFIX = "Difficulty: ";
 
 
     public static final int D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS = 6;
@@ -656,6 +659,21 @@ public final class Constants {
     public static final float D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY = 0.25f;
 
     public static final float D_CRYSTAL_MIRROR_CONTROLS_DURATION = 1750; // ms
+
+
+    public static final Interpolation D_CRYSTAL_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
+            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
+    );
+
+    public static final Interpolation D_CRYSTAL_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
+            D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.05f,
+            2,
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
+    );
 
 
 

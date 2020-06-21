@@ -318,14 +318,14 @@ public class BulletsHandler implements Updatable {
 
     public void resetSpeed() {
         //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
-        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
+        gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
         d_survival_bulletSpeedMultiplierTween.start();
         resetCurrentSpeedMultiplier();
     }
 
     public void decrementCurrentSpeedMultiplier() {
-        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
+        gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
         d_survival_bulletSpeedMultiplierTween.start();
 
@@ -380,8 +380,8 @@ public class BulletsHandler implements Updatable {
         // getD_crystal_bulletSpeedMultiplierTween().pause();
         // getD_crystal_fakeWaveProbabilityTween().pause();
 
-        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().pause();
-        gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().pause();
+        gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween().pause();
+        gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().pause();
     }
 
     public Bullet getCurrentWaveLastBullet() {
@@ -1097,6 +1097,7 @@ public class BulletsHandler implements Updatable {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 setBulletsPerAttack((int) interpolation.apply(D_CRYSTAL_BULLETS_INITIAL_NO_PER_ATTACK, D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+                // Gdx.app.log(TAG, "getBulletsPerAttack() = " + getBulletsPerAttack());
             }
         };
 
@@ -1165,7 +1166,7 @@ public class BulletsHandler implements Updatable {
 
                 startCurrentBulletSpeedTweenStarBullet_FirstStage();
                 gameplayScreen.getStarsContainer().startCurrentSpeedTweenStarBullet();
-                gameplayScreen.getScoreStuff().startScoreTweenStarBullet_FirstStage();
+                gameplayScreen.getScoreTimerStuff().startScoreTweenStarBullet_FirstStage();
             }
 
             @Override
@@ -1229,7 +1230,7 @@ public class BulletsHandler implements Updatable {
             public void onStart() {
                 super.onStart();
                 gameplayScreen.startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(true, false);
-                gameplayScreen.getScoreStuff().startScoreTweenStarBullet_ThirdStage();
+                gameplayScreen.getScoreTimerStuff().startScoreTweenStarBullet_ThirdStage();
                 //gameplayScreen.getStarsContainer().setInWarpFastForwardAnimation(true);
                 startCurrentBulletSpeedTweenStarBullet_ThirdStage();
 
@@ -1251,8 +1252,8 @@ public class BulletsHandler implements Updatable {
                     // getD_crystal_bulletSpeedMultiplierTween().pause();
                     // getD_crystal_fakeWaveProbabilityTween().pause();
 
-                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().resume();
-                    gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().resume();
+                    gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween().resume();
+                    gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().resume();
                 }
             }
         };

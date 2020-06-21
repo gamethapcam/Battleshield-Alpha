@@ -48,7 +48,8 @@ public class HealthHandler {
             bullet.stopUsingTheBullet(worldWidth, worldHeight);
         }
 
-        gameplayScreen.getScoreStuff().getFadeOutTween().start();
+        gameplayScreen.getScoreTimerStuff().getFadeOutTween().start();
+
         gameplayScreen.getPauseStuff().getPauseSymbolFadesOutWhenLosing().start();
 
         Bullet.setPlusOrMinusExists(false);
@@ -72,8 +73,8 @@ public class HealthHandler {
         gameplayScreen.hideTempProgressBar();
 
         if (gameplayScreen != null)
-            if (gameplayScreen.getScoreStuff() != null)
-                gameplayScreen.getScoreStuff().registerBestScoreToHardDrive();
+            if (gameplayScreen.getScoreTimerStuff() != null)
+                gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
     }
 
     public void newGame() {
@@ -85,34 +86,37 @@ public class HealthHandler {
 
             gameplayScreen.setState(GameplayScreen.State.PLAYING);
             setHealth(1f);
-            gameplayScreen.getScoreStuff().resetScore();
+            gameplayScreen.getScoreTimerStuff().resetScore();
             //gameplayScreen.getBulletsHandler().resetSpeedResetTime();
-            gameplayScreen.getScoreStuff().resetScore();
-            SimpleText scoreText = gameplayScreen.getScoreStuff().getScoreText();
+            gameplayScreen.getScoreTimerStuff().resetScore();
+            SimpleText scoreText = gameplayScreen.getScoreTimerStuff().getScoreText();
             scoreText.setColor(scoreText.getColor().r, scoreText.getColor().g, scoreText.getColor().b, 1);
-            SimpleText scoreMultiplierText = gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText();
+            SimpleText scoreMultiplierText = gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getScoreMultiplierText();
             scoreMultiplierText.setColor(scoreMultiplierText.getColor().r, scoreMultiplierText.getColor().g, scoreMultiplierText.getColor().b, 1);
-            gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setAlpha(1);
+            gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBar().setAlpha(1);
             Image pauseSymbol = gameplayScreen.getPauseStuff().getPauseSymbol();
             pauseSymbol.setColor(pauseSymbol.getColor().r, pauseSymbol.getColor().g, pauseSymbol.getColor().b, 1);
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK);
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().newWave();
+            gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().startMyProgressBarTween();
             switch (gameplayScreen.getGameplayMode()) {
                 case SURVIVAL:
                     gameplayScreen.getBulletsHandler().startSurvivalDifficultyTweens();
+                    gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().survival();
                     break;
                 case CRYSTAL:
                     gameplayScreen.getBulletsHandler().startCrystalDifficultyTweens();
+                    gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().crystal();
                     break;
             }
-            gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierTween().start();
-            gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBarTween().start();
+            //gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween().start();
+            //gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
             gameplayScreen.getStarsContainer().resetCurrentSpeed();
             gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
-            gameplayScreen.showTempProgressBar();
+            // gameplayScreen.showTempProgressBar();
 
         }
     }

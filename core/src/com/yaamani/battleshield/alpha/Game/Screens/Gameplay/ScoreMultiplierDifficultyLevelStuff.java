@@ -2,6 +2,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -16,7 +17,7 @@ import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
 
-public class ScoreMultiplierStuff implements Resizable, Updatable {
+public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable {
 
     private GameplayScreen gameplayScreen;
 
@@ -27,17 +28,19 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
 
     //private Tween scoreMultiplier;
 
-    private float scoreMultiplier = 1;
+    private float scoreMultiplierDifficultyLevel = 1;
 
-    private Tween scoreMultiplierTween; // The higher the difficulty the higher the score multiplier.
+    private Tween survival_scoreMultiplierTween; // The higher the difficulty the higher the score multiplier.
+    private Tween crystal_difficultyLevelTween;
 
-    public ScoreMultiplierStuff(GameplayScreen gameplayScreen) {
+    public ScoreMultiplierDifficultyLevelStuff(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
         initializeScoreMultiplierText(gameplayScreen.getMyBitmapFont());
         initializeProgressBar();
         initializeMyProgressBarTween();
-        initializeScoreMultiplierTween();
+        initializeSurvival_scoreMultiplierTween();
+        initializeCrystal_difficultyLevelTween();
     }
 
     @Override
@@ -48,7 +51,7 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
 
     @Override
     public void update(float delta) {
-        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING & gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL) {
+         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
 
             /*if (myProgressBarTween.isFinished()) {
                 if (scoreMultiplier < SCORE_MULTIPLIER_MAX)
@@ -57,12 +60,19 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
             }*/
 
             myProgressBarTween.update(delta);
-            scoreMultiplierTween.update(delta);
+            switch (gameplayScreen.getGameplayMode()) {
+                case SURVIVAL:
+                    survival_scoreMultiplierTween.update(delta);
+                    break;
+                case CRYSTAL:
+                    crystal_difficultyLevelTween.update(delta);
+                    break;
+            }
         }
     }
 
-    private void updateCharSequence(float currentMultiplier) {
-        scoreMultiplierText.setCharSequence("x" + currentMultiplier, true);
+    private void updateCharSequence(String prefix, float currentMultiplier) {
+        scoreMultiplierText.setCharSequence(prefix + "x" + currentMultiplier, true);
 
         bulletSpeedMultiplierTextUpdatePosition();
         progressBarUpdatePosition();
@@ -74,7 +84,7 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
         Viewport viewport = gameplayScreen.getStage().getViewport();
         /*scoreMultiplierText.setPosition(viewport.getWorldWidth()/2f - bulletSpeedMultiplierTextWidth2,
                 viewport.getWorldHeight()/2f - bulletSpeedMultiplierTextHeight2 / 1.7f);*/
-        scoreMultiplierText.setPosition(SCORE_TXT_MARGIN, gameplayScreen.getScoreStuff().getScoreText().getY() - SCORE_TXT_MARGIN - bulletSpeedMultiplierTextHeight2);
+        scoreMultiplierText.setPosition(SCORE_TXT_MARGIN, gameplayScreen.getScoreTimerStuff().getScoreText().getY() - SCORE_TXT_MARGIN - bulletSpeedMultiplierTextHeight2);
     }
 
     private void progressBarUpdatePosition() {
@@ -96,17 +106,52 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
         return myProgressBar;
     }
 
-    public float getScoreMultiplier() {
-        return scoreMultiplier;
+    public float getScoreMultiplierDifficultyLevel() {
+        return scoreMultiplierDifficultyLevel;
     }
 
-    public Tween getScoreMultiplierTween() {
-        return scoreMultiplierTween;
+    public Tween getSurvival_scoreMultiplierTween() {
+        return survival_scoreMultiplierTween;
     }
 
     public void setVisible(boolean visible) {
         scoreMultiplierText.setVisible(visible);
         myProgressBar.setVisible(visible);
+    }
+
+    public void gameplayModeStuff(GameplayMode gameplayMode) {
+        switch (gameplayMode) {
+            case SURVIVAL:
+                survival();
+                break;
+            case CRYSTAL:
+                crystal();
+                break;
+        }
+
+        myProgressBarTween.start();
+    }
+
+    public void startMyProgressBarTween() {
+        myProgressBarTween.start();
+    }
+
+    public void survival() {
+        updateCharSequence("", 1.0f);
+
+        myProgressBarTween.setDurationMillis(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS);
+        myProgressBarTween.setInterpolation(SURVIVAL_SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION);
+
+        survival_scoreMultiplierTween.start();
+    }
+
+    public void crystal() {
+        updateCharSequence(DIFFICULTY_PREFIX, 1);
+
+        myProgressBarTween.setDurationMillis(CRYSTAL_LEVEL_TIME*60*1000);
+        myProgressBarTween.setInterpolation(D_CRYSTAL_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
+
+        crystal_difficultyLevelTween.start();
     }
 
     //---------------------------------------- Initializers ---------------------------------------
@@ -151,55 +196,74 @@ public class ScoreMultiplierStuff implements Resizable, Updatable {
             }
         };*/
 
-        myProgressBarTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION) {
+        myProgressBarTween = new Tween() {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 myProgressBar.setPercentage(interpolation.apply(percentage));
                 //Gdx.app.log(TAG, "" + myProgressBar.getPercentage());
             }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
+            }
         };
 
-        //myProgressBarTween.finish();
-        myProgressBarTween.start();
+        // myProgressBarTween.finish();
+        // myProgressBarTween.start();
 
         gameplayScreen.addToFinishWhenLosing(myProgressBarTween);
     }
 
-    private void initializeScoreMultiplierTween() {
-        scoreMultiplierTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS, SCORE_MULTIPLIER_TWEEN_INTERPOLATION) {
+    private void initializeSurvival_scoreMultiplierTween() {
+        survival_scoreMultiplierTween = new Tween(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS, SURVIVAL_SCORE_MULTIPLIER_TWEEN_INTERPOLATION) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 float newScoreMultiplier = interpolation.apply(SCORE_MULTIPLIER_MIN, SCORE_MULTIPLIER_MAX, percentage);
-                if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-                    if (newScoreMultiplier != scoreMultiplier) {
-                        scoreMultiplier = newScoreMultiplier;
-                        updateCharSequence(newScoreMultiplier);
+                // if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+                    if (newScoreMultiplier != scoreMultiplierDifficultyLevel) {
+                        scoreMultiplierDifficultyLevel = newScoreMultiplier;
+                        updateCharSequence("", newScoreMultiplier);
                     }
+            }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
             }
         };
 
-        scoreMultiplierTween.start();
+        // survival_scoreMultiplierTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(scoreMultiplierTween);
+        gameplayScreen.addToFinishWhenLosing(survival_scoreMultiplierTween);
 
     }
 
+    private void initializeCrystal_difficultyLevelTween() {
+        crystal_difficultyLevelTween = new Tween(CRYSTAL_LEVEL_TIME*60*1000, D_CRYSTAL_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                int newDifficultyLevel = MathUtils.round(interpolation.apply(1, D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS, percentage));
+                if (newDifficultyLevel != scoreMultiplierDifficultyLevel) {
+                    scoreMultiplierDifficultyLevel = newDifficultyLevel;
+                    updateCharSequence(DIFFICULTY_PREFIX, newDifficultyLevel);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(crystal_difficultyLevelTween);
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * <a href="https://www.desmos.com/calculator/sid9ootsqs">https://www.desmos.com/calculator/sid9ootsqs</a>
+     *
+     */
     public static class ProgressBarTweenSingleDifficultyInterpolation extends MyInterpolation {
 
         private float x0;

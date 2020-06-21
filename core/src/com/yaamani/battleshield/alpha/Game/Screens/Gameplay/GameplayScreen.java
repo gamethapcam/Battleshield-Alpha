@@ -60,7 +60,7 @@ public class GameplayScreen extends AdvancedScreen {
     private Controller controllerLeft;
     private Controller controllerRight;
 
-    private ScoreStuff scoreStuff;
+    private ScoreTimerStuff scoreTimerStuff;
     private PauseStuff pauseStuff;
 
     private GameOverLayer gameOverLayer;
@@ -95,7 +95,7 @@ public class GameplayScreen extends AdvancedScreen {
         initializeWhiteTextureHidesEveryThingSecondStageStarBullet();
         initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet();
 
-        scoreStuff = new ScoreStuff(this, myBitmapFont);
+        scoreTimerStuff = new ScoreTimerStuff(this, myBitmapFont);
 
         //initializeControllers();
 
@@ -128,7 +128,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         super.act(delta);
 
-        scoreStuff.update(delta);
+        scoreTimerStuff.update(delta);
 
         /*if (getState() == GameplayScreen.State.PLAYING) {
             if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
@@ -235,7 +235,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         healthBar.resize(width, height, worldWidth, worldHeight);
 
-        scoreStuff.resize(width, height, worldWidth, worldHeight);
+        scoreTimerStuff.resize(width, height, worldWidth, worldHeight);
 
         gameOverLayer.resize(width, height, worldWidth, worldHeight);
 
@@ -394,22 +394,25 @@ public class GameplayScreen extends AdvancedScreen {
         this.gameplayMode = gameplayMode;
 
         if (gameplayMode == GameplayMode.SURVIVAL) {
-            scoreStuff.getScoreMultiplierStuff().setVisible(true);
+            //scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().setVisible(true);
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
-            // bulletsHandler.startSurvivalDifficultyTweens(); // No need as this line is being called in HealthHandler.newGame();
+            bulletsHandler.startSurvivalDifficultyTweens();
         } else {
-            scoreStuff.getScoreMultiplierStuff().setVisible(false);
+            //scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().setVisible(false);
 
             switch (gameplayMode) {
                 case CRYSTAL:
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
-                    // bulletsHandler.setCurrentPlanetSpecialBulletsType(CRYSTAL_PLANET_SPECIAL_BULLET_TYPE);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
-                    // bulletsHandler.startCrystalDifficultyTweens(); // No need as this line is being called in HealthHandler.newGame();
+                    bulletsHandler.startCrystalDifficultyTweens();
                     break;
             }
 
         }
+
+        scoreTimerStuff.gameplayModeStuff(gameplayMode);
+
+        healthHandler.newGame();
     }
 
     public ShieldsAndContainersHandler getShieldsAndContainersHandler() {
@@ -428,8 +431,8 @@ public class GameplayScreen extends AdvancedScreen {
         return healthBar;
     }
 
-    public ScoreStuff getScoreStuff() {
-        return scoreStuff;
+    public ScoreTimerStuff getScoreTimerStuff() {
+        return scoreTimerStuff;
     }
 
     public BulletsAndShieldContainer[] getBulletsAndShieldContainers() {
@@ -528,12 +531,5 @@ public class GameplayScreen extends AdvancedScreen {
      */
     public void hideTempProgressBar() {
         tempProgressBar.setVisible(false);
-    }
-
-    /**
-     * Calls {@code setVisible(true)}.
-     */
-    public void showTempProgressBar() {
-        tempProgressBar.setVisible(true);
     }
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
-import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -19,14 +18,14 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
 import static com.yaamani.battleshield.alpha.MyEngine.MyInterpolation.*;
 
-public class ScoreStuff implements Resizable, Updatable {
+public class ScoreTimerStuff implements Resizable, Updatable {
 
-    public static final String TAG = ScoreStuff.class.getSimpleName();
+    public static final String TAG = ScoreTimerStuff.class.getSimpleName();
 
     /**
-     * The score variable always stores the seconds played this turn so far. It doesn't matter whether survival mode is being played or a level is being played.
+     * The scoreTimer variable always stores the seconds played this turn so far. It doesn't matter whether survival mode is being played or a level is being played.
      */
-    private float score;
+    private float scoreTimer;
     private float currentBest;
     private boolean playerScoredBest = false;
 
@@ -36,7 +35,7 @@ public class ScoreStuff implements Resizable, Updatable {
 
     private Tween fadeOutTween;
 
-    private ScoreMultiplierStuff scoreMultiplierStuff;
+    private ScoreMultiplierDifficultyLevelStuff scoreMultiplierDifficultyLevelStuff;
 
     private MyTween scoreTweenStarBullet_FirstStage;
     private Tween scoreTweenStarBullet_ThirdStage;
@@ -48,7 +47,7 @@ public class ScoreStuff implements Resizable, Updatable {
     private GameplayScreen gameplayScreen;
 
 
-    public ScoreStuff(GameplayScreen gameplayScreen, MyBitmapFont font) {
+    public ScoreTimerStuff(GameplayScreen gameplayScreen, MyBitmapFont font) {
         this.gameplayScreen = gameplayScreen;
 
         scoreText = new SimpleText(font, "0.0");
@@ -66,7 +65,7 @@ public class ScoreStuff implements Resizable, Updatable {
 
         initializePlanetsTimerFlashesWhenZero();
 
-        scoreMultiplierStuff = new ScoreMultiplierStuff(gameplayScreen);
+        scoreMultiplierDifficultyLevelStuff = new ScoreMultiplierDifficultyLevelStuff(gameplayScreen);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class ScoreStuff implements Resizable, Updatable {
         scoreText.setX(SCORE_TXT_MARGIN);
         scoreText.setY(worldHeight - scoreText.getHeight() - SCORE_TXT_MARGIN);
 
-        scoreMultiplierStuff.resize(width, height, worldWidth, worldHeight);
+        scoreMultiplierDifficultyLevelStuff.resize(width, height, worldWidth, worldHeight);
 
     }
 
@@ -84,12 +83,16 @@ public class ScoreStuff implements Resizable, Updatable {
         scoreTweenStarBullet_FirstStage.update(delta);
         scoreTweenStarBullet_ThirdStage.update(delta);
 
-        scoreMultiplierStuff.update(delta);
+        scoreMultiplierDifficultyLevelStuff.update(delta);
 
         planetsTimerFlashesWhenZero.update(delta);
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-            if (!gameplayScreen.isInStarBulletAnimation()) score += delta * scoreMultiplierStuff.getScoreMultiplier();
+            if (!gameplayScreen.isInStarBulletAnimation())
+                if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+                    scoreTimer += delta * scoreMultiplierDifficultyLevelStuff.getScoreMultiplierDifficultyLevel();
+                else
+                    scoreTimer += delta;
 
         checkBestScore();
 
@@ -108,7 +111,7 @@ public class ScoreStuff implements Resizable, Updatable {
     private void setCharSequenceForScoreText() {
         if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
             // If SURVIVAL -> display the score variable.
-            scoreText.setCharSequence("" + roundTo(score, 2), true);
+            scoreText.setCharSequence("" + roundTo(scoreTimer, 2), true);
         else {
             // If not SURVIVAL -> display a timer counting down.
             float levelTime = 0;
@@ -119,7 +122,7 @@ public class ScoreStuff implements Resizable, Updatable {
                     break;
             }
 
-            float secondsLeft = MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - score), 0, Float.MAX_VALUE);
+            float secondsLeft = MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - scoreTimer), 0, Float.MAX_VALUE);
             scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) (secondsLeft * SECONDS_TO_MINUTES)), true);
 
             if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.LOST)
@@ -129,7 +132,7 @@ public class ScoreStuff implements Resizable, Updatable {
 
     private void checkBestScore() {
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING & gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
-            if ((currentBest == 0.0 | currentBest < score) & !playerScoredBest) {
+            if ((currentBest == 0.0 | currentBest < scoreTimer) & !playerScoredBest) {
                 playerScoredBest = true;
                 scoreText.setColor(SCORE_BEST_COLOR);
             }
@@ -137,19 +140,19 @@ public class ScoreStuff implements Resizable, Updatable {
 
     public void updateBestScoreButDontRegisterToHardDriveYet() {
         if (playerScoredBest) {
-            currentBest = score;
+            currentBest = scoreTimer;
         }
     }
 
     public void registerBestScoreToHardDrive() {
         if (currentBest > preferences.getFloat(SCORE_BEST_KEY)) {
-            preferences.putFloat(SCORE_BEST_KEY, score);
+            preferences.putFloat(SCORE_BEST_KEY, scoreTimer);
             preferences.flush();
         }
     }
 
     public void resetScore() {
-        score = 0;
+        scoreTimer = 0;
         playerScoredBest = false;
     }
 
@@ -169,28 +172,32 @@ public class ScoreStuff implements Resizable, Updatable {
         return scoreText;
     }
 
-    public float getScore() {
-        return score;
+    public float getScoreTimer() {
+        return scoreTimer;
     }
 
     public Tween getFadeOutTween() {
         return fadeOutTween;
     }
 
-    public ScoreMultiplierStuff getScoreMultiplierStuff() {
-        return scoreMultiplierStuff;
+    public ScoreMultiplierDifficultyLevelStuff getScoreMultiplierDifficultyLevelStuff() {
+        return scoreMultiplierDifficultyLevelStuff;
     }
 
     public void startScoreTweenStarBullet_FirstStage() {
-        scoreTweenStarBullet_FirstStage.setInitialVal(score);
-        scoreTweenStarBullet_FirstStage.setFinalVal(score + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) MILLIS_TO_SECONDS);
+        scoreTweenStarBullet_FirstStage.setInitialVal(scoreTimer);
+        scoreTweenStarBullet_FirstStage.setFinalVal(scoreTimer + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) MILLIS_TO_SECONDS);
         scoreTweenStarBullet_FirstStage.start();
     }
 
     public void startScoreTweenStarBullet_ThirdStage() {
-        timePlayedSoFarStarBulletThirdStageInitialValue = score;
-        timePlayedSoFarStarBulletThirdStageFinalValue = score + STAR_BULLET_SCORE_BONUS * scoreMultiplierStuff.getScoreMultiplier();
+        timePlayedSoFarStarBulletThirdStageInitialValue = scoreTimer;
+        timePlayedSoFarStarBulletThirdStageFinalValue = scoreTimer + STAR_BULLET_SCORE_BONUS * scoreMultiplierDifficultyLevelStuff.getScoreMultiplierDifficultyLevel();
         scoreTweenStarBullet_ThirdStage.start();
+    }
+
+    public void gameplayModeStuff(GameplayMode gameplayMode) {
+        scoreMultiplierDifficultyLevelStuff.gameplayModeStuff(gameplayMode);
     }
 
     //----------------------------------------------------------------------------
@@ -200,18 +207,18 @@ public class ScoreStuff implements Resizable, Updatable {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
 
-                if (gameplayScreen.getGameplayMode() != GameplayMode.SURVIVAL)
-                    return;
+                /*if (gameplayScreen.getGameplayMode() != GameplayMode.SURVIVAL)
+                    return;*/
 
                 Color scoreTextColor = scoreText.getColor();
-                Color scoreMultiplierTextColor = scoreMultiplierStuff.getScoreMultiplierText().getColor();
+                Color scoreMultiplierTextColor = scoreMultiplierDifficultyLevelStuff.getScoreMultiplierText().getColor();
                 //Color scoreMultiplierProgressBarColor = scoreMultiplierStuff.getMyProgressBar().getColor();
 
                 float alpha = interpolation.apply(1 - percentage);
 
                 scoreText.setColor(scoreTextColor.r, scoreTextColor.g, scoreTextColor.b, alpha);
-                scoreMultiplierStuff.getScoreMultiplierText().setColor(scoreMultiplierTextColor.r, scoreMultiplierTextColor.g, scoreMultiplierTextColor.b, alpha);
-                scoreMultiplierStuff.getMyProgressBar().setAlpha(alpha);
+                scoreMultiplierDifficultyLevelStuff.getScoreMultiplierText().setColor(scoreMultiplierTextColor.r, scoreMultiplierTextColor.g, scoreMultiplierTextColor.b, alpha);
+                scoreMultiplierDifficultyLevelStuff.getMyProgressBar().setAlpha(alpha);
             }
 
             @Override
@@ -229,7 +236,7 @@ public class ScoreStuff implements Resizable, Updatable {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
                 if (gameplayScreen.isInStarBulletAnimation())
-                    score = myInterpolation.apply(startX, endX, startY, endY, currentX);
+                    scoreTimer = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
@@ -246,7 +253,7 @@ public class ScoreStuff implements Resizable, Updatable {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 if (gameplayScreen.isInStarBulletAnimation())
-                    score = interpolation.apply(timePlayedSoFarStarBulletThirdStageInitialValue, timePlayedSoFarStarBulletThirdStageFinalValue, percentage);
+                    scoreTimer = interpolation.apply(timePlayedSoFarStarBulletThirdStageInitialValue, timePlayedSoFarStarBulletThirdStageFinalValue, percentage);
             }
         };
 
