@@ -467,6 +467,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
+                    if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL)
+                        gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().generateCrack();
                 }
             };
 

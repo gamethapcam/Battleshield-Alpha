@@ -15,7 +15,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.PostProcessingEffect;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
-public class TrailWarpPostProcessingEffect extends PostProcessingEffect implements Disposable {
+public class TrailWarpPostProcessingEffect extends PostProcessingEffect {
 
     private ShaderProgram gaussianBlurShader;
     private ShaderProgram bloomStretchShader;
@@ -44,6 +44,8 @@ public class TrailWarpPostProcessingEffect extends PostProcessingEffect implemen
         vBlurFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)(inputTextureWidthPixelUnits / blurResDivisor), (int)(inputTextureHeightPixelUnits / blurResDivisor), false);
         this.kernelSize = kernelSize;
 
+
+
         initializeStretchWarpShader();
         initializeGaussianBlurShader();
 
@@ -69,6 +71,9 @@ public class TrailWarpPostProcessingEffect extends PostProcessingEffect implemen
 
     @Override
     public void dispose() {
+        gaussianBlurShader.dispose();
+        bloomStretchShader.dispose();
+
         hBlurFrameBuffer.dispose();
         vBlurFrameBuffer.dispose();
     }

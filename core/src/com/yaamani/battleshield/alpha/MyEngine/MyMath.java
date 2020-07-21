@@ -573,6 +573,39 @@ public final class MyMath {
     }
 
 
+    /**
+     * f(x) = a2*x^2 + a1*x + a0.
+     */
+    public static class SecondDegreePolynomialCoefficients {
+        public float a2;
+        public float a1;
+        public float a0;
+    }
+
+    public static final SecondDegreePolynomialCoefficients threePointsPolynomialInterpolationResult = new SecondDegreePolynomialCoefficients();
+
+    /**
+     * <p>This function calculates the coefficients of a second-degree polynomial "{@code f(x) = a2*x^2 + a1*x + a0}" passing through the three given points.</p>
+     * <p><b>The result is found in {@link MyMath#threePointsPolynomialInterpolationResult}.
+     * Make sure to copy a2, a1 and a0 to other variables because once you call this function again, the results will be replaced.</b></p>
+     * @param x0
+     * @param y0
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
+    public static void threePointsPolynomialInterpolation(float x0, float y0, float x1, float y1, float x2, float y2) {
+        float x0_x1 = x0 - x1;
+        float x0_x2 = x0 - x2;
+        float x1_x2 = x1 - x2;
+        float denominator = x0_x1*x0_x2*x1_x2;
+
+        threePointsPolynomialInterpolationResult.a2 = (y0*x1_x2          - y1*x0_x2         + y2*x0_x1)         /denominator;
+        threePointsPolynomialInterpolationResult.a1 = (-y0*x1_x2*(x1+x2) + y1*x0_x2*(x0+x2) - y2*x0_x1*(x0+x1)) /denominator;
+        threePointsPolynomialInterpolationResult.a0 = (y0*x1*x2*x1_x2    - y1*x0*x2*x0_x2   + y2*x0*x1*x0_x1)   /denominator;
+    }
+
 
     public interface BisectionFunction {
         float function(float x);

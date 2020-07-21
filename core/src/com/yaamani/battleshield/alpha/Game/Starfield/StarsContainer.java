@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsHandler;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GlassCrackPostProcessingEffect;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.TrailWarpPostProcessingEffect;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -47,6 +48,7 @@ public class StarsContainer extends Group implements Disposable{
     private MyTween currentSpeedTweenStarBullet_FirstStage; //First stage
 
     private TrailWarpPostProcessingEffect trailWarpPostProcessingEffect;
+    private GlassCrackPostProcessingEffect glassCrackPostProcessingEffect;
 
     private boolean inWarpTrailAnimation = false;
     private boolean inWarpFastForwardAnimation = false;
@@ -64,6 +66,7 @@ public class StarsContainer extends Group implements Disposable{
     private GameplayScreen gameplayScreen;
 
     private Texture badlogic;
+    private Texture test;
 
     private Array<Float> fpss;
 
@@ -89,6 +92,8 @@ public class StarsContainer extends Group implements Disposable{
         
         trailWarpPostProcessingEffect = new TrailWarpPostProcessingEffect(viewport, viewport.getWorldWidth(), viewport.getWorldHeight(), STAR_BULLET_TRAIL_WARP_BLUR_RESOLUTION_DIVISOR, STAR_BULLET_TRAIL_WARP_BLUR_KERNEL_SIZE);
 
+        glassCrackPostProcessingEffect = new GlassCrackPostProcessingEffect();
+
 
         initializeCurrentSpeedTweenStarBullet_FirstStage();
 
@@ -99,6 +104,8 @@ public class StarsContainer extends Group implements Disposable{
 
         badlogic = new Texture(Gdx.files.internal("badlogic.jpg"));
         badlogic.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        test = new Texture(Gdx.files.internal("test.jpg"));
+        test.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         fpss = new Array<>(Float.class);
     }
 
@@ -147,12 +154,41 @@ public class StarsContainer extends Group implements Disposable{
         batch.end();
         Texture starsFrameBufferTexture = renderStarsToOriginalFrameBuffer(batch);
 
-        if (inWarpTrailAnimation) {
-            trailWarpPostProcessingEffect.draw(batch, starsFrameBufferTexture, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
-        } else {
-            if (!trailWarpPostProcessingEffect.isBlurBuffersCleared())
-                trailWarpPostProcessingEffect.clearBlurBuffers(batch);
+        if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL) {
 
+
+            if (inWarpTrailAnimation) {
+                trailWarpPostProcessingEffect.draw(batch, starsFrameBufferTexture, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+            } else {
+                if (!trailWarpPostProcessingEffect.isBlurBuffersCleared())
+                    trailWarpPostProcessingEffect.clearBlurBuffers(batch);
+
+                batch.begin();
+                batch.draw(starsFrameBufferTexture,
+                        0,
+                        0,
+                        viewport.getWorldWidth(),
+                        viewport.getWorldHeight(),
+                        0,
+                        0,
+                        starsFrameBufferTexture.getWidth(),
+                        starsFrameBufferTexture.getHeight(),
+                        false,
+                        true);
+            }
+
+            if (inWarpTrailAnimation)
+                fpss.add(1 / Gdx.graphics.getDeltaTime());
+
+
+
+        } else if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL) {
+
+
+            glassCrackPostProcessingEffect.draw(batch, starsFrameBufferTexture/*test*//*badlogic*/, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+
+
+        } else {
             batch.begin();
             batch.draw(starsFrameBufferTexture,
                     0,
@@ -166,9 +202,6 @@ public class StarsContainer extends Group implements Disposable{
                     false,
                     true);
         }
-
-        if (inWarpTrailAnimation)
-            fpss.add(1/Gdx.graphics.getDeltaTime());
 
     }
 
@@ -186,6 +219,7 @@ public class StarsContainer extends Group implements Disposable{
     public void dispose() {
         originalFrameBuffer.dispose();
         trailWarpPostProcessingEffect.dispose();
+
     }
 
     // ------------------------ methods ------------------------
@@ -325,6 +359,10 @@ public class StarsContainer extends Group implements Disposable{
 
     public Tween getWarpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage() {
         return warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage;
+    }
+
+    public GlassCrackPostProcessingEffect getGlassCrackPostProcessingEffect() {
+        return glassCrackPostProcessingEffect;
     }
 
     // ------------------------ initializers ------------------------

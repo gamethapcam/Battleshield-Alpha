@@ -40,11 +40,11 @@ public final class Constants {
 
     public static final boolean STARS_MOTION_BLUR = false;
 
-    public static final float PINK_TO_GREY_DURATION = 500;
+    public static final float PINK_TO_GREY_DURATION = 50/*0*/;
 
-    public static final float STARS_FADE_IN_DURATION = 300;
+    public static final float STARS_FADE_IN_DURATION = 30/*0*/;
 
-    public static final float STARS_UPWARDS_DURATION = 5000;
+    public static final float STARS_UPWARDS_DURATION = 50/*00*/;
 
     public static final float MM_EARTH_ENTITIES_UPWARDS_DURATION = STARS_UPWARDS_DURATION / 2f;
 

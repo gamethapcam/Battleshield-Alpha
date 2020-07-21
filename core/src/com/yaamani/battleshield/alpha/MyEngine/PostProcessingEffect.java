@@ -3,8 +3,9 @@ package com.yaamani.battleshield.alpha.MyEngine;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
 
-public abstract class PostProcessingEffect {
+public abstract class PostProcessingEffect implements Disposable {
 
     private TextureRegion _temp;
 

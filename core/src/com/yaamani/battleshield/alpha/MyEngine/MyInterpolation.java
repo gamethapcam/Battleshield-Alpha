@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 
 /**
- * This class needed for MyTween's gradual pausing and gradual resuming.
- * @see MyTween
  * @Author Mahmoud Yamani
  */
 
@@ -630,7 +628,7 @@ public abstract class MyInterpolation extends Interpolation {
 
     /**
      * <a href="https://www.desmos.com/calculator/3m1wdcgaqp">https://www.desmos.com/calculator/3m1wdcgaqp</a>
-     * 
+     *
      */
     public static abstract class IntervalsCurve extends Interpolation {
 
