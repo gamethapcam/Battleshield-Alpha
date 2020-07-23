@@ -69,6 +69,10 @@ public class GameplayScreen extends AdvancedScreen {
 
     private TempProgressBar tempProgressBar;
 
+    private LevelFinishStuff levelFinishStuff;
+
+
+
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
         super(game, transform);
@@ -98,6 +102,9 @@ public class GameplayScreen extends AdvancedScreen {
         scoreTimerStuff = new ScoreTimerStuff(this, myBitmapFont);
 
         //initializeControllers();
+
+        levelFinishStuff = new LevelFinishStuff(this);
+
 
         //---------
         state = State.PLAYING;
@@ -138,6 +145,8 @@ public class GameplayScreen extends AdvancedScreen {
         bulletsHandler.update(delta);
 
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
+
+        levelFinishStuff.update(delta);
 
 
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
@@ -241,7 +250,9 @@ public class GameplayScreen extends AdvancedScreen {
 
         whiteTextureHidesEveryThingSecondStageStarBullet.setBounds(-worldWidth, -worldHeight, worldWidth*4, worldHeight*4);
 
-        resizeTempProgressBar(worldWidth, worldHeight);
+        tempProgressBar.resize(width, height, worldWidth, worldHeight);
+
+        levelFinishStuff.resize(width, height, worldWidth, worldHeight);
     }
 
     //------------------------------ initializers ------------------------------
@@ -353,18 +364,12 @@ public class GameplayScreen extends AdvancedScreen {
     }
 
     private void initializeTempProgressBar() {
-        tempProgressBar = new TempProgressBar(myBitmapFont);
+        tempProgressBar = new TempProgressBar(this, myBitmapFont);
         tempProgressBar.setProgressBarPercentageBarHeightRatio(MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO);
         addActor(tempProgressBar);
     }
 
-    private void resizeTempProgressBar(float worldWidth, float worldHeight) {
-        tempProgressBar.setWidth(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_WIDTH);
-        tempProgressBar.setHeight(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_HEIGHT);
-        tempProgressBar.setX(worldWidth/2 - tempProgressBar.getWidth()/2);
-        tempProgressBar.setY(worldHeight/2 - tempProgressBar.getHeight()/2);
-        tempProgressBar.setProgressBarHeight(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_HEIGHT, GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_TOP_MARGIN);
-    }
+
 
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
@@ -495,6 +500,14 @@ public class GameplayScreen extends AdvancedScreen {
         this.inStarBulletAnimation = inStarBulletAnimation;
     }
 
+    public TempProgressBar getTempProgressBar() {
+        return tempProgressBar;
+    }
+
+    public LevelFinishStuff getLevelFinishStuff() {
+        return levelFinishStuff;
+    }
+
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
@@ -531,5 +544,12 @@ public class GameplayScreen extends AdvancedScreen {
      */
     public void hideTempProgressBar() {
         tempProgressBar.setVisible(false);
+    }
+
+    public void onWaitingForFinishButtonToBePressed() {
+        scoreTimerStuff.getPlanetsTimerFlashesWhenZero().start();
+        levelFinishStuff.getFinishTextTween().start();
+        levelFinishStuff.getFinishText().setVisible(true);
+        tempProgressBar.positionBottomLeft();
     }
 }

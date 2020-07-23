@@ -125,8 +125,9 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             float secondsLeft = MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - scoreTimer), 0, Float.MAX_VALUE);
             scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) (secondsLeft * SECONDS_TO_MINUTES)), true);
 
-            if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.LOST)
-                planetsTimerFlashesWhenZero.start();
+            if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.LOST) {
+                gameplayScreen.onWaitingForFinishButtonToBePressed();
+            }
         }
     }
 
@@ -178,6 +179,10 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
     public Tween getFadeOutTween() {
         return fadeOutTween;
+    }
+
+    public Tween getPlanetsTimerFlashesWhenZero() {
+        return planetsTimerFlashesWhenZero;
     }
 
     public ScoreMultiplierDifficultyLevelStuff getScoreMultiplierDifficultyLevelStuff() {

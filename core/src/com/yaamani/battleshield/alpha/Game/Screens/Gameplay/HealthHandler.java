@@ -75,6 +75,9 @@ public class HealthHandler {
         if (gameplayScreen != null)
             if (gameplayScreen.getScoreTimerStuff() != null)
                 gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
+
+
+        gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
     }
 
     public void newGame() {
@@ -116,7 +119,13 @@ public class HealthHandler {
             gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
             gameplayScreen.getStarsContainer().resetCurrentSpeed();
             gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
+
+            gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().clearRefractionBuffers();
+
+            gameplayScreen.getTempProgressBar().positionCentre();
             // gameplayScreen.showTempProgressBar();
+
+            gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
         }
     }

@@ -620,6 +620,33 @@ public abstract class MyInterpolation extends Interpolation {
     }
 
 
+    /**
+     * <a href="https://www.desmos.com/calculator/tgfwewhdsh">https://www.desmos.com/calculator/tgfwewhdsh</a>
+     */
+    public static class MyPulses extends Interpolation {
+
+        private float n;
+
+        public MyPulses(float n) {
+            setN(n);
+        }
+
+        @Override
+        public float apply(float a) {
+            if (a == 1) return 1;
+            if (MathUtils.floor(2*n*a) % 2 == 0)
+                return 0;
+            else return 1;
+        }
+
+        public void setN(float n) {
+            if (n <= 0)
+                throw new ValueOutOfRangeException("n must be positive.");
+            this.n = n;
+        }
+    }
+
+
 
 
 

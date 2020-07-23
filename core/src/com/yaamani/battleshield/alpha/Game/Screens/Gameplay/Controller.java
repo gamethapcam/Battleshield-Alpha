@@ -67,8 +67,8 @@ public abstract class Controller extends Group implements Resizable {
     }
 
     private void settingBounds(float worldWidth, float worldHeight) {
-        if (controllerPosition == Direction.LEFT) setBounds(0, 0, worldWidth/2f, worldHeight);
-        else setBounds(worldWidth/2f, 0, worldWidth/2f, worldHeight);
+        if (controllerPosition == Direction.LEFT) setBounds(0, 0, worldWidth/2f - TURRET_RADIUS, worldHeight);
+        else setBounds(worldWidth/2f + TURRET_RADIUS, 0, worldWidth/2f - TURRET_RADIUS, worldHeight);
 
     }
 

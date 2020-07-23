@@ -8,9 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
+
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_HEIGHT;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_HEIGHT;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_TOP_MARGIN;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_WIDTH;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.SCORE_TXT_MARGIN;
 
 /**
  * <p>A very fast way to display a temp progress bar for a certain amount of time.</p>
@@ -18,29 +25,36 @@ import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
  * Or you can call {@link TempProgressBar#display(TextureRegion, float)} to display the progress bar with an image on top of it.</p>
  * <p>You should call {@link #setProgressBarHeight(float, float)} immediately after initialization & {@link #setBounds(float, float, float, float)}.</p>
  */
-public class TempProgressBar extends Group {
+public class TempProgressBar extends Group implements Resizable {
 
     private static final String TAG = TempProgressBar.class.getSimpleName();
 
+
+    private GameplayScreen gameplayScreen;
+
+
     public enum Alignment {LEFT, CENTER, RIGHT}
     private Alignment textOrImageAlignment;
-
     private Image image;
+
     private SimpleText text;
     private MyProgressBar progressBar;
-
     private float progressBarTopMargin;
 
     private Actor tempActor; // text or image
+
     private TextureRegion tempTextureRegion;
     private String tempCharSequence;
-
     private Tween tween;
+
+    private boolean centre = true; // if false -> bottom left
+
     //private boolean reverse;
 
-
-    public TempProgressBar(MyBitmapFont myBitmapFont, Alignment textOrImageAlignment) {
+    public TempProgressBar(GameplayScreen gameplayScreen, MyBitmapFont myBitmapFont, Alignment textOrImageAlignment) {
         setVisible(false);
+
+        this.gameplayScreen = gameplayScreen;
 
         this.textOrImageAlignment = textOrImageAlignment;
 
@@ -58,14 +72,28 @@ public class TempProgressBar extends Group {
         initializeTween();
     }
 
-    public TempProgressBar(MyBitmapFont myBitmapFont) {
-        this(myBitmapFont, Alignment.CENTER);
+    public TempProgressBar(GameplayScreen gameplayScreen, MyBitmapFont myBitmapFont) {
+        this(gameplayScreen, myBitmapFont, Alignment.CENTER);
     }
 
     @Override
     public void act(float delta) {
         tween.update(delta);
         super.act(delta);
+    }
+
+    @Override
+    public void resize(int width, int height, float worldWidth, float worldHeight) {
+        setWidth(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_WIDTH);
+        setHeight(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_HEIGHT);
+        if (centre) {
+            setX(worldWidth / 2 - getWidth() / 2);
+            setY(worldHeight / 2 - getHeight() / 2);
+        } else {
+            setX(SCORE_TXT_MARGIN);
+            setY(SCORE_TXT_MARGIN);
+        }
+        setProgressBarHeight(GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_HEIGHT, GAMEPLAY_SCREEN_TEMP_PROGRESS_BAR_PROGRESS_BAR_TOP_MARGIN);
     }
 
     private void initializeTween() {
@@ -218,6 +246,22 @@ public class TempProgressBar extends Group {
             calculateImageBounds(tempTextureRegion);
         if (tempCharSequence != null)
             calculateTextBounds(tempCharSequence);
+    }
+
+    public void positionCentre() {
+        centre = true;
+
+        float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
+        float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
+        setX(worldWidth / 2 - getWidth() / 2);
+        setY(worldHeight / 2 - getHeight() / 2);
+    }
+
+    public void positionBottomLeft() {
+        centre = false;
+
+        setX(SCORE_TXT_MARGIN);
+        setY(SCORE_TXT_MARGIN);
     }
 
     /**

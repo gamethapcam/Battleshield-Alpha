@@ -177,6 +177,26 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
         currentCrackGenerationFrame = CrackGenerator.NUMBER_OF_RANDOMLY_GENERATED_LINE_POINTS-2;
     }
 
+    public void clearRefractionBuffers() {
+        refractionCrackMapFrameBuffer0.begin();
+
+        //Gdx.gl.glClearColor(.5f, .5f, 0, 0);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        refractionCrackMapFrameBuffer0.end();
+
+
+
+        refractionCrackMapFrameBuffer1.begin();
+
+        //Gdx.gl.glClearColor(.5f, .5f, 0, 0);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        refractionCrackMapFrameBuffer1.end();
+    }
+
     @Override
     public void dispose() {
         refractionCrackMap.dispose();
@@ -215,23 +235,7 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
         refractionCrackMapFrameBuffer1 = new FrameBuffer(f, w, h, false);
 
 
-        refractionCrackMapFrameBuffer0.begin();
-
-        //Gdx.gl.glClearColor(.5f, .5f, 0, 0);
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        refractionCrackMapFrameBuffer0.end();
-
-
-
-        refractionCrackMapFrameBuffer1.begin();
-
-        //Gdx.gl.glClearColor(.5f, .5f, 0, 0);
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        refractionCrackMapFrameBuffer1.end();
+        clearRefractionBuffers();
 
 
         currentFBO = refractionCrackMapFrameBuffer0;

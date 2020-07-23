@@ -306,6 +306,7 @@ public class MainMenuScreen extends AdvancedScreen {
                 planets.setVisible(false);
                 //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
             }
+
         });
     }
 

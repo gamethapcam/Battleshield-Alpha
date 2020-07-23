@@ -334,9 +334,9 @@ public final class Constants {
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = MyMath.cloneAndReplace(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS, SpecialBullet.BOMB);
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -/*0.04f*/0;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -/*0.2f*/0;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -593,7 +593,29 @@ public final class Constants {
 
 
 
-    public static final float CRYSTAL_LEVEL_TIME = 5/*0.5f*/; //minutes
+
+
+
+
+
+    public static final float LEVEL_FINISH_FINISH_TEXT_TWEEN_DURATION = 350; //ms
+
+    public static final Interpolation LEVEL_FINISH_FINISH_TEXT_TWEEN_INTERPOLATION = new MyInterpolation.MyPulses(1);
+
+    public static final float LEVEL_FINISH_FINISH_TEXT_INITIAL_ALPHA = 0.55f;
+
+    public static final float LEVEL_FINISH_FINISH_TEXT_FINAL_ALPHA = 1f;
+
+    public static final float LEVEL_FINISH_FINISH_TEXT_INITIAL_HEIGHT = 0.485f * TURRET_RADIUS;
+
+    public static final float LEVEL_FINISH_FINISH_TEXT_FINAL_HEIGHT = 0.5f * TURRET_RADIUS;
+
+
+
+
+
+
+    public static final float CRYSTAL_LEVEL_TIME = 5/*0.04f*//*0.5f*/; //minutes
 
     public static final SpecialBullet[] CRYSTAL_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
 
