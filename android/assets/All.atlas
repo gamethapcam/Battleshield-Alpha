@@ -76,7 +76,7 @@ Mirror Arrows
   index: -1
 Pause Symbol
   rotate: false
-  xy: 662, 31
+  xy: 2729, 1492
   size: 58, 79
   orig: 58, 79
   offset: 0, 0
@@ -174,28 +174,28 @@ Shields120
   index: -1
 Shields45
   rotate: false
-  xy: 722, 48
+  xy: 978, 158
   size: 16, 62
   orig: 16, 62
   offset: 0, 0
   index: -1
 Shields48
   rotate: false
-  xy: 895, 153
+  xy: 2789, 1504
   size: 16, 67
   orig: 16, 67
   offset: 0, 0
   index: -1
 Shields51
   rotate: false
-  xy: 2575, 2717
+  xy: 736, 38
   size: 17, 72
   orig: 17, 72
   offset: 0, 0
   index: -1
 Shields54
   rotate: false
-  xy: 2729, 1494
+  xy: 2575, 2712
   size: 18, 77
   orig: 18, 77
   offset: 0, 0
@@ -209,21 +209,21 @@ Shields57
   index: -1
 Shields60
   rotate: false
-  xy: 1780, 1388
+  xy: 1395, 482
   size: 20, 87
   orig: 20, 87
   offset: 0, 0
   index: -1
 Shields63
   rotate: false
-  xy: 1395, 477
+  xy: 1756, 1383
   size: 21, 92
   orig: 21, 92
   offset: 0, 0
   index: -1
 Shields66
   rotate: false
-  xy: 1756, 1379
+  xy: 954, 124
   size: 22, 96
   orig: 22, 96
   offset: 0, 0
@@ -396,6 +396,13 @@ SURVIVAL
   orig: 658, 108
   offset: 0, 0
   index: -1
+T1
+  rotate: false
+  xy: 821, 115
+  size: 131, 105
+  orig: 131, 105
+  offset: 0, 0
+  index: -1
 Too Many Trees
   rotate: false
   xy: 2, 3117
@@ -405,7 +412,7 @@ Too Many Trees
   index: -1
 Star
   rotate: false
-  xy: 821, 148
+  xy: 662, 38
   size: 72, 72
   orig: 72, 72
   offset: 0, 0

@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DifficultyCurveTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
@@ -38,6 +39,8 @@ public class MainMenuScreen extends AdvancedScreen {
 
     private SimpleText planets;
     private SimpleText crystal;
+    private Image t1;
+    private SimpleText diseases;
 
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
@@ -132,6 +135,8 @@ public class MainMenuScreen extends AdvancedScreen {
         initializeFree(game);
         initializePlanets();
         initializeCrystal(game);
+        initializeT1(game);
+        initializeDiseases(game);
 
         //start.setLayoutEnabled(false, earthEntities); //for performance.
 
@@ -147,6 +152,8 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(free);
         addActor(planets);
         addActor(crystal);
+        addActor(t1);
+        addActor(diseases);
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
     }
@@ -214,6 +221,15 @@ public class MainMenuScreen extends AdvancedScreen {
         if (crystal != null) {
             crystal.setHeight(MM_CRYSTAL_TXT_HEIGHT);
             crystal.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - crystal.getWidth());
+        }
+
+        TextureRegion _t1 = Assets.instance.mainMenuAssets.t1;
+        t1.setSize(MM_T1_TXT_HEIGHT * _t1.getRegionWidth() / _t1.getRegionHeight(), MM_T1_TXT_HEIGHT);
+        if (t1 != null) t1.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - t1.getWidth());
+
+        if (diseases != null) {
+            diseases.setHeight(MM_DISEASES_TXT_HEIGHT);
+            diseases.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - diseases.getWidth());
         }
     }
 
@@ -418,6 +434,8 @@ public class MainMenuScreen extends AdvancedScreen {
                         survival.setVisible(false);
                         planets.setVisible(false);
                         crystal.setVisible(true);
+                        t1.setVisible(true);
+                        diseases.setVisible(true);
                     }
                 }
         );
@@ -453,6 +471,56 @@ public class MainMenuScreen extends AdvancedScreen {
         gameplayScreen.setGameplayMode(GameplayMode.CRYSTAL);
         game.switchScreens(mainMenuToGameplay);
         //game.switchScreens(new SimplestTransition(game, game.getAdvancedScreens()[2], new ExperimentsScreen(game, false)));
+    }
+
+    private void initializeT1(final AdvancedStage game) {
+        t1 = new Image(Assets.instance.mainMenuAssets.t1) {
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+
+                /*Color color = getColor();
+                batch.setColor(1, 1, 1, alpha * parentAlpha);*/
+
+                //Gdx.app.log(TAG, "" + batch.getBlendSrcFunc() + ", " + batch.getBlendDstFunc());
+                batch.setBlendFunction(GL20.GL_ONE_MINUS_DST_COLOR, GL20.GL_ONE_MINUS_SRC_COLOR);
+                super.draw(batch, parentAlpha);
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            }
+        };
+
+
+        t1.setVisible(false);
+
+        t1.setY(MM_T1_TXT_FINAL_Y);
+
+
+    }
+
+    private void initializeDiseases(AdvancedStage game) {
+        diseases = new SimpleText(myBitmapFont, "DISEASES");
+
+        diseases.setVisible(false);
+
+        diseases.setY(MM_DISEASES_FINAL_Y);
+
+        diseases.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        diseases.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        //Gdx.app.log(TAG, "HI");
+                        startDiseases(game);
+                    }
+                }
+        );
+    }
+
+    private void startDiseases(final AdvancedStage game) {
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+        gameplayScreen.setGameplayMode(GameplayMode.DISEASES);
+        game.switchScreens(mainMenuToGameplay);
     }
 
     public void setSurvivalAlpha(float a) {

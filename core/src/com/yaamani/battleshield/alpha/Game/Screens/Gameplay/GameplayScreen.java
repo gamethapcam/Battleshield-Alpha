@@ -7,10 +7,12 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
@@ -33,6 +35,7 @@ public class GameplayScreen extends AdvancedScreen {
     private Array<Timer> finishWhenLosing;
     //private Array<Timer> resumeWhenResumingStarBullet;
 
+    private Group containerOfContainers; // Initially created for diseases planet (Dizziness disease).
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
 
@@ -141,13 +144,16 @@ public class GameplayScreen extends AdvancedScreen {
             if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
         }*/
 
+        if (getGameplayMode() == GameplayMode.DISEASES) {
+            containerOfContainers.rotateBy(delta * DISEASED_DIZZINESS_ROTATION_SPEED);
+        }
+
         shieldsAndContainersHandler.update(delta);
         bulletsHandler.update(delta);
 
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
 
         levelFinishStuff.update(delta);
-
 
         //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
         //Gdx.app.log(TAG, "controllerLeft.getAngleDeg() = " + controllerLeft.getAngleDeg());
@@ -253,6 +259,8 @@ public class GameplayScreen extends AdvancedScreen {
         tempProgressBar.resize(width, height, worldWidth, worldHeight);
 
         levelFinishStuff.resize(width, height, worldWidth, worldHeight);
+
+        containerOfContainers.setPosition(worldWidth/2f, worldHeight/2f);
     }
 
     //------------------------------ initializers ------------------------------
@@ -301,13 +309,18 @@ public class GameplayScreen extends AdvancedScreen {
     }
 
     private void initializeBulletsAndShieldArray() {
+        containerOfContainers = new Group();
+
         bulletsAndShieldContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT];
         for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
-            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i);
+            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, containerOfContainers, i);
         }
 
         shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
 
+
+        addActor(containerOfContainers);
+        //containerOfContainers.rotateBy(-10f);
 
         /*bulletsAndShieldContainers[0].getShield().setDebug(true);
         bulletsAndShieldContainers[0].getShield().getSemiCircle0().setDebug(true);*/
@@ -407,9 +420,15 @@ public class GameplayScreen extends AdvancedScreen {
 
             switch (gameplayMode) {
                 case CRYSTAL:
+                    scoreTimerStuff.setLevelTime(CRYSTAL_LEVEL_TIME);
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
                     bulletsHandler.startCrystalDifficultyTweens();
+                    break;
+                case DISEASES:
+                    scoreTimerStuff.setLevelTime(DISEASES_LEVEL_TIME);
+                    bulletsHandler.setCurrentPlanetSpecialBullets(null);
+                    // TODO: startDiseasesDifficultyTweens();
                     break;
             }
 

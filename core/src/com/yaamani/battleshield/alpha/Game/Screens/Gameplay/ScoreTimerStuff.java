@@ -29,6 +29,8 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     private float currentBest;
     private boolean playerScoredBest = false;
 
+    private float levelTime; // Not survival
+
     private Preferences preferences;
 
     private SimpleText scoreText;
@@ -105,22 +107,41 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             currentBest = 0;
         }
 
-        setCharSequenceForScoreText();
+
+
+        if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
+            updateCharSequenceForScoreTextWhenSurvival();
+        else {
+            float secondsLeft = calculateSecondsLeft();
+            updateCharSequenceForScoreTextWhenNotSurvival(secondsLeft);
+
+            handleFinishButton(secondsLeft);
+        }
+
+
+        //updateCharSequenceForScoreText();
     }
 
-    private void setCharSequenceForScoreText() {
+    private void updateCharSequenceForScoreTextWhenSurvival() {
+        scoreText.setCharSequence("" + roundTo(scoreTimer, 2), true);
+    }
+
+    private void updateCharSequenceForScoreTextWhenNotSurvival(float secondsLeft) {
+        scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) (secondsLeft * SECONDS_TO_MINUTES)), true);
+    }
+
+    private void handleFinishButton(float secondsLeft) {
+        if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.LOST) {
+            gameplayScreen.onWaitingForFinishButtonToBePressed();
+        }
+    }
+
+    /*private void updateCharSequenceForScoreText() {
         if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
             // If SURVIVAL -> display the score variable.
             scoreText.setCharSequence("" + roundTo(scoreTimer, 2), true);
         else {
             // If not SURVIVAL -> display a timer counting down.
-            float levelTime = 0;
-
-            switch (gameplayScreen.getGameplayMode()) {
-                case CRYSTAL:
-                    levelTime = CRYSTAL_LEVEL_TIME;
-                    break;
-            }
 
             float secondsLeft = MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - scoreTimer), 0, Float.MAX_VALUE);
             scoreText.setCharSequence("" + toMinutesDigitalTimeFormat((float) (secondsLeft * SECONDS_TO_MINUTES)), true);
@@ -129,6 +150,10 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                 gameplayScreen.onWaitingForFinishButtonToBePressed();
             }
         }
+    }*/
+
+    private float calculateSecondsLeft() {
+        return MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - scoreTimer), 0, Float.MAX_VALUE);
     }
 
     private void checkBestScore() {
@@ -203,6 +228,10 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
     public void gameplayModeStuff(GameplayMode gameplayMode) {
         scoreMultiplierDifficultyLevelStuff.gameplayModeStuff(gameplayMode);
+    }
+
+    public void setLevelTime(float levelTime) {
+        this.levelTime = levelTime;
     }
 
     //----------------------------------------------------------------------------
@@ -291,18 +320,6 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
         //gameplayScreen.addToFinishWhenLosing(planetsTimerFlashesWhenZero);
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public static class TimePlayedSoFarStarBulletThirdStageInterpolation extends Interpolation {

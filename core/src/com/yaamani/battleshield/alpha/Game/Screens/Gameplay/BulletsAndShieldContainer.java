@@ -27,9 +27,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
-    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index) {
+    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, Group containerOfContainers, byte index) {
         shield = new Shield(this, gameplayScreen);
-        gameplayScreen.addActor(this);
+        //gameplayScreen.addActor(this);
+        containerOfContainers.addActor(this);
         this.index = index;
 
         initializeRotationOmegaAlphaTween(gameplayScreen);
@@ -61,7 +62,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        setPosition(worldWidth / 2f, worldHeight / 2f);
+        //setPosition(worldWidth / 2f, worldHeight / 2f);
+        //setPosition();
     }
 
     public Shield getShield() {
@@ -72,10 +74,18 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         return index;
     }
 
+    public RotationOmegaAlphaTween getRotationOmegaAlphaTween() {
+        return rotationOmegaAlphaTween;
+    }
+
     //------------------------------------------------------------
 
     public void startRotationOmegaAlphaTween() {
         rotationOmegaAlphaTween.start();
+    }
+
+    public void setOldRotationDeg(float oldRotationDeg) {
+        rotationOmegaAlphaTween.setOldRotationDeg(oldRotationDeg);
     }
 
     public void setNewRotationDeg(float newRotationDeg) {
@@ -123,9 +133,19 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         private RotationOmegaAlphaTween(float durationMillis, Interpolation interpolation) {
             super(durationMillis, interpolation);
 
-            oldRotationDeg = BulletsAndShieldContainer.this.getRotation();
+            /*oldRotationDeg = BulletsAndShieldContainer.this.getRotation();*/
             oldOmegaDeg = BulletsAndShieldContainer.this.getShield().getOmegaDeg();
             oldAlpha = newAlpha = 0f;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+
+            //oldRotationDeg = BulletsAndShieldContainer.this.getRotation();
+            //oldOmegaDeg = BulletsAndShieldContainer.this.getShield().getOmegaDeg();
+            //oldAlpha = newAlpha = 0f;
+
         }
 
         @Override
@@ -136,7 +156,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             if (newOmegaDeg == null | newRotationDeg == null) return;
             BulletsAndShieldContainer.this.getShield().setOmegaDeg(interpolation.apply(oldOmegaDeg, newOmegaDeg, percentage));
             BulletsAndShieldContainer.this.setRotation(interpolation.apply(oldRotationDeg, newRotationDeg, percentage));
+        }
 
+        public void setOldRotationDeg(float oldRotationDeg) {
+            this.oldRotationDeg = oldRotationDeg;
         }
 
         private void setNewRotationDeg(float newRotationDeg) {

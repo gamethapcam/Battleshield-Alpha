@@ -87,6 +87,10 @@ public final class Constants {
     public static final float MM_PLANETS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
 
     public static final float MM_CRYSTAL_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
+
+    public static final float MM_DISEASES_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
+
+    public static final float MM_T1_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
     //-------
     public static final float MM_MOUNTAIN_INITIAL_Y = -MM_MOUNTAIN_HEIGHT;
 
@@ -129,6 +133,10 @@ public final class Constants {
     public static final float MM_PLANETS_TXT_FINAL_Y = MM_FREE_TXT_FINAL_Y;
 
     public static final float MM_CRYSTAL_TXT_FINAL_Y = MM_SURVIVAL_TXT_FINAL_Y;
+
+    public static final float MM_T1_TXT_FINAL_Y = MM_FREE_TXT_FINAL_Y;
+
+    public static final float MM_DISEASES_FINAL_Y = MM_FREE_TXT_FINAL_Y - 13f;
     //-------
     public static final float MM_MOUNTAIN_X_MOVING_AMOUNT = WORLD_SIZE * 0.02f;
 
@@ -147,7 +155,7 @@ public final class Constants {
 
 
     public enum GameplayControllerType {FREE, RESTRICTED}
-    public enum GameplayMode {SURVIVAL, CRYSTAL}
+    public enum GameplayMode {SURVIVAL, CRYSTAL, DISEASES}
 
 
     public enum Direction {RIGHT, LEFT}
@@ -702,6 +710,15 @@ public final class Constants {
 
 
 
+    public static final float DISEASES_LEVEL_TIME = 5; //minutes
+
+    public static final float DISEASED_DIZZINESS_ROTATION_SPEED = -12; //deg/sec
+
+
+
+
+
+
 
 
 
@@ -812,5 +829,7 @@ public final class Constants {
     public static final String ASSETS_RESTRICTED = "RESTRICTED";
 
     public static final String ASSETS_FREE = "FREE";
+
+    public static final String ASSETS_T1 = "T1";
 
 }

@@ -621,7 +621,7 @@ public abstract class MyInterpolation extends Interpolation {
 
 
     /**
-     * <a href="https://www.desmos.com/calculator/tgfwewhdsh">https://www.desmos.com/calculator/tgfwewhdsh</a>
+     * <a href="https://www.desmos.com/calculator/uawiku9scg">https://www.desmos.com/calculator/uawiku9scg</a>
      */
     public static class MyPulses extends Interpolation {
 

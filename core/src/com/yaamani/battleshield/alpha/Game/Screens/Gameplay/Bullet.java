@@ -261,7 +261,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
     }
 
-    public void stopUsingTheBullet(float worldWidth, float worldHeight) {
+    public void  stopUsingTheBullet(float worldWidth, float worldHeight) {
         inUse = false;
         //bulletMovement.finish();
         resetPosition(worldWidth, worldHeight);

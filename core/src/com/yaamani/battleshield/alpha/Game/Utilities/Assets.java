@@ -113,6 +113,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion survival;
         public final TextureRegion restricted;
         public final TextureRegion free;
+        public final TextureRegion t1;
 
         private MainMenuAssets(TextureAtlas atlas) {
             mountain = atlas.findRegion(ASSETS_MOUNTAIN);
@@ -125,6 +126,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             survival = atlas.findRegion(ASSETS_SURVIVAL);
             restricted = atlas.findRegion(ASSETS_RESTRICTED);
             free = atlas.findRegion(ASSETS_FREE);
+            t1 = atlas.findRegion(ASSETS_T1);
         }
 
     }
