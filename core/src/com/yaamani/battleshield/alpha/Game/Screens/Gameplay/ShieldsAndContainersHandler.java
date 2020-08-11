@@ -115,8 +115,11 @@ public class ShieldsAndContainersHandler implements Updatable {
             if (cAs[i] == null) continue;
 
             for (int c = 0; c < activeShieldsNum; c++) {
-                float onStartAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f));
-                float onEndAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f));
+
+                Gdx.app.log(TAG, "" + gameplayScreen.getContainerOfContainers().getRotation());
+
+                float onStartAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f) + gameplayScreen.getContainerOfContainers().getRotation());
+                float onEndAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f) + gameplayScreen.getContainerOfContainers().getRotation());
                 //if (onStartAngle < 0) onStartAngle += 360f; //To avoid -ve angles.
                 //Gdx.app.log(TAG,c + ", " + gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngle + ", " + onEndAngle);
 

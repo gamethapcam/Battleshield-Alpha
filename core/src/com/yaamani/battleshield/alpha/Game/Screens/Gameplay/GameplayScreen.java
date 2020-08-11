@@ -527,6 +527,10 @@ public class GameplayScreen extends AdvancedScreen {
         return levelFinishStuff;
     }
 
+    public Group getContainerOfContainers() {
+        return containerOfContainers;
+    }
+
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
