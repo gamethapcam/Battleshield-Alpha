@@ -675,7 +675,7 @@ public abstract class MyInterpolation extends Interpolation {
 
         public void setN(int n) {
             if (n < 2)
-                throw new ValueOutOfRangeException("n must be greater than or equal to 2.");
+                throw new ValueOutOfRangeException("n must be greater than or equal to 2. Passed value is " + n + ".");
             this.n = n;
         }
 

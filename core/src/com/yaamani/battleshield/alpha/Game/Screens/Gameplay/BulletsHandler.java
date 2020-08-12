@@ -13,6 +13,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
+import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -830,8 +831,19 @@ public class BulletsHandler implements Updatable {
                 break;
         }
 
-        D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY.setN(tempNonBusyContainersSize);
-        int numOfFakeWaves = (int) D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY.apply(1, tempNonBusyContainersSize, MathUtils.random());
+        //Gdx.app.log(TAG, "tempNonBusyContainersSize = " + tempNonBusyContainersSize);
+
+        int numOfFakeWaves;
+
+        try {
+            D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY.setN(tempNonBusyContainersSize);
+            numOfFakeWaves = (int) D_CRYSTAL_NUMBER_OF_FAKE_WAVES_PROBABILITY.apply(1, tempNonBusyContainersSize, MathUtils.random());
+        } catch (ValueOutOfRangeException e) {
+            /*if (tempNonBusyContainersSize == 0)
+                numOfFakeWaves = 0;
+            else // == 1*/
+                numOfFakeWaves = 1;
+        }
 
         Gdx.app.log(TAG, "tempNonBusyContainersSize = " + tempNonBusyContainersSize + ", numOfFakeWaves = " + numOfFakeWaves);
 
