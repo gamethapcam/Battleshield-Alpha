@@ -16,7 +16,7 @@ precision mediump float;
 #define T_MAX_L 0.001-T_MIN_L
 #define T_MIN_C 0.001
 #define T_MAX_C 0.004-T_MIN_C
-#define SIN_MULTIPLIER_RANDOM 100000.0
+//#define SIN_MULTIPLIER_RANDOM 100000.0
 #define RCL_M 150.
 #define RCC_M 1044.
 #define EXTENSION 0.03
@@ -78,9 +78,17 @@ float sech(float x) {
     return 2./(exp(x) + exp(-x));
 }
 
-float rand(float x) {
+float rand0(float x) {
+    return fract(sin(30.0*x)*30.0);
+}
+
+/*float rand(float x) {
     return fract(sin(x)*SIN_MULTIPLIER_RANDOM);
     //return sin(x);
+}*/
+
+float rand(float x) {
+    return rand0(rand0(x));
 }
 
 float noise(float x, float m, float initial) {
@@ -219,7 +227,7 @@ void main() {
         if (insideVerticalBounds(u_lPoints[u_currentFrame], u_lPoints[u_currentFrame+1], x, T_MAX_L)) {
             if (abs(linePerpendicularDistance) <= thickness) {
                 float rcl = noiseRC(u_c*x+u_s*y, RCL_M, 70.)/*1.*/;
-                outColor.b = rcl;
+                outColor.b = rcl/*0.*/;
             }
 
 
@@ -230,7 +238,7 @@ void main() {
 
 
 
-    //////////////////////////////////////// Parabolas & thier refraction ////////////////////////////////////////
+    //////////////////////////////////////// Parabolas ////////////////////////////////////////
 
     int index = -1;
     if (u_currentFrame == 4) {
@@ -269,39 +277,43 @@ void main() {
         float totalDistanceBetweenCurveAndLine = abs(curveDistanceAlongPerpendicularLine) + abs(linePerpendicularDistance);
 
 
-        /*float ratio;
-        if (curveDistanceAlongPerpendicularLine > linePerpendicularDistance)
-        ratio = curveDistanceAlongPerpendicularLine/linePerpendicularDistance;
-        else
-        ratio = linePerpendicularDistance/curveDistanceAlongPerpendicularLine;*/
+        //float ratio;
+        //if (curveDistanceAlongPerpendicularLine > linePerpendicularDistance)
+        //ratio = curveDistanceAlongPerpendicularLine/linePerpendicularDistance;
+        //else
+        //ratio = linePerpendicularDistance/curveDistanceAlongPerpendicularLine;
 
 
         float c_t = thickness / (totalDistanceBetweenCurveAndLine*150.);
-        float rcc = /*.2*ratio * */noise(u_c*x+u_s*y, RCC_M/(200.*c_t), 70.)/* / totalDistanceBetweenCurveAndLine*/;
+        float rcc = noise(u_c*x+u_s*y, RCC_M/(200.*c_t), 70.);
         if (curveDistanceAlongPerpendicularLine <= c_t) {
-            outColor.b = rcc;
+
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+
+            //outColor.b = rcc; // Uncomment to make the curve work.
+
         }
 
-        /*if (outColor.g == 1.)
-            outColor.g = 0.;
-        else
-            outColor.g = 1.;*/
-
-        /*if (outColor.g < .25)
-            outColor.g = .3;
-        else if (outColor.g < .5)
-            outColor.g = 0.6;
-        else if (outColor.g < .75)
-            outColor.g = 0.9;
-        else
-            outColor.g = 0.1;*/
-        //outColor.r = 1.;
-
-        //}
     }
 
 
 
+
+
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 

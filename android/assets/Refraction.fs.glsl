@@ -53,7 +53,7 @@ void main() {
     float crackBlur = refractionCrackColor.a;
 
     //vec4 outColor = (texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y+displacementY)) + vec4(crackBlur));
-    vec4 outColor = vec4(crackBlur);
+    vec4 outColor = vec4(/*crackBlur*/0.);
     if (refractionCrackColor.g < 0.25)
         outColor += (texture2D(u_texture, vec2(x, v_texCoords.y)));
     else if (refractionCrackColor.g < 0.5)
@@ -66,7 +66,7 @@ void main() {
 
 
     if (crack > 0.)
-        outColor += crack;
+        outColor += vec4(crack, crack, crack, crack);
         //gl_FragColor = vec4(screenBlendMode(gl_FragColor.rgb, vec3(refractionCrackColor.b, refractionCrackColor.b, refractionCrackColor.b)), 1.);
 
     gl_FragColor = v_color * outColor;
