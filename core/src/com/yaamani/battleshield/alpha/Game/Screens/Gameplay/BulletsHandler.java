@@ -847,10 +847,11 @@ public class BulletsHandler implements Updatable {
 
         Gdx.app.log(TAG, "tempNonBusyContainersSize = " + tempNonBusyContainersSize + ", numOfFakeWaves = " + numOfFakeWaves);
 
-        for (int i = 0; i < numOfFakeWaves; i++) {
-            BulletsAndShieldContainer c = chooseContainer(positioning);
-            attachBullets(c, 1, true); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
-        }
+        if (tempNonBusyContainersSize >= 1)
+            for (int i = 0; i < numOfFakeWaves; i++) {
+                BulletsAndShieldContainer c = chooseContainer(positioning);
+                attachBullets(c, 1, true); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
+            }
     }
 
     /*private BulletsAndShieldContainer chooseContainer() {
