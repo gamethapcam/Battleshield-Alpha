@@ -38,7 +38,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         initializeRotationOmegaAlphaTween(gameplayScreen);
 
         indexText = new SimpleText(gameplayScreen.getMyBitmapFont(), ""+index);
-        addActor(indexText);
+        //addActor(indexText); // Uncomment for debugging
         indexText.setHeight(WORLD_SIZE/20f);
         indexText.setPosition(-indexText.getWidth()/2f, 12f);
 
