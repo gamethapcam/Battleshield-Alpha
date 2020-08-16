@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
@@ -27,13 +28,20 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
-    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, Group containerOfContainers, byte index) {
+    private SimpleText indexText; // for debugging
+
+    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index) {
         shield = new Shield(this, gameplayScreen);
-        //gameplayScreen.addActor(this);
-        containerOfContainers.addActor(this);
+        gameplayScreen.addActor(this);
         this.index = index;
 
         initializeRotationOmegaAlphaTween(gameplayScreen);
+
+        indexText = new SimpleText(gameplayScreen.getMyBitmapFont(), ""+index);
+        addActor(indexText);
+        indexText.setHeight(WORLD_SIZE/20f);
+        indexText.setPosition(-indexText.getWidth()/2f, 12f);
+
 
         /*rotationText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
         addActor(rotationText);
@@ -62,7 +70,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        //setPosition(worldWidth / 2f, worldHeight / 2f);
+        setPosition(worldWidth / 2f, worldHeight / 2f);
         //setPosition();
     }
 

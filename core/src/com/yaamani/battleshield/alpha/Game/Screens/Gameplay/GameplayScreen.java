@@ -35,7 +35,6 @@ public class GameplayScreen extends AdvancedScreen {
     private Array<Timer> finishWhenLosing;
     //private Array<Timer> resumeWhenResumingStarBullet;
 
-    private Group containerOfContainers; // Initially created for diseases planet (Dizziness disease).
     private BulletsAndShieldContainer[] bulletsAndShieldContainers;
     private ShieldsAndContainersHandler shieldsAndContainersHandler;
 
@@ -145,7 +144,7 @@ public class GameplayScreen extends AdvancedScreen {
         }*/
 
         if (getGameplayMode() == GameplayMode.DISEASES) {
-            containerOfContainers.rotateBy(delta * DISEASED_DIZZINESS_ROTATION_SPEED);
+            //containerOfContainers.rotateBy(delta * DISEASED_DIZZINESS_ROTATION_SPEED);
         }
 
         shieldsAndContainersHandler.update(delta);
@@ -260,7 +259,6 @@ public class GameplayScreen extends AdvancedScreen {
 
         levelFinishStuff.resize(width, height, worldWidth, worldHeight);
 
-        containerOfContainers.setPosition(worldWidth/2f, worldHeight/2f);
     }
 
     //------------------------------ initializers ------------------------------
@@ -309,17 +307,14 @@ public class GameplayScreen extends AdvancedScreen {
     }
 
     private void initializeBulletsAndShieldArray() {
-        containerOfContainers = new Group();
-
         bulletsAndShieldContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT];
         for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
-            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, containerOfContainers, i);
+            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, i);
         }
 
         shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
 
 
-        addActor(containerOfContainers);
         //containerOfContainers.rotateBy(-10f);
 
         /*bulletsAndShieldContainers[0].getShield().setDebug(true);
@@ -527,9 +522,7 @@ public class GameplayScreen extends AdvancedScreen {
         return levelFinishStuff;
     }
 
-    public Group getContainerOfContainers() {
-        return containerOfContainers;
-    }
+
 
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------

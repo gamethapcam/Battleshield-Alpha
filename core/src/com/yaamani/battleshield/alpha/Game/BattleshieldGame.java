@@ -54,7 +54,6 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         initializeLoadingScreen();
 
-
         //saveProgrammaticallyGeneratedTextures(1080);
 
         //tweenAndMyTweenTesting = new TweenAndMyTweenTesting(game);

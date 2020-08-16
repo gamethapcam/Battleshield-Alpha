@@ -244,12 +244,12 @@ public class RestrictedController extends Controller {
     private void calculateOutputAngleFromStickAngle() {
         if (getControllerPosition() == Direction.RIGHT) {
             if (stickAngle >= 0)
-                outputAngle = MathUtils.lerp(0, MathUtils.PI / 2f * 0.9999f, stickAngle / (archAngle / 2f));
-            else outputAngle = MathUtils.lerp(0, -MathUtils.PI / 2f * 0.9999f, -stickAngle / (archAngle / 2f));
+                outputAngle = MathUtils.lerp(0, MathUtils.PI / 2f * 0.9f, stickAngle / (archAngle / 2f));
+            else outputAngle = MathUtils.lerp(0, -MathUtils.PI / 2f * 0.9f, -stickAngle / (archAngle / 2f));
         } else {
             if (stickAngle >= 0)
-                outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.00001f, MathUtils.PI, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
-            else outputAngle = MathUtils.lerp(-MathUtils.PI/2f, -MathUtils.PI, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+                outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.1f, MathUtils.PI * 1.1f, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            else outputAngle = MathUtils.lerp(-MathUtils.PI/2f * 1.1f, -MathUtils.PI * 1.1f, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
         }
     }
 

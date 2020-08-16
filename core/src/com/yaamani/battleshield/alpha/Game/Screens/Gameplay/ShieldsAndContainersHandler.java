@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -26,15 +27,25 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     private float baseRotation;
 
+
+    private float[] onStartAngles;
+    private float[] onEndAngles;
+
     public ShieldsAndContainersHandler(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
         initializeMirrorControlsTimer();
+
+        onStartAngles = new float[SHIELDS_MAX_COUNT];
+        onEndAngles = new float[SHIELDS_MAX_COUNT];
     }
 
     @Override
     public void update(float delta) {
         mirrorControlsTimer.update(delta);
+
+        if (gameplayScreen.getBulletsAndShieldContainers()[0].getRotationOmegaAlphaTween().isStarted())
+            updateStartingAndEndingAngles();
 
         /*if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {
             baseRotation -= 0.2f;
@@ -98,6 +109,18 @@ public class ShieldsAndContainersHandler implements Updatable {
         }
     }
 
+    public void updateStartingAndEndingAngles() {
+        float singleShieldAngle = 360f / activeShieldsNum;
+        //Gdx.app.log(TAG, "singleShieldAngle = " + singleShieldAngle + " / 2 = " + (singleShieldAngle / 2f));
+        onStartAngles[0] = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[0].getRotation() - (singleShieldAngle / 2f));
+        onEndAngles[0] = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[0].getRotation() + (singleShieldAngle / 2f));
+
+        for (int i = 1; i < activeShieldsNum; i++) {
+            onStartAngles[i] = MyMath.deg_0_to_360(onStartAngles[i-1] + singleShieldAngle);
+            onEndAngles[i] = MyMath.deg_0_to_360(onEndAngles[i-1] + singleShieldAngle);
+        }
+    }
+
     public void handleOnShields() {
         Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDeg(),
                 gameplayScreen.getControllerRight().getAngleDeg()}; // cAs is for controllerAngles.
@@ -108,8 +131,11 @@ public class ShieldsAndContainersHandler implements Updatable {
         if (cAs[1] != null)
             cAs[1] = MyMath.deg_0_to_360(cAs[1] - 90);
 
+
+
         for (int l = 0; l < activeShieldsNum; l++)
             gameplayScreen.getBulletsAndShieldContainers()[l].getShield().setOn(false);
+
 
         for (int i = 0; i < 2; i++) {
             if (cAs[i] == null) continue;
@@ -118,25 +144,59 @@ public class ShieldsAndContainersHandler implements Updatable {
 
                 //Gdx.app.log(TAG, "" + gameplayScreen.getContainerOfContainers().getRotation());
 
-                float onStartAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f) + gameplayScreen.getContainerOfContainers().getRotation()/* + 90*/);
-                float onEndAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f) + gameplayScreen.getContainerOfContainers().getRotation()/* + 90*/);
+                //float onStartAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f));
+                //float onEndAngle = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f));
+
+                /*onStartAngles[c] = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() - (360f / activeShieldsNum / 2f));
+                onEndAngles[c] = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + (360f / activeShieldsNum / 2f));*/
+
                 //if (onStartAngle < 0) onStartAngle += 360f; //To avoid -ve angles.
-                //Gdx.app.log(TAG,c + ", " + gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngle + ", " + onEndAngle);
+                //Gdx.app.log(TAG,c + ", " + gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngles[c] + ", " + onEndAngles[c]);
 
-                boolean setOnToTrue = false;
+                boolean inBounds = false;
 
-                if (onStartAngle > onEndAngle) {
-                    if (cAs[i] >= onStartAngle | cAs[i] <= onEndAngle) setOnToTrue = true;
-                } else if (cAs[i] > onStartAngle & cAs[i] <= onEndAngle) setOnToTrue = true;
+                if (onStartAngles[c] > onEndAngles[c]) {
+                    if (cAs[i] >= onStartAngles[c] | cAs[i] <= onEndAngles[c]) inBounds = true;
+                } else if (cAs[i] >= onStartAngles[c] & cAs[i] <= onEndAngles[c]) inBounds = true;
 
-                if (setOnToTrue) {
+                if (inBounds) {
                     //Gdx.app.log(TAG,gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngle + ", " + onEndAngle + ", " + cAs[i]);
-                    gameplayScreen.getBulletsAndShieldContainers()[c].getShield().setOn(true);
+                    BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[c];
+                    container.getShield().setOn(true);
                     break;
+
+                    /*float rotation = MyMath.deg_0_to_360(container.getRotation());
+                    if (i == 0) { // left controller
+                        if (rotation >= 0 & rotation <= 180) {
+                            container.getShield().setOn(true);
+                        } else {
+                            int index = MathUtils.clamp(c-1, 0, activeShieldsNum);
+                            gameplayScreen.getBulletsAndShieldContainers()[index].getShield().setOn(true);
+                        }
+                    } else { // right controller
+                        if (rotation >= 180 & rotation <= 360) {
+                            container.getShield().setOn(true);
+                        }else {
+                            int index = MathUtils.clamp(c+1, 0, activeShieldsNum);
+                            gameplayScreen.getBulletsAndShieldContainers()[index].getShield().setOn(true);
+                        }
+                    }
+                    break;*/
                 }
             }
         }
+
+        if (cAs[0] != null | cAs[1] != null) {
+            Gdx.app.log(TAG, cAs[0] + ", " + cAs[1]);
+            for (int c = 0; c < activeShieldsNum; c++) {
+                Gdx.app.log(TAG, c + ", " + gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngles[c] + ", " + onEndAngles[c]);
+            }
+        }
     }
+
+    /*private boolean validateOnShieldRotation(BulletsAndShieldContainer container) {
+
+    }*/
 
     public void startMirrorTimer() {
         mirrorControlsTimer.start();
@@ -157,6 +217,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         setRotationForContainers();
         setOmegaForShieldObjects();
         startRotationOmegaTweenForAll();
+
+        //updateStartingAndEndingAngles();
 
         /*for (BulletsAndShieldContainer container : probability) {
             Gdx.app.log(TAG, "" + container.getRotation());

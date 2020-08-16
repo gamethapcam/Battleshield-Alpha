@@ -124,7 +124,7 @@ public abstract class Controller extends Group implements Resizable {
 
     public Float getAngleDeg() {
         if (getOutputAngle() == null) return null;
-        Gdx.app.log(TAG, "" + getOutputAngle()*MathUtils.radiansToDegrees);
+        //Gdx.app.log(TAG, "" + getOutputAngle()*MathUtils.radiansToDegrees);
         return getOutputAngle()*MathUtils.radiansToDegrees;
     }
 

@@ -409,9 +409,13 @@ public final class MyMath {
     }
 
     public static float deg_0_to_360(float deg) {
-        if (deg < 0) return deg_0_to_360(deg + 360);
+        /*if (deg < 0) return deg_0_to_360(deg + 360);
         if (deg >= 360) return deg_0_to_360(deg - 360);
-        return deg;
+        return deg;*/
+
+        float result = deg % 360;
+        if (result < 0) result += 360;
+        return result;
     }
 
     public enum Dimension {X, Y}
