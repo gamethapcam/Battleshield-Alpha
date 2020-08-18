@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -27,6 +28,8 @@ public class RestrictedController extends Controller {
 
     private boolean mirror;
 
+    private SimpleText outputAngleText; //Debugging
+
     public RestrictedController(GameplayScreen gameplayScreen, Image stick, float archRadius, float archInnerRadiusRatio, float archAngle, Constants.Direction controllerPosition) {
         super(gameplayScreen, stick, controllerPosition);
 
@@ -41,6 +44,13 @@ public class RestrictedController extends Controller {
         //initializeShieldsRepresentation();
 
         moveTheStickAccordingToTheStickAngle();
+
+
+
+        outputAngleText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
+        //addActor(outputAngleText); // Uncomment for debugging
+        outputAngleText.setHeight(WORLD_SIZE/20f);
+        outputAngleText.setPosition(0, 0);
     }
 
     public boolean isMirror() {
@@ -59,6 +69,8 @@ public class RestrictedController extends Controller {
     @Override
     public void act(float delta) {
         super.act(delta);
+
+        outputAngleText.setCharSequence("" + ((getOutputAngle() != null) ? getOutputAngle() * MathUtils.radDeg : ""), true);
 
         //if (getControllerPosition() == Direction.RIGHT) bg.setX(bg.getX()-0.1f);a
         //bg.rotateBy(0.4f);
@@ -244,12 +256,19 @@ public class RestrictedController extends Controller {
     private void calculateOutputAngleFromStickAngle() {
         if (getControllerPosition() == Direction.RIGHT) {
             if (stickAngle >= 0)
-                outputAngle = MathUtils.lerp(0, MathUtils.PI / 2f * 0.9f, stickAngle / (archAngle / 2f));
-            else outputAngle = MathUtils.lerp(0, -MathUtils.PI / 2f * 0.9f, -stickAngle / (archAngle / 2f));
+                outputAngle = MathUtils.lerp(0, (90 - 20) * MathUtils.degRad, stickAngle / (archAngle / 2f));
+                //outputAngle = stickAngle / (archAngle / 2f) * MathUtils.PI / 2f;
+            else
+                outputAngle = MathUtils.lerp(0, -(90 - 20) * MathUtils.degRad, -stickAngle / (archAngle / 2f));
+                //outputAngle = -stickAngle / (archAngle / 2f) * -MathUtils.PI / 2f;
         } else {
             if (stickAngle >= 0)
-                outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.1f, MathUtils.PI * 1.1f, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
-            else outputAngle = MathUtils.lerp(-MathUtils.PI/2f * 1.1f, -MathUtils.PI * 1.1f, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+                //outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.25f, MathUtils.PI * 1.25f, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+                outputAngle = MathUtils.lerp((90 + 20) * MathUtils.degRad, MathUtils.PI, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            else
+                //outputAngle = MathUtils.lerp(-MathUtils.PI/2f * 1.25f, -MathUtils.PI * 1.25f, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+                outputAngle = MathUtils.lerp(-(90 + 20) * MathUtils.degRad, -MathUtils.PI, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+
         }
     }
 
