@@ -28,10 +28,13 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
+    private GameplayScreen gameplayScreen;
+
     private SimpleText indexText; // for debugging
 
     public BulletsAndShieldContainer(GameplayScreen gameplayScreen, Group containerOfContainers, byte index) {
         shield = new Shield(this, gameplayScreen);
+        this.gameplayScreen = gameplayScreen;
         //gameplayScreen.addActor(this);
         containerOfContainers.addActor(this);
         this.index = index;
@@ -165,6 +168,11 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             if (newOmegaDeg == null | newRotationDeg == null) return;
             BulletsAndShieldContainer.this.getShield().setOmegaDeg(interpolation.apply(oldOmegaDeg, newOmegaDeg, percentage));
             BulletsAndShieldContainer.this.setRotation(interpolation.apply(oldRotationDeg, newRotationDeg, percentage));
+
+            if (index == 0) {//Don't repeat for every BulletsAndShieldContainer
+                if (percentage >= 0.6f)
+                    gameplayScreen.getShieldsAndContainersHandler().updateStartingAndEndingAngles();
+            }
         }
 
         public void setOldRotationDeg(float oldRotationDeg) {

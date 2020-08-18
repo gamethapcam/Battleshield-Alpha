@@ -44,8 +44,6 @@ public class ShieldsAndContainersHandler implements Updatable {
     public void update(float delta) {
         mirrorControlsTimer.update(delta);
 
-        if (gameplayScreen.getBulletsAndShieldContainers()[0].getRotationOmegaAlphaTween().isStarted())
-            updateStartingAndEndingAngles();
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {
             gameplayScreen.getContainerOfContainers().rotateBy(delta * DISEASED_DIZZINESS_ROTATION_SPEED);
