@@ -24,7 +24,7 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     private Timer mirrorControlsTimer;
 
-    private float baseRotation;
+    //private float baseRotation;
 
     public ShieldsAndContainersHandler(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;

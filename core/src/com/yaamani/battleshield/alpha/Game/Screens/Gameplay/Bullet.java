@@ -255,9 +255,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void correctSpecialBulletsRotation() {
         if (currentEffect != effects.ordinary &
                 currentEffect != effects.ordinaryFake &
-                getRotation() != -parent.getRight()) {
+                getRotation() != -parent.getRotation()) {
 
-            setRotation(-parent.getRotation());
+            Group containerOfContainers = gameplayScreen.getContainerOfContainers();
+            setRotation(-containerOfContainers.getRotation()-parent.getRotation());
         }
     }
 
