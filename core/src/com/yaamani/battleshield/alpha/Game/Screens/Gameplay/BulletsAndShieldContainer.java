@@ -30,9 +30,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private SimpleText indexText; // for debugging
 
-    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, byte index) {
+    public BulletsAndShieldContainer(GameplayScreen gameplayScreen, Group containerOfContainers, byte index) {
         shield = new Shield(this, gameplayScreen);
-        gameplayScreen.addActor(this);
+        //gameplayScreen.addActor(this);
+        containerOfContainers.addActor(this);
         this.index = index;
 
         initializeRotationOmegaAlphaTween(gameplayScreen);
@@ -70,7 +71,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        setPosition(worldWidth / 2f, worldHeight / 2f);
+        //setPosition(worldWidth / 2f, worldHeight / 2f);
         //setPosition();
     }
 

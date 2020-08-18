@@ -47,6 +47,11 @@ public class ShieldsAndContainersHandler implements Updatable {
         if (gameplayScreen.getBulletsAndShieldContainers()[0].getRotationOmegaAlphaTween().isStarted())
             updateStartingAndEndingAngles();
 
+        if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {
+            gameplayScreen.getContainerOfContainers().rotateBy(delta * DISEASED_DIZZINESS_ROTATION_SPEED);
+            updateStartingAndEndingAngles();
+        }
+
         /*if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {
             baseRotation -= 0.2f;
 
@@ -112,8 +117,12 @@ public class ShieldsAndContainersHandler implements Updatable {
     public void updateStartingAndEndingAngles() {
         float singleShieldAngle = 360f / activeShieldsNum;
         //Gdx.app.log(TAG, "singleShieldAngle = " + singleShieldAngle + " / 2 = " + (singleShieldAngle / 2f));
-        onStartAngles[0] = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[0].getRotation() - (singleShieldAngle / 2f));
-        onEndAngles[0] = MyMath.deg_0_to_360(gameplayScreen.getBulletsAndShieldContainers()[0].getRotation() + (singleShieldAngle / 2f));
+
+        float firstBulletsAndShieldContainerRotation = gameplayScreen.getBulletsAndShieldContainers()[0].getRotation();
+        float containerOfContainersRotation = gameplayScreen.getContainerOfContainers().getRotation();
+
+        onStartAngles[0] = MyMath.deg_0_to_360(firstBulletsAndShieldContainerRotation + containerOfContainersRotation - (singleShieldAngle / 2f));
+        onEndAngles[0]   = MyMath.deg_0_to_360(firstBulletsAndShieldContainerRotation + containerOfContainersRotation + (singleShieldAngle / 2f));
 
         for (int i = 1; i < activeShieldsNum; i++) {
             onStartAngles[i] = MyMath.deg_0_to_360(onStartAngles[i-1] + singleShieldAngle);

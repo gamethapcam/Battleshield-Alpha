@@ -342,9 +342,9 @@ public final class Constants {
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = MyMath.cloneAndReplace(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS, SpecialBullet.BOMB);
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = /*-0.04f*/0;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = /*-0.2f*/0;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
