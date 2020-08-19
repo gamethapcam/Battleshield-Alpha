@@ -131,6 +131,22 @@ public class ShieldsAndContainersHandler implements Updatable {
         Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDeg(),
                 gameplayScreen.getControllerRight().getAngleDeg()}; // cAs is for controllerAngles.
 
+
+        if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+            float singleShieldAngle = 360f / activeShieldsNum;
+            float clampAngle = singleShieldAngle/2f - 2; // -2 is just to make sure that the top most shield is going to be activated.
+
+            if (cAs[0] != null) {
+                if (cAs[0] > 0) cAs[0] = MathUtils.clamp(cAs[0], 90 + clampAngle, 180);
+                else cAs[0] = MathUtils.clamp(cAs[0], -180, -(90 + clampAngle));
+            }
+
+            if (cAs[1] != null)
+                cAs[1] = MathUtils.clamp(cAs[1], -(90 - clampAngle), (90 - clampAngle));
+
+        }
+
+
         if (cAs[0] != null)
             cAs[0] = MyMath.deg_0_to_360(cAs[0] - 90);
 

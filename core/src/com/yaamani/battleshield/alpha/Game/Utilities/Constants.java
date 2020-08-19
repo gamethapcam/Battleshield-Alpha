@@ -11,6 +11,12 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
 public final class Constants {
 
+
+    private static final boolean NO_DEATH = true;
+
+
+
+
     public static final float WORLD_SIZE = 100.0f/*300.0f*/;
     // WORLD_SIZE will always be equal to viewport.getWorldHeight() for landscape apps.
     // And will always be equal to viewport.getWorldWidth() for portrait apps.
@@ -350,9 +356,9 @@ public final class Constants {
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = MyMath.cloneAndReplace(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS, SpecialBullet.BOMB);
 
-    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = -0.04f/*0*/;
+    public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = NO_DEATH ? 0 : -0.04f;
 
-    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = -0.2f/*0*/;
+    public static final float BULLETS_BOMB_AFFECT_HEALTH_BY = NO_DEATH ? 0 : -0.2f;
 
     public static final float BULLETS_HEART_AFFECT_HEALTH_BY = +0.07f;
 
@@ -726,7 +732,7 @@ public final class Constants {
 
     public static final int DISEASES_SHIELDS_MAX_COUNT = 8;
 
-    public static final int DISEASES_SHIELDS_MIN_COUNT = 4;
+    public static final int DISEASES_SHIELDS_MIN_COUNT = 3;
 
 
 
