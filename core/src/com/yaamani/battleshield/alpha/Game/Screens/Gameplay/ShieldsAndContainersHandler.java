@@ -21,11 +21,11 @@ public class ShieldsAndContainersHandler implements Updatable {
     private int activeShieldsNum;
 
     // Containers with no bullets attached during the current wave.
-    private Array<BulletsAndShieldContainer> nonBusyContainers = new Array<>(false, SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);;
+    private Array<BulletsAndShieldContainer> nonBusyContainers;
 
     private Timer mirrorControlsTimer;
 
-    private float baseRotation;
+    //private float baseRotation;
 
 
     private float[] onStartAngles;
@@ -35,9 +35,6 @@ public class ShieldsAndContainersHandler implements Updatable {
         this.gameplayScreen = gameplayScreen;
 
         initializeMirrorControlsTimer();
-
-        onStartAngles = new float[SHIELDS_MAX_COUNT];
-        onEndAngles = new float[SHIELDS_MAX_COUNT];
     }
 
     @Override
@@ -90,9 +87,9 @@ public class ShieldsAndContainersHandler implements Updatable {
 
             if (i < activeShieldsNum)
                 if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.FREE) {
-                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
+                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum ]);
                 } else {
-                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum - SHIELDS_MIN_COUNT]);
+                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum]);
 
                 }
             else gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */360);
@@ -113,6 +110,8 @@ public class ShieldsAndContainersHandler implements Updatable {
     }
 
     public void updateStartingAndEndingAngles() {
+        if (onStartAngles == null) return;
+
         float singleShieldAngle = 360f / activeShieldsNum;
         //Gdx.app.log(TAG, "singleShieldAngle = " + singleShieldAngle + " / 2 = " + (singleShieldAngle / 2f));
 
@@ -214,8 +213,10 @@ public class ShieldsAndContainersHandler implements Updatable {
     }
 
     public void setActiveShieldsNum(int activeShieldsNum) {
-        if (activeShieldsNum > SHIELDS_MAX_COUNT) this.activeShieldsNum = SHIELDS_MAX_COUNT;
-        else if (activeShieldsNum < SHIELDS_MIN_COUNT) this.activeShieldsNum = SHIELDS_MIN_COUNT;
+        int shieldsMaxCount = gameplayScreen.getCurrentShieldsMaxCount();
+        int shieldsMinCount = gameplayScreen.getCurrentShieldsMinCount();
+        if (activeShieldsNum > shieldsMaxCount) this.activeShieldsNum = shieldsMaxCount;
+        else if (activeShieldsNum < shieldsMinCount) this.activeShieldsNum = shieldsMinCount;
         else this.activeShieldsNum = activeShieldsNum;
 
         updateNonBusyContainer();
@@ -282,5 +283,14 @@ public class ShieldsAndContainersHandler implements Updatable {
                 ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
             }
         };
+    }
+
+    public void initializeNonBusyContainers(int shieldsMaxCount) {
+        nonBusyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
+    }
+
+    public void initializeOnStartAnglesAndOnEndAngles(int shieldsMaxCount) {
+        onStartAngles = new float[shieldsMaxCount];
+        onEndAngles = new float[shieldsMaxCount];
     }
 }

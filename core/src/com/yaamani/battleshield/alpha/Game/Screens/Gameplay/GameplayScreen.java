@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
@@ -30,6 +29,9 @@ public class GameplayScreen extends AdvancedScreen {
 
     private GameplayControllerType gameplayControllerType;
     private GameplayMode gameplayMode;
+
+    private Integer currentShieldsMaxCount;
+    private Integer currentShieldsMinCount;
 
 
     private Array<Timer> finishWhenLosing;
@@ -90,7 +92,6 @@ public class GameplayScreen extends AdvancedScreen {
         initializeHandlers(game, starsContainer.getRadialTween());
 
         initializeTurret();
-        initializeBulletsAndShieldArray();
 
         //initializeBullets(starsContainer.getRadialTween());
 
@@ -306,10 +307,10 @@ public class GameplayScreen extends AdvancedScreen {
         controllerRight.setDebug(true);*/
     }
 
-    private void initializeBulletsAndShieldArray() {
+    private void initializeBulletsAndShieldArray(int shieldsMaxCount) {
         containerOfContainers = new Group();
 
-        bulletsAndShieldContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT];
+        bulletsAndShieldContainers = new BulletsAndShieldContainer[shieldsMaxCount];
         for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
             bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, containerOfContainers, i);
         }
@@ -331,14 +332,14 @@ public class GameplayScreen extends AdvancedScreen {
     }
 
 
-    
+
     private void initializeWhiteTextureHidesEveryThingSecondStageStarBullet() {
         whiteTextureHidesEveryThingSecondStageStarBullet = new Image(Assets.instance.gameplayAssets.gameOverBG);
         whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(false);
         whiteTextureHidesEveryThingSecondStageStarBullet.setColor(1, 1, 1, 0);
         addActor(whiteTextureHidesEveryThingSecondStageStarBullet);
     }
-    
+
     private void initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet() {
         float duration = STAR_BULLET_SECOND_STAGE_DURATION*(1-STAR_BULLET_SECOND_STAGE_WHITE_TEXTURE_HIDES_EVERYTHING_DELAY_PERCENTAGE);
 
@@ -369,7 +370,7 @@ public class GameplayScreen extends AdvancedScreen {
                 }*/
             }
         };
-        
+
         addToFinishWhenLosing(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
         //addToResumeWhenResumingStarBullet(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
     }
@@ -413,6 +414,10 @@ public class GameplayScreen extends AdvancedScreen {
             //scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().setVisible(true);
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
             bulletsHandler.startSurvivalDifficultyTweens();
+
+            setCurrentShieldsMinMaxCount(SURVIVAL_SHIELDS_MIN_COUNT, SURVIVAL_SHIELDS_MAX_COUNT);
+
+
         } else {
             //scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().setVisible(false);
 
@@ -422,11 +427,17 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
                     bulletsHandler.startCrystalDifficultyTweens();
+
+                    setCurrentShieldsMinMaxCount(CRYSTAL_SHIELDS_MIN_COUNT, CRYSTAL_SHIELDS_MAX_COUNT);
+
                     break;
                 case DISEASES:
                     scoreTimerStuff.setLevelTime(DISEASES_LEVEL_TIME);
                     bulletsHandler.setCurrentPlanetSpecialBullets(null);
                     // TODO: startDiseasesDifficultyTweens();
+
+                    setCurrentShieldsMinMaxCount(DISEASES_SHIELDS_MIN_COUNT, DISEASES_SHIELDS_MAX_COUNT);
+
                     break;
             }
 
@@ -527,6 +538,25 @@ public class GameplayScreen extends AdvancedScreen {
 
     public Group getContainerOfContainers() {
         return containerOfContainers;
+    }
+
+    public Integer getCurrentShieldsMaxCount() {
+        return currentShieldsMaxCount;
+    }
+
+    public Integer getCurrentShieldsMinCount() {
+        return currentShieldsMinCount;
+    }
+
+    public void setCurrentShieldsMinMaxCount(Integer currentShieldsMinCount, Integer currentShieldsMaxCount) {
+        this.currentShieldsMaxCount = currentShieldsMaxCount;
+        this.currentShieldsMinCount = currentShieldsMinCount;
+
+        bulletsHandler.initializeBusyAndNonBusyContainers(currentShieldsMaxCount);
+        shieldsAndContainersHandler.initializeNonBusyContainers(currentShieldsMaxCount);
+        shieldsAndContainersHandler.initializeOnStartAnglesAndOnEndAngles(currentShieldsMaxCount);
+        initializeBulletsAndShieldArray(currentShieldsMaxCount);
+
     }
 
     //------------------------------ Other methods ------------------------------

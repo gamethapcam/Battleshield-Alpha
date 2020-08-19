@@ -227,6 +227,14 @@ public final class Constants {
             D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
+    public static final int SURVIVAL_SHIELDS_MAX_COUNT = 8;
+
+    public static final int SURVIVAL_SHIELDS_MIN_COUNT = 3;
+
+
+
+
+
     public static final float BULLETS_ORDINARY_HEIGHT = WORLD_SIZE / 27.69230769f;
 
     public static final float BULLETS_ORDINARY_WIDTH_RATIO = 1f/3f;
@@ -304,16 +312,16 @@ public final class Constants {
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
+            /*SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,*/
 
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,
+           /* SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK,*/
             SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
@@ -369,26 +377,23 @@ public final class Constants {
 
     public static final Color SHIELDS_COLOR = Color.WHITE;
 
-    public static final int SHIELDS_MAX_COUNT = 8;
-
-    public static final int SHIELDS_MIN_COUNT = 3/*2*/;
-
     public static final float SHIELDS_SKIP_ANGLE_WHEN_SAVING = 3f; //Deg
 
     public static final String SHIELDS_NAMING_WHEN_SAVING = "Shields";
 
-    public static final float SHIELDS_SAVING_FROM_ANGLE = 360f/SHIELDS_MAX_COUNT;
+    public static final float SHIELDS_SAVING_FROM_ANGLE = 360f/ SURVIVAL_SHIELDS_MAX_COUNT;
 
-    public static final float SHIELDS_SAVING_TO_ANGLE = 360f/SHIELDS_MIN_COUNT;
+    public static final float SHIELDS_SAVING_TO_ANGLE = 360f/ SURVIVAL_SHIELDS_MIN_COUNT;
 
     public static final int SHIELDS_ACTIVE_DEFAULT = 6;
 
     public static final float SHIELDS_ON_DISPLACEMENT = WORLD_SIZE / 100f;
 
-    public static final float[] SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY = {60f, 0, /*18f*/360f/5f/2f, 0, /*-12.85714286f*/0, 0};
-    //SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[0] is the shift angle when the number of shields = SHIELDS_MIN_COUNT ..... And SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[length-1] is the shift angle  when the number of shields = SHIELDS_MAX_COUNT.
+    public static final float[] SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY = {0, 0, 0, 60f, 0, /*18f*/360f/5f/2f, 0, /*-12.85714286f*/0, 0};
+    //SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[0] is the shift angle when the number of shields is 0, SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[1] is the shift angle when the number of shields is 1 and so on. It doesn't make sense to have 0 or 1 or 2 shields but this just makes the code simpler and more generic.
 
-    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {/*90f, 45f, 18f, 0, -12.85714286f, 0*/-60f, -45f, 0, 0+360f/6f/2f, 360f/7f, 360f/7f+360f/8f/3f};
+    //public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {0, 0, 0, 90f, 45f, 18f, 0, -12.85714286f, 0};
+    public static final float[] SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY = {0, 0, 0, -60f, -45f, 0, 0+360f/6f/2f, 360f/7f, 360f/7f+360f/8f/3f};
 
     public static final float SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION = 650/*3000*/;
 
@@ -707,12 +712,21 @@ public final class Constants {
     );
 
 
+    public static final int CRYSTAL_SHIELDS_MAX_COUNT = 8;
+
+    public static final int CRYSTAL_SHIELDS_MIN_COUNT = 4;
+
+
 
 
 
     public static final float DISEASES_LEVEL_TIME = 5; //minutes
 
     public static final float DISEASED_DIZZINESS_ROTATION_SPEED = -12; //deg/sec
+
+    public static final int DISEASES_SHIELDS_MAX_COUNT = 8;
+
+    public static final int DISEASES_SHIELDS_MIN_COUNT = 4;
 
 
 

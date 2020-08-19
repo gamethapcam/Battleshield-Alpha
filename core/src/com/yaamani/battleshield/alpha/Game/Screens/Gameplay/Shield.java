@@ -21,12 +21,15 @@ public class Shield extends Actor {
 
     private Timer shieldDisabledTimer;
 
+    private GameplayScreen gameplayScreen;
+
     public Shield(BulletsAndShieldContainer bulletsAndShieldContainer, GameplayScreen gameplayScreen) {
-        this(90, bulletsAndShieldContainer);
+        this(gameplayScreen, 90, bulletsAndShieldContainer);
         initializeShieldDisabledTimer(gameplayScreen);
     }
 
-    public Shield(float omegaDeg, BulletsAndShieldContainer bulletsAndShieldContainer) {
+    public Shield(GameplayScreen gameplayScreen, float omegaDeg, BulletsAndShieldContainer bulletsAndShieldContainer) {
+        this.gameplayScreen = gameplayScreen;
         setOmegaDeg(omegaDeg);
         //setOrigin(0, 0);
         //setRotation(-90);
@@ -57,10 +60,14 @@ public class Shield extends Actor {
     }
 
     public void setOmegaDeg(float omegaDeg) {
-        float correctedOmega = MathUtils.clamp(omegaDeg, SHIELDS_SAVING_FROM_ANGLE, SHIELDS_SAVING_TO_ANGLE);
 
-        int index = Math.round((correctedOmega - SHIELDS_SAVING_FROM_ANGLE)/SHIELDS_SKIP_ANGLE_WHEN_SAVING);
-        this.omegaDeg = index*SHIELDS_SKIP_ANGLE_WHEN_SAVING + SHIELDS_SAVING_FROM_ANGLE;
+        float minOmega = 360f / gameplayScreen.getCurrentShieldsMaxCount();
+        float maxOmega = 360f / gameplayScreen.getCurrentShieldsMinCount();
+
+        float correctedOmega = MathUtils.clamp(omegaDeg, minOmega, maxOmega);
+
+        int index = Math.round((correctedOmega - minOmega)/SHIELDS_SKIP_ANGLE_WHEN_SAVING);
+        this.omegaDeg = index*SHIELDS_SKIP_ANGLE_WHEN_SAVING + minOmega;
 
         currentRegion = Assets.instance.gameplayAssets.shieldsWithVariousAngles[index];
 

@@ -104,10 +104,6 @@ public class BulletsHandler implements Updatable {
         waveBulletsType = new WaveBulletsType[2];
         waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
 
-        busyContainers = new Array<>(false, SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
-        tempNonBusyLeftContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
-        tempNonBusyRightContainers = new BulletsAndShieldContainer[SHIELDS_MAX_COUNT/2];
-
         crystalPlanetFakeWaveProbability = D_CRYSTAL_FAKE_WAVE_PROBABILITY_INITIAL;
 
         //initializeNoMinusNoPlusProbability();
@@ -553,13 +549,13 @@ public class BulletsHandler implements Updatable {
 
             if (currentSpecialBullet == SpecialBullet.MINUS) {
 
-                Gdx.app.log(TAG, "Possible MINUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT) + ", " +
+                Gdx.app.log(TAG, "Possible MINUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount()) + ", " +
                         Bullet.isPlusOrMinusExists() + ", " +
                         Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
                         (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED));
 
-                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MIN_COUNT |
+                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount() |
                         Bullet.isPlusOrMinusExists() |
                         Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished() |
@@ -605,13 +601,13 @@ public class BulletsHandler implements Updatable {
 
             if (currentSpecialBullet == SpecialBullet.PLUS) {
 
-                Gdx.app.log(TAG, "Possible PLUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT) + ", " +
+                Gdx.app.log(TAG, "Possible PLUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount()) + ", " +
                         Bullet.isPlusOrMinusExists() + ", " +
                         Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
                         (isDouble & gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED));
 
-                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == SHIELDS_MAX_COUNT |
+                if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount() |
                         Bullet.isPlusOrMinusExists() |
                         Bullet.isStarExists() |
                         !plusMinusBulletsTimer.isFinished() |
@@ -1273,6 +1269,12 @@ public class BulletsHandler implements Updatable {
 
         gameplayScreen.addToFinishWhenLosing(starBulletThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(starBulletThirdStage);
+    }
+
+    public void initializeBusyAndNonBusyContainers(int shieldsMaxCount) {
+        busyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
+        tempNonBusyLeftContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
+        tempNonBusyRightContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
     }
 
 
