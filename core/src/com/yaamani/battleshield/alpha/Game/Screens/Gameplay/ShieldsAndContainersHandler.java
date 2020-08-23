@@ -83,7 +83,7 @@ public class ShieldsAndContainersHandler implements Updatable {
             float oldRotationDeg = gameplayScreen.getBulletsAndShieldContainers()[i].getRotation();
             gameplayScreen.getBulletsAndShieldContainers()[i].setOldRotationDeg(oldRotationDeg);
 
-            Gdx.app.log(TAG, "" + oldRotationDeg);
+            //Gdx.app.log(TAG, "" + oldRotationDeg);
 
             if (i < activeShieldsNum)
                 if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.FREE) {
@@ -118,8 +118,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         float firstBulletsAndShieldContainerRotation = gameplayScreen.getBulletsAndShieldContainers()[0].getRotation();
         float containerOfContainersRotation = gameplayScreen.getContainerOfContainers().getRotation();
 
-        onStartAngles[0] = MyMath.deg_0_to_360(firstBulletsAndShieldContainerRotation + containerOfContainersRotation - (singleShieldAngle / 2f));
-        onEndAngles[0]   = MyMath.deg_0_to_360(firstBulletsAndShieldContainerRotation + containerOfContainersRotation + (singleShieldAngle / 2f));
+        onStartAngles[0] = MyMath.deg_0_to_360(firstBulletsAndShieldContainerRotation + containerOfContainersRotation - (singleShieldAngle / 2f) + 90);
+        onEndAngles[0]   = MyMath.deg_0_to_360(firstBulletsAndShieldContainerRotation + containerOfContainersRotation + (singleShieldAngle / 2f) + 90);
 
         for (int i = 1; i < activeShieldsNum; i++) {
             onStartAngles[i] = MyMath.deg_0_to_360(onStartAngles[i-1] + singleShieldAngle);
@@ -148,10 +148,10 @@ public class ShieldsAndContainersHandler implements Updatable {
 
 
         if (cAs[0] != null)
-            cAs[0] = MyMath.deg_0_to_360(cAs[0] - 90);
+            cAs[0] = MyMath.deg_0_to_360(cAs[0]/* - 90*/);
 
         if (cAs[1] != null)
-            cAs[1] = MyMath.deg_0_to_360(cAs[1] - 90);
+            cAs[1] = MyMath.deg_0_to_360(cAs[1]/* - 90*/);
 
 
 
@@ -208,12 +208,12 @@ public class ShieldsAndContainersHandler implements Updatable {
             }
         }
 
-        if (cAs[0] != null | cAs[1] != null) {
+        /*if (cAs[0] != null | cAs[1] != null) {
             Gdx.app.log(TAG, cAs[0] + ", " + cAs[1]);
             for (int c = 0; c < activeShieldsNum; c++) {
                 Gdx.app.log(TAG, c + ", " + gameplayScreen.getBulletsAndShieldContainers()[c].getRotation() + ", " + onStartAngles[c] + ", " + onEndAngles[c]);
             }
-        }
+        }*/
     }
 
     /*private boolean validateOnShieldRotation(BulletsAndShieldContainer container) {

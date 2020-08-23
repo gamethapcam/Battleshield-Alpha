@@ -3,8 +3,8 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -30,7 +30,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private GameplayScreen gameplayScreen;
 
-    private SimpleText indexText; // for debugging
+    private SimpleText debugText;
 
     public BulletsAndShieldContainer(GameplayScreen gameplayScreen, Group containerOfContainers, byte index) {
         shield = new Shield(this, gameplayScreen);
@@ -41,10 +41,11 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         initializeRotationOmegaAlphaTween(gameplayScreen);
 
-        indexText = new SimpleText(gameplayScreen.getMyBitmapFont(), ""+index);
-        //addActor(indexText); // Uncomment for debugging
-        indexText.setHeight(WORLD_SIZE/20f);
-        indexText.setPosition(-indexText.getWidth()/2f, 12f);
+        debugText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
+        addActor(debugText); // Uncomment for debugging
+        debugText.setHeight(WORLD_SIZE/ /*20f*/ 45f);
+        debugText.setPosition(-debugText.getWidth()/2f, 12f);
+        //debugText.setRotation(90);
 
 
         /*rotationText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
@@ -63,6 +64,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         super.act(delta);
 
         rotationOmegaAlphaTween.update(delta);
+
+        debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90), 2), true); // Uncomment for debugging
     }
 
     @Override

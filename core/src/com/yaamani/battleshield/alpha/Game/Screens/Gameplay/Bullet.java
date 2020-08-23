@@ -121,7 +121,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
-        attach(parent);
+        readyToBeAttached(parent);
 
         setY(getY() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT));
 
@@ -129,7 +129,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent/*, boolean isDouble, int indexForDoubleWave*/) {
-        attach(parent);
+        readyToBeAttached(parent);
 
         //if (isDouble & indexForDoubleWave == 1) {
             //float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED_INITIAL / 1000f;
@@ -143,7 +143,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //bulletMovementSetDurationAndStart();
     }
 
-    private void attach(BulletsAndShieldContainer parent) {
+    private void readyToBeAttached(BulletsAndShieldContainer parent) {
         inUse = true;
         this.parent = parent;
         parent.addActor(this);

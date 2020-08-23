@@ -576,6 +576,10 @@ public final class MyMath {
         return MathUtils.round(val*multiplier) / multiplier;
     }
 
+    /*public static boolean isInRange(float value, float start, boolean startInclusive, float end, boolean endInclusive) {
+
+    }*/
+
 
     /**
      * f(x) = a2*x^2 + a1*x + a0.

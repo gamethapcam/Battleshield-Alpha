@@ -39,6 +39,10 @@ public class BulletsHandler implements Updatable {
     /*private BulletsAndShieldContainer previous;
     private BulletsAndShieldContainer current;*/
 
+    private Array<BulletsAndShieldContainer> dizzinessLeftContainersDoubleWave; // The containers that can be activated with the left controller (restricted) during the time the bullets of a particular wave hit this container.
+    private Array<BulletsAndShieldContainer> dizzinessRightContainersDoubleWave; // The containers that can be activated with the right controller (restricted) during the time the bullets of a particular wave hit this container.
+    private Array<BulletsAndShieldContainer> dizzinessContainersThatChangeControllerDoubleWave; // The containers that can be activated with the right controller (restricted) during the time the bullets of a particular wave hit this container.
+
     private int bulletsPerAttack = D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK;
     //private Timer decreaseBulletsPerAttackTimer;
 
@@ -113,6 +117,8 @@ public class BulletsHandler implements Updatable {
         //initializeIsThereDoubleWaveTimer();
 
         setCurrentSpeedMultiplier(1);
+
+        initializeDizzinessDoubleWaveArrays();
 
 
         initializeD_survival_bulletsPerAttackNumberTween();
@@ -428,7 +434,7 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "doubleWaveTimer Duration = " + isThereDoubleWaveTimer.getDurationMillis());
         isThereDoubleWaveTimer.start();
     }*/
-    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean fake) {
+    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean isFake) {
         waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
         //int specialBulletOrder = 0;
 
@@ -438,7 +444,7 @@ public class BulletsHandler implements Updatable {
         //------------------------------------------------------
 
         float fakeTweenDelay = 0;
-        if (fake) {
+        if (isFake) {
             fakeTweenDelay = (Bullet.getR() / currentBulletSpeed*1000)/1.25f - D_CRYSTAL_FAKE_TWEEN_DURATION;
         }
 
@@ -448,16 +454,16 @@ public class BulletsHandler implements Updatable {
             for (int i = 0; i < bulletsPerAttack; i++) {
                 bullet = bulletPool.obtain();
 
-                bullet.notSpecial(fake);
+                bullet.notSpecial(isFake);
                 bullet.attachNotSpecialToBulletsAndShieldContainer(parent, i);
-                if (fake)
+                if (isFake)
                     bullet.getFakeTween().start(fakeTweenDelay);
             }
         } else {
             bullet = bulletPool.obtain();
-            bullet.setSpecial(currentSpecialBullet, questionMark, fake);
+            bullet.setSpecial(currentSpecialBullet, questionMark, isFake);
             bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
-            if (fake)
+            if (isFake)
                 bullet.getFakeTween().start(fakeTweenDelay);
         }
 
@@ -517,7 +523,7 @@ public class BulletsHandler implements Updatable {
             else {
                 currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.STAR);
             }
-            //Gdx.app.log(TAG, MyMath.arrayToString(GOOD_BULLETS_PROBABILITY));
+            //Gdx.app.log(TAG, MyMath.arrayToString(GOOD_BULLETS_PROBABILITY))
 
             if (currentSpecialBullet == SpecialBullet.QUESTION_MARK) {
 
@@ -662,23 +668,25 @@ public class BulletsHandler implements Updatable {
 
         switch (waveAttackType) {
             case SINGLE:
-                newSingleWave();
-                //newDoubleWave();
+                //newSingleWave();
+                newDoubleWave();
                 break;
             case DOUBLE:
                 //newSingleWave();
                 //Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isPlusOrMinusExists() + ", " + plusMinusBulletsTimer.isFinished());
 
                 if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
-                    if (MathUtils.random(1) == 0) newRoundWave();
+                    if (MathUtils.random(1) == 0)
+                        //newRoundWave();
+                        newSingleWave();
                     else newSingleWave();
                 } else newDoubleWave();
 
                 break;
             case ROUND:
                 //newSingleWave();
-                //newDoubleWave();
-                newRoundWave();
+                newDoubleWave();
+                //newRoundWave();
                 break;
         }
         //resetWaveTimer();
@@ -700,6 +708,13 @@ public class BulletsHandler implements Updatable {
     }
 
     private void newDoubleWave() {
+        if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {// TODO:     & current disease == dizziness
+            dizzinessDoubleWave();
+        } else
+            ordinaryDoubleWave();
+    }
+
+    private void ordinaryDoubleWave() {
         isDouble = true;
         Gdx.app.log(TAG, "NEW DOUBLE WAVE");
 
@@ -708,7 +723,7 @@ public class BulletsHandler implements Updatable {
 
         if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
             float firstContainerAngleDeg = MyMath.deg_0_to_360(firstContainer.getRotation());
-            if (firstContainerAngleDeg == 0)
+            if (firstContainerAngleDeg == 0) // Top shield
                 secondContainer = chooseContainer(ContainerPositioning.RANDOM);
             else if (firstContainerAngleDeg < 180) // Right
                 secondContainer = chooseContainer(ContainerPositioning.LEFT);
@@ -724,6 +739,147 @@ public class BulletsHandler implements Updatable {
         if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL) {
             crystalPlanetFakeWave(firstContainer);
             crystalPlanetFakeWave(secondContainer);
+        }
+    }
+
+    private BulletsAndShieldContainer firstOpposingContainersDizziness;
+    private BulletsAndShieldContainer secondOpposingContainersDizziness;
+    private BulletsAndShieldContainer firstContainersAlwaysControlledByOneControllerDizziness;
+    private BulletsAndShieldContainer secondContainersAlwaysControlledByOneControllerDizziness;
+
+    private void dizzinessDoubleWave() {
+        //ordinaryDoubleWave();
+
+        if (Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
+            newSingleWave();
+            return;
+        }
+
+        // If containers change positioning more than one, this won't work. A.K.A The rotational speed should be relatively slow.
+
+        populateDizzinessDoubleWaveArrays();
+
+        firstOpposingContainersDizziness = null;
+        secondOpposingContainersDizziness = null;
+        firstContainersAlwaysControlledByOneControllerDizziness = null;
+        secondContainersAlwaysControlledByOneControllerDizziness = null;
+
+        dizzinessOpposingContainersDoubleWave();
+        dizzinessContainersAlwaysControlledByOneControllerDoubleWave();
+
+        if (firstOpposingContainersDizziness != null & firstContainersAlwaysControlledByOneControllerDizziness != null) {
+            int rand = MathUtils.random(1);
+            if (rand == 0) {
+                attachBullets(firstOpposingContainersDizziness, 0, false);
+                attachBullets(secondOpposingContainersDizziness, 1, false);
+            } else {
+                attachBullets(firstContainersAlwaysControlledByOneControllerDizziness, 0, false);
+                attachBullets(secondContainersAlwaysControlledByOneControllerDizziness, 1, false);
+            }
+        } else if (firstOpposingContainersDizziness != null) {
+            attachBullets(firstOpposingContainersDizziness, 0, false);
+            attachBullets(secondOpposingContainersDizziness, 1, false);
+        } else if (firstContainersAlwaysControlledByOneControllerDizziness != null) {
+            attachBullets(firstContainersAlwaysControlledByOneControllerDizziness, 0, false);
+            attachBullets(secondContainersAlwaysControlledByOneControllerDizziness, 1, false);
+        } else {
+            newSingleWave();
+        }
+
+
+
+
+        Gdx.app.log(TAG, "=================================================================================");
+    }
+
+    private void populateDizzinessDoubleWaveArrays() {
+        dizzinessLeftContainersDoubleWave.clear();
+        dizzinessRightContainersDoubleWave.clear();
+        dizzinessContainersThatChangeControllerDoubleWave.clear();
+
+        float waveHittingTheShieldStartTime = (Bullet.getR()-SHIELDS_RADIUS) / getBulletSpeed();
+        float waveHittingTheShieldEndTime = ((Bullet.getR()-SHIELDS_RADIUS) + getBulletsPerAttack()*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getBulletSpeed();
+
+        Gdx.app.log(TAG, "HittingTime (Start, End) = (" + waveHittingTheShieldStartTime + ", " + waveHittingTheShieldEndTime + ").");
+
+        int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
+
+
+        for (int i = 0; i < activeShieldsNum; i++) {
+
+            // If containers change positioning more than one, this won't work. A.K.A Relatively slow Rotational speed.
+
+            BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
+            float currentRotation = container.getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90;
+            float rotationWhenTheWaveStartsHitting = currentRotation + DISEASED_DIZZINESS_ROTATION_SPEED*waveHittingTheShieldStartTime;
+            float rotationWhenTheWaveStopsHitting = currentRotation + DISEASED_DIZZINESS_ROTATION_SPEED*waveHittingTheShieldEndTime;
+
+
+            ContainerPositioning containerPositioningWhenTheWaveStartsHitting = determineContainerPositioning(rotationWhenTheWaveStartsHitting);
+            ContainerPositioning containerPositioningWhenTheWaveStopsHitting = determineContainerPositioning(rotationWhenTheWaveStopsHitting);
+
+            Gdx.app.log(TAG, i + " --- Rotation & Positioning (Starts, Stops) Hitting = (" + rotationWhenTheWaveStartsHitting + ", " + rotationWhenTheWaveStopsHitting + "), (" + containerPositioningWhenTheWaveStartsHitting + ", " + containerPositioningWhenTheWaveStopsHitting + ").");
+
+            if (containerPositioningWhenTheWaveStartsHitting == ContainerPositioning.RIGHT &
+                    containerPositioningWhenTheWaveStopsHitting == ContainerPositioning.RIGHT)
+                dizzinessRightContainersDoubleWave.add(container);
+            else if (containerPositioningWhenTheWaveStartsHitting == ContainerPositioning.LEFT &
+                    containerPositioningWhenTheWaveStopsHitting == ContainerPositioning.LEFT)
+                dizzinessLeftContainersDoubleWave.add(container);
+            else
+                dizzinessContainersThatChangeControllerDoubleWave.add(container);
+        }
+    }
+
+    /**
+     *
+     * @param rotationDeg Make sure that you add the rotation of {@link GameplayScreen#getContainerOfContainers()} as well as 90 degrees.
+     * @return
+     */
+    private ContainerPositioning determineContainerPositioning(float rotationDeg) {
+        rotationDeg = MyMath.deg_0_to_360(rotationDeg);
+
+        if (rotationDeg < 90)
+            return ContainerPositioning.RIGHT;
+        else if (rotationDeg > 270)
+            return ContainerPositioning.RIGHT;
+        else return ContainerPositioning.LEFT;
+    }
+
+    private void dizzinessOpposingContainersDoubleWave() {
+        // If 2 containers are 180 degrees apart, they're of course guaranteed to be controlled by different controllers (restricted).
+
+        int len = dizzinessContainersThatChangeControllerDoubleWave.size;
+        if (len > 1) {
+
+            for (int i = 0; i < len; i++) {
+                for (int j = i+1; j < len; j++) {
+                    BulletsAndShieldContainer firstContainer = dizzinessContainersThatChangeControllerDoubleWave.items[i];
+                    BulletsAndShieldContainer secondContainer = dizzinessContainersThatChangeControllerDoubleWave.items[j];
+                    float rotationFirst = MyMath.deg_0_to_360(firstContainer.getRotation());
+                    float rotationSecond = MyMath.deg_0_to_360(secondContainer.getRotation());
+                    if (Math.abs(rotationFirst - rotationSecond) == 180) {
+                        firstOpposingContainersDizziness = firstContainer;
+                        secondOpposingContainersDizziness = secondContainer;
+                        Gdx.app.log(TAG, "------Possible Opposing------ (" + firstContainer.getIndex() + ", " + secondContainer.getIndex() + ").");
+                    }
+                }
+            }
+
+        }
+    }
+
+    private void dizzinessContainersAlwaysControlledByOneControllerDoubleWave() {
+        if (dizzinessLeftContainersDoubleWave.size == 0 | dizzinessRightContainersDoubleWave.size == 0) {
+            return;
+        } else {
+            BulletsAndShieldContainer[] dizzinessLeftContainersDoubleWaveItems = dizzinessLeftContainersDoubleWave.items;
+            BulletsAndShieldContainer[] dizzinessRightContainersDoubleWaveItems = dizzinessRightContainersDoubleWave.items;
+
+            firstContainersAlwaysControlledByOneControllerDizziness =
+                    MyMath.pickRandomElement(dizzinessLeftContainersDoubleWaveItems, 0, dizzinessLeftContainersDoubleWave.size - 1);
+            secondContainersAlwaysControlledByOneControllerDizziness =
+                    MyMath.pickRandomElement(dizzinessRightContainersDoubleWaveItems, 0, dizzinessRightContainersDoubleWave.size - 1);
         }
     }
 
@@ -1275,6 +1431,14 @@ public class BulletsHandler implements Updatable {
         busyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
         tempNonBusyLeftContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
         tempNonBusyRightContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
+    }
+
+    private void initializeDizzinessDoubleWaveArrays() {
+        /*dizzinessLeftContainersDoubleWave = new BulletsAndShieldContainer[MathUtils.ceil(DISEASES_SHIELDS_MAX_COUNT/2f)];
+        dizzinessRightContainersDoubleWave = new BulletsAndShieldContainer[MathUtils.ceil(DISEASES_SHIELDS_MAX_COUNT/2f)];*/
+        dizzinessLeftContainersDoubleWave = new Array<>(false, DISEASES_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        dizzinessRightContainersDoubleWave = new Array<>(false, DISEASES_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        dizzinessContainersThatChangeControllerDoubleWave = new Array<>(false, DISEASES_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
     }
 
 
