@@ -163,18 +163,24 @@ public class BulletsHandler implements Updatable {
         plusMinusBulletsTimer.update(delta);
         //decreaseBulletsPerAttackTimer.update(delta);
 
-        d_survival_bulletsPerAttackNumberTween.update(delta);
-        // if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
-            //currentDifficultyLevelTimer.update(delta);
-        d_survival_bulletSpeedMultiplierTween.update(delta);
-        // }
-
-        d_crystal_bulletsPerAttackNumberTween.update(delta);
-        d_crystal_bulletSpeedMultiplierTween.update(delta);
-        d_crystal_fakeWaveProbabilityTween.update(delta);
-
-        d_dizziness_bulletsPerAttackNumberTween.update(delta);
-        d_dizziness_bulletSpeedMultiplierTween.update(delta);
+        switch (gameplayScreen.getGameplayMode()) {
+            case SURVIVAL:
+                d_survival_bulletsPerAttackNumberTween.update(delta);
+                // if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
+                //currentDifficultyLevelTimer.update(delta);
+                d_survival_bulletSpeedMultiplierTween.update(delta);
+                // }
+                break;
+            case CRYSTAL:
+                d_crystal_bulletsPerAttackNumberTween.update(delta);
+                d_crystal_bulletSpeedMultiplierTween.update(delta);
+                d_crystal_fakeWaveProbabilityTween.update(delta);
+                break;
+            case DIZZINESS:
+                d_dizziness_bulletsPerAttackNumberTween.update(delta);
+                d_dizziness_bulletSpeedMultiplierTween.update(delta);
+                break;
+        }
 
         currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
         currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
@@ -231,10 +237,10 @@ public class BulletsHandler implements Updatable {
         return d_survival_bulletSpeedMultiplierTween;
     }
 
-    public void startSurvivalDifficultyTweens() {
+    /*public void startSurvivalDifficultyTweens() {
         d_survival_bulletsPerAttackNumberTween.start();
         d_survival_bulletSpeedMultiplierTween.start();
-    }
+    }*/
 
     public Tween getD_crystal_bulletsPerAttackNumberTween() {
         return d_crystal_bulletsPerAttackNumberTween;
@@ -248,10 +254,18 @@ public class BulletsHandler implements Updatable {
         return d_crystal_fakeWaveProbabilityTween;
     }
 
-    public void startCrystalDifficultyTweens() {
+    /*public void startCrystalDifficultyTweens() {
         d_crystal_bulletsPerAttackNumberTween.start();
         d_crystal_bulletSpeedMultiplierTween.start();
         d_crystal_fakeWaveProbabilityTween.start();
+    }*/
+
+    public Tween getD_dizziness_bulletsPerAttackNumberTween() {
+        return d_dizziness_bulletsPerAttackNumberTween;
+    }
+
+    public Tween getD_dizziness_bulletSpeedMultiplierTween() {
+        return d_dizziness_bulletSpeedMultiplierTween;
     }
 
     public void startDizzinessDifficultyTweens() {
@@ -772,7 +786,16 @@ public class BulletsHandler implements Updatable {
 
         // If containers change positioning more than one, this won't work. A.K.A The rotational speed should be relatively slow.
 
-        populateDizzinessDoubleWaveArrays();
+        float afterHowManySecondsTheWaveWillStartHittingTheShield = (Bullet.getR()-SHIELDS_RADIUS) / getBulletSpeed();
+        float afterHowManySecondsTheWaveWillStopHittingTheShield = ((Bullet.getR()-SHIELDS_RADIUS) + getBulletsPerAttack()*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getBulletSpeed();
+
+        if (willDifficultyChangeDuringDoubleWave(afterHowManySecondsTheWaveWillStartHittingTheShield, afterHowManySecondsTheWaveWillStopHittingTheShield)) {
+            newSingleWave();
+            return;
+        }
+
+
+        populateDizzinessDoubleWaveArrays(afterHowManySecondsTheWaveWillStartHittingTheShield, afterHowManySecondsTheWaveWillStopHittingTheShield);
 
         firstOpposingContainersDizziness = null;
         secondOpposingContainersDizziness = null;
@@ -807,15 +830,23 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "=================================================================================");
     }
 
-    private void populateDizzinessDoubleWaveArrays() {
+    private boolean willDifficultyChangeDuringDoubleWave(float afterHowManySecondsTheWaveWillStartHittingTheShield, float afterHowManySecondsTheWaveWillStopHittingTheShield) {
+        float timePassedSinceTheLevelStarts = gameplayScreen.getScoreTimerStuff().getScoreTimer();
+        float levelPercentageRightNow = timePassedSinceTheLevelStarts/(DIZZINESS_LEVEL_TIME*60);
+        float levelPercentageWhenTheWaveStopsHitting = (timePassedSinceTheLevelStarts+afterHowManySecondsTheWaveWillStopHittingTheShield)/(DIZZINESS_LEVEL_TIME*60);
+
+        float difficultyRightNow = D_DIZZINESS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION.apply(1, D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS, levelPercentageRightNow);
+        float difficultyWhenTheWaveStopsHitting = D_DIZZINESS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION.apply(1, D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS, levelPercentageWhenTheWaveStopsHitting);
+
+        return difficultyRightNow != difficultyWhenTheWaveStopsHitting;
+    }
+
+    private void populateDizzinessDoubleWaveArrays(float afterHowManySecondsTheWaveWillStartHittingTheShield, float afterHowManySecondsTheWaveWillStopHittingTheShield) {
         dizzinessLeftContainersDoubleWave.clear();
         dizzinessRightContainersDoubleWave.clear();
         dizzinessContainersThatChangeControllerDoubleWave.clear();
 
-        float waveHittingTheShieldStartTime = (Bullet.getR()-SHIELDS_RADIUS) / getBulletSpeed();
-        float waveHittingTheShieldEndTime = ((Bullet.getR()-SHIELDS_RADIUS) + getBulletsPerAttack()*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getBulletSpeed();
-
-        Gdx.app.log(TAG, "HittingTime (Start, End) = (" + waveHittingTheShieldStartTime + ", " + waveHittingTheShieldEndTime + ").");
+        Gdx.app.log(TAG, "HittingTime (Start, End) = (" + afterHowManySecondsTheWaveWillStartHittingTheShield + ", " + afterHowManySecondsTheWaveWillStopHittingTheShield + ").");
 
         int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
 
@@ -826,8 +857,9 @@ public class BulletsHandler implements Updatable {
 
             BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
             float currentRotation = container.getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90;
-            float rotationWhenTheWaveStartsHitting = currentRotation + DIZZINESS_DIZZINESS_ROTATION_SPEED *waveHittingTheShieldStartTime;
-            float rotationWhenTheWaveStopsHitting = currentRotation + DIZZINESS_DIZZINESS_ROTATION_SPEED *waveHittingTheShieldEndTime;
+            float dizzinessRotationalSpeed = gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeed();
+            float rotationWhenTheWaveStartsHitting = currentRotation + dizzinessRotationalSpeed*afterHowManySecondsTheWaveWillStartHittingTheShield;
+            float rotationWhenTheWaveStopsHitting = currentRotation + dizzinessRotationalSpeed*afterHowManySecondsTheWaveWillStopHittingTheShield;
 
 
             ContainerPositioning containerPositioningWhenTheWaveStartsHitting = determineContainerPositioning(rotationWhenTheWaveStartsHitting);

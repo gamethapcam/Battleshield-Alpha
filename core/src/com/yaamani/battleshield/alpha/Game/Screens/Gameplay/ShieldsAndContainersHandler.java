@@ -1,10 +1,12 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -26,6 +28,10 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     //private float baseRotation;
 
+    private float dizzinessRotationalSpeed;
+
+    private Tween d_dizziness_rotationalSpeedTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
 
     private float[] onStartAngles;
     private float[] onEndAngles;
@@ -34,6 +40,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         this.gameplayScreen = gameplayScreen;
 
         initializeMirrorControlsTimer();
+
+        initializeD_dizziness_rotationalSpeedTween();
     }
 
     @Override
@@ -42,7 +50,9 @@ public class ShieldsAndContainersHandler implements Updatable {
 
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS) {
-            gameplayScreen.getContainerOfContainers().rotateBy(delta * DIZZINESS_DIZZINESS_ROTATION_SPEED);
+            d_dizziness_rotationalSpeedTween.update(delta);
+
+            gameplayScreen.getContainerOfContainers().rotateBy(delta * dizzinessRotationalSpeed);
             updateStartingAndEndingAngles();
         }
 
@@ -252,6 +262,14 @@ public class ShieldsAndContainersHandler implements Updatable {
         return activeShieldsNum;
     }
 
+    public float getDizzinessRotationalSpeed() {
+        return dizzinessRotationalSpeed;
+    }
+
+    public Tween getD_dizziness_rotationalSpeedTween() {
+        return d_dizziness_rotationalSpeedTween;
+    }
+
     private void updateNonBusyContainer() {
         /*nonBusyContainers = new Array<>(false,
                 gameplayScreen.getBulletsAndShieldContainers(),
@@ -307,5 +325,17 @@ public class ShieldsAndContainersHandler implements Updatable {
     public void initializeOnStartAnglesAndOnEndAngles(int shieldsMaxCount) {
         onStartAngles = new float[shieldsMaxCount];
         onEndAngles = new float[shieldsMaxCount];
+    }
+
+    private void initializeD_dizziness_rotationalSpeedTween() {
+
+        d_dizziness_rotationalSpeedTween = new Tween(DIZZINESS_LEVEL_TIME*60*1000, D_DIZZINESS_ROTATIONAL_SPEED_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                dizzinessRotationalSpeed = interpolation.apply(D_DIZZINESS_ROTATIONAL_SPEED_MIN, D_DIZZINESS_ROTATIONAL_SPEED_MAX, percentage);
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_dizziness_rotationalSpeedTween);
     }
 }

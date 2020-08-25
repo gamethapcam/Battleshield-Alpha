@@ -103,7 +103,7 @@ public class HealthHandler {
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().newWave();
             gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().startMyProgressBarTween();
-            switch (gameplayScreen.getGameplayMode()) {
+            /*switch (gameplayScreen.getGameplayMode()) {
                 case SURVIVAL:
                     gameplayScreen.getBulletsHandler().startSurvivalDifficultyTweens();
                     gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().survival();
@@ -112,7 +112,8 @@ public class HealthHandler {
                     gameplayScreen.getBulletsHandler().startCrystalDifficultyTweens();
                     gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().crystal();
                     break;
-            }
+            }*/
+            gameplayScreen.setGameplayMode(gameplayScreen.getGameplayMode());
             //gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween().start();
             //gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();

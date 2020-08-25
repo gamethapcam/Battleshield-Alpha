@@ -642,6 +642,10 @@ public final class Constants {
 
     public static final SpecialBullet[] CRYSTAL_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
 
+    public static final int CRYSTAL_SHIELDS_MAX_COUNT = 8;
+
+    public static final int CRYSTAL_SHIELDS_MIN_COUNT = 4;
+
 
     public static final int D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
@@ -650,9 +654,9 @@ public final class Constants {
     public static final MyInterpolation D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
 
-    public static final int D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK;
+    public static final int D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
 
-    public static final int D_CRYSTAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT = D_SURVIVAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+    public static final int D_CRYSTAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
 
     public static final int D_CRYSTAL_BULLETS_MAX_NUMBER_PER_ATTACK = D_CRYSTAL_BULLETS_MIN_NUMBER_PER_ATTACK + (D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_CRYSTAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
 
@@ -665,16 +669,22 @@ public final class Constants {
     );
 
 
-    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INITIAL = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL;
+    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INITIAL = 1;
 
-    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INCREMENT = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+    public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
 
     public static final float D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_MAX = D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_CRYSTAL_BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
-    public static final Interpolation D_CRYSTAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
+    /*public static final Interpolation D_CRYSTAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
             D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
             0.15f,
             new MyInterpolation.MyInterpolationIn.MyInterpolationIn(new MyInterpolation.MyExp(3)),
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
+    );*/
+
+    public static final Interpolation D_CRYSTAL_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
             D_CRYSTAL_DIFFICULTY_TIME_SCALE,
             D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
     );
@@ -706,8 +716,8 @@ public final class Constants {
 
     public static final Interpolation D_CRYSTAL_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
             D_CRYSTAL_NUMBER_OF_DIFFICULTY_LEVELS,
-            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
-            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
     );
 
     public static final Interpolation D_CRYSTAL_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
@@ -719,9 +729,6 @@ public final class Constants {
     );
 
 
-    public static final int CRYSTAL_SHIELDS_MAX_COUNT = 8;
-
-    public static final int CRYSTAL_SHIELDS_MIN_COUNT = 4;
 
 
 
@@ -729,26 +736,38 @@ public final class Constants {
 
 
 
-
-
-    public static final float DIZZINESS_LEVEL_TIME = 5/*0.5f*/; //minutes
-
-    public static final int D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
-
-    public static final float DIZZINESS_DIZZINESS_ROTATION_SPEED = -12; //deg/sec
+    public static final float DIZZINESS_LEVEL_TIME = /*5*/1f; //minutes
 
     public static final int DIZZINESS_SHIELDS_MAX_COUNT = 8;
 
     public static final int DIZZINESS_SHIELDS_MIN_COUNT = 3;
 
+
+    public static final int D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
     public static final MyInterpolation D_DIZZINESS_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
 
     public static final MyInterpolation D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
+    //public static final float DIZZINESS_DIZZINESS_ROTATIONAL_SPEED = -12; //deg/sec
 
-    public static final int D_DIZZINESS_BULLETS_MIN_NUMBER_PER_ATTACK = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK;
 
-    public static final int D_DIZZINESS_BULLETS_NUMBER_PER_ATTACK_DECREMENT = D_SURVIVAL_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+    public static final float D_DIZZINESS_ROTATIONAL_SPEED_MIN = -5f; // deg/sec
+
+    public static final float D_DIZZINESS_ROTATIONAL_SPEED_INCREMENT = -3; // deg/sec
+
+    public static final float D_DIZZINESS_ROTATIONAL_SPEED_MAX = D_DIZZINESS_ROTATIONAL_SPEED_MIN + (D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_DIZZINESS_ROTATIONAL_SPEED_INCREMENT;
+
+    public static final Interpolation D_DIZZINESS_ROTATIONAL_SPEED_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_DIZZINESS_DIFFICULTY_TIME_SCALE,
+            D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final int D_DIZZINESS_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+
+    public static final int D_DIZZINESS_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
 
     public static final int D_DIZZINESS_BULLETS_MAX_NUMBER_PER_ATTACK = D_DIZZINESS_BULLETS_MIN_NUMBER_PER_ATTACK + (D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_DIZZINESS_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
 
@@ -760,16 +779,22 @@ public final class Constants {
             D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE
     );
 
-    public static final float D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INITIAL = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL;
+    public static final float D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INITIAL = 1;
 
-    public static final float D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INCREMENT = D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+    public static final float D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
 
     public static final float D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_MAX = D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
-    public static final Interpolation D_DIZZINESS_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
+    /*public static final Interpolation D_DIZZINESS_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.RepeatedCurveCustomScaleIntervals(
             D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS,
             0.15f,
             new MyInterpolation.MyInterpolationIn.MyInterpolationIn(new MyInterpolation.MyExp(3)),
+            D_DIZZINESS_DIFFICULTY_TIME_SCALE,
+            D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE
+    );*/
+
+    public static final Interpolation D_DIZZINESS_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS,
             D_DIZZINESS_DIFFICULTY_TIME_SCALE,
             D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE
     );
@@ -779,8 +804,8 @@ public final class Constants {
 
     public static final Interpolation D_DIZZINESS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
             D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS,
-            D_SURVIVAL_DIFFICULTY_TIME_SCALE,
-            D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
+            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
+            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
     );
 
     public static final Interpolation D_DIZZINESS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(

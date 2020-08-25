@@ -415,7 +415,10 @@ public class GameplayScreen extends AdvancedScreen {
             scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().survival();
 
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
-            bulletsHandler.startSurvivalDifficultyTweens();
+
+            //bulletsHandler.startSurvivalDifficultyTweens();
+            bulletsHandler.getD_survival_bulletsPerAttackNumberTween().start();
+            bulletsHandler.getD_survival_bulletSpeedMultiplierTween().start();
 
             setCurrentShieldsMinMaxCount(SURVIVAL_SHIELDS_MIN_COUNT, SURVIVAL_SHIELDS_MAX_COUNT);
 
@@ -430,7 +433,11 @@ public class GameplayScreen extends AdvancedScreen {
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
-                    bulletsHandler.startCrystalDifficultyTweens();
+
+                    //bulletsHandler.startCrystalDifficultyTweens();
+                    bulletsHandler.getD_crystal_bulletsPerAttackNumberTween().start();
+                    bulletsHandler.getD_crystal_bulletSpeedMultiplierTween().start();
+                    bulletsHandler.getD_crystal_fakeWaveProbabilityTween().start();
 
                     setCurrentShieldsMinMaxCount(CRYSTAL_SHIELDS_MIN_COUNT, CRYSTAL_SHIELDS_MAX_COUNT);
 
@@ -441,7 +448,10 @@ public class GameplayScreen extends AdvancedScreen {
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(null);
 
-                    bulletsHandler.startDizzinessDifficultyTweens();
+                    //bulletsHandler.startDizzinessDifficultyTweens();
+                    bulletsHandler.getD_dizziness_bulletsPerAttackNumberTween().start();
+                    bulletsHandler.getD_dizziness_bulletSpeedMultiplierTween().start();
+                    shieldsAndContainersHandler.getD_dizziness_rotationalSpeedTween().start();
 
                     setCurrentShieldsMinMaxCount(DIZZINESS_SHIELDS_MIN_COUNT, DIZZINESS_SHIELDS_MAX_COUNT);
 
