@@ -60,6 +60,10 @@ public class BulletsHandler implements Updatable {
     private Tween d_crystal_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
     private Tween d_crystal_fakeWaveProbabilityTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
 
+    private Tween d_dizziness_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween d_dizziness_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
+
 
 
 
@@ -128,6 +132,9 @@ public class BulletsHandler implements Updatable {
         initializeD_crystal_bulletSpeedMultiplierTween();
         initializeD_crystal_fakeWaveProbabilityTween();
 
+        initializeD_dizziness_bulletsPerAttackNumberTween();
+        initializeD_dizziness_bulletSpeedMultiplierTween();
+
         //initializeCurrentDifficultLevelTimer();
 
         initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
@@ -165,6 +172,9 @@ public class BulletsHandler implements Updatable {
         d_crystal_bulletsPerAttackNumberTween.update(delta);
         d_crystal_bulletSpeedMultiplierTween.update(delta);
         d_crystal_fakeWaveProbabilityTween.update(delta);
+
+        d_dizziness_bulletsPerAttackNumberTween.update(delta);
+        d_dizziness_bulletSpeedMultiplierTween.update(delta);
 
         currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
         currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
@@ -242,6 +252,11 @@ public class BulletsHandler implements Updatable {
         d_crystal_bulletsPerAttackNumberTween.start();
         d_crystal_bulletSpeedMultiplierTween.start();
         d_crystal_fakeWaveProbabilityTween.start();
+    }
+
+    public void startDizzinessDifficultyTweens() {
+        d_dizziness_bulletsPerAttackNumberTween.start();
+        d_dizziness_bulletSpeedMultiplierTween.start();
     }
 
     /* public BulletsAndShieldContainer getPrevious() {
@@ -708,7 +723,7 @@ public class BulletsHandler implements Updatable {
     }
 
     private void newDoubleWave() {
-        if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {// TODO:     & current disease == dizziness
+        if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS) {
             dizzinessDoubleWave();
         } else
             ordinaryDoubleWave();
@@ -811,8 +826,8 @@ public class BulletsHandler implements Updatable {
 
             BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
             float currentRotation = container.getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90;
-            float rotationWhenTheWaveStartsHitting = currentRotation + DISEASED_DIZZINESS_ROTATION_SPEED*waveHittingTheShieldStartTime;
-            float rotationWhenTheWaveStopsHitting = currentRotation + DISEASED_DIZZINESS_ROTATION_SPEED*waveHittingTheShieldEndTime;
+            float rotationWhenTheWaveStartsHitting = currentRotation + DIZZINESS_DIZZINESS_ROTATION_SPEED *waveHittingTheShieldStartTime;
+            float rotationWhenTheWaveStopsHitting = currentRotation + DIZZINESS_DIZZINESS_ROTATION_SPEED *waveHittingTheShieldEndTime;
 
 
             ContainerPositioning containerPositioningWhenTheWaveStartsHitting = determineContainerPositioning(rotationWhenTheWaveStartsHitting);
@@ -1293,6 +1308,32 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToFinishWhenLosing(d_crystal_fakeWaveProbabilityTween);
     }
 
+    private void initializeD_dizziness_bulletsPerAttackNumberTween() {
+
+        d_dizziness_bulletsPerAttackNumberTween = new Tween(DIZZINESS_LEVEL_TIME*60*1000, D_DIZZINESS_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setBulletsPerAttack((int) interpolation.apply(D_DIZZINESS_BULLETS_INITIAL_NO_PER_ATTACK, D_DIZZINESS_BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_dizziness_bulletsPerAttackNumberTween);
+
+    }
+
+    private void initializeD_dizziness_bulletSpeedMultiplierTween() {
+
+        d_dizziness_bulletSpeedMultiplierTween = new Tween(DIZZINESS_LEVEL_TIME*60*1000, D_DIZZINESS_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setCurrentSpeedMultiplier(interpolation.apply(D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_INITIAL, D_DIZZINESS_BULLETS_SPEED_MULTIPLIER_MAX, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_dizziness_bulletSpeedMultiplierTween);
+    }
+
+
     private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
         currentBulletSpeedTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION) {
             @Override
@@ -1436,9 +1477,9 @@ public class BulletsHandler implements Updatable {
     private void initializeDizzinessDoubleWaveArrays() {
         /*dizzinessLeftContainersDoubleWave = new BulletsAndShieldContainer[MathUtils.ceil(DISEASES_SHIELDS_MAX_COUNT/2f)];
         dizzinessRightContainersDoubleWave = new BulletsAndShieldContainer[MathUtils.ceil(DISEASES_SHIELDS_MAX_COUNT/2f)];*/
-        dizzinessLeftContainersDoubleWave = new Array<>(false, DISEASES_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
-        dizzinessRightContainersDoubleWave = new Array<>(false, DISEASES_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
-        dizzinessContainersThatChangeControllerDoubleWave = new Array<>(false, DISEASES_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        dizzinessLeftContainersDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        dizzinessRightContainersDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        dizzinessContainersThatChangeControllerDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
     }
 
 

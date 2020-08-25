@@ -1,6 +1,5 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
@@ -42,8 +41,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         mirrorControlsTimer.update(delta);
 
 
-        if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {
-            gameplayScreen.getContainerOfContainers().rotateBy(delta * DISEASED_DIZZINESS_ROTATION_SPEED);
+        if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS) {
+            gameplayScreen.getContainerOfContainers().rotateBy(delta * DIZZINESS_DIZZINESS_ROTATION_SPEED);
             updateStartingAndEndingAngles();
         }
 

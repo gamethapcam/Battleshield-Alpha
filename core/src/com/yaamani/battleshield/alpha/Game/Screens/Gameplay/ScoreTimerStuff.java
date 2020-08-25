@@ -226,9 +226,9 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         scoreTweenStarBullet_ThirdStage.start();
     }
 
-    public void gameplayModeStuff(GameplayMode gameplayMode) {
+    /*public void gameplayModeStuff(GameplayMode gameplayMode) {
         scoreMultiplierDifficultyLevelStuff.gameplayModeStuff(gameplayMode);
-    }
+    }*/
 
     public void setLevelTime(float levelTime) {
         this.levelTime = levelTime;

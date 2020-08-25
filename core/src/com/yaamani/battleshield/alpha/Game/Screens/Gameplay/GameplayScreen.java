@@ -412,6 +412,8 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (gameplayMode == GameplayMode.SURVIVAL) {
             //scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().setVisible(true);
+            scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().survival();
+
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
             bulletsHandler.startSurvivalDifficultyTweens();
 
@@ -424,6 +426,8 @@ public class GameplayScreen extends AdvancedScreen {
             switch (gameplayMode) {
                 case CRYSTAL:
                     scoreTimerStuff.setLevelTime(CRYSTAL_LEVEL_TIME);
+                    scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().crystal();
+
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
                     bulletsHandler.startCrystalDifficultyTweens();
@@ -431,19 +435,22 @@ public class GameplayScreen extends AdvancedScreen {
                     setCurrentShieldsMinMaxCount(CRYSTAL_SHIELDS_MIN_COUNT, CRYSTAL_SHIELDS_MAX_COUNT);
 
                     break;
-                case DISEASES:
-                    scoreTimerStuff.setLevelTime(DISEASES_LEVEL_TIME);
-                    bulletsHandler.setCurrentPlanetSpecialBullets(null);
-                    // TODO: startDiseasesDifficultyTweens();
+                case DIZZINESS:
+                    scoreTimerStuff.setLevelTime(DIZZINESS_LEVEL_TIME);
+                    scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().dizziness();
 
-                    setCurrentShieldsMinMaxCount(DISEASES_SHIELDS_MIN_COUNT, DISEASES_SHIELDS_MAX_COUNT);
+                    bulletsHandler.setCurrentPlanetSpecialBullets(null);
+
+                    bulletsHandler.startDizzinessDifficultyTweens();
+
+                    setCurrentShieldsMinMaxCount(DIZZINESS_SHIELDS_MIN_COUNT, DIZZINESS_SHIELDS_MAX_COUNT);
 
                     break;
             }
 
         }
 
-        scoreTimerStuff.gameplayModeStuff(gameplayMode);
+        //scoreTimerStuff.gameplayModeStuff(gameplayMode);
 
         healthHandler.newGame();
     }

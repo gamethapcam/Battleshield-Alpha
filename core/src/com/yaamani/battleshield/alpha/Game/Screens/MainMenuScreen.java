@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DifficultyCurveTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
@@ -40,7 +39,7 @@ public class MainMenuScreen extends AdvancedScreen {
     private SimpleText planets;
     private SimpleText crystal;
     private Image t1;
-    private SimpleText diseases;
+    private SimpleText dizziness;
 
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
@@ -153,7 +152,7 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(planets);
         addActor(crystal);
         addActor(t1);
-        addActor(diseases);
+        addActor(dizziness);
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
     }
@@ -227,9 +226,9 @@ public class MainMenuScreen extends AdvancedScreen {
         t1.setSize(MM_T1_TXT_HEIGHT * _t1.getRegionWidth() / _t1.getRegionHeight(), MM_T1_TXT_HEIGHT);
         if (t1 != null) t1.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - t1.getWidth());
 
-        if (diseases != null) {
-            diseases.setHeight(MM_DISEASES_TXT_HEIGHT);
-            diseases.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - diseases.getWidth());
+        if (dizziness != null) {
+            dizziness.setHeight(MM_DIZZINESS_TXT_HEIGHT);
+            dizziness.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - dizziness.getWidth());
         }
     }
 
@@ -435,7 +434,7 @@ public class MainMenuScreen extends AdvancedScreen {
                         planets.setVisible(false);
                         crystal.setVisible(true);
                         t1.setVisible(true);
-                        diseases.setVisible(true);
+                        dizziness.setVisible(true);
                     }
                 }
         );
@@ -497,15 +496,15 @@ public class MainMenuScreen extends AdvancedScreen {
     }
 
     private void initializeDiseases(AdvancedStage game) {
-        diseases = new SimpleText(myBitmapFont, "DISEASES");
+        dizziness = new SimpleText(myBitmapFont, "DIZZINESS");
 
-        diseases.setVisible(false);
+        dizziness.setVisible(false);
 
-        diseases.setY(MM_DISEASES_FINAL_Y);
+        dizziness.setY(MM_DIZZINESS_FINAL_Y);
 
-        diseases.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        dizziness.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
 
-        diseases.addListener(
+        dizziness.addListener(
                 new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -519,7 +518,7 @@ public class MainMenuScreen extends AdvancedScreen {
 
     private void startDiseases(final AdvancedStage game) {
         gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
-        gameplayScreen.setGameplayMode(GameplayMode.DISEASES);
+        gameplayScreen.setGameplayMode(GameplayMode.DIZZINESS);
         game.switchScreens(mainMenuToGameplay);
     }
 

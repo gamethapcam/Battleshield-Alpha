@@ -32,6 +32,8 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
     private Tween survival_scoreMultiplierTween; // The higher the difficulty the higher the score multiplier.
     private Tween crystal_difficultyLevelTween;
+    private Tween dizziness_difficultyLevelTween;
+
 
     public ScoreMultiplierDifficultyLevelStuff(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
@@ -41,6 +43,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         initializeMyProgressBarTween();
         initializeSurvival_scoreMultiplierTween();
         initializeCrystal_difficultyLevelTween();
+        initializeDizziness_difficultyLevelTween();
     }
 
     @Override
@@ -66,6 +69,9 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
                     break;
                 case CRYSTAL:
                     crystal_difficultyLevelTween.update(delta);
+                    break;
+                case DIZZINESS:
+                    dizziness_difficultyLevelTween.update(delta);
                     break;
             }
         }
@@ -119,7 +125,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         myProgressBar.setVisible(visible);
     }
 
-    public void gameplayModeStuff(GameplayMode gameplayMode) {
+    /*public void gameplayModeStuff(GameplayMode gameplayMode) {
         switch (gameplayMode) {
             case SURVIVAL:
                 survival();
@@ -130,7 +136,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         }
 
         myProgressBarTween.start();
-    }
+    }*/
 
     public void startMyProgressBarTween() {
         myProgressBarTween.start();
@@ -141,6 +147,8 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS);
         myProgressBarTween.setInterpolation(SURVIVAL_SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION);
+        myProgressBarTween.start();
+
 
         survival_scoreMultiplierTween.start();
     }
@@ -150,8 +158,21 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(CRYSTAL_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_CRYSTAL_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
+        myProgressBarTween.start();
+
 
         crystal_difficultyLevelTween.start();
+    }
+
+    public void dizziness() {
+        updateCharSequence(DIFFICULTY_PREFIX, 1);
+
+        myProgressBarTween.setDurationMillis(DIZZINESS_LEVEL_TIME*60*1000);
+        myProgressBarTween.setInterpolation(D_DIZZINESS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
+        myProgressBarTween.start();
+
+
+        dizziness_difficultyLevelTween.start();
     }
 
     //---------------------------------------- Initializers ---------------------------------------
@@ -257,6 +278,26 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         };
 
         gameplayScreen.addToFinishWhenLosing(crystal_difficultyLevelTween);
+    }
+
+    private void initializeDizziness_difficultyLevelTween() {
+        dizziness_difficultyLevelTween = new Tween(DIZZINESS_LEVEL_TIME*60*1000, D_DIZZINESS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                int newDifficultyLevel = MathUtils.round(interpolation.apply(1, D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS, percentage));
+                if (newDifficultyLevel != scoreMultiplierDifficultyLevel) {
+                    scoreMultiplierDifficultyLevel = newDifficultyLevel;
+                    updateCharSequence(DIFFICULTY_PREFIX, newDifficultyLevel);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(dizziness_difficultyLevelTween);
     }
 
 
