@@ -278,6 +278,14 @@ public class ShieldsAndContainersHandler implements Updatable {
         return dizzinessBaseRotationalSpeed;
     }
 
+    /**
+     *
+     * @return speed * multiplier.
+     */
+    public float getDizzinessRotationalSpeed() {
+        return dizzinessBaseRotationalSpeed*dizzinessRotationalSpeedMultiplier;
+    }
+
     public Tween getD_dizziness_rotationalSpeedTween() {
         return d_dizziness_rotationalSpeedTween;
     }
@@ -363,7 +371,6 @@ public class ShieldsAndContainersHandler implements Updatable {
                 dizzinessRotationalSpeedMultiplier = D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER;
                 TextureRegion r = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
                 gameplayScreen.displayTempProgressBar(r, dizzinessRotationalSpeedMultiplierTimer.getDurationMillis());
-                Bullet.setFasterDizzinessRotationExists(true);
             }
 
             @Override
@@ -371,7 +378,6 @@ public class ShieldsAndContainersHandler implements Updatable {
                 super.onFinish();
 
                 dizzinessRotationalSpeedMultiplier = 1;
-                Bullet.setFasterDizzinessRotationExists(false);
             }
         };
 

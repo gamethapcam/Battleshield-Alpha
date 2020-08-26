@@ -263,8 +263,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private void correctSpecialBulletsRotation() {
         if (currentEffect != effects.ordinary &
-                currentEffect != effects.ordinaryFake &
-                getRotation() != -parent.getRotation()) {
+                currentEffect != effects.ordinaryFake /*&
+                getRotation() != -parent.getRotation()*/) {
 
             Group containerOfContainers = gameplayScreen.getContainerOfContainers();
             setRotation(-containerOfContainers.getRotation()-parent.getRotation());
@@ -364,6 +364,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             case FASTER_DIZZINESS_ROTATION:
                 if (!questionMark) region = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
                 currentEffect = effects.fasterDizzinessRotation;
+                Bullet.setFasterDizzinessRotationExists(true);
                 break;
         }
 
@@ -566,7 +567,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().start();
-
+                    Bullet.setFasterDizzinessRotationExists(false);
                 }
             };
 

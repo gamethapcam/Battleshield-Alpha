@@ -784,12 +784,22 @@ public class BulletsHandler implements Updatable {
             return;
         }
 
+        if (Bullet.isFasterDizzinessRotationExists()) {
+            newSingleWave();
+            return;
+        }
+
         // If containers change positioning more than one, this won't work. A.K.A The rotational speed should be relatively slow.
 
         float afterHowManySecondsTheWaveWillStartHittingTheShield = (Bullet.getR()-SHIELDS_RADIUS) / getBulletSpeed();
         float afterHowManySecondsTheWaveWillStopHittingTheShield = ((Bullet.getR()-SHIELDS_RADIUS) + getBulletsPerAttack()*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getBulletSpeed();
 
-        if (willDifficultyChangeDuringDoubleWave(afterHowManySecondsTheWaveWillStartHittingTheShield, afterHowManySecondsTheWaveWillStopHittingTheShield)) {
+        if (willDifficultyChangeDuringDoubleWave(afterHowManySecondsTheWaveWillStopHittingTheShield)) {
+            newSingleWave();
+            return;
+        }
+
+        if (ifTheFasterDizzinessRotationBulletIsTakingPlace_willItsEffectStopBeforeThisDoubleWaveEnd(afterHowManySecondsTheWaveWillStopHittingTheShield)) {
             newSingleWave();
             return;
         }
@@ -830,7 +840,7 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "=================================================================================");
     }
 
-    private boolean willDifficultyChangeDuringDoubleWave(float afterHowManySecondsTheWaveWillStartHittingTheShield, float afterHowManySecondsTheWaveWillStopHittingTheShield) {
+    private boolean willDifficultyChangeDuringDoubleWave(float afterHowManySecondsTheWaveWillStopHittingTheShield) {
         float timePassedSinceTheLevelStarts = gameplayScreen.getScoreTimerStuff().getScoreTimer();
         float levelPercentageRightNow = timePassedSinceTheLevelStarts/(DIZZINESS_LEVEL_TIME*60);
         float levelPercentageWhenTheWaveStopsHitting = (timePassedSinceTheLevelStarts+afterHowManySecondsTheWaveWillStopHittingTheShield)/(DIZZINESS_LEVEL_TIME*60);
@@ -839,6 +849,17 @@ public class BulletsHandler implements Updatable {
         float difficultyWhenTheWaveStopsHitting = D_DIZZINESS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION.apply(1, D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS, levelPercentageWhenTheWaveStopsHitting);
 
         return difficultyRightNow != difficultyWhenTheWaveStopsHitting;
+    }
+
+    private boolean ifTheFasterDizzinessRotationBulletIsTakingPlace_willItsEffectStopBeforeThisDoubleWaveEnd(float afterHowManySecondsTheWaveWillStopHittingTheShield) {
+        Timer dizzinessFasterRotationalSpeedBulletEffectTimer = gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer();
+        if (dizzinessFasterRotationalSpeedBulletEffectTimer.isStarted()) {
+            float remainingBulletEffectTime =
+                    (1-dizzinessFasterRotationalSpeedBulletEffectTimer.getPercentage()) * dizzinessFasterRotationalSpeedBulletEffectTimer.getDurationMillis() / 1000f;
+            Gdx.app.log(TAG, "remainingBulletEffectTime = " + remainingBulletEffectTime);
+            return remainingBulletEffectTime < afterHowManySecondsTheWaveWillStopHittingTheShield;
+        }
+        return false;
     }
 
     private void populateDizzinessDoubleWaveArrays(float afterHowManySecondsTheWaveWillStartHittingTheShield, float afterHowManySecondsTheWaveWillStopHittingTheShield) {
@@ -857,7 +878,7 @@ public class BulletsHandler implements Updatable {
 
             BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
             float currentRotation = container.getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90;
-            float dizzinessRotationalSpeed = gameplayScreen.getShieldsAndContainersHandler().getDizzinessBaseRotationalSpeed();
+            float dizzinessRotationalSpeed = gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeed();
             float rotationWhenTheWaveStartsHitting = currentRotation + dizzinessRotationalSpeed*afterHowManySecondsTheWaveWillStartHittingTheShield;
             float rotationWhenTheWaveStopsHitting = currentRotation + dizzinessRotationalSpeed*afterHowManySecondsTheWaveWillStopHittingTheShield;
 

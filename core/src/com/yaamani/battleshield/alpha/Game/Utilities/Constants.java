@@ -749,7 +749,7 @@ public final class Constants {
 
     public static final float D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY = 0.25f;
 
-    public static final float D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_DURATION = 2000; // ms
+    public static final float D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_DURATION = 3000; // ms
 
     public static final float D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER = 2f;
 
