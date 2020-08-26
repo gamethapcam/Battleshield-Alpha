@@ -25,6 +25,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private static boolean plusOrMinusExists = false;
     private static boolean starExists = false;
+    private static boolean fasterDizzinessRotationExists = false;
     private static float R = 0;
 
     public enum BulletType {ORDINARY, SPECIAL}
@@ -106,6 +107,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public static void setStarExists(boolean starExists) {
         Bullet.starExists = starExists;
+    }
+
+    public static boolean isFasterDizzinessRotationExists() {
+        return fasterDizzinessRotationExists;
+    }
+
+    public static void setFasterDizzinessRotationExists(boolean fasterDizzinessRotationExists) {
+        Bullet.fasterDizzinessRotationExists = fasterDizzinessRotationExists;
     }
 
     public boolean isInUse() {
@@ -352,6 +361,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!questionMark) region = Assets.instance.gameplayAssets.shieldDisablingBullet;
                 currentEffect = effects.shieldDisabling;
                 break;
+            case FASTER_DIZZINESS_ROTATION:
+                if (!questionMark) region = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
+                currentEffect = effects.fasterDizzinessRotation;
+                break;
         }
 
         // Next 2 lines are for debugging.
@@ -438,6 +451,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         private BulletEffect mirror;
         private BulletEffect ordinaryFake; // Does nothing
         private BulletEffect fake; // Does nothing
+
+        //Dizziness
+        private BulletEffect fasterDizzinessRotation;
 
 
 
@@ -546,6 +562,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 }
             };
 
+            fasterDizzinessRotation = new BulletEffect() {
+                @Override
+                public void effect() {
+                    gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().start();
+
+                }
+            };
 
             /*questionMark = new BulletEffect() {
                 @Override

@@ -446,7 +446,8 @@ public class GameplayScreen extends AdvancedScreen {
                     scoreTimerStuff.setLevelTime(DIZZINESS_LEVEL_TIME);
                     scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().dizziness();
 
-                    bulletsHandler.setCurrentPlanetSpecialBullets(null);
+                    bulletsHandler.setCurrentPlanetSpecialBullets(DIZZINESS_SPECIAL_BULLETS);
+                    bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY);
 
                     //bulletsHandler.startDizzinessDifficultyTweens();
                     bulletsHandler.getD_dizziness_bulletsPerAttackNumberTween().start();

@@ -846,7 +846,7 @@ public class BulletsHandler implements Updatable {
         dizzinessRightContainersDoubleWave.clear();
         dizzinessContainersThatChangeControllerDoubleWave.clear();
 
-        Gdx.app.log(TAG, "HittingTime (Start, End) = (" + afterHowManySecondsTheWaveWillStartHittingTheShield + ", " + afterHowManySecondsTheWaveWillStopHittingTheShield + ").");
+        //Gdx.app.log(TAG, "HittingTime (Start, End) = (" + afterHowManySecondsTheWaveWillStartHittingTheShield + ", " + afterHowManySecondsTheWaveWillStopHittingTheShield + ").");
 
         int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
 
@@ -857,7 +857,7 @@ public class BulletsHandler implements Updatable {
 
             BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
             float currentRotation = container.getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90;
-            float dizzinessRotationalSpeed = gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeed();
+            float dizzinessRotationalSpeed = gameplayScreen.getShieldsAndContainersHandler().getDizzinessBaseRotationalSpeed();
             float rotationWhenTheWaveStartsHitting = currentRotation + dizzinessRotationalSpeed*afterHowManySecondsTheWaveWillStartHittingTheShield;
             float rotationWhenTheWaveStopsHitting = currentRotation + dizzinessRotationalSpeed*afterHowManySecondsTheWaveWillStopHittingTheShield;
 
@@ -865,7 +865,7 @@ public class BulletsHandler implements Updatable {
             ContainerPositioning containerPositioningWhenTheWaveStartsHitting = determineContainerPositioning(rotationWhenTheWaveStartsHitting);
             ContainerPositioning containerPositioningWhenTheWaveStopsHitting = determineContainerPositioning(rotationWhenTheWaveStopsHitting);
 
-            Gdx.app.log(TAG, i + " --- Rotation & Positioning (Starts, Stops) Hitting = (" + rotationWhenTheWaveStartsHitting + ", " + rotationWhenTheWaveStopsHitting + "), (" + containerPositioningWhenTheWaveStartsHitting + ", " + containerPositioningWhenTheWaveStopsHitting + ").");
+            //Gdx.app.log(TAG, i + " --- Rotation & Positioning (Starts, Stops) Hitting = (" + rotationWhenTheWaveStartsHitting + ", " + rotationWhenTheWaveStopsHitting + "), (" + containerPositioningWhenTheWaveStartsHitting + ", " + containerPositioningWhenTheWaveStopsHitting + ").");
 
             if (containerPositioningWhenTheWaveStartsHitting == ContainerPositioning.RIGHT &
                     containerPositioningWhenTheWaveStopsHitting == ContainerPositioning.RIGHT)

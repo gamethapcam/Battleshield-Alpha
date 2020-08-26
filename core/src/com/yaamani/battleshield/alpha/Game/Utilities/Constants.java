@@ -289,7 +289,7 @@ public final class Constants {
 
     public enum SpecialBullet {
         MINUS, HEART, STAR, // Good
-        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_ROTATION /*Dizziness*/, // Bad
+        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, // Bad
         QUESTION_MARK
     }
 
@@ -736,14 +736,23 @@ public final class Constants {
 
 
 
-    public static final float DIZZINESS_LEVEL_TIME = /*5*/1f; //minutes
+    public static final float DIZZINESS_LEVEL_TIME = 5; //minutes
 
     public static final int DIZZINESS_SHIELDS_MAX_COUNT = 8;
 
     public static final int DIZZINESS_SHIELDS_MIN_COUNT = 3;
 
-
     public static final int D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
+
+    public static final SpecialBullet[] DIZZINESS_SPECIAL_BULLETS = {SpecialBullet.FASTER_DIZZINESS_ROTATION};
+
+    public static final float D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY = 0.25f;
+
+    public static final float D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_DURATION = 2000; // ms
+
+    public static final float D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER = 2f;
+
 
     public static final MyInterpolation D_DIZZINESS_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
 
@@ -752,7 +761,7 @@ public final class Constants {
     //public static final float DIZZINESS_DIZZINESS_ROTATIONAL_SPEED = -12; //deg/sec
 
 
-    public static final float D_DIZZINESS_ROTATIONAL_SPEED_MIN = -5f; // deg/sec
+    public static final float D_DIZZINESS_ROTATIONAL_SPEED_MIN = -6f; // deg/sec
 
     public static final float D_DIZZINESS_ROTATIONAL_SPEED_INCREMENT = -3; // deg/sec
 
@@ -909,6 +918,8 @@ public final class Constants {
     public static final String ASSETS_SHIELD_DISABLING_BULLET = "Shield Disabling";
 
     public static final String ASSETS_MIRROR_BULLET = "Mirror";
+
+    public static final String ASSETS_FASTER_DIZZINESS_ROTATION = "Faster Dizziness Rotation";
 
     public static final String ASSETS_PAUSE_TEXT = "Pause Text";
 

@@ -1,8 +1,10 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
@@ -28,9 +30,12 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     //private float baseRotation;
 
-    private float dizzinessRotationalSpeed;
 
     private Tween d_dizziness_rotationalSpeedTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
+    private float dizzinessBaseRotationalSpeed;
+    private float dizzinessRotationalSpeedMultiplier = 1;
+    private Timer dizzinessRotationalSpeedMultiplierTimer; // For faster dizziness rotation bullet
 
 
     private float[] onStartAngles;
@@ -42,6 +47,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         initializeMirrorControlsTimer();
 
         initializeD_dizziness_rotationalSpeedTween();
+
+        initializeDizzinessRotationalSpeedMultiplierTimer();
     }
 
     @Override
@@ -51,8 +58,9 @@ public class ShieldsAndContainersHandler implements Updatable {
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS) {
             d_dizziness_rotationalSpeedTween.update(delta);
+            dizzinessRotationalSpeedMultiplierTimer.update(delta);
 
-            gameplayScreen.getContainerOfContainers().rotateBy(delta * dizzinessRotationalSpeed);
+            gameplayScreen.getContainerOfContainers().rotateBy(delta * dizzinessBaseRotationalSpeed * dizzinessRotationalSpeedMultiplier);
             updateStartingAndEndingAngles();
         }
 
@@ -237,6 +245,10 @@ public class ShieldsAndContainersHandler implements Updatable {
         return mirrorControlsTimer.getDurationMillis();
     }
 
+    public Timer getDizzinessRotationalSpeedMultiplierTimer() {
+        return dizzinessRotationalSpeedMultiplierTimer;
+    }
+
     public void setActiveShieldsNum(int activeShieldsNum) {
         int shieldsMaxCount = gameplayScreen.getCurrentShieldsMaxCount();
         int shieldsMinCount = gameplayScreen.getCurrentShieldsMinCount();
@@ -262,8 +274,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         return activeShieldsNum;
     }
 
-    public float getDizzinessRotationalSpeed() {
-        return dizzinessRotationalSpeed;
+    public float getDizzinessBaseRotationalSpeed() {
+        return dizzinessBaseRotationalSpeed;
     }
 
     public Tween getD_dizziness_rotationalSpeedTween() {
@@ -316,6 +328,8 @@ public class ShieldsAndContainersHandler implements Updatable {
                 ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
             }
         };
+
+        gameplayScreen.addToFinishWhenLosing(mirrorControlsTimer);
     }
 
     public void initializeNonBusyContainers(int shieldsMaxCount) {
@@ -332,10 +346,35 @@ public class ShieldsAndContainersHandler implements Updatable {
         d_dizziness_rotationalSpeedTween = new Tween(DIZZINESS_LEVEL_TIME*60*1000, D_DIZZINESS_ROTATIONAL_SPEED_DIFFICULTY_CURVE) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                dizzinessRotationalSpeed = interpolation.apply(D_DIZZINESS_ROTATIONAL_SPEED_MIN, D_DIZZINESS_ROTATIONAL_SPEED_MAX, percentage);
+                dizzinessBaseRotationalSpeed = interpolation.apply(D_DIZZINESS_ROTATIONAL_SPEED_MIN, D_DIZZINESS_ROTATIONAL_SPEED_MAX, percentage);
             }
         };
 
         gameplayScreen.addToFinishWhenLosing(d_dizziness_rotationalSpeedTween);
+    }
+
+    private void initializeDizzinessRotationalSpeedMultiplierTimer() {
+
+        dizzinessRotationalSpeedMultiplierTimer = new Timer(D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_DURATION) {
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                dizzinessRotationalSpeedMultiplier = D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER;
+                TextureRegion r = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
+                gameplayScreen.displayTempProgressBar(r, dizzinessRotationalSpeedMultiplierTimer.getDurationMillis());
+                Bullet.setFasterDizzinessRotationExists(true);
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                dizzinessRotationalSpeedMultiplier = 1;
+                Bullet.setFasterDizzinessRotationExists(false);
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(dizzinessRotationalSpeedMultiplierTimer);
     }
 }

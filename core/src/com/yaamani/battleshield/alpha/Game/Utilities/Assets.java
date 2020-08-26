@@ -150,6 +150,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion questionMarkBullet;
         public final TextureRegion shieldDisablingBullet;
         public final TextureRegion mirrorBullet;
+        public final TextureRegion fasterDizzinessRotationBullet;
 
         public final TextureRegion pauseText;
         public final TextureRegion pauseSymbol;
@@ -182,6 +183,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             questionMarkBullet = atlas.findRegion(ASSETS_QUESTION_MARK_BULLET);
             shieldDisablingBullet = atlas.findRegion(ASSETS_SHIELD_DISABLING_BULLET);
             mirrorBullet = atlas.findRegion(ASSETS_MIRROR_BULLET);
+            fasterDizzinessRotationBullet = atlas.findRegion(ASSETS_FASTER_DIZZINESS_ROTATION);
 
             pauseText = atlas.findRegion(ASSETS_PAUSE_TEXT);
             pauseSymbol = atlas.findRegion(ASSETS_PAUSE_SYMBOL);

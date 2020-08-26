@@ -54,6 +54,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         initializeLoadingScreen();
 
+        Gdx.app.log(TAG, "" + ((BULLETS_ORDINARY_HEIGHT+BULLETS_DISTANCE_BETWEEN_TWO)*D_CRYSTAL_BULLETS_INITIAL_NO_PER_ATTACK/D_SURVIVAL_BULLETS_SPEED_INITIAL));
+
         //saveProgrammaticallyGeneratedTextures(1080);
 
         //tweenAndMyTweenTesting = new TweenAndMyTweenTesting(game);

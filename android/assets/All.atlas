@@ -32,6 +32,13 @@ Dimming Overlay
   orig: 500, 210
   offset: 0, 0
   index: -1
+Faster Dizziness Rotation
+  rotate: false
+  xy: 1346, 1250
+  size: 115, 115
+  orig: 115, 115
+  offset: 0, 0
+  index: -1
 Free Controller BG
   rotate: false
   xy: 1229, 1477
@@ -48,21 +55,21 @@ Free Controller Stick
   index: -1
 Heart
   rotate: false
-  xy: 1346, 1250
+  xy: 1463, 1250
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Minus
   rotate: false
-  xy: 1463, 1250
+  xy: 1427, 1133
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Mirror
   rotate: false
-  xy: 1427, 1133
+  xy: 1427, 1016
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
@@ -90,7 +97,7 @@ Pause Text
   index: -1
 Plus
   rotate: false
-  xy: 1427, 1016
+  xy: 1427, 899
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
@@ -118,70 +125,70 @@ Restricted Controller Right BG
   index: -1
 Shield Disabling
   rotate: false
-  xy: 1427, 899
+  xy: 1427, 782
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Shields102
   rotate: false
-  xy: 1544, 786
+  xy: 1593, 1099
   size: 39, 149
   orig: 39, 149
   offset: 0, 0
   index: -1
 Shields105
   rotate: false
-  xy: 1544, 937
+  xy: 2628, 2964
   size: 41, 153
   orig: 41, 153
   offset: 0, 0
   index: -1
 Shields108
   rotate: false
-  xy: 1544, 1092
+  xy: 1544, 764
   size: 43, 156
   orig: 43, 156
   offset: 0, 0
   index: -1
 Shields111
   rotate: false
-  xy: 2575, 2791
+  xy: 1544, 922
   size: 45, 160
   orig: 45, 160
   offset: 0, 0
   index: -1
 Shields114
   rotate: false
-  xy: 2575, 2953
+  xy: 1544, 1084
   size: 47, 164
   orig: 47, 164
   offset: 0, 0
   index: -1
 Shields117
   rotate: false
-  xy: 1480, 613
+  xy: 2575, 2778
   size: 49, 167
   orig: 49, 167
   offset: 0, 0
   index: -1
 Shields120
   rotate: false
-  xy: 1427, 610
+  xy: 2575, 2947
   size: 51, 170
   orig: 51, 170
   offset: 0, 0
   index: -1
 Shields45
   rotate: false
-  xy: 978, 158
+  xy: 2575, 2714
   size: 16, 62
   orig: 16, 62
   offset: 0, 0
   index: -1
 Shields48
   rotate: false
-  xy: 2789, 1504
+  xy: 1662, 1269
   size: 16, 67
   orig: 16, 67
   offset: 0, 0
@@ -195,28 +202,28 @@ Shields51
   index: -1
 Shields54
   rotate: false
-  xy: 2575, 2712
+  xy: 2789, 1494
   size: 18, 77
   orig: 18, 77
   offset: 0, 0
   index: -1
 Shields57
   rotate: false
-  xy: 1662, 1263
+  xy: 1826, 1393
   size: 19, 82
   orig: 19, 82
   offset: 0, 0
   index: -1
 Shields60
   rotate: false
-  xy: 1395, 482
+  xy: 1544, 675
   size: 20, 87
   orig: 20, 87
   offset: 0, 0
   index: -1
 Shields63
   rotate: false
-  xy: 1756, 1383
+  xy: 1427, 571
   size: 21, 92
   orig: 21, 92
   offset: 0, 0
@@ -258,56 +265,56 @@ Shields78
   index: -1
 Shields81
   rotate: false
-  xy: 1726, 1355
+  xy: 1796, 1355
   size: 28, 120
   orig: 28, 120
   offset: 0, 0
   index: -1
 Shields84
   rotate: false
-  xy: 1695, 1351
+  xy: 1765, 1351
   size: 29, 124
   orig: 29, 124
   offset: 0, 0
   index: -1
 Shields87
   rotate: false
-  xy: 1662, 1347
+  xy: 1732, 1347
   size: 31, 128
   orig: 31, 128
   offset: 0, 0
   index: -1
 Shields90
   rotate: false
-  xy: 1589, 1115
+  xy: 1698, 1342
   size: 32, 133
   orig: 32, 133
   offset: 0, 0
   index: -1
 Shields93
   rotate: false
-  xy: 4048, 3460
+  xy: 1662, 1338
   size: 34, 137
   orig: 34, 137
   offset: 0, 0
   index: -1
 Shields96
   rotate: false
-  xy: 4010, 3456
+  xy: 4049, 3456
   size: 36, 141
   orig: 36, 141
   offset: 0, 0
   index: -1
 Shields99
   rotate: false
-  xy: 2624, 2972
+  xy: 4010, 3452
   size: 37, 145
   orig: 37, 145
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 1427, 782
+  xy: 1427, 665
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
