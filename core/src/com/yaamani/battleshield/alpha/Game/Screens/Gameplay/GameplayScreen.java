@@ -19,6 +19,8 @@ import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
+import java.util.Arrays;
+
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class GameplayScreen extends AdvancedScreen {
@@ -308,17 +310,23 @@ public class GameplayScreen extends AdvancedScreen {
     }
 
     private void initializeBulletsAndShieldArray(int shieldsMaxCount) {
-        containerOfContainers = new Group();
+        if (containerOfContainers == null) {
+            containerOfContainers = new Group();
+            addActorAt(gameOverLayer.getZIndex(), containerOfContainers);
+        }
 
-        bulletsAndShieldContainers = new BulletsAndShieldContainer[shieldsMaxCount];
+        if (bulletsAndShieldContainers == null)
+            bulletsAndShieldContainers = new BulletsAndShieldContainer[shieldsMaxCount];
+
         for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
-            bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, containerOfContainers, i);
+
+            if (bulletsAndShieldContainers[i] == null)
+                bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, containerOfContainers, i);
         }
 
         shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
 
 
-        addActor(containerOfContainers);
         //containerOfContainers.rotateBy(-10f);
 
         /*bulletsAndShieldContainers[0].getShield().setDebug(true);

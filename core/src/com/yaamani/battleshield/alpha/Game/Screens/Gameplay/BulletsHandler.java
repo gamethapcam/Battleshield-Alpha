@@ -1522,9 +1522,13 @@ public class BulletsHandler implements Updatable {
     }
 
     public void initializeBusyAndNonBusyContainers(int shieldsMaxCount) {
-        busyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
-        tempNonBusyLeftContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
-        tempNonBusyRightContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
+        if (busyContainers == null)
+            busyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
+
+        if (tempNonBusyLeftContainers == null)
+            tempNonBusyLeftContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
+        if (tempNonBusyRightContainers == null)
+            tempNonBusyRightContainers = new BulletsAndShieldContainer[shieldsMaxCount /2];
     }
 
     private void initializeDizzinessDoubleWaveArrays() {

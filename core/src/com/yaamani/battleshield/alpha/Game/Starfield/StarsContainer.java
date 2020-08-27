@@ -59,7 +59,8 @@ public class StarsContainer extends Group implements Disposable{
 
 
     private RadialTween radialTween;
-    private float thetaForRadialTween; // Rad
+    private float radialVelocity; // rad/sec
+    private float baseRadialVelocity;
 
     private BulletsHandler bulletsHandler;
 
@@ -124,7 +125,7 @@ public class StarsContainer extends Group implements Disposable{
             star.act(delta,
                     transitionVelocity,
                     currentStarSpeed,
-                    thetaForRadialTween,
+                    radialVelocity,
                     inWarpTrailAnimation,
                     inWarpFastForwardAnimation,
                     warpFastForwardSpeed,
@@ -327,12 +328,17 @@ public class StarsContainer extends Group implements Disposable{
         this.bulletsHandler = bulletsHandler;
     }
 
-    public float getThetaForRadialTween() {
-        return thetaForRadialTween;
+    public float getRadialVelocity() {
+        return radialVelocity;
     }
 
-    public void setThetaForRadialTween(float thetaForRadialTween) {
-        this.thetaForRadialTween = thetaForRadialTween;
+    public float getBaseRadialVelocity() {
+        return baseRadialVelocity;
+    }
+
+    public void setBaseRadialVelocity(float baseRadialVelocity) {
+        this.baseRadialVelocity = baseRadialVelocity;
+        this.radialVelocity = baseRadialVelocity;
     }
 
     public void setGameplayScreen(GameplayScreen gameplayScreen) {
@@ -387,20 +393,20 @@ public class StarsContainer extends Group implements Disposable{
             public void tween(float percentage, Interpolation interpolation) {
                 if (percentage < 0.5f) { // interpolationIn
                     if (getSpecialBullet() == SpecialBullet.MINUS)
-                        thetaForRadialTween = interpolation.apply(0, STARS_POLAR_TWEEN_THETA_MAX, percentage);
+                        radialVelocity = interpolation.apply(baseRadialVelocity, baseRadialVelocity+STARS_POLAR_TWEEN_THETA_MAX, percentage);
                     else if (getSpecialBullet() == SpecialBullet.PLUS)
-                        thetaForRadialTween = interpolation.apply(0, -STARS_POLAR_TWEEN_THETA_MAX, percentage);
+                        radialVelocity = interpolation.apply(baseRadialVelocity, baseRadialVelocity-STARS_POLAR_TWEEN_THETA_MAX, percentage);
                 } else { // interpolationOut
                     if (getSpecialBullet() == SpecialBullet.MINUS)
-                        thetaForRadialTween = interpolation.apply(STARS_POLAR_TWEEN_THETA_MAX, 0, percentage);
+                        radialVelocity = interpolation.apply(baseRadialVelocity+STARS_POLAR_TWEEN_THETA_MAX, baseRadialVelocity, percentage);
                     else if (getSpecialBullet() == SpecialBullet.PLUS)
-                        thetaForRadialTween = interpolation.apply(-STARS_POLAR_TWEEN_THETA_MAX, 0, percentage);
+                        radialVelocity = interpolation.apply(baseRadialVelocity-STARS_POLAR_TWEEN_THETA_MAX, baseRadialVelocity, percentage);
                 }
             }
 
             @Override
             public void onFinish() {
-                thetaForRadialTween = 0;
+                radialVelocity = baseRadialVelocity;
                 super.onFinish();
             }
         };

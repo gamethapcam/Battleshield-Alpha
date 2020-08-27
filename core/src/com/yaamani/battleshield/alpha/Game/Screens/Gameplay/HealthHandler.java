@@ -65,7 +65,7 @@ public class HealthHandler {
                 pauseWhenPausingFinishWhenLosing[i].finish();
         }
 
-        gameplayScreen.getStarsContainer().setThetaForRadialTween(5 * MathUtils.degreesToRadians);
+        gameplayScreen.getStarsContainer().setBaseRadialVelocity(-5 * MathUtils.degreesToRadians);
 
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setVisible(false);
@@ -113,13 +113,12 @@ public class HealthHandler {
                     gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().crystal();
                     break;
             }*/
-            gameplayScreen.setGameplayMode(gameplayScreen.getGameplayMode());
             //gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween().start();
             //gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().start();
             gameplayScreen.getGameOverLayer().disappearToStartANewGame();
-            gameplayScreen.getStarsContainer().setThetaForRadialTween(0);
+            gameplayScreen.getStarsContainer().setBaseRadialVelocity(0);
             gameplayScreen.getStarsContainer().resetCurrentSpeed();
-            gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
+            //gameplayScreen.getShieldsAndContainersHandler().setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
 
             gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().clearRefractionBuffers();
 
@@ -128,6 +127,7 @@ public class HealthHandler {
 
             gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
+            gameplayScreen.setGameplayMode(gameplayScreen.getGameplayMode());
         }
     }
 }

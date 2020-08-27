@@ -111,7 +111,7 @@ public class Star {
     public void act(float delta,
                     Vector2 additionalVelocity,
                     float currentStarSpeed,
-                    float thetaForRadialTween,
+                    float radialVelocity,
                     boolean inTrailWarpAnimation,
                     boolean inWarpFastForwardAnimation,
                     float warpFastForwardSpeed,
@@ -162,7 +162,7 @@ public class Star {
         linearPosition.x += additionalVelocity.x * delta * z;
         linearPosition.y += additionalVelocity.y * delta * z;
 
-        radialTweenPlusMinusBullet(delta, thetaForRadialTween);
+        radialTweenPlusMinusBullet(delta, radialVelocity);
 
         whenTheStarExitTheScreenBingItBack(inTrailWarpAnimation, r, inWarpFastForwardAnimation);
 
@@ -173,15 +173,15 @@ public class Star {
     }
 
 
-    private void radialTweenPlusMinusBullet(float delta, float thetaForRadialTween) {
-        if (/*radialTween.isStarted()*/thetaForRadialTween != 0) {
+    private void radialTweenPlusMinusBullet(float delta, float radialVelocity) {
+        if (/*radialTween.isStarted()*/radialVelocity != 0) {
             float xFromTheCenter = linearPosition.x - viewport.getWorldWidth()/2f;
             float yFromTheCenter = linearPosition.y - viewport.getWorldHeight()/2f;
 
             float r = (float) Math.sqrt(xFromTheCenter*xFromTheCenter + yFromTheCenter*yFromTheCenter);
             float theta = (float) Math.atan2(yFromTheCenter, xFromTheCenter);
 
-            theta += thetaForRadialTween * (STARS_POLAR_TWEEN_THETA_MINIMUM_MULTIPLIER + z) * delta;
+            theta += radialVelocity * (STARS_POLAR_TWEEN_THETA_MINIMUM_MULTIPLIER + z) * delta;
 
             linearPosition.x = (float) (r*Math.cos(theta)) + viewport.getWorldWidth()/2f;
             linearPosition.y = (float) (r*Math.sin(theta)) + viewport.getWorldHeight()/2f;

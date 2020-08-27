@@ -341,12 +341,15 @@ public class ShieldsAndContainersHandler implements Updatable {
     }
 
     public void initializeNonBusyContainers(int shieldsMaxCount) {
-        nonBusyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
+        if (nonBusyContainers == null)
+            nonBusyContainers = new Array<>(false, shieldsMaxCount, BulletsAndShieldContainer.class);
     }
 
     public void initializeOnStartAnglesAndOnEndAngles(int shieldsMaxCount) {
-        onStartAngles = new float[shieldsMaxCount];
-        onEndAngles = new float[shieldsMaxCount];
+        if (onStartAngles == null)
+            onStartAngles = new float[shieldsMaxCount];
+        if (onEndAngles == null)
+            onEndAngles = new float[shieldsMaxCount];
     }
 
     private void initializeD_dizziness_rotationalSpeedTween() {
@@ -354,7 +357,9 @@ public class ShieldsAndContainersHandler implements Updatable {
         d_dizziness_rotationalSpeedTween = new Tween(DIZZINESS_LEVEL_TIME*60*1000, D_DIZZINESS_ROTATIONAL_SPEED_DIFFICULTY_CURVE) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                dizzinessBaseRotationalSpeed = interpolation.apply(D_DIZZINESS_ROTATIONAL_SPEED_MIN, D_DIZZINESS_ROTATIONAL_SPEED_MAX, percentage);
+                float speed = interpolation.apply(D_DIZZINESS_ROTATIONAL_SPEED_MIN, D_DIZZINESS_ROTATIONAL_SPEED_MAX, percentage);
+                dizzinessBaseRotationalSpeed = speed;
+                gameplayScreen.getStarsContainer().setBaseRadialVelocity(speed * MathUtils.degRad);
             }
         };
 
