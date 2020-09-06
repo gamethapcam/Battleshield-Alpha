@@ -19,8 +19,6 @@ import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
-import java.util.Arrays;
-
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class GameplayScreen extends AdvancedScreen {
@@ -139,6 +137,11 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (state == State.PAUSED) return;
 
+
+
+
+
+
         super.act(delta);
 
         scoreTimerStuff.update(delta);
@@ -147,6 +150,7 @@ public class GameplayScreen extends AdvancedScreen {
             if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
         }*/
 
+        healthHandler.update(delta);
 
 
         shieldsAndContainersHandler.update(delta);
@@ -172,10 +176,10 @@ public class GameplayScreen extends AdvancedScreen {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP))
-            healthHandler.setHealth(healthHandler.getHealth() + .05f);
+            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() + .05f);
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            healthHandler.setHealth(healthHandler.getHealth() - .05f);
+            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() - .05f);
 
         for (int i = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUM_0;
              i <= 9 + Input.Keys.NUM_0;
@@ -211,10 +215,10 @@ public class GameplayScreen extends AdvancedScreen {
         com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
 
         if (gamePad.getButton(5))
-            healthHandler.setHealth(healthHandler.getHealth() + .05f);
+            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() + .05f);
 
         if (gamePad.getButton(7))
-            healthHandler.setHealth(healthHandler.getHealth() - .05f);
+            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() - .05f);
 
         if (gamePad.getButton(4)) {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);

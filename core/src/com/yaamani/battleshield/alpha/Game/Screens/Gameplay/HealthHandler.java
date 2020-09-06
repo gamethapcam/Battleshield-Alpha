@@ -1,38 +1,54 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
+import com.yaamani.battleshield.alpha.MyEngine.TweenedFloat;
+import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class HealthHandler {
+public class HealthHandler implements Updatable {
 
     private GameplayScreen gameplayScreen;
 
-    private float health; // 0 <= health <= oo
+    //private float health; // 0 <= health <= oo
+    private TweenedFloat health;
 
     public HealthHandler(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
-        setHealth(1);
+
+        health = new TweenedFloat(1) {
+            @Override
+            public void onTween(float value) {
+                if (gameplayScreen.getHealthBar() != null)
+                    gameplayScreen.getHealthBar().setAngle(value*MathUtils.PI2);
+
+                if (value <= 0) {
+                    playerLost();
+                }
+            }
+        };
+
+        //setHealth(1);
     }
 
-    public float getHealth() {
+    @Override
+    public void update(float delta) {
+        health.update(delta);
+    }
+
+    public TweenedFloat getHealth() {
         return health;
     }
 
     public void setHealth(float health) {
         float correctedHealth = MathUtils.clamp(health, 0, Float.MAX_VALUE);
-        this.health = correctedHealth;
-
-        if (gameplayScreen.getHealthBar() != null)
-            gameplayScreen.getHealthBar().setAngle(correctedHealth*MathUtils.PI2);
-
-        if (correctedHealth == 0) {
-            playerLost();
-        }
+        //this.health = correctedHealth;
+        this.health.tween(correctedHealth, 200, Interpolation.exp5Out);
     }
 
     public void playerLost() {

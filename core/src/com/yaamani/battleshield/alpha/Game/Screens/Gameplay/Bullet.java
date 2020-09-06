@@ -580,8 +580,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
 
         private void affectHealth(float by) {
-            float health = gameplayScreen.getHealthHandler().getHealth();
+            float health = gameplayScreen.getHealthHandler().getHealth().getFinishedValue();
             gameplayScreen.getHealthHandler().setHealth(health + by);
+
         }
 
         private void plusMinusCommon() {

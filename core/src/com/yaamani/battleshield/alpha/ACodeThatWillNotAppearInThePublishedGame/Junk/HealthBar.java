@@ -32,7 +32,7 @@ public class HealthBar extends Actor implements Resizable {
         this.healthHandler = healthHandler;
 
         gameplayScreen.addActor(this);
-        drawHealth(healthHandler.getHealth());
+        drawHealth(healthHandler.getHealth().getExactCurrentValue());
 
 //        setDebug(true);
     }
@@ -46,7 +46,7 @@ public class HealthBar extends Actor implements Resizable {
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-        if (healthHandler.getHealth() > 0) batch.draw(currentRegion, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        if (healthHandler.getHealth().getExactCurrentValue() > 0) batch.draw(currentRegion, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
         /*debugOrigin.draw(batch);
         drawXY(batch);*/
@@ -54,7 +54,7 @@ public class HealthBar extends Actor implements Resizable {
 
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
-        drawHealth(healthHandler.getHealth());
+        drawHealth(healthHandler.getHealth().getExactCurrentValue());
     }
 
     public void drawHealth(float correctedHealth) {
