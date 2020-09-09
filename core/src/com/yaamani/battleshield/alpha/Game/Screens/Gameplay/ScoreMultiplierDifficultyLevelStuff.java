@@ -33,6 +33,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
     private Tween survival_scoreMultiplierTween; // The higher the difficulty the higher the score multiplier.
     private Tween crystal_difficultyLevelTween;
     private Tween dizziness_difficultyLevelTween;
+    private Tween lazer_difficultyLevelTween;
 
 
     public ScoreMultiplierDifficultyLevelStuff(GameplayScreen gameplayScreen) {
@@ -44,6 +45,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         initializeSurvival_scoreMultiplierTween();
         initializeCrystal_difficultyLevelTween();
         initializeDizziness_difficultyLevelTween();
+        initializeLazer_difficultyLevelTween();
     }
 
     @Override
@@ -72,6 +74,9 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
                     break;
                 case DIZZINESS:
                     dizziness_difficultyLevelTween.update(delta);
+                    break;
+                case LAZER:
+                    lazer_difficultyLevelTween.update(delta);
                     break;
             }
         }
@@ -173,6 +178,17 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
 
         dizziness_difficultyLevelTween.start();
+    }
+
+    public void lazer() {
+        updateCharSequence(DIFFICULTY_PREFIX, 1);
+
+        myProgressBarTween.setDurationMillis(LAZER_LEVEL_TIME*60*1000);
+        myProgressBarTween.setInterpolation(D_LAZER_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
+        myProgressBarTween.start();
+
+
+        lazer_difficultyLevelTween.start();
     }
 
     //---------------------------------------- Initializers ---------------------------------------
@@ -298,6 +314,26 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         };
 
         gameplayScreen.addToFinishWhenLosing(dizziness_difficultyLevelTween);
+    }
+
+    private void initializeLazer_difficultyLevelTween() {
+        lazer_difficultyLevelTween = new Tween(LAZER_LEVEL_TIME*60*1000, D_LAZER_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                int newDifficultyLevel = MathUtils.round(interpolation.apply(1, D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS, percentage));
+                if (newDifficultyLevel != scoreMultiplierDifficultyLevel) {
+                    scoreMultiplierDifficultyLevel = newDifficultyLevel;
+                    updateCharSequence(DIFFICULTY_PREFIX, newDifficultyLevel);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(lazer_difficultyLevelTween);
     }
 
 

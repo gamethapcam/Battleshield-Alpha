@@ -40,6 +40,7 @@ public class MainMenuScreen extends AdvancedScreen {
     private SimpleText crystal;
     private Image t1;
     private SimpleText dizziness;
+    private SimpleText lazer;
 
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
@@ -135,7 +136,8 @@ public class MainMenuScreen extends AdvancedScreen {
         initializePlanets();
         initializeCrystal(game);
         initializeT1(game);
-        initializeDiseases(game);
+        initializeDizziness(game);
+        initializeLazer(game);
 
         //start.setLayoutEnabled(false, earthEntities); //for performance.
 
@@ -153,6 +155,7 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(crystal);
         addActor(t1);
         addActor(dizziness);
+        addActor(lazer);
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
     }
@@ -229,6 +232,11 @@ public class MainMenuScreen extends AdvancedScreen {
         if (dizziness != null) {
             dizziness.setHeight(MM_DIZZINESS_TXT_HEIGHT);
             dizziness.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - dizziness.getWidth());
+        }
+
+        if (lazer != null) {
+            lazer.setHeight(MM_LAZER_TXT_HEIGHT);
+            lazer.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - lazer.getWidth());
         }
     }
 
@@ -435,6 +443,7 @@ public class MainMenuScreen extends AdvancedScreen {
                         crystal.setVisible(true);
                         t1.setVisible(true);
                         dizziness.setVisible(true);
+                        lazer.setVisible(true);
                     }
                 }
         );
@@ -495,7 +504,7 @@ public class MainMenuScreen extends AdvancedScreen {
 
     }
 
-    private void initializeDiseases(AdvancedStage game) {
+    private void initializeDizziness(AdvancedStage game) {
         dizziness = new SimpleText(myBitmapFont, "DIZZINESS");
 
         dizziness.setVisible(false);
@@ -510,15 +519,41 @@ public class MainMenuScreen extends AdvancedScreen {
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
                         //Gdx.app.log(TAG, "HI");
-                        startDiseases(game);
+                        startDizziness(game);
                     }
                 }
         );
     }
 
-    private void startDiseases(final AdvancedStage game) {
+    private void startDizziness(final AdvancedStage game) {
         gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
         gameplayScreen.setGameplayMode(GameplayMode.DIZZINESS);
+        game.switchScreens(mainMenuToGameplay);
+    }
+
+    private void initializeLazer(final AdvancedStage game) {
+        lazer = new SimpleText(myBitmapFont, "LAZER");
+
+        lazer.setVisible(false);
+
+        lazer.setY(MM_LAZER_FINAL_Y);
+
+        lazer.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        lazer.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startLazer(game);
+                    }
+                }
+        );
+    }
+
+    private void startLazer(final AdvancedStage game) {
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+        gameplayScreen.setGameplayMode(GameplayMode.LAZER);
         game.switchScreens(mainMenuToGameplay);
     }
 

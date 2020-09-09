@@ -63,6 +63,9 @@ public class BulletsHandler implements Updatable {
     private Tween d_dizziness_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
     private Tween d_dizziness_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
 
+    private Tween d_lazer_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween d_lazer_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
 
 
 
@@ -135,6 +138,9 @@ public class BulletsHandler implements Updatable {
         initializeD_dizziness_bulletsPerAttackNumberTween();
         initializeD_dizziness_bulletSpeedMultiplierTween();
 
+        initializeD_lazer_bulletsPerAttackNumberTween();
+        initializeD_lazer_bulletsSpeedMultiplierTween();
+
         //initializeCurrentDifficultLevelTimer();
 
         initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
@@ -179,6 +185,10 @@ public class BulletsHandler implements Updatable {
             case DIZZINESS:
                 d_dizziness_bulletsPerAttackNumberTween.update(delta);
                 d_dizziness_bulletSpeedMultiplierTween.update(delta);
+                break;
+            case LAZER:
+                d_lazer_bulletsPerAttackNumberTween.update(delta);
+                d_lazer_bulletSpeedMultiplierTween.update(delta);
                 break;
         }
 
@@ -268,9 +278,12 @@ public class BulletsHandler implements Updatable {
         return d_dizziness_bulletSpeedMultiplierTween;
     }
 
-    public void startDizzinessDifficultyTweens() {
-        d_dizziness_bulletsPerAttackNumberTween.start();
-        d_dizziness_bulletSpeedMultiplierTween.start();
+    public Tween getD_lazer_bulletsPerAttackNumberTween() {
+        return d_lazer_bulletsPerAttackNumberTween;
+    }
+
+    public Tween getD_lazer_bulletSpeedMultiplierTween() {
+        return d_lazer_bulletSpeedMultiplierTween;
     }
 
     /* public BulletsAndShieldContainer getPrevious() {
@@ -1385,6 +1398,31 @@ public class BulletsHandler implements Updatable {
 
         gameplayScreen.addToFinishWhenLosing(d_dizziness_bulletSpeedMultiplierTween);
     }
+
+    private void initializeD_lazer_bulletsPerAttackNumberTween() {
+
+        d_lazer_bulletsPerAttackNumberTween = new Tween(LAZER_LEVEL_TIME*60*1000, D_LAZER_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setBulletsPerAttack((int) interpolation.apply(D_LAZER_BULLETS_INITIAL_NO_PER_ATTACK, D_LAZER_BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_lazer_bulletsPerAttackNumberTween);
+
+    }
+
+    private void initializeD_lazer_bulletsSpeedMultiplierTween() {
+        d_lazer_bulletSpeedMultiplierTween = new Tween(LAZER_LEVEL_TIME*60*1000, D_LAZER_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setCurrentSpeedMultiplier(interpolation.apply(D_LAZER_BULLETS_SPEED_MULTIPLIER_INITIAL, D_LAZER_BULLETS_SPEED_MULTIPLIER_MAX, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenLosing(d_lazer_bulletSpeedMultiplierTween);
+    }
+
 
 
     private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {

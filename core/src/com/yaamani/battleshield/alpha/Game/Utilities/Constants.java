@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    private static final boolean NO_DEATH = false;
+    private static final boolean NO_DEATH = true;
 
 
 
@@ -96,6 +96,8 @@ public final class Constants {
 
     public static final float MM_DIZZINESS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
 
+    public static final float MM_LAZER_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
+
     public static final float MM_T1_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
     //-------
     public static final float MM_MOUNTAIN_INITIAL_Y = -MM_MOUNTAIN_HEIGHT;
@@ -143,6 +145,8 @@ public final class Constants {
     public static final float MM_T1_TXT_FINAL_Y = MM_FREE_TXT_FINAL_Y;
 
     public static final float MM_DIZZINESS_FINAL_Y = MM_FREE_TXT_FINAL_Y - 13f;
+
+    public static final float MM_LAZER_FINAL_Y = MM_DIZZINESS_FINAL_Y - 13f;
     //-------
     public static final float MM_MOUNTAIN_X_MOVING_AMOUNT = WORLD_SIZE * 0.02f;
 
@@ -161,7 +165,7 @@ public final class Constants {
 
 
     public enum GameplayControllerType {FREE, RESTRICTED}
-    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS}
+    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER}
 
 
     public enum Direction {RIGHT, LEFT}
@@ -813,8 +817,8 @@ public final class Constants {
 
     public static final Interpolation D_DIZZINESS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
             D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS,
-            D_CRYSTAL_DIFFICULTY_TIME_SCALE,
-            D_CRYSTAL_DIFFICULTY_OUTPUT_SCALE
+            D_DIZZINESS_DIFFICULTY_TIME_SCALE,
+            D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE
     );
 
     public static final Interpolation D_DIZZINESS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
@@ -823,6 +827,72 @@ public final class Constants {
             2,
             D_DIZZINESS_DIFFICULTY_TIME_SCALE,
             D_DIZZINESS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+
+
+
+
+
+
+
+    public static final float LAZER_LEVEL_TIME = /*5*/0.5f; //minutes
+
+    public static final int LAZER_SHIELDS_MAX_COUNT = 8;
+
+    public static final int LAZER_SHIELDS_MIN_COUNT = 4;
+
+    public static final int D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
+
+    public static final MyInterpolation D_LAZER_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
+
+    public static final MyInterpolation D_LAZER_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
+
+
+    public static final int D_LAZER_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+
+    public static final int D_LAZER_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
+
+    public static final int D_LAZER_BULLETS_MAX_NUMBER_PER_ATTACK = D_LAZER_BULLETS_MIN_NUMBER_PER_ATTACK + (D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_LAZER_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+
+    public static final int D_LAZER_BULLETS_INITIAL_NO_PER_ATTACK = D_LAZER_BULLETS_MAX_NUMBER_PER_ATTACK;
+
+    public static final Interpolation D_LAZER_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_LAZER_DIFFICULTY_TIME_SCALE,
+            D_LAZER_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final float D_LAZER_BULLETS_SPEED_MULTIPLIER_INITIAL = 1;
+
+    public static final float D_LAZER_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+
+    public static final float D_LAZER_BULLETS_SPEED_MULTIPLIER_MAX = D_LAZER_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_LAZER_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final Interpolation D_LAZER_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_LAZER_DIFFICULTY_TIME_SCALE,
+            D_LAZER_DIFFICULTY_OUTPUT_SCALE
+    );
+    
+    
+
+
+    public static final Interpolation D_LAZER_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_LAZER_DIFFICULTY_TIME_SCALE,
+            D_LAZER_DIFFICULTY_OUTPUT_SCALE
+    );
+    
+    public static final Interpolation D_LAZER_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
+            D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.05f,
+            2,
+            D_LAZER_DIFFICULTY_TIME_SCALE,
+            D_LAZER_DIFFICULTY_OUTPUT_SCALE
     );
 
 

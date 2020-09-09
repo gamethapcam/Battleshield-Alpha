@@ -452,8 +452,8 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.getD_crystal_fakeWaveProbabilityTween().start();
 
                     setCurrentShieldsMinMaxCount(CRYSTAL_SHIELDS_MIN_COUNT, CRYSTAL_SHIELDS_MAX_COUNT);
-
                     break;
+
                 case DIZZINESS:
                     scoreTimerStuff.setLevelTime(DIZZINESS_LEVEL_TIME);
                     scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().dizziness();
@@ -467,7 +467,18 @@ public class GameplayScreen extends AdvancedScreen {
                     shieldsAndContainersHandler.getD_dizziness_rotationalSpeedTween().start();
 
                     setCurrentShieldsMinMaxCount(DIZZINESS_SHIELDS_MIN_COUNT, DIZZINESS_SHIELDS_MAX_COUNT);
+                    break;
 
+                case LAZER:
+                    scoreTimerStuff.setLevelTime(LAZER_LEVEL_TIME);
+                    scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().lazer();
+
+                    bulletsHandler.setCurrentPlanetSpecialBullets(null); // A custom algorithm for this planet's special bullet.
+
+                    bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();
+                    bulletsHandler.getD_lazer_bulletSpeedMultiplierTween().start();
+
+                    setCurrentShieldsMinMaxCount(LAZER_SHIELDS_MIN_COUNT, LAZER_SHIELDS_MAX_COUNT);
                     break;
             }
 
