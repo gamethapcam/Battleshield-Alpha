@@ -4,429 +4,450 @@ size: 4096,4096
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+Armor
+  rotate: false
+  xy: 1427, 873
+  size: 115, 115
+  orig: 115, 115
+  offset: 0, 0
+  index: -1
 Big Circle
   rotate: false
-  xy: 2, 1248
+  xy: 2, 1255
   size: 1225, 1225
   orig: 1225, 1225
   offset: 0, 0
   index: -1
 Bomb
   rotate: false
-  xy: 1229, 1250
+  xy: 1427, 756
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Bullet
   rotate: false
-  xy: 2625, 3606
+  xy: 1427, 598
   size: 13, 39
   orig: 13, 39
   offset: 0, 0
   index: -1
 Dimming Overlay
   rotate: false
-  xy: 2227, 1491
+  xy: 2227, 1498
   size: 500, 210
   orig: 500, 210
   offset: 0, 0
   index: -1
 Faster Dizziness Rotation
   rotate: false
-  xy: 1346, 1250
+  xy: 1427, 639
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Free Controller BG
   rotate: false
-  xy: 1229, 1477
+  xy: 1229, 1484
   size: 996, 996
   orig: 996, 996
   offset: 0, 0
   index: -1
 Free Controller Stick
   rotate: false
-  xy: 2729, 1573
+  xy: 1427, 990
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
+Halo Armor
+  rotate: false
+  xy: 1028, 177
+  size: 202, 399
+  orig: 202, 399
+  offset: 0, 0
+  index: -1
 Heart
   rotate: false
-  xy: 1463, 1250
+  xy: 2111, 1367
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
+Lazer Gun
+  rotate: false
+  xy: 1662, 1308
+  size: 242, 174
+  orig: 242, 174
+  offset: 0, 0
+  index: -1
 Minus
   rotate: false
-  xy: 1427, 1133
+  xy: 2729, 1593
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Mirror
   rotate: false
-  xy: 1427, 1016
+  xy: 662, 2
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Mirror Arrows
   rotate: false
-  xy: 2575, 3597
+  xy: 2575, 3604
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 Pause Symbol
   rotate: false
-  xy: 2729, 1492
+  xy: 2729, 1512
   size: 58, 79
   orig: 58, 79
   offset: 0, 0
   index: -1
 Pause Text
   rotate: false
-  xy: 2575, 3647
+  xy: 2575, 3654
   size: 900, 428
   orig: 900, 428
   offset: 0, 0
   index: -1
 Plus
   rotate: false
-  xy: 1427, 899
+  xy: 1317, 461
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Question Mark
   rotate: false
-  xy: 1233, 255
+  xy: 1662, 1246
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Restricted Controller Left BG
   rotate: false
-  xy: 4010, 3599
+  xy: 4010, 3606
   size: 83, 476
   orig: 83, 476
   offset: 0, 0
   index: -1
 Restricted Controller Right BG
   rotate: false
-  xy: 2571, 3119
+  xy: 1232, 100
   size: 83, 476
   orig: 83, 476
   offset: 0, 0
   index: -1
 Shield Disabling
   rotate: false
-  xy: 1427, 782
+  xy: 1317, 344
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Shields102
   rotate: false
-  xy: 1593, 1099
+  xy: 4010, 3455
   size: 39, 149
   orig: 39, 149
   offset: 0, 0
   index: -1
 Shields105
   rotate: false
-  xy: 2628, 2964
+  xy: 1409, 72
   size: 41, 153
   orig: 41, 153
   offset: 0, 0
   index: -1
 Shields108
   rotate: false
-  xy: 1544, 764
+  xy: 1364, 69
   size: 43, 156
   orig: 43, 156
   offset: 0, 0
   index: -1
 Shields111
   rotate: false
-  xy: 1544, 922
+  xy: 1317, 65
   size: 45, 160
   orig: 45, 160
   offset: 0, 0
   index: -1
 Shields114
   rotate: false
-  xy: 1544, 1084
+  xy: 1544, 655
   size: 47, 164
   orig: 47, 164
   offset: 0, 0
   index: -1
 Shields117
   rotate: false
-  xy: 2575, 2778
+  xy: 1544, 821
   size: 49, 167
   orig: 49, 167
   offset: 0, 0
   index: -1
 Shields120
   rotate: false
-  xy: 2575, 2947
+  xy: 1571, 1202
   size: 51, 170
   orig: 51, 170
   offset: 0, 0
   index: -1
 Shields45
   rotate: false
-  xy: 2575, 2714
+  xy: 2789, 1529
   size: 16, 62
   orig: 16, 62
   offset: 0, 0
   index: -1
 Shields48
   rotate: false
-  xy: 1662, 1269
+  xy: 1590, 1133
   size: 16, 67
   orig: 16, 67
   offset: 0, 0
   index: -1
 Shields51
   rotate: false
-  xy: 736, 38
+  xy: 1571, 1128
   size: 17, 72
   orig: 17, 72
   offset: 0, 0
   index: -1
 Shields54
   rotate: false
-  xy: 2789, 1494
+  xy: 2571, 3525
   size: 18, 77
   orig: 18, 77
   offset: 0, 0
   index: -1
 Shields57
   rotate: false
-  xy: 1826, 1393
+  xy: 2484, 1414
   size: 19, 82
   orig: 19, 82
   offset: 0, 0
   index: -1
 Shields60
   rotate: false
-  xy: 1544, 675
+  xy: 2111, 1278
   size: 20, 87
   orig: 20, 87
   offset: 0, 0
   index: -1
 Shields63
   rotate: false
-  xy: 1427, 571
+  xy: 2461, 1404
   size: 21, 92
   orig: 21, 92
   offset: 0, 0
   index: -1
 Shields66
   rotate: false
-  xy: 954, 124
+  xy: 2437, 1400
   size: 22, 96
   orig: 22, 96
   offset: 0, 0
   index: -1
 Shields69
   rotate: false
-  xy: 1370, 468
+  xy: 2412, 1395
   size: 23, 101
   orig: 23, 101
   offset: 0, 0
   index: -1
 Shields72
   rotate: false
-  xy: 1636, 1259
+  xy: 2386, 1390
   size: 24, 106
   orig: 24, 106
   offset: 0, 0
   index: -1
 Shields75
   rotate: false
-  xy: 1609, 1255
+  xy: 2359, 1386
   size: 25, 110
   orig: 25, 110
   offset: 0, 0
   index: -1
 Shields78
   rotate: false
-  xy: 1580, 1250
+  xy: 779, 2
   size: 27, 115
   orig: 27, 115
   offset: 0, 0
   index: -1
 Shields81
   rotate: false
-  xy: 1796, 1355
+  xy: 2329, 1376
   size: 28, 120
   orig: 28, 120
   offset: 0, 0
   index: -1
 Shields84
   rotate: false
-  xy: 1765, 1351
+  xy: 2298, 1372
   size: 29, 124
   orig: 29, 124
   offset: 0, 0
   index: -1
 Shields87
   rotate: false
-  xy: 1732, 1347
+  xy: 1557, 990
   size: 31, 128
   orig: 31, 128
   offset: 0, 0
   index: -1
 Shields90
   rotate: false
-  xy: 1698, 1342
+  xy: 2264, 1363
   size: 32, 133
   orig: 32, 133
   offset: 0, 0
   index: -1
 Shields93
   rotate: false
-  xy: 1662, 1338
+  xy: 2228, 1359
   size: 34, 137
   orig: 34, 137
   offset: 0, 0
   index: -1
 Shields96
   rotate: false
-  xy: 4049, 3456
+  xy: 1624, 1231
   size: 36, 141
   orig: 36, 141
   offset: 0, 0
   index: -1
 Shields99
   rotate: false
-  xy: 4010, 3452
+  xy: 4051, 3459
   size: 37, 145
   orig: 37, 145
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 1427, 665
+  xy: 1317, 227
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Star Glow
   rotate: false
-  xy: 1028, 255
+  xy: 1906, 1278
   size: 203, 204
   orig: 203, 204
   offset: 0, 0
   index: -1
 Turret
   rotate: false
-  xy: 1233, 317
+  xy: 1427, 1120
   size: 142, 142
   orig: 142, 142
   offset: 0, 0
   index: -1
 Logo
   rotate: false
-  xy: 2227, 1703
+  xy: 2227, 1710
   size: 615, 770
   orig: 615, 770
   offset: 0, 0
   index: -1
 Big Mountain in the Back
   rotate: false
-  xy: 2, 2710
+  xy: 2, 2717
   size: 2571, 405
   orig: 2571, 405
   offset: 0, 0
   index: -1
 Big Tree in the Back
   rotate: false
-  xy: 1028, 571
+  xy: 1028, 578
   size: 397, 675
   orig: 397, 675
   offset: 0, 0
   index: -1
 FREE
   rotate: false
-  xy: 1028, 461
+  xy: 1229, 1264
   size: 340, 108
   orig: 340, 108
   offset: 0, 0
   index: -1
 Front Big Tree
   rotate: false
-  xy: 3477, 3481
+  xy: 3477, 3488
   size: 531, 594
   orig: 531, 594
   offset: 0, 0
   index: -1
 Front Grass
   rotate: false
-  xy: 2, 2475
+  xy: 2, 2482
   size: 2568, 233
   orig: 2568, 233
   offset: 0, 0
   index: -1
 Middle Tall Grass
   rotate: false
-  xy: 2, 3597
+  xy: 2, 3604
   size: 2571, 478
   orig: 2571, 478
   offset: 0, 0
   index: -1
 RESTRICTED
   rotate: false
-  xy: 2, 112
+  xy: 2, 119
   size: 817, 108
   orig: 817, 108
   offset: 0, 0
   index: -1
 START
   rotate: false
-  xy: 1229, 1367
+  xy: 1229, 1374
   size: 431, 108
   orig: 431, 108
   offset: 0, 0
   index: -1
 SURVIVAL
   rotate: false
-  xy: 2, 2
+  xy: 2, 9
   size: 658, 108
   orig: 658, 108
   offset: 0, 0
   index: -1
 T1
   rotate: false
-  xy: 821, 115
+  xy: 821, 122
   size: 131, 105
   orig: 131, 105
   offset: 0, 0
   index: -1
 Too Many Trees
   rotate: false
-  xy: 2, 3117
+  xy: 2, 3124
   size: 2567, 478
   orig: 2567, 478
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 662, 38
+  xy: 954, 155
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Uni Neue Bold Italic
   rotate: false
-  xy: 2, 222
+  xy: 2, 229
   size: 1024, 1024
   orig: 1024, 1024
   offset: 0, 0

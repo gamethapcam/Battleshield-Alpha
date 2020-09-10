@@ -151,6 +151,10 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion shieldDisablingBullet;
         public final TextureRegion mirrorBullet;
         public final TextureRegion fasterDizzinessRotationBullet;
+        public final TextureRegion armorBullet;
+
+        public final TextureRegion armorHalo;
+        public final TextureRegion lazerGun;
 
         public final TextureRegion pauseText;
         public final TextureRegion pauseSymbol;
@@ -184,6 +188,10 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             shieldDisablingBullet = atlas.findRegion(ASSETS_SHIELD_DISABLING_BULLET);
             mirrorBullet = atlas.findRegion(ASSETS_MIRROR_BULLET);
             fasterDizzinessRotationBullet = atlas.findRegion(ASSETS_FASTER_DIZZINESS_ROTATION);
+            armorBullet = atlas.findRegion(ASSETS_ARMOR_BULLET);
+
+            armorHalo = atlas.findRegion(ASSETS_ARMOR_HALO);
+            lazerGun = atlas.findRegion(ASSETS_LAZER_GUN);
 
             pauseText = atlas.findRegion(ASSETS_PAUSE_TEXT);
             pauseSymbol = atlas.findRegion(ASSETS_PAUSE_SYMBOL);

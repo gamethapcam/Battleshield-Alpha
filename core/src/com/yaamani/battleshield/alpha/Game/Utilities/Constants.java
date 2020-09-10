@@ -851,6 +851,11 @@ public final class Constants {
     public static final MyInterpolation D_LAZER_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
 
+    public static final int LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR = 5;
+
+    //public static final ;
+
+
     public static final int D_LAZER_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
 
     public static final int D_LAZER_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
@@ -1014,5 +1019,11 @@ public final class Constants {
     public static final String ASSETS_FREE = "FREE";
 
     public static final String ASSETS_T1 = "T1";
+
+    public static final String ASSETS_ARMOR_BULLET = "Armor";
+
+    public static final String ASSETS_ARMOR_HALO = "Armor Halo";
+
+    public static final String ASSETS_LAZER_GUN = "Lazer Gun";
 
 }

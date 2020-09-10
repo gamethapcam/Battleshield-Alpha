@@ -710,8 +710,8 @@ public class BulletsHandler implements Updatable {
 
         switch (waveAttackType) {
             case SINGLE:
-                //newSingleWave();
-                newDoubleWave();
+                newSingleWave();
+                //newDoubleWave();
                 break;
             case DOUBLE:
                 //newSingleWave();
@@ -719,16 +719,16 @@ public class BulletsHandler implements Updatable {
 
                 if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
                     if (MathUtils.random(1) == 0)
-                        //newRoundWave();
-                        newSingleWave();
+                        newRoundWave();
+                        //newSingleWave();
                     else newSingleWave();
                 } else newDoubleWave();
 
                 break;
             case ROUND:
                 //newSingleWave();
-                newDoubleWave();
-                //newRoundWave();
+                //newDoubleWave();
+                newRoundWave();
                 break;
         }
         //resetWaveTimer();

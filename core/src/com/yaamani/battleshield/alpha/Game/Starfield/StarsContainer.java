@@ -105,8 +105,8 @@ public class StarsContainer extends Group implements Disposable{
 
         badlogic = new Texture(Gdx.files.internal("badlogic.jpg"));
         badlogic.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        test = new Texture(Gdx.files.internal("test.jpg"));
-        test.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        //test = new Texture(Gdx.files.internal("test.jpg"));
+        //test.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         fpss = new Array<>(Float.class);
     }
 
