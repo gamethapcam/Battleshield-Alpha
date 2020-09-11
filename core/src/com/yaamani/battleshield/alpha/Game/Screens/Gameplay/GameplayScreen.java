@@ -7,14 +7,19 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.ColorAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -61,6 +66,10 @@ public class GameplayScreen extends AdvancedScreen {
     private int rotation;
 
 
+
+    private LazerAttackStuff lazerAttackStuff;
+
+
     // HUD
     private Controller controllerLeft;
     private Controller controllerRight;
@@ -75,7 +84,6 @@ public class GameplayScreen extends AdvancedScreen {
     private TempProgressBar tempProgressBar;
 
     private LevelFinishStuff levelFinishStuff;
-
 
 
 
@@ -109,7 +117,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         levelFinishStuff = new LevelFinishStuff(this);
 
-
+        lazerAttackStuff = new LazerAttackStuff(this);
         //---------
         state = State.PLAYING;
 
@@ -144,11 +152,30 @@ public class GameplayScreen extends AdvancedScreen {
 
         super.act(delta);
 
-        scoreTimerStuff.update(delta);
 
-        /*if (getState() == GameplayScreen.State.PLAYING) {
-            if (!inStarBulletAnimation) timePlayedThisTurnSoFar += delta;
-        }*/
+
+        debuggingControls();
+        gamePadPooling();
+
+
+        if (Gdx.input.getRotation() != rotation) {
+            //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
+        }
+        rotation = Gdx.input.getRotation();
+
+
+        lazerAttackStuff.update(delta);
+
+        if (lazerAttackStuff.isLazerAttacking())
+            return;
+
+
+        //Gdx.app.log(TAG, "free bullets = " + bulletsHandler.getBulletPool().getFree());
+        //Gdx.app.log(TAG, "" + bulletsHandler.getCurrentWaveLastBullet());
+
+
+
+        scoreTimerStuff.update(delta);
 
         healthHandler.update(delta);
 
@@ -160,11 +187,13 @@ public class GameplayScreen extends AdvancedScreen {
 
         levelFinishStuff.update(delta);
 
-        //if (controllerLeft.getAngle() != null) shield.setOmegaDeg(controllerLeft.getAngle() * MathUtils.radiansToDegrees);
-        //Gdx.app.log(TAG, "controllerLeft.getAngleDeg() = " + controllerLeft.getAngleDeg());
 
         shieldsAndContainersHandler.handleOnShields();
 
+
+    }
+
+    private void debuggingControls() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.EQUALS) | Gdx.input.isKeyJustPressed(Input.Keys.PLUS))  {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);
             starsContainer.getRadialTween().start(SpecialBullet.PLUS);
@@ -195,18 +224,6 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_0) | Gdx.input.isKeyPressed(Input.Keys.NUMPAD_0))
             bulletsHandler.setBulletsPerAttack(10);
-
-        if (Gdx.input.getRotation() != rotation) {
-            //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
-        }
-        rotation = Gdx.input.getRotation();
-
-        /*healthBar.setOrigin(healthBar.getRadius(), healthBar.getRadius());
-        healthBar.setRotation(healthBar.getRotation() + 1);*/
-
-        //bulletsAndShieldContainers[0].getShield().rotateBy(0.1f);
-
-        gamePadPooling();
     }
 
     private void gamePadPooling() {
@@ -266,6 +283,8 @@ public class GameplayScreen extends AdvancedScreen {
         levelFinishStuff.resize(width, height, worldWidth, worldHeight);
 
         containerOfContainers.setPosition(worldWidth/2f, worldHeight/2f);
+
+        lazerAttackStuff.resize(width, height, worldWidth, worldHeight);
     }
 
     //------------------------------ initializers ------------------------------
@@ -428,6 +447,8 @@ public class GameplayScreen extends AdvancedScreen {
 
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
 
+            lazerAttackStuff.getNextLazerAttackTimerText().setVisible(false);
+
             //bulletsHandler.startSurvivalDifficultyTweens();
             bulletsHandler.getD_survival_bulletsPerAttackNumberTween().start();
             bulletsHandler.getD_survival_bulletSpeedMultiplierTween().start();
@@ -446,6 +467,8 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
 
+                    lazerAttackStuff.getNextLazerAttackTimerText().setVisible(false);
+
                     //bulletsHandler.startCrystalDifficultyTweens();
                     bulletsHandler.getD_crystal_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_crystal_bulletSpeedMultiplierTween().start();
@@ -457,6 +480,8 @@ public class GameplayScreen extends AdvancedScreen {
                 case DIZZINESS:
                     scoreTimerStuff.setLevelTime(DIZZINESS_LEVEL_TIME);
                     scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().dizziness();
+
+                    lazerAttackStuff.getNextLazerAttackTimerText().setVisible(false);
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(DIZZINESS_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY);
@@ -474,6 +499,9 @@ public class GameplayScreen extends AdvancedScreen {
                     scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().lazer();
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(null); // A custom algorithm for this planet's special bullet.
+
+                    lazerAttackStuff.getNextLazerAttackTimerText().setVisible(true);
+                    lazerAttackStuff.getNextLazerAttackTimer().start();
 
                     bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_lazer_bulletSpeedMultiplierTween().start();

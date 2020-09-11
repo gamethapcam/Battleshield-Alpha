@@ -68,6 +68,9 @@ public class BulletsHandler implements Updatable {
 
 
 
+    //private float[] timestampsForArmorBulletsToPrepareForTheNextLazerAttack;
+
+
 
 
 

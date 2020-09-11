@@ -851,6 +851,8 @@ public final class Constants {
     public static final MyInterpolation D_LAZER_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
 
 
+    public static final int LAZER_NUMBER_OF_LAZER_ATTACKS = D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS - 1;
+
     public static final int LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR = 5;
 
     //public static final ;
