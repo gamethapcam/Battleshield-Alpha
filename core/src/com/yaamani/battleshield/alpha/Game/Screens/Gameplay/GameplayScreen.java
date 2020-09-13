@@ -628,6 +628,10 @@ public class GameplayScreen extends AdvancedScreen {
 
     }
 
+    public LazerAttackStuff getLazerAttackStuff() {
+        return lazerAttackStuff;
+    }
+
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------

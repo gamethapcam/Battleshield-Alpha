@@ -28,6 +28,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private static boolean fasterDizzinessRotationExists = false;
     private static float R = 0;
 
+    public static int currentInUseBulletsCount = 0;
+
     public enum BulletType {ORDINARY, SPECIAL}
     private BulletType bulletType;
 
@@ -117,6 +119,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         Bullet.fasterDizzinessRotationExists = fasterDizzinessRotationExists;
     }
 
+    public static int getCurrentInUseBulletsCount() {
+        return currentInUseBulletsCount;
+    }
+
     public boolean isInUse() {
         return inUse;
     }
@@ -127,6 +133,16 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public Tween getFakeTween() {
         return fakeTween;
+    }
+
+    public void iamInUseNow() {
+        inUse = true;
+        currentInUseBulletsCount++;
+    }
+
+    public void iamNotInUseNow() {
+        inUse = false;
+        currentInUseBulletsCount--;
     }
 
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
@@ -153,7 +169,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void readyToBeAttached(BulletsAndShieldContainer parent) {
-        inUse = true;
+        iamInUseNow();
+
         this.parent = parent;
         parent.addActor(this);
 
@@ -258,6 +275,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
             if (gameplayScreen.getBulletsHandler().getCurrentWaveLastBullet() == this)
                 gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
+
+            if (currentEffect.equals(effects.armor)) {
+                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+            }
         }
     }
 
@@ -272,7 +293,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void stopUsingTheBullet(float worldWidth, float worldHeight) {
-        inUse = false;
+        iamNotInUseNow();
         //bulletMovement.finish();
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
@@ -366,6 +387,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 currentEffect = effects.fasterDizzinessRotation;
                 Bullet.setFasterDizzinessRotationExists(true);
                 break;
+            case ARMOR:
+                if (!questionMark) region = Assets.instance.gameplayAssets.armorBullet;
+                currentEffect = effects.armor;
+                gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                break;
         }
 
         // Next 2 lines are for debugging.
@@ -455,6 +481,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         //Dizziness
         private BulletEffect fasterDizzinessRotation;
+
+        //Lazer
+        private BulletEffect armor;
 
 
 
@@ -571,6 +600,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 }
             };
 
+            armor = new BulletEffect() {
+                @Override
+                public void effect() {
+
+                }
+            };
             /*questionMark = new BulletEffect() {
                 @Override
                 public void effect() {

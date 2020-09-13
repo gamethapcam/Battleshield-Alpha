@@ -292,7 +292,7 @@ public final class Constants {
     };
 
     public enum SpecialBullet {
-        MINUS, HEART, STAR, // Good
+        MINUS, HEART, STAR, ARMOR /*Lazer*/, // Good
         PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, // Bad
         QUESTION_MARK
     }
@@ -330,7 +330,7 @@ public final class Constants {
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,*/
 
-           /* SpecialBullet.QUESTION_MARK,
+           /*SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,*/
             SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
@@ -359,6 +359,8 @@ public final class Constants {
     };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = MyMath.cloneAndReplace(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS, SpecialBullet.BOMB);
+
+    public static final float FORCED_SPECIAL_BULLET_QUESTION_MARK_PROBABILITY = 0.18f;
 
     public static final float BULLETS_ORDINARY_AFFECT_HEALTH_BY = NO_DEATH ? 0 : -0.04f;
 
@@ -837,7 +839,7 @@ public final class Constants {
 
 
 
-    public static final float LAZER_LEVEL_TIME = /*5*/0.5f; //minutes
+    public static final float LAZER_LEVEL_TIME = /*5*/1f; //minutes
 
     public static final int LAZER_SHIELDS_MAX_COUNT = 8;
 
@@ -854,6 +856,12 @@ public final class Constants {
     public static final int LAZER_NUMBER_OF_LAZER_ATTACKS = D_LAZER_NUMBER_OF_DIFFICULTY_LEVELS - 1;
 
     public static final int LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR = 5;
+
+    public static final int D_LAZER_PROVIDED_ARMOR_BULLETS_EACH_ATTACK_DECREMENT = 1;
+
+    public static final int D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS = LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR + (LAZER_NUMBER_OF_LAZER_ATTACKS-1)*D_LAZER_PROVIDED_ARMOR_BULLETS_EACH_ATTACK_DECREMENT; // Nth term of an arithmetic sequence.
+
+    public static final float LAZER_LAZER_TIMER_DURATION = LAZER_LEVEL_TIME*60*1000/(LAZER_NUMBER_OF_LAZER_ATTACKS+1);
 
     //public static final ;
 
