@@ -164,10 +164,13 @@ public class GameplayScreen extends AdvancedScreen {
         rotation = Gdx.input.getRotation();
 
 
+        healthHandler.update(delta);
+
         lazerAttackStuff.update(delta);
 
-        if (lazerAttackStuff.isLazerAttacking())
+        if (lazerAttackStuff.isLazerAttacking()) {
             return;
+        }
 
 
         //Gdx.app.log(TAG, "free bullets = " + bulletsHandler.getBulletPool().getFree());
@@ -177,7 +180,6 @@ public class GameplayScreen extends AdvancedScreen {
 
         scoreTimerStuff.update(delta);
 
-        healthHandler.update(delta);
 
 
         shieldsAndContainersHandler.update(delta);
@@ -447,7 +449,7 @@ public class GameplayScreen extends AdvancedScreen {
 
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
 
-            lazerAttackStuff.getNextLazerAttackTimerText().setVisible(false);
+            lazerAttackStuff.hide();
 
             //bulletsHandler.startSurvivalDifficultyTweens();
             bulletsHandler.getD_survival_bulletsPerAttackNumberTween().start();
@@ -467,7 +469,7 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBullets(CRYSTAL_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
 
-                    lazerAttackStuff.getNextLazerAttackTimerText().setVisible(false);
+                    lazerAttackStuff.hide();
 
                     //bulletsHandler.startCrystalDifficultyTweens();
                     bulletsHandler.getD_crystal_bulletsPerAttackNumberTween().start();
@@ -481,7 +483,7 @@ public class GameplayScreen extends AdvancedScreen {
                     scoreTimerStuff.setLevelTime(DIZZINESS_LEVEL_TIME);
                     scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().dizziness();
 
-                    lazerAttackStuff.getNextLazerAttackTimerText().setVisible(false);
+                    lazerAttackStuff.hide();
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(DIZZINESS_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY);
@@ -500,7 +502,7 @@ public class GameplayScreen extends AdvancedScreen {
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(null); // A custom algorithm for this planet's special bullet.
 
-                    lazerAttackStuff.getNextLazerAttackTimerText().setVisible(true);
+                    lazerAttackStuff.show();
                     lazerAttackStuff.getNextLazerAttackTimer().start();
 
                     bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();

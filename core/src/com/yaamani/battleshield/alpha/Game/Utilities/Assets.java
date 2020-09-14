@@ -155,6 +155,8 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
 
         public final TextureRegion armorHalo;
         public final TextureRegion lazerGun;
+        public final TextureRegion armorBlack;
+        public final TextureRegion armorGlowing;
 
         public final TextureRegion pauseText;
         public final TextureRegion pauseSymbol;
@@ -192,6 +194,8 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
 
             armorHalo = atlas.findRegion(ASSETS_ARMOR_HALO);
             lazerGun = atlas.findRegion(ASSETS_LAZER_GUN);
+            armorBlack = atlas.findRegion(ASSETS_ARMOR_BLACK);
+            armorGlowing = atlas.findRegion(ASSETS_ARMOR_GLOWING);
 
             pauseText = atlas.findRegion(ASSETS_PAUSE_TEXT);
             pauseSymbol = atlas.findRegion(ASSETS_PAUSE_SYMBOL);

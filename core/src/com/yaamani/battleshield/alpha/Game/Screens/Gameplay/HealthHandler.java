@@ -24,14 +24,18 @@ public class HealthHandler implements Updatable {
         health = new TweenedFloat(1) {
             @Override
             public void onTween(float value) {
+
+                if (gameplayScreen.getState() != GameplayScreen.State.PLAYING) return;
+
                 if (gameplayScreen.getHealthBar() != null)
                     gameplayScreen.getHealthBar().setAngle(value*MathUtils.PI2);
 
-                if (value <= 0) {
+                if (this.getFinishedValue() <= 0) {
                     playerLost();
                 }
             }
         };
+        gameplayScreen.addToFinishWhenLosing(health.getTweenObj());
 
         //setHealth(1);
     }
@@ -48,7 +52,7 @@ public class HealthHandler implements Updatable {
     public void setHealth(float health) {
         float correctedHealth = MathUtils.clamp(health, 0, Float.MAX_VALUE);
         //this.health = correctedHealth;
-        this.health.tween(correctedHealth, 200, Interpolation.exp5Out);
+        this.health.tween(correctedHealth, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
     }
 
     public void playerLost() {
@@ -94,6 +98,8 @@ public class HealthHandler implements Updatable {
 
 
         gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
+
+        gameplayScreen.getLazerAttackStuff().resetLazerStuff();
     }
 
     public void newGame() {
@@ -105,6 +111,8 @@ public class HealthHandler implements Updatable {
 
             gameplayScreen.setState(GameplayScreen.State.PLAYING);
             setHealth(1f);
+
+
             gameplayScreen.getScoreTimerStuff().resetScore();
             //gameplayScreen.getBulletsHandler().resetSpeedResetTime();
             gameplayScreen.getScoreTimerStuff().resetScore();

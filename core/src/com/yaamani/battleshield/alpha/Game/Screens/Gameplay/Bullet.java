@@ -603,7 +603,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             armor = new BulletEffect() {
                 @Override
                 public void effect() {
-
+                    gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack();
                 }
             };
             /*questionMark = new BulletEffect() {

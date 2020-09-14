@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    private static final boolean NO_DEATH = true;
+    private static final boolean NO_DEATH = false;
 
 
 
@@ -447,6 +447,10 @@ public final class Constants {
 
     public static final int HEALTH_BAR_SAVING_TO_ANGLE = 360;
 
+    public static final float HEALTH_BAR_TWEEN_DURATION = 200; // ms
+
+    public static final Interpolation HEALTH_BAR_TWEEN_INTERPOLATION = Interpolation.exp5Out;
+
 
 
     public static final float STARS_SPEED = WORLD_SIZE / 70.0f;
@@ -863,7 +867,23 @@ public final class Constants {
 
     public static final float LAZER_LAZER_TIMER_DURATION = LAZER_LEVEL_TIME*60*1000/(LAZER_NUMBER_OF_LAZER_ATTACKS+1);
 
-    //public static final ;
+    public static final float LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT = WORLD_SIZE / 20f;
+
+    public static final float LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_WIDTH_RATIO = 0.93504589f;
+
+    public static final float LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT = LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT * 1.819289476578635f;
+
+    public static final float LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_WIDTH_RATIO = 0.95890291f;
+
+    public static final float LAZER_TEXT_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT = WORLD_SIZE / 28.5f;
+
+    public static final float LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_Y = WORLD_SIZE * 0.505f;
+
+    public static final float LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_Y = LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_Y - (LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT-LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT)/2f;
+
+    public static final float LAZER_TEXT_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_Y = WORLD_SIZE * 0.457f;
+
+    public static final float LAZER_ALPHA_ACTION_DURATION = 0.25f; // sec
 
 
     public static final int D_LAZER_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
@@ -1035,5 +1055,9 @@ public final class Constants {
     public static final String ASSETS_ARMOR_HALO = "Armor Halo";
 
     public static final String ASSETS_LAZER_GUN = "Lazer Gun";
+
+    public static final String ASSETS_ARMOR_BLACK = "Armor Black";
+
+    public static final String ASSETS_ARMOR_GLOWING = "Armor Glowing";
 
 }
