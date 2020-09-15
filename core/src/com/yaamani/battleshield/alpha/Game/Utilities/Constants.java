@@ -84,11 +84,11 @@ public final class Constants {
 
     public static final float MM_START_TXT_HEIGHT = WORLD_SIZE * 0.1f;
 
-    public static final float MM_START_TXT_WIDTH = MM_START_TXT_HEIGHT * 3.98480139f;
+    public static final float MM_START_TXT_WIDTH = MM_START_TXT_HEIGHT * 472.625f/108.484f;
 
     public static final float MM_SURVIVAL_TXT_HEIGHT = WORLD_SIZE * 0.1f;
 
-    public static final float MM_SURVIVAL_TXT_WIDTH = MM_SURVIVAL_TXT_HEIGHT * 658.266f/108.484f;
+    public static final float MM_SURVIVAL_TXT_WIDTH = MM_SURVIVAL_TXT_HEIGHT * 711.352f/108.484f;
 
     public static final float MM_PLANETS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
 
@@ -1034,9 +1034,9 @@ public final class Constants {
 
     public static final String ASSETS_HEALTH_BAR = "Big Circle";
 
-    public static final String ASSETS_FONT = "Uni Neue Bold Italic";
+    public static final String ASSETS_FONT = "PublicSans-ExtraBoldItalic";
 
-    public static final String ASSETS_FONT_FNT_INTERNAL = "Uni Neue Bold Italic.fnt";
+    public static final String ASSETS_FONT_FNT_INTERNAL = "PublicSans-ExtraBoldItalic.fnt";
 
     public static final String ASSETS_BIG_CIRCLE = "Big Circle";
 

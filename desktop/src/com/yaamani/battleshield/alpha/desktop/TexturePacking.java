@@ -24,8 +24,8 @@ class TexturePacking {
         //saveProgrammaticallyGeneratedTextures(1080);
 
         TexturePacker.process(settings,
-                "/Users/mac/OneDrive/Battleshield(Alpha)/Unpacked Assets/1080p",
-                "/Users/mac/OneDrive/Battleshield(Alpha)/android/assets",
+                "Unpacked Assets/1080p",
+                "android/assets",
                 "All");
     }
 

@@ -35,6 +35,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
     private SimpleText collectedArmorBulletsText;
 
 
+    // The lazer itself.
+    
+
 
     private Timer test;
 
