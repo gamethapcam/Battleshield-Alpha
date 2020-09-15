@@ -1,6 +1,8 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -19,19 +21,20 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
     private Timer nextLazerAttackTimer;
     private SimpleText nextLazerAttackTimerText;
+
+    // Level handling
     private boolean lazerAttacking = false;
-
     private boolean waitingForAllRemainingBulletsToBeCleared;
-
     private int currentNumOfLazerAttacksThatTookPlace;
-
     private int currentNumOfSpawnedArmorBulletsForTheNextAttack;
     private int currentNumOfCollectedArmorBulletsByThePlayerForNextAttack;
 
-    // How many armor bullets the player collected ui.
+    // How many armor bullets the player collected UI.
     private Image armorBlack;
     private Image armorGlowing;
     private SimpleText collectedArmorBulletsText;
+
+
 
     private Timer test;
 
