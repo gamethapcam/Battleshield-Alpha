@@ -43,6 +43,8 @@ public class SimpleText extends Actor {
         this.aspectRatioLocked = true;
 
         _temp = new TextureRegion();
+
+        setDebug(true);
     }
 
     @Override
@@ -133,6 +135,12 @@ public class SimpleText extends Actor {
                 charSequenceWidthPixelUnits += glyph.xadvance;
             if (i == length-1)
                 charSequenceWidthPixelUnits += glyph.xoffset + glyph.width;
+
+            if (i > 0) {
+                float kerning = (float) glyphs.get(i-1).getKerning((char) glyph.id);
+                charSequenceWidthPixelUnits += kerning;
+                //Gdx.app.log(TAG, "" + glyphs.get(i-1).id + ", " + glyph.id + ", " + glyphs.get(i-1).getKerning((char) glyph.id) + ", " + kerning);
+            }
 
 
             //Gdx.app.log(TAG, c + ", id = " + glyph.id + ", yoffset = " + (glyph.yoffset));
