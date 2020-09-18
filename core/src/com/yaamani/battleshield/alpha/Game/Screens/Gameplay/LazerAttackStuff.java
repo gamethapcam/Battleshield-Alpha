@@ -190,10 +190,12 @@ public class LazerAttackStuff implements Updatable, Resizable {
             if (waitForTheRightMomentToSpawn) {
                 if (theRightMomentToSpawn()) {
                     Gdx.app.log(TAG, "Shortage of armor bullets .... Spawning 1 armor bullet now.");
+                    bulletsHandler.busyToNonBusy();
                     bulletsHandler.newSingleWave(false);
                 }
             } else {
                 Gdx.app.log(TAG, "Shortage of armor bullets .... Spawning 1 armor bullet now.");
+                bulletsHandler.busyToNonBusy();
                 bulletsHandler.newSingleWave(false);
             }
 
@@ -206,6 +208,10 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
         BulletsHandler bulletsHandler = gameplayScreen.getBulletsHandler();
         Bullet currentWaveLastBullet = bulletsHandler.getCurrentWaveLastBullet();
+
+        if (currentWaveLastBullet.getBulletType() == null)
+            return true;
+
 
         if (currentWaveLastBullet.getBulletType() == Bullet.BulletType.ORDINARY) {
 

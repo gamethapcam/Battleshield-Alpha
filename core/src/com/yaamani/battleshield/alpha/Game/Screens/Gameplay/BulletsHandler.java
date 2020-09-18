@@ -720,7 +720,7 @@ public class BulletsHandler implements Updatable {
         return currentSpecialBullet;
     }
 
-    private void busyToNonBusy() {
+    public void busyToNonBusy() {
         Array<BulletsAndShieldContainer> nonBusyContainers = gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers();
         Iterator<BulletsAndShieldContainer> it = busyContainers.iterator();
         // System.out.print("["+TAG+"] "+ "Busy : ");
