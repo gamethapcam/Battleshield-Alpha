@@ -44,7 +44,7 @@ public class SimpleText extends Actor {
 
         _temp = new TextureRegion();
 
-        setDebug(true);
+        //setDebug(true);
     }
 
     @Override

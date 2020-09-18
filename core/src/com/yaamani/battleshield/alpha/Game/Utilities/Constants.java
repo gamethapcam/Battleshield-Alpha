@@ -509,7 +509,7 @@ public final class Constants {
 
     public static final float SCORE_TXT_HEIGHT = WORLD_SIZE / 9f;
 
-    public static final float SCORE_TXT_MARGIN = WORLD_SIZE / 40f;
+    public static final float SCORE_TXT_MARGIN = WORLD_SIZE / 35f;
 
     public static final float SCORE_FADE_OUT_TWEEN_DURATION = 700;
 
@@ -535,7 +535,7 @@ public final class Constants {
     public static final float GAMEOVER_LAYER_TAP_ANY_WHERE_TO_START_AGAIN_TXT_LINE_SPACING = WORLD_SIZE * 58f/1440f;
 
 
-    public static final float BULLET_SPEED_MULTIPLIER_TXT_HEIGHT = WORLD_SIZE / 31.5f;
+    public static final float BULLET_SPEED_MULTIPLIER_TXT_HEIGHT = WORLD_SIZE / 30f;
 
     public static final Color BULLET_SPEED_MULTIPLIER_TXT_COLOR = /*new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1)*/Color.WHITE;
 
@@ -843,7 +843,7 @@ public final class Constants {
 
 
 
-    public static final float LAZER_LEVEL_TIME = /*5*/1f; //minutes
+    public static final float LAZER_LEVEL_TIME = 5; //minutes
 
     public static final int LAZER_SHIELDS_MAX_COUNT = 8;
 
@@ -867,13 +867,15 @@ public final class Constants {
 
     public static final float LAZER_LAZER_TIMER_DURATION = LAZER_LEVEL_TIME*60*1000/(LAZER_NUMBER_OF_LAZER_ATTACKS+1);
 
+
+
     public static final float LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT = WORLD_SIZE / 20f;
 
-    public static final float LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_WIDTH_RATIO = 0.93504589f;
+    public static final float LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_WIDTH = LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT * 0.93504589f;
 
     public static final float LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT = LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT * 1.819289476578635f;
 
-    public static final float LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_WIDTH_RATIO = 0.95890291f;
+    public static final float LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_WIDTH = LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT * 0.95890291f;
 
     public static final float LAZER_TEXT_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT = WORLD_SIZE / 28.5f;
 
@@ -884,6 +886,49 @@ public final class Constants {
     public static final float LAZER_TEXT_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_Y = WORLD_SIZE * 0.457f;
 
     public static final float LAZER_ALPHA_ACTION_DURATION = 0.25f; // sec
+
+    public static final float LAZER_GUN_HEIGHT = WORLD_SIZE / 10f;
+
+    public static final float LAZER_GUN_WIDTH = LAZER_GUN_HEIGHT * 187.587f/137.039f;
+
+    public static final float LAZER_BEAM_HEIGHT = WORLD_SIZE / 95f;
+
+    public static final float LAZER_GLOW_HEIGHT = WORLD_SIZE / 4f;
+
+    public static final float LAZER_BEAM_GLOW_WIDTH_MULTIPLIER = 435.477f/314.675f;
+
+    public static final float LAZER_HALO_ARMOR_HEIGHT = 2*TURRET_RADIUS*2f;
+
+    public static final float LAZER_HALO_ARMOR_WIDTH = TURRET_RADIUS*2f;
+
+    //public static final float LAZER_ATTACK_TOTAL_TIME = 2500f;
+
+    public static final float LAZER_GUN_FADE_IN_TWEEN_DURATION = 400f;
+
+    public static final float LAZER_GLOW_SHRINKING_TWEEN_DURATION = 1000f;
+
+    public static final Interpolation LAZER_GLOW_SHRINKING_TWEEN_INTERPOLATION = Interpolation.exp5Out;
+
+    public static final float LAZER_BEAM_SHRINKING_TWEEN_DURATION = 3200f;
+
+    public static final Interpolation LAZER_BEAM_SHRINKING_TWEEN_INTERPOLATION = Interpolation.exp5In;
+
+    public static final float LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_LOW = 0.8f;
+
+    public static final float LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_HIGH = 1.2f;
+
+    public static final float LAZER_BEAM_VISIBILITY_PROBABILITY_TWEEN_DURATION = LAZER_BEAM_SHRINKING_TWEEN_DURATION*0.7f;
+
+    public static final Interpolation LAZER_BEAM_VISIBILITY_PROBABILITY_TWEEN_INTERPOLATION = Interpolation.exp5In;
+
+    public static final float LAZER_HALO_ARMOR_BLINKING_TWEEN_DURATION = LAZER_BEAM_SHRINKING_TWEEN_DURATION;
+
+    public static final float LAZER_HALO_ARMOR_BLINKING_START_ALPHA = 0.6f;
+
+
+
+    public static final float D_LAZER_YAMANI_HEALTH_AFFECTION_AMOUNT = -0.4f; // -40%
+
 
 
     public static final int D_LAZER_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
@@ -1052,12 +1097,16 @@ public final class Constants {
 
     public static final String ASSETS_ARMOR_BULLET = "Armor";
 
-    public static final String ASSETS_ARMOR_HALO = "Armor Halo";
+    public static final String ASSETS_ARMOR_HALO = "Halo Armor";
 
     public static final String ASSETS_LAZER_GUN = "Lazer Gun";
 
     public static final String ASSETS_ARMOR_BLACK = "Armor Black";
 
     public static final String ASSETS_ARMOR_GLOWING = "Armor Glowing";
+
+    public static final String ASSETS_LAZER_BEAM = "Lazer Beam";
+
+    public static final String ASSETS_LAZER_GLOW = "Lazer Glow";
 
 }

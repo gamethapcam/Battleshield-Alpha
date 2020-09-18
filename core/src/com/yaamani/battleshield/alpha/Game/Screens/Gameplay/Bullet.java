@@ -495,7 +495,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             ordinary = new BulletEffect() {
                 @Override
                 public void effect() {
-                    affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
+
+                    gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
                 }
             };
 
@@ -513,7 +514,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             bomb = new BulletEffect() {
                 @Override
                 public void effect() {
-                    affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
+                    gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_BOMB_AFFECT_HEALTH_BY);
                     if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL)
                         gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().generateCrack();
                 }
@@ -542,7 +543,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             heart = new BulletEffect() {
                 @Override
                 public void effect() {
-                    affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
+                    gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_HEART_AFFECT_HEALTH_BY);
                 }
             };
 
@@ -614,11 +615,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             };*/
         }
 
-        private void affectHealth(float by) {
+        /*private void affectHealth(float by) {
             float health = gameplayScreen.getHealthHandler().getHealth().getFinishedValue();
             gameplayScreen.getHealthHandler().setHealth(health + by);
 
-        }
+        }*/
 
         private void plusMinusCommon() {
             Bullet.setPlusOrMinusExists(false);

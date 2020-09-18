@@ -67,7 +67,7 @@ public abstract class TweenedFloat implements Updatable {
      * If it's in the middle of the tween, this returns the final after the tween finishes.
      * @return
      */
-    public float getFinishedValue() {
+    public float getCurrentFinalValue() {
         return to;
     }
 

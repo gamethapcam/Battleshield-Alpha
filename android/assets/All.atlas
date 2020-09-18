@@ -6,462 +6,476 @@ filter: Linear,Linear
 repeat: none
 Armor
   rotate: false
-  xy: 715, 11
+  xy: 1229, 1250
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Armor Black
   rotate: false
-  xy: 4010, 3531
+  xy: 4010, 3515
   size: 77, 82
   orig: 77, 82
   offset: 0, 0
   index: -1
 Armor Glowing
   rotate: false
-  xy: 1427, 740
+  xy: 1714, 1010
   size: 143, 149
   orig: 143, 149
   offset: 0, 0
   index: -1
 Big Circle
   rotate: false
-  xy: 2, 1264
+  xy: 2, 1248
   size: 1225, 1225
   orig: 1225, 1225
   offset: 0, 0
   index: -1
 Bomb
   rotate: false
-  xy: 1317, 470
+  xy: 1714, 893
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Bullet
   rotate: false
-  xy: 1571, 533
+  xy: 1346, 1252
   size: 13, 39
   orig: 13, 39
   offset: 0, 0
   index: -1
 Dimming Overlay
   rotate: false
-  xy: 2227, 1507
+  xy: 2227, 1491
   size: 500, 210
   orig: 500, 210
   offset: 0, 0
   index: -1
 Faster Dizziness Rotation
   rotate: false
-  xy: 1317, 353
+  xy: 1427, 577
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Free Controller BG
   rotate: false
-  xy: 1229, 1493
+  xy: 1229, 1477
   size: 996, 996
   orig: 996, 996
   offset: 0, 0
   index: -1
 Free Controller Stick
   rotate: false
-  xy: 2729, 1589
+  xy: 1427, 694
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 Halo Armor
   rotate: false
-  xy: 1028, 186
-  size: 202, 399
-  orig: 202, 399
+  xy: 1427, 963
+  size: 200, 402
+  orig: 200, 402
   offset: 0, 0
   index: -1
 Heart
   rotate: false
-  xy: 1317, 236
+  xy: 2729, 1586
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
+Lazer Beam
+  rotate: false
+  xy: 2575, 3637
+  size: 385, 8
+  orig: 385, 8
+  offset: 0, 0
+  index: -1
+Lazer Glow
+  rotate: false
+  xy: 1028, 324
+  size: 444, 245
+  orig: 444, 245
+  offset: 0, 0
+  index: -1
 Lazer Gun
   rotate: false
-  xy: 1427, 891
-  size: 242, 174
-  orig: 242, 174
+  xy: 1427, 824
+  size: 188, 137
+  orig: 188, 137
   offset: 0, 0
   index: -1
 Minus
   rotate: false
-  xy: 1317, 119
+  xy: 2076, 1360
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Mirror
   rotate: false
-  xy: 1845, 1376
+  xy: 915, 105
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Mirror Arrows
   rotate: false
-  xy: 2575, 3613
+  xy: 1474, 355
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 Pause Symbol
   rotate: false
-  xy: 2729, 1508
+  xy: 855, 31
   size: 58, 79
   orig: 58, 79
   offset: 0, 0
   index: -1
 Pause Text
   rotate: false
-  xy: 2575, 3663
+  xy: 2575, 3647
   size: 900, 428
   orig: 900, 428
   offset: 0, 0
   index: -1
 Plus
   rotate: false
-  xy: 1962, 1376
+  xy: 2063, 1243
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Question Mark
   rotate: false
-  xy: 2789, 1527
+  xy: 1028, 262
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 Restricted Controller Left BG
   rotate: false
-  xy: 4010, 3615
+  xy: 4010, 3599
   size: 83, 476
   orig: 83, 476
   offset: 0, 0
   index: -1
 Restricted Controller Right BG
   rotate: false
-  xy: 1232, 109
+  xy: 1629, 889
   size: 83, 476
   orig: 83, 476
   offset: 0, 0
   index: -1
 Shield Disabling
   rotate: false
-  xy: 2079, 1376
+  xy: 2729, 1469
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Shields102
   rotate: false
-  xy: 1536, 328
+  xy: 2571, 3291
   size: 39, 149
   orig: 39, 149
   offset: 0, 0
   index: -1
 Shields105
   rotate: false
-  xy: 1571, 574
+  xy: 2571, 3442
   size: 41, 153
   orig: 41, 153
   offset: 0, 0
   index: -1
 Shields108
   rotate: false
-  xy: 1619, 733
+  xy: 1604, 666
   size: 43, 156
   orig: 43, 156
   offset: 0, 0
   index: -1
 Shields111
   rotate: false
-  xy: 1572, 729
+  xy: 1557, 662
   size: 45, 160
   orig: 45, 160
   offset: 0, 0
   index: -1
 Shields114
   rotate: false
-  xy: 1487, 313
+  xy: 1527, 411
   size: 47, 164
   orig: 47, 164
   offset: 0, 0
   index: -1
 Shields117
   rotate: false
-  xy: 1434, 138
+  xy: 1859, 992
   size: 49, 167
   orig: 49, 167
   offset: 0, 0
   index: -1
 Shields120
   rotate: false
-  xy: 1434, 307
+  xy: 1474, 405
   size: 51, 170
   orig: 51, 170
   offset: 0, 0
   index: -1
 Shields45
   rotate: false
-  xy: 1651, 1319
+  xy: 934, 41
   size: 16, 62
   orig: 16, 62
   offset: 0, 0
   index: -1
 Shields48
   rotate: false
-  xy: 989, 169
+  xy: 2559, 1422
   size: 16, 67
   orig: 16, 67
   offset: 0, 0
   index: -1
 Shields51
   rotate: false
-  xy: 2571, 3539
+  xy: 915, 31
   size: 17, 72
   orig: 17, 72
   offset: 0, 0
   index: -1
 Shields54
   rotate: false
-  xy: 1551, 517
+  xy: 2539, 1412
   size: 18, 77
   orig: 18, 77
   offset: 0, 0
   index: -1
 Shields57
   rotate: false
-  xy: 915, 80
+  xy: 2518, 1407
   size: 19, 82
   orig: 19, 82
   offset: 0, 0
   index: -1
 Shields60
   rotate: false
-  xy: 893, 39
+  xy: 2496, 1402
   size: 20, 87
   orig: 20, 87
   offset: 0, 0
   index: -1
 Shields63
   rotate: false
-  xy: 2418, 1413
+  xy: 2473, 1397
   size: 21, 92
   orig: 21, 92
   offset: 0, 0
   index: -1
 Shields66
   rotate: false
-  xy: 1627, 1285
+  xy: 2449, 1393
   size: 22, 96
   orig: 22, 96
   offset: 0, 0
   index: -1
 Shields69
   rotate: false
-  xy: 2393, 1404
+  xy: 2424, 1388
   size: 23, 101
   orig: 23, 101
   offset: 0, 0
   index: -1
 Shields72
   rotate: false
-  xy: 1601, 1275
+  xy: 2036, 1115
   size: 24, 106
   orig: 24, 106
   offset: 0, 0
   index: -1
 Shields75
   rotate: false
-  xy: 2366, 1395
+  xy: 1831, 898
   size: 25, 110
   orig: 25, 110
   offset: 0, 0
   index: -1
 Shields78
   rotate: false
-  xy: 2337, 1390
+  xy: 2395, 1374
   size: 27, 115
   orig: 27, 115
   offset: 0, 0
   index: -1
 Shields81
   rotate: false
-  xy: 863, 6
+  xy: 2365, 1369
   size: 28, 120
   orig: 28, 120
   offset: 0, 0
   index: -1
 Shields84
   rotate: false
-  xy: 832, 2
+  xy: 2334, 1365
   size: 29, 124
   orig: 29, 124
   offset: 0, 0
   index: -1
 Shields87
   rotate: false
-  xy: 2196, 1363
+  xy: 2301, 1361
   size: 31, 128
   orig: 31, 128
   offset: 0, 0
   index: -1
 Shields90
   rotate: false
-  xy: 2303, 1372
+  xy: 2193, 1342
   size: 32, 133
   orig: 32, 133
   offset: 0, 0
   index: -1
 Shields93
   rotate: false
-  xy: 2267, 1368
+  xy: 2265, 1352
   size: 34, 137
   orig: 34, 137
   offset: 0, 0
   index: -1
 Shields96
   rotate: false
-  xy: 2229, 1364
+  xy: 2227, 1348
   size: 36, 141
   orig: 36, 141
   offset: 0, 0
   index: -1
 Shields99
   rotate: false
-  xy: 1664, 744
+  xy: 2571, 3144
   size: 37, 145
   orig: 37, 145
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 1434, 479
+  xy: 1919, 1106
   size: 115, 115
   orig: 115, 115
   offset: 0, 0
   index: -1
 Star Glow
   rotate: false
-  xy: 1427, 1067
+  xy: 1714, 1161
   size: 203, 204
   orig: 203, 204
   offset: 0, 0
   index: -1
 Turret
   rotate: false
-  xy: 1427, 596
+  xy: 1919, 1223
   size: 142, 142
   orig: 142, 142
   offset: 0, 0
   index: -1
 Logo
   rotate: false
-  xy: 2227, 1719
+  xy: 2227, 1703
   size: 615, 770
   orig: 615, 770
   offset: 0, 0
   index: -1
 Big Mountain in the Back
   rotate: false
-  xy: 2, 2726
+  xy: 2, 2710
   size: 2571, 405
   orig: 2571, 405
   offset: 0, 0
   index: -1
 Big Tree in the Back
   rotate: false
-  xy: 1028, 587
+  xy: 1028, 571
   size: 397, 675
   orig: 397, 675
   offset: 0, 0
   index: -1
 FREE
   rotate: false
-  xy: 1229, 1273
+  xy: 1704, 1367
   size: 370, 108
   orig: 370, 108
   offset: 0, 0
   index: -1
 Front Big Tree
   rotate: false
-  xy: 3477, 3497
+  xy: 3477, 3481
   size: 531, 594
   orig: 531, 594
   offset: 0, 0
   index: -1
 Front Grass
   rotate: false
-  xy: 2, 2491
+  xy: 2, 2475
   size: 2568, 233
   orig: 2568, 233
   offset: 0, 0
   index: -1
 Middle Tall Grass
   rotate: false
-  xy: 2, 3613
+  xy: 2, 3597
   size: 2571, 478
   orig: 2571, 478
   offset: 0, 0
   index: -1
 RESTRICTED
   rotate: false
-  xy: 2, 128
+  xy: 2, 112
   size: 911, 108
   orig: 911, 108
   offset: 0, 0
   index: -1
 START
   rotate: false
-  xy: 1229, 1383
+  xy: 1229, 1367
   size: 473, 108
   orig: 473, 108
   offset: 0, 0
   index: -1
 SURVIVAL
   rotate: false
-  xy: 2, 18
+  xy: 2, 2
   size: 711, 108
   orig: 711, 108
   offset: 0, 0
   index: -1
 T1
   rotate: false
-  xy: 1704, 1383
-  size: 139, 108
-  orig: 139, 108
+  xy: 715, 2
+  size: 138, 108
+  orig: 138, 108
   offset: 0, 0
   index: -1
 Too Many Trees
   rotate: false
-  xy: 2, 3133
+  xy: 2, 3117
   size: 2567, 478
   orig: 2567, 478
   offset: 0, 0
   index: -1
 PublicSans-ExtraBoldItalic
   rotate: false
-  xy: 2, 238
+  xy: 2, 222
   size: 1024, 1024
   orig: 1024, 1024
   offset: 0, 0
   index: -1
 Star
   rotate: false
-  xy: 915, 164
+  xy: 1346, 1293
   size: 72, 72
   orig: 72, 72
   offset: 0, 0

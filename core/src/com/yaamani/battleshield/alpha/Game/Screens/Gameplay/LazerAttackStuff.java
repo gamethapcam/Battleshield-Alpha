@@ -1,8 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -35,11 +33,14 @@ public class LazerAttackStuff implements Updatable, Resizable {
     private SimpleText collectedArmorBulletsText;
 
 
-    // The lazer itself.
-    
+    // The lazer attack itself.
+    private LazerAttack lazerAttack;
 
 
-    private Timer test;
+    public enum LazerAttackHealthAffection {OMAR, YAMANI}
+    private LazerAttackHealthAffection lazerAttackHealthAffection;
+
+    //private Timer test;
 
     private GameplayScreen gameplayScreen;
 
@@ -49,8 +50,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
         initializeHowManyArmorBulletsThePlayerCollected();
 
+        initializeLazerAttack();
 
-        test = new Timer(2000) {
+        /*test = new Timer(2000) {
             @Override
             public void onStart() {
                 super.onStart();
@@ -89,7 +91,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(test);
+        gameplayScreen.addToFinishWhenLosing(test);*/
     }
 
     @Override
@@ -101,19 +103,23 @@ public class LazerAttackStuff implements Updatable, Resizable {
         armorGlowing.setHeight(LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT);
         collectedArmorBulletsText.setHeight(LAZER_TEXT_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT);
 
-        armorBlack.setWidth(LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT*LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_WIDTH_RATIO);
-        armorGlowing.setWidth(LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT*LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_WIDTH_RATIO);
+        armorBlack.setWidth(LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_WIDTH);
+        armorGlowing.setWidth(LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_WIDTH);
 
         armorBlack.setPosition(worldWidth/2 - armorBlack.getWidth()/2f, LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_Y);
         armorGlowing.setPosition(worldWidth/2 - armorGlowing.getWidth()/2f, LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_Y);
         setPositionForCollectedArmorBulletsText();
+
+        lazerAttack.resize(width, height, worldWidth, worldHeight);
     }
 
     @Override
     public void update(float delta) {
         nextLazerAttackTimer.update(delta);
         waitingForAllRemainingBulletsToBeCleared();
-        test.update(delta);
+        //test.update(delta);
+
+        lazerAttack.update(delta);
     }
 
 
@@ -166,7 +172,8 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
                 if (makeSureThatTheCorrectNumOfArmorBulletsAreSpawned(false)) { // When all bullets get cleared, just make sure once more.
                     waitingForAllRemainingBulletsToBeCleared = false;
-                    test.start();
+                    //test.start();
+                    lazerAttack.start();
                 }
             }
         }
@@ -253,6 +260,8 @@ public class LazerAttackStuff implements Updatable, Resizable {
         armorBlack.setVisible(false);
         armorGlowing.setVisible(false);
         collectedArmorBulletsText.setVisible(false);
+
+        lazerAttack.hide();
     }
 
     public void resetLazerStuff() {
@@ -262,6 +271,8 @@ public class LazerAttackStuff implements Updatable, Resizable {
         currentNumOfSpawnedArmorBulletsForTheNextAttack = 0;
         currentNumOfCollectedArmorBulletsByThePlayerForNextAttack = 0;
         updateCharacterSequenceForCollectedArmorBulletsText();
+        hide();
+        armorGlowing.setColor(1, 1, 1,0);
     }
 
     //------------------------------ Getters And Setters ------------------------------
@@ -279,6 +290,18 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
     public int getCurrentNumOfLazerAttacksThatTookPlace() {
         return currentNumOfLazerAttacksThatTookPlace;
+    }
+
+    public int getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() {
+        return currentNumOfCollectedArmorBulletsByThePlayerForNextAttack;
+    }
+
+    public LazerAttackHealthAffection getLazerAttackHealthAffection() {
+        return lazerAttackHealthAffection;
+    }
+
+    public void setLazerAttackHealthAffection(LazerAttackHealthAffection lazerAttackHealthAffection) {
+        this.lazerAttackHealthAffection = lazerAttackHealthAffection;
     }
 
     //------------------------------ initializers ------------------------------
@@ -326,6 +349,11 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
                 nextLazerAttackTimerText.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
 
+                /*for (BulletsAndShieldContainer c : gameplayScreen.getBulletsAndShieldContainers()) {
+                    if (c.getColor().a == 1)
+                    c.addAction(Actions);
+                }*/
+
                 /*float timeLeftForTheLastBulletToDisappear = calculateTheTimeLeftForTheLastBulletToDisappear();
                 test.start(timeLeftForTheLastBulletToDisappear);*/
 
@@ -348,4 +376,44 @@ public class LazerAttackStuff implements Updatable, Resizable {
         armorGlowing.setColor(1, 1, 1, 0);
         collectedArmorBulletsText.setColor(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
     }
+
+    private void initializeLazerAttack() {
+        lazerAttack = new LazerAttack(gameplayScreen) {
+            @Override
+            public void onStart() {
+                super.onStart();
+                Gdx.app.log(TAG, "LAZER LAZER !!!!");
+                gameplayScreen.getControllerLeft().addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+                gameplayScreen.getControllerRight().addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                currentNumOfLazerAttacksThatTookPlace++;
+
+                Gdx.app.log(TAG, "LAZER ENDS !!!!");
+                gameplayScreen.getControllerLeft().addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
+                gameplayScreen.getControllerRight().addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
+
+                if (currentNumOfLazerAttacksThatTookPlace < LAZER_NUMBER_OF_LAZER_ATTACKS) {
+                    nextLazerAttackTimerText.addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
+                    nextLazerAttackTimer.start();
+                } else {
+                    armorBlack.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+                    armorGlowing.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+                    collectedArmorBulletsText.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+                }
+
+                currentNumOfCollectedArmorBulletsByThePlayerForNextAttack = 0;
+                updateCharacterSequenceForCollectedArmorBulletsText();
+                armorGlowing.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+
+                lazerAttacking = false;
+                gameplayScreen.getBulletsHandler().newWave();
+            }
+        };
+    }
+
 }

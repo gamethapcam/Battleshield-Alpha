@@ -70,6 +70,13 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
     public AssetManager getAssetManager() {
         return assetManager;
     }
+    
+    public TextureAtlas.AtlasRegion findRegion(TextureAtlas atlas, String name) {
+        TextureAtlas.AtlasRegion region = atlas.findRegion(name);
+        if (region == null)
+            Gdx.app.error(TAG, "No Region found by the name \"" + name + "\".");
+        return region;
+    }
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,7 +102,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public void update(float delta) {
             if (assetManager.isLoaded(ASSETS_ALL) & update) {
                 TextureAtlas atlas = assetManager.get(ASSETS_ALL);
-                logo = atlas.findRegion(ASSETS_LOGO);
+                logo = findRegion(atlas, ASSETS_LOGO);
             }
         }
     }
@@ -116,17 +123,17 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion t1;
 
         private MainMenuAssets(TextureAtlas atlas) {
-            mountain = atlas.findRegion(ASSETS_MOUNTAIN);
-            treeBack = atlas.findRegion(ASSETS_TREE_BACK);
-            treeFront = atlas.findRegion(ASSETS_TREE_FRONT);
-            frontGrass = atlas.findRegion(ASSETS_FRONT_GRASS);
-            tallGrass = atlas.findRegion(ASSETS_TALL_GRASS);
-            manyTrees = atlas.findRegion(ASSETS_MANY_TREES);
-            start = atlas.findRegion(ASSETS_START);
-            survival = atlas.findRegion(ASSETS_SURVIVAL);
-            restricted = atlas.findRegion(ASSETS_RESTRICTED);
-            free = atlas.findRegion(ASSETS_FREE);
-            t1 = atlas.findRegion(ASSETS_T1);
+            mountain = findRegion(atlas, ASSETS_MOUNTAIN);
+            treeBack = findRegion(atlas, ASSETS_TREE_BACK);
+            treeFront = findRegion(atlas, ASSETS_TREE_FRONT);
+            frontGrass = findRegion(atlas, ASSETS_FRONT_GRASS);
+            tallGrass = findRegion(atlas, ASSETS_TALL_GRASS);
+            manyTrees = findRegion(atlas, ASSETS_MANY_TREES);
+            start = findRegion(atlas, ASSETS_START);
+            survival = findRegion(atlas, ASSETS_SURVIVAL);
+            restricted = findRegion(atlas, ASSETS_RESTRICTED);
+            free = findRegion(atlas, ASSETS_FREE);
+            t1 = findRegion(atlas, ASSETS_T1);
         }
 
     }
@@ -157,6 +164,8 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion lazerGun;
         public final TextureRegion armorBlack;
         public final TextureRegion armorGlowing;
+        public final TextureRegion lazerBeam;
+        public final TextureRegion lazerGlow;
 
         public final TextureRegion pauseText;
         public final TextureRegion pauseSymbol;
@@ -173,54 +182,56 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
 
         private GameplayAssets(TextureAtlas atlas) {
             //Gdx.app.log(TAG, "" + shieldsArrayLength);
-            freeControllerBG = atlas.findRegion(ASSETS_FREE_CONTROLLER_BG);
-            restrictedControllerRightBG = atlas.findRegion(ASSETS_RESTRICTED_CONTROLLER_RIGHT_BG);
-            restrictedControllerLeftBG = atlas.findRegion(ASSETS_RESTRICTED_CONTROLLER_LEFT_BG);
-            controllerStick = atlas.findRegion(ASSETS_CONTROLLER_STICK);
+            freeControllerBG = findRegion(atlas, ASSETS_FREE_CONTROLLER_BG);
+            restrictedControllerRightBG = findRegion(atlas, ASSETS_RESTRICTED_CONTROLLER_RIGHT_BG);
+            restrictedControllerLeftBG = findRegion(atlas, ASSETS_RESTRICTED_CONTROLLER_LEFT_BG);
+            controllerStick = findRegion(atlas, ASSETS_CONTROLLER_STICK);
 
-            turret = atlas.findRegion(ASSETS_TURRET);
+            turret = findRegion(atlas, ASSETS_TURRET);
 
-            bullet = atlas.findRegion(ASSETS_BULLET);
-            plusBullet = atlas.findRegion(ASSETS_PLUS_BULLET);
-            minusBullet = atlas.findRegion(ASSETS_MINUS_BULLET);
-            heartBullet = atlas.findRegion(ASSETS_HEART_BULLET);
-            bombBullet = atlas.findRegion(ASSETS_BOMB_BULLET);
-            starBullet = atlas.findRegion(ASSETS_STAR_BULLET);
-            questionMarkBullet = atlas.findRegion(ASSETS_QUESTION_MARK_BULLET);
-            shieldDisablingBullet = atlas.findRegion(ASSETS_SHIELD_DISABLING_BULLET);
-            mirrorBullet = atlas.findRegion(ASSETS_MIRROR_BULLET);
-            fasterDizzinessRotationBullet = atlas.findRegion(ASSETS_FASTER_DIZZINESS_ROTATION);
-            armorBullet = atlas.findRegion(ASSETS_ARMOR_BULLET);
+            bullet = findRegion(atlas, ASSETS_BULLET);
+            plusBullet = findRegion(atlas, ASSETS_PLUS_BULLET);
+            minusBullet = findRegion(atlas, ASSETS_MINUS_BULLET);
+            heartBullet = findRegion(atlas, ASSETS_HEART_BULLET);
+            bombBullet = findRegion(atlas, ASSETS_BOMB_BULLET);
+            starBullet = findRegion(atlas, ASSETS_STAR_BULLET);
+            questionMarkBullet = findRegion(atlas, ASSETS_QUESTION_MARK_BULLET);
+            shieldDisablingBullet = findRegion(atlas, ASSETS_SHIELD_DISABLING_BULLET);
+            mirrorBullet = findRegion(atlas, ASSETS_MIRROR_BULLET);
+            fasterDizzinessRotationBullet = findRegion(atlas, ASSETS_FASTER_DIZZINESS_ROTATION);
+            armorBullet = findRegion(atlas, ASSETS_ARMOR_BULLET);
 
-            armorHalo = atlas.findRegion(ASSETS_ARMOR_HALO);
-            lazerGun = atlas.findRegion(ASSETS_LAZER_GUN);
-            armorBlack = atlas.findRegion(ASSETS_ARMOR_BLACK);
-            armorGlowing = atlas.findRegion(ASSETS_ARMOR_GLOWING);
+            armorHalo = findRegion(atlas, ASSETS_ARMOR_HALO);
+            lazerGun = findRegion(atlas, ASSETS_LAZER_GUN);
+            armorBlack = findRegion(atlas, ASSETS_ARMOR_BLACK);
+            armorGlowing = findRegion(atlas, ASSETS_ARMOR_GLOWING);
+            lazerBeam = findRegion(atlas, ASSETS_LAZER_BEAM);
+            lazerGlow = findRegion(atlas, ASSETS_LAZER_GLOW);
 
-            pauseText = atlas.findRegion(ASSETS_PAUSE_TEXT);
-            pauseSymbol = atlas.findRegion(ASSETS_PAUSE_SYMBOL);
-            dimmingOverlay = atlas.findRegion(ASSETS_DIMMING_OVERLAY);
+            pauseText = findRegion(atlas, ASSETS_PAUSE_TEXT);
+            pauseSymbol = findRegion(atlas, ASSETS_PAUSE_SYMBOL);
+            dimmingOverlay = findRegion(atlas, ASSETS_DIMMING_OVERLAY);
 
             initializeShieldsWithVariousAngles(atlas);
 
             //initializeHealthBarWithVariousAngles(atlas);
-            healthBar = atlas.findRegion(ASSETS_HEALTH_BAR);
+            healthBar = findRegion(atlas, ASSETS_HEALTH_BAR);
 
-            gameOverBG = atlas.findRegion(ASSETS_GAME_OVER_BG);
+            gameOverBG = findRegion(atlas, ASSETS_GAME_OVER_BG);
 
         }
 
         private void initializeShieldsWithVariousAngles(TextureAtlas atlas) {
             for (int i = 0; i < shieldsArrayLength; i++) {
                 String name = SHIELDS_NAMING_WHEN_SAVING + (int) (SHIELDS_SAVING_FROM_ANGLE + SHIELDS_SKIP_ANGLE_WHEN_SAVING*i);
-                shieldsWithVariousAngles[i] = atlas.findRegion(name);
+                shieldsWithVariousAngles[i] = findRegion(atlas, name);
             }
         }
 
         /*private void initializeHealthBarWithVariousAngles(TextureAtlas atlas) {
             for (int i = 0; i < healthBarArrayLength; i++) {
                 String name = HEALTH_BAR_NAMING_WHEN_SAVING + (HEALTH_BAR_SAVING_FROM_ANGLE + HEALTH_BAR_SKIP_ANGLE_WHEN_SAVING*i);
-                healthBarWithVariousAngles[i] = atlas.findRegion(name);
+                healthBarWithVariousAngles[i] = findRegion(atlas, name);
             }
         }*/
 
@@ -237,13 +248,13 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion bigCircle;
 
         private MutualAssets(TextureAtlas atlas) {
-            star = atlas.findRegion(ASSETS_STAR);
-            starGlow = atlas.findRegion(ASSETS_STAR_GLOW);
+            star = findRegion(atlas, ASSETS_STAR);
+            starGlow = findRegion(atlas, ASSETS_STAR_GLOW);
 
 
-            font = atlas.findRegion(ASSETS_FONT);
+            font = findRegion(atlas, ASSETS_FONT);
 
-            bigCircle = atlas.findRegion(ASSETS_BIG_CIRCLE);
+            bigCircle = findRegion(atlas, ASSETS_BIG_CIRCLE);
         }
     }
 

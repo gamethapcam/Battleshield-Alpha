@@ -7,19 +7,14 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.actions.ColorAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
-import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -168,6 +163,10 @@ public class GameplayScreen extends AdvancedScreen {
 
         lazerAttackStuff.update(delta);
 
+        shieldsAndContainersHandler.update(delta);
+
+        shieldsAndContainersHandler.handleOnShields();
+
         if (lazerAttackStuff.isLazerAttacking()) {
             return;
         }
@@ -182,15 +181,11 @@ public class GameplayScreen extends AdvancedScreen {
 
 
 
-        shieldsAndContainersHandler.update(delta);
         bulletsHandler.update(delta);
 
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
 
         levelFinishStuff.update(delta);
-
-
-        shieldsAndContainersHandler.handleOnShields();
 
 
     }
@@ -207,10 +202,10 @@ public class GameplayScreen extends AdvancedScreen {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP))
-            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() + .05f);
+            healthHandler.affectHealthBy(+.05f);
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() - .05f);
+            healthHandler.affectHealthBy(-.05f);
 
         for (int i = D_SURVIVAL_BULLETS_MIN_NUMBER_PER_ATTACK + Input.Keys.NUM_0;
              i <= 9 + Input.Keys.NUM_0;
@@ -234,10 +229,10 @@ public class GameplayScreen extends AdvancedScreen {
         com.badlogic.gdx.controllers.Controller gamePad = Controllers.getControllers().peek();
 
         if (gamePad.getButton(5))
-            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() + .05f);
+            healthHandler.affectHealthBy(+.05f);
 
         if (gamePad.getButton(7))
-            healthHandler.setHealth(healthHandler.getHealth().getFinishedValue() - .05f);
+            healthHandler.affectHealthBy(-.05f);
 
         if (gamePad.getButton(4)) {
             shieldsAndContainersHandler.setActiveShieldsNum(shieldsAndContainersHandler.getActiveShieldsNum() + 1);

@@ -3,6 +3,7 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
@@ -30,8 +31,9 @@ public class HealthHandler implements Updatable {
                 if (gameplayScreen.getHealthBar() != null)
                     gameplayScreen.getHealthBar().setAngle(value*MathUtils.PI2);
 
-                if (this.getFinishedValue() <= 0) {
-                    playerLost();
+                if (this.getCurrentFinalValue() <= 0) {
+                    if (value <= 0)
+                        playerLost();
                 }
             }
         };
@@ -49,10 +51,23 @@ public class HealthHandler implements Updatable {
         return health;
     }
 
-    public void setHealth(float health) {
+    public void setHealthValueTo(float health) {
+        setHealthValueTo(health, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
+    }
+
+    public void setHealthValueTo(float health, float durationMillis, Interpolation interpolation) {
         float correctedHealth = MathUtils.clamp(health, 0, Float.MAX_VALUE);
         //this.health = correctedHealth;
-        this.health.tween(correctedHealth, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
+        this.health.tween(correctedHealth, durationMillis, interpolation);
+    }
+
+    public void affectHealthBy(float by, float durationMillis, Interpolation interpolation) {
+        float healthFinishedValue = health.getCurrentFinalValue();
+        setHealthValueTo(healthFinishedValue + by, durationMillis, interpolation);
+    }
+
+    public void affectHealthBy(float by) {
+        affectHealthBy(by, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
     }
 
     public void playerLost() {
@@ -110,7 +125,7 @@ public class HealthHandler implements Updatable {
                     gameplayScreen.getStage().getViewport().getWorldHeight());
 
             gameplayScreen.setState(GameplayScreen.State.PLAYING);
-            setHealth(1f);
+            setHealthValueTo(1f);
 
 
             gameplayScreen.getScoreTimerStuff().resetScore();
@@ -152,6 +167,13 @@ public class HealthHandler implements Updatable {
             gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
             gameplayScreen.setGameplayMode(gameplayScreen.getGameplayMode());
+
+            if (gameplayScreen.getControllerLeft().getColor().a < 1)
+                gameplayScreen.getControllerLeft().addAction(Actions.alpha(1, 0.2f));
+            if (gameplayScreen.getControllerRight().getColor().a < 1)
+                gameplayScreen.getControllerRight().addAction(Actions.alpha(1, 0.2f));
+
+
         }
     }
 }

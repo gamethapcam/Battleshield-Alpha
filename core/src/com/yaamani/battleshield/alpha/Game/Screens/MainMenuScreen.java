@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.LazerAttackStuff;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -41,6 +42,9 @@ public class MainMenuScreen extends AdvancedScreen {
     private Image t1;
     private SimpleText dizziness;
     private SimpleText lazer;
+
+    private SimpleText lazerOmar;
+    private SimpleText lazerYamani;
 
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
@@ -138,6 +142,8 @@ public class MainMenuScreen extends AdvancedScreen {
         initializeT1(game);
         initializeDizziness(game);
         initializeLazer(game);
+        initializeLazerOmar(game);
+        initializeLazerYamani(game);
 
         //start.setLayoutEnabled(false, earthEntities); //for performance.
 
@@ -156,6 +162,8 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(t1);
         addActor(dizziness);
         addActor(lazer);
+        addActor(lazerOmar);
+        addActor(lazerYamani);
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
     }
@@ -237,6 +245,16 @@ public class MainMenuScreen extends AdvancedScreen {
         if (lazer != null) {
             lazer.setHeight(MM_LAZER_TXT_HEIGHT);
             lazer.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - lazer.getWidth());
+        }
+
+        if (lazerOmar != null) {
+            lazerOmar.setHeight(MM_CRYSTAL_TXT_HEIGHT);
+            lazerOmar.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - lazerOmar.getWidth());
+        }
+
+        if (lazerYamani != null) {
+            lazerYamani.setHeight(MM_CRYSTAL_TXT_HEIGHT);
+            lazerYamani.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - lazerYamani.getWidth());
         }
     }
 
@@ -545,15 +563,62 @@ public class MainMenuScreen extends AdvancedScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
-                        startLazer(game);
+                        //startLazer(game, );
+                        lazerOmar.setVisible(true);
+                        lazerYamani.setVisible(true);
+                        crystal.setVisible(false);
+                        dizziness.setVisible(false);
+                        t1.setVisible(false);
+                        lazer.setVisible(false);
                     }
                 }
         );
     }
 
-    private void startLazer(final AdvancedStage game) {
+    private void initializeLazerOmar(final AdvancedStage game) {
+        lazerOmar = new SimpleText(myBitmapFont, "OMAR");
+
+        lazerOmar.setVisible(false);
+
+        lazerOmar.setY(MM_SURVIVAL_TXT_FINAL_Y);
+
+        lazerOmar.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        lazerOmar.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startLazer(game, LazerAttackStuff.LazerAttackHealthAffection.OMAR);
+                    }
+                }
+        );
+    }
+
+    private void initializeLazerYamani(final AdvancedStage game) {
+        lazerYamani = new SimpleText(myBitmapFont, "YAMANI");
+
+        lazerYamani.setVisible(false);
+
+        lazerYamani.setY(MM_PLANETS_TXT_FINAL_Y);
+
+        lazerYamani.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        lazerYamani.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startLazer(game, LazerAttackStuff.LazerAttackHealthAffection.YAMANI);
+                    }
+                }
+        );
+    }
+
+    private void startLazer(final AdvancedStage game, LazerAttackStuff.LazerAttackHealthAffection lazerAttackHealthAffection) {
         gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
         gameplayScreen.setGameplayMode(GameplayMode.LAZER);
+        gameplayScreen.getLazerAttackStuff().setLazerAttackHealthAffection(lazerAttackHealthAffection);
         game.switchScreens(mainMenuToGameplay);
     }
 
