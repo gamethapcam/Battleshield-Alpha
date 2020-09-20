@@ -42,7 +42,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         initializeRotationOmegaAlphaTween(gameplayScreen);
 
         debugText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
-        //addActor(debugText); // Uncomment for debugging
+        addActor(debugText);
+        debugText.setVisible(false); // Set to true for debugging.
         debugText.setHeight(WORLD_SIZE/ /*20f*/ 45f);
         debugText.setPosition(-debugText.getWidth()/2f, 12f);
         //debugText.setRotation(90);
@@ -65,7 +66,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         rotationOmegaAlphaTween.update(delta);
 
-        debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90), 2), true); // Uncomment for debugging
+        if (debugText.isVisible())
+            debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90), 2), true);
     }
 
     @Override

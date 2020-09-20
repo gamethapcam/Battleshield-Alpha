@@ -48,7 +48,8 @@ public class RestrictedController extends Controller {
 
 
         outputAngleText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
-        //addActor(outputAngleText); // Uncomment for debugging
+        addActor(outputAngleText);
+        outputAngleText.setVisible(false); // Set to true for debugging.
         outputAngleText.setHeight(WORLD_SIZE/20f);
         outputAngleText.setPosition(0, 0);
     }
@@ -70,7 +71,8 @@ public class RestrictedController extends Controller {
     public void act(float delta) {
         super.act(delta);
 
-        outputAngleText.setCharSequence("" + ((getOutputAngle() != null) ? getOutputAngle() * MathUtils.radDeg : ""), true);
+        if (outputAngleText.isVisible())
+            outputAngleText.setCharSequence("" + ((getOutputAngle() != null) ? getOutputAngle() * MathUtils.radDeg : ""), true);
 
         //if (getControllerPosition() == Direction.RIGHT) bg.setX(bg.getX()-0.1f);a
         //bg.rotateBy(0.4f);

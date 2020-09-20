@@ -3,7 +3,6 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -90,7 +89,7 @@ public class LevelFinishStuff implements Resizable, Updatable {
                 float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
                 for (int i = len-1; i >= 0; i--) {
                     Bullet bullet = gameplayScreen.getBulletsHandler().getActiveBullets().get(i);
-                    bullet.stopUsingTheBullet(worldWidth, worldHeight);
+                    bullet.stopUsingTheBullet(worldWidth, worldHeight, true);
                 }
             }
         });

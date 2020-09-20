@@ -15,9 +15,12 @@ import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
+
+import java.util.Iterator;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -81,6 +84,10 @@ public class GameplayScreen extends AdvancedScreen {
     private LevelFinishStuff levelFinishStuff;
 
 
+    private SimpleText currentInUseNumText; // For debugging
+    private SimpleText activeBulletsText; // For debugging
+
+
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
         super(game, transform);
@@ -125,6 +132,19 @@ public class GameplayScreen extends AdvancedScreen {
                 viewport.getWorldHeight());*/
 
         initializeTempProgressBar();
+
+
+
+        activeBulletsText = new SimpleText(myBitmapFont, "");
+        addActor(activeBulletsText);
+        activeBulletsText.setVisible(false); // Set to true for debugging.
+        activeBulletsText.setHeight(WORLD_SIZE/22f);
+
+        currentInUseNumText = new SimpleText(myBitmapFont, "");
+        addActor(currentInUseNumText);
+        currentInUseNumText.setVisible(false); // Set to true for debugging.
+        currentInUseNumText.setHeight(WORLD_SIZE/22f);
+        currentInUseNumText.setY(WORLD_SIZE/22f);
     }
 
     //----------------------------- Super Class Methods -------------------------------
@@ -159,13 +179,15 @@ public class GameplayScreen extends AdvancedScreen {
         rotation = Gdx.input.getRotation();
 
 
-        healthHandler.update(delta);
-
         lazerAttackStuff.update(delta);
+
+        healthHandler.update(delta);
 
         shieldsAndContainersHandler.update(delta);
 
         shieldsAndContainersHandler.handleOnShields();
+
+        debuggingText();
 
         if (lazerAttackStuff.isLazerAttacking()) {
             return;
@@ -188,6 +210,21 @@ public class GameplayScreen extends AdvancedScreen {
         levelFinishStuff.update(delta);
 
 
+    }
+
+    private void debuggingText() {
+        if (currentInUseNumText.isVisible())
+            currentInUseNumText.setCharSequence("currentInUse = " + Bullet.getCurrentInUseBulletsCount() + ",                                           active.size = " + bulletsHandler.getActiveBullets().size, true);
+
+        if (activeBulletsText.isVisible()) {
+            StringBuilder activeBullets = new StringBuilder();
+            Iterator<Bullet> it = bulletsHandler.getActiveBullets().iterator();
+            while (it.hasNext()) {
+                Bullet bullet = it.next();
+                activeBullets.append(bullet.getI()).append(", ");
+            }
+            activeBulletsText.setCharSequence("activeBullets = " + activeBullets.toString(), true);
+        }
     }
 
     private void debuggingControls() {

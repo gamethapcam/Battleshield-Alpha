@@ -843,7 +843,7 @@ public final class Constants {
 
 
 
-    public static final float LAZER_LEVEL_TIME = 5; //minutes
+    public static final float LAZER_LEVEL_TIME = 5/*0.5f*/; //minutes
 
     public static final int LAZER_SHIELDS_MAX_COUNT = 8;
 

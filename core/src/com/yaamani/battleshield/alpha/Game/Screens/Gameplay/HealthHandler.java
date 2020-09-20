@@ -10,6 +10,8 @@ import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.TweenedFloat;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
+import java.util.Iterator;
+
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class HealthHandler implements Updatable {
@@ -77,11 +79,18 @@ public class HealthHandler implements Updatable {
 
         float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
         float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
-        int len = gameplayScreen.getBulletsHandler().getActiveBullets().size;
+        /*int len = gameplayScreen.getBulletsHandler().getActiveBullets().size;
         for (int i = len-1; i >= 0; i--) {
             Bullet bullet = gameplayScreen.getBulletsHandler().getActiveBullets().get(i);
-            bullet.stopUsingTheBullet(worldWidth, worldHeight);
+            bullet.stopUsingTheBullet(worldWidth, worldHeight, true);
+        }*/
+        Iterator<Bullet> it = gameplayScreen.getBulletsHandler().getActiveBullets().iterator();
+        while (it.hasNext()) {
+            Bullet bullet = it.next();
+            bullet.stopUsingTheBullet(worldWidth, worldHeight, false);
+            it.remove();
         }
+
 
         gameplayScreen.getScoreTimerStuff().getFadeOutTween().start();
 
@@ -139,6 +148,7 @@ public class HealthHandler implements Updatable {
             Image pauseSymbol = gameplayScreen.getPauseStuff().getPauseSymbol();
             pauseSymbol.setColor(pauseSymbol.getColor().r, pauseSymbol.getColor().g, pauseSymbol.getColor().b, 1);
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK);
+            gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
             gameplayScreen.getBulletsHandler().newWave();
             gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().startMyProgressBarTween();

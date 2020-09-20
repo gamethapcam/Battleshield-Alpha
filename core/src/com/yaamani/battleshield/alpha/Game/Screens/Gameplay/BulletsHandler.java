@@ -9,6 +9,7 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -109,6 +110,7 @@ public class BulletsHandler implements Updatable {
     private final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS;*/
 
 
+
     //private Timer isThereDoubleWaveTimer;
 
     public BulletsHandler(AdvancedStage game, GameplayScreen gameplayScreen) {
@@ -155,6 +157,8 @@ public class BulletsHandler implements Updatable {
         initializeStarBulletFirstStage();
         initializeStarBulletSecondStage();
         initializeStarBulletThirdStage();
+
+
 
         //resetWaveTimer();
 
@@ -205,6 +209,7 @@ public class BulletsHandler implements Updatable {
         starBulletThirdStage.update(delta);
 
         handleNewWave();
+
 
         //isThereDoubleWaveTimer.update(delta);
 
@@ -535,6 +540,8 @@ public class BulletsHandler implements Updatable {
             for (int i = 0; i < bulletsPerAttack; i++) {
                 bullet = bulletPool.obtain();
 
+                // Gdx.app.log(TAG, "obtained (NotSpecial) -> " + bullet.getI());
+
                 bullet.notSpecial(isFake);
                 bullet.attachNotSpecialToBulletsAndShieldContainer(parent, i);
                 if (isFake)
@@ -542,6 +549,9 @@ public class BulletsHandler implements Updatable {
             }
         } else {
             bullet = bulletPool.obtain();
+
+            // Gdx.app.log(TAG, "obtained (Special)    -> " + bullet.getI());
+
             bullet.setSpecial(currentSpecialBullet, questionMark, isFake);
             bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
             if (isFake)
@@ -1262,13 +1272,19 @@ public class BulletsHandler implements Updatable {
 
     private void initializeBulletPool() {
         bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY) {
+
+            private int instantiatedObjects = 0;
+
             @Override
             protected Bullet newObject() {
-                return new Bullet(gameplayScreen, gameplayScreen.getStarsContainer()/*.getRadialTween()*/, gameplayScreen.getStage().getViewport());
+                Bullet newBullet = new Bullet(gameplayScreen, gameplayScreen.getStarsContainer()/*.getRadialTween()*/, gameplayScreen.getStage().getViewport(), instantiatedObjects);;
+                instantiatedObjects++;
+                return newBullet;
             }
 
             @Override
             public void free(Bullet object) {
+                // Gdx.app.log(TAG, "freed -> " + object.getI());
                 super.free(object);
                 //Gdx.app.log(TAG, "Free bullets in pool = " + getFree());
             }
@@ -1276,7 +1292,7 @@ public class BulletsHandler implements Updatable {
             @Override
             public Bullet obtain() {
                 Bullet bullet = super.obtain();
-                activeBullets.add(bullet);
+                //activeBullets.add(bullet);
                 return bullet;
             }
         };

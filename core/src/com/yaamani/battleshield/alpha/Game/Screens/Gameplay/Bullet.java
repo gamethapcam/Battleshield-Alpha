@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -30,11 +29,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public static int currentInUseBulletsCount = 0;
 
+    private int i;
+
     public enum BulletType {ORDINARY, SPECIAL}
     private BulletType bulletType;
 
-    private Pool<Bullet> bulletPool;
-    private Array<Bullet> activeBullets;
+    //private Pool<Bullet> bulletPool;
+    //private Array<Bullet> activeBullets;
 
     private boolean inUse = false;
     private BulletsAndShieldContainer parent;
@@ -59,11 +60,20 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private float initialY;
     private float finalY;*/
 
-    public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer starsContainer, Viewport viewport) {
+    private SimpleText iText;
+
+    public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer starsContainer, Viewport viewport, int i) {
         this.gameplayScreen = gameplayScreen;
         this.bulletsHandler = gameplayScreen.getBulletsHandler();
-        this.bulletPool = bulletsHandler.getBulletPool();
-        this.activeBullets = bulletsHandler.getActiveBullets();
+        //this.bulletPool = bulletsHandler.getBulletPool();
+        //this.activeBullets = bulletsHandler.getActiveBullets();
+
+        this.i = i;
+        iText = new SimpleText(gameplayScreen.getMyBitmapFont(), ""+i);
+        addActor(iText);
+        iText.setVisible(false); // Set to true for debugging.
+        iText.setHeight(WORLD_SIZE/33f);
+        iText.setX(2f);
 
         effects = new Effects();
 
@@ -84,6 +94,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         // initializeBulletMovement();
 
         // setColor(1, 1, 1, 0.2f); //Debugging
+    }
+
+    public int getI() {
+        return i;
     }
 
     @Override
@@ -137,11 +151,15 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public void iamInUseNow() {
         inUse = true;
+        bulletsHandler.getActiveBullets().add(this);
         currentInUseBulletsCount++;
     }
 
-    public void iamNotInUseNow() {
+    public void iamNotInUseNow(boolean removeFromActiveBullets) {
+
         inUse = false;
+        if (removeFromActiveBullets)
+            bulletsHandler.getActiveBullets().removeValue(this, true);
         currentInUseBulletsCount--;
     }
 
@@ -195,7 +213,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //if (getStage() != null) {
             //Viewport viewport = getStage().getViewport();
             //if (viewport != null)
-                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f);
+                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f);/*worldHeight/3f*/;
         //}
     }
 
@@ -245,7 +263,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (getY() <= /*SHIELDS_RADIUS+SHIELDS_THICKNESS*/SHIELDS_RADIUS+SHIELDS_ON_DISPLACEMENT &
                         getY() >= /*SHIELDS_RADIUS-SHIELDS_THICKNESS*/SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT - getHeight() &
                         shield.isOn()) {
-                    stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
+                    stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
                     if (currentEffect == effects.minus | currentEffect == effects.plus) plusOrMinusExists = false;
                     return;
                 }
@@ -256,7 +274,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (parent.getColor().a >= 0.95f)
                     currentEffect.effect();
 
-                stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
+                stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
             }
 
             if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
@@ -272,7 +290,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private void whenTheShieldCompletelyDisappears() {
         if (parent.getColor().a <= 0) {
-            stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight());
+            stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
             if (gameplayScreen.getBulletsHandler().getCurrentWaveLastBullet() == this)
                 gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
 
@@ -292,13 +310,15 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
     }
 
-    public void stopUsingTheBullet(float worldWidth, float worldHeight) {
-        iamNotInUseNow();
+    public void stopUsingTheBullet(float worldWidth, float worldHeight, boolean removeFromActiveBullets) {
+        if (!inUse) return;
+
+        iamNotInUseNow(removeFromActiveBullets);
         //bulletMovement.finish();
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
-        bulletPool.free(this);
-        activeBullets.removeValue(this, true);
+        bulletsHandler.getBulletPool().free(this);
+
 
         handlePlusMinusStarExists();
     }

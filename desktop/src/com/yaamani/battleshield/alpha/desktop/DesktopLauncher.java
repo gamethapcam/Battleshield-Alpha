@@ -13,9 +13,11 @@ public class DesktopLauncher {
 
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 550;
-		config.width = (int) (config.height * (3f/2f));
+		config.height = 500;
+		config.width = /*(int) (config.height * (3f/2f))*/700;
 		config.useHDPI = true;
+		config.x = 0;
+		config.y = 0;
 		//config.samples = 16;
 		//LwjglApplicationConfiguration.disableAudio = true;
 		//config.vSyncEnabled = false;
