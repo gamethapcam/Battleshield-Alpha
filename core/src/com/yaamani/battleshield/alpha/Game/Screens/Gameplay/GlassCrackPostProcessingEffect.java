@@ -25,7 +25,7 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
     /*private FrameBuffer hBlurFrameBuffer;
     private FrameBuffer vBlurFrameBuffer;*/
 
-    private Texture refractionCrackMap; // For testing
+    //private Texture refractionCrackMap; // For testing
 
     private FrameBuffer refractionCrackMapFrameBuffer0; //Double buffer
     private FrameBuffer refractionCrackMapFrameBuffer1; //Double buffer
@@ -43,7 +43,7 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
     private float currentCrackGenerationFrame = -1;
 
     public GlassCrackPostProcessingEffect() {
-        refractionCrackMap = new Texture(Gdx.files.internal("refractionMap.png"));
+        //refractionCrackMap = new Texture(Gdx.files.internal("refractionMap.png"));
         initializeRefractionShader();
         initializeCrackAdderAnimatorShader();
 
@@ -199,7 +199,7 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
 
     @Override
     public void dispose() {
-        refractionCrackMap.dispose();
+        //refractionCrackMap.dispose();
         refractionCrackMapFrameBuffer0.dispose();
         refractionShader.dispose();
         crackAdderAnimatorShader.dispose();

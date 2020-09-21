@@ -70,7 +70,7 @@ public class BulletsHandler implements Updatable {
 
 
 
-    private float[] timestampsForArmorBulletsToPrepareForTheNextLazerAttack = new float[D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS];
+    private float[] timestampsForArmorBulletsToPrepareForTheNextLazerAttack = new float[MathUtils.ceil(D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS)];
 
 
     private boolean forcedSpecialBulletAsap = false;
@@ -745,7 +745,8 @@ public class BulletsHandler implements Updatable {
 
     public void calculateTimestampsForArmorBulletsToPrepareForTheNextLazerAttack() {
         LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
-        int currentLength = D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS - lazerAttackStuff.getCurrentNumOfLazerAttacksThatTookPlace();
+        //int currentLength = D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS - lazerAttackStuff.getCurrentNumOfLazerAttacksThatTookPlace();
+        int currentLength = lazerAttackStuff.calculateTotalNumOfArmorBulletsThatShouldBeSpawned();
         for (int i = 0; i < timestampsForArmorBulletsToPrepareForTheNextLazerAttack.length; i++) {
             if (i < currentLength)
                 timestampsForArmorBulletsToPrepareForTheNextLazerAttack[i] = MathUtils.random() * LAZER_LAZER_TIMER_DURATION;

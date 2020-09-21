@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -150,7 +151,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
         float[] timestampsForArmorBulletsToPrepareForTheNextLazerAttack = bulletsHandler.getTimestampsForArmorBulletsToPrepareForTheNextLazerAttack();
 
-        int currentAttackMaxArmorBullets = D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS - currentNumOfLazerAttacksThatTookPlace;
+        int currentAttackMaxArmorBullets = calculateTotalNumOfArmorBulletsThatShouldBeSpawned();
 
         if (currentNumOfSpawnedArmorBulletsForTheNextAttack < currentAttackMaxArmorBullets) {
             float timestampForTheCurrentBullet = timestampsForArmorBulletsToPrepareForTheNextLazerAttack[currentNumOfSpawnedArmorBulletsForTheNextAttack];
@@ -180,7 +181,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
     }
 
     private boolean makeSureThatTheCorrectNumOfArmorBulletsAreSpawned(boolean waitForTheRightMomentToSpawn) {
-        int totalNumOfArmorBulletsThatShouldHaveBeenSpawned = D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS - currentNumOfLazerAttacksThatTookPlace;
+        int totalNumOfArmorBulletsThatShouldHaveBeenSpawned = calculateTotalNumOfArmorBulletsThatShouldBeSpawned();
         if (currentNumOfSpawnedArmorBulletsForTheNextAttack < totalNumOfArmorBulletsThatShouldHaveBeenSpawned) {
 
             BulletsHandler bulletsHandler = gameplayScreen.getBulletsHandler();
@@ -202,6 +203,11 @@ public class LazerAttackStuff implements Updatable, Resizable {
             return false;
         }
         return true;
+    }
+
+    public int calculateTotalNumOfArmorBulletsThatShouldBeSpawned() {
+        //return MathUtils.ceil(D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS - currentNumOfLazerAttacksThatTookPlace/2f);
+        return LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR;
     }
 
     public boolean theRightMomentToSpawn() {
