@@ -184,6 +184,7 @@ public class HealthHandler implements Updatable {
                 gameplayScreen.getControllerRight().addAction(Actions.alpha(1, 0.2f));
 
 
+
         }
     }
 }

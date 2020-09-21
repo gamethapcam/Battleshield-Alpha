@@ -25,6 +25,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
     private boolean lazerAttacking = false;
     private boolean waitingForAllRemainingBulletsToBeCleared;
     private int currentNumOfLazerAttacksThatTookPlace;
+    private int currentNecessaryNumOfArmorBulletsForTheNextAttack;
     private int currentNumOfSpawnedArmorBulletsForTheNextAttack;
     private int currentNumOfCollectedArmorBulletsByThePlayerForNextAttack;
 
@@ -48,6 +49,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
     public LazerAttackStuff(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
         initializeNextLazerAttackTimer();
+
+        currentNumOfLazerAttacksThatTookPlace = 0;
+        calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
 
         initializeHowManyArmorBulletsThePlayerCollected();
 
@@ -131,7 +135,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
     }
 
     private void updateCharacterSequenceForCollectedArmorBulletsText() {
-        String charSequence = currentNumOfCollectedArmorBulletsByThePlayerForNextAttack + "/" + LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR;
+        String charSequence = currentNumOfCollectedArmorBulletsByThePlayerForNextAttack + "/" + /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/getCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
         collectedArmorBulletsText.setCharSequence(charSequence, true);
         setPositionForCollectedArmorBulletsText();
     }
@@ -207,7 +211,11 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
     public int calculateTotalNumOfArmorBulletsThatShouldBeSpawned() {
         //return MathUtils.ceil(D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS - currentNumOfLazerAttacksThatTookPlace/2f);
-        return LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR;
+        return /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/getCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
+    }
+
+    public void calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack() {
+        currentNecessaryNumOfArmorBulletsForTheNextAttack = LAZER_MIN_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR + currentNumOfLazerAttacksThatTookPlace*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR_INCREMRNT;
     }
 
     public boolean theRightMomentToSpawn() {
@@ -244,13 +252,13 @@ public class LazerAttackStuff implements Updatable, Resizable {
     }
 
     public void incrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() {
-        if (currentNumOfCollectedArmorBulletsByThePlayerForNextAttack == LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR)
+        if (currentNumOfCollectedArmorBulletsByThePlayerForNextAttack == /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/getCurrentNecessaryNumOfArmorBulletsForTheNextAttack())
             return;
 
         currentNumOfCollectedArmorBulletsByThePlayerForNextAttack++;
         updateCharacterSequenceForCollectedArmorBulletsText();
 
-        if (currentNumOfCollectedArmorBulletsByThePlayerForNextAttack == LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR
+        if (currentNumOfCollectedArmorBulletsByThePlayerForNextAttack == /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()
                 & armorGlowing.getColor().a == 0) {
 
             armorGlowing.addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
@@ -281,6 +289,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
         lazerAttacking = false;
         waitingForAllRemainingBulletsToBeCleared = false;
         currentNumOfLazerAttacksThatTookPlace = 0;
+        calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
         currentNumOfSpawnedArmorBulletsForTheNextAttack = 0;
         currentNumOfCollectedArmorBulletsByThePlayerForNextAttack = 0;
         updateCharacterSequenceForCollectedArmorBulletsText();
@@ -315,6 +324,10 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
     public void setLazerAttackHealthAffection(LazerAttackHealthAffection lazerAttackHealthAffection) {
         this.lazerAttackHealthAffection = lazerAttackHealthAffection;
+    }
+
+    public int getCurrentNecessaryNumOfArmorBulletsForTheNextAttack() {
+        return currentNecessaryNumOfArmorBulletsForTheNextAttack;
     }
 
     //------------------------------ initializers ------------------------------
@@ -407,6 +420,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
                 currentNumOfLazerAttacksThatTookPlace++;
 
                 Gdx.app.log(TAG, "LAZER ENDS !!!!");
+
+                calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
+
                 gameplayScreen.getControllerLeft().addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
                 gameplayScreen.getControllerRight().addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
 

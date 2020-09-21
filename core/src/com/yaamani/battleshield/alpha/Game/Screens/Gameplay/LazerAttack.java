@@ -99,7 +99,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
     public void onStart() {
         LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
-        if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR) {
+        if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
             haloArmor.addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
         }
     }
@@ -115,7 +115,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
     private void calculateLazerBeamHorizontalBounds() {
         LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
-        if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR) {
+        if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
 
             lazerBeam.setWidth(lazerGun.getX() - LAZER_HALO_ARMOR_WIDTH);
             lazerBeam.setX(LAZER_HALO_ARMOR_WIDTH);
@@ -181,7 +181,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
                 lazerGlowShrinkingTween.start();
 
                 LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
-                if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR) {
+                if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
                     haloArmorBlinkingTween.start();
                 } else {
                     affectHealth();

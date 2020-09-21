@@ -535,6 +535,7 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBullets(null); // A custom algorithm for this planet's special bullet.
 
                     lazerAttackStuff.show();
+                    lazerAttackStuff.calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
                     lazerAttackStuff.getNextLazerAttackTimer().start();
 
                     bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();
