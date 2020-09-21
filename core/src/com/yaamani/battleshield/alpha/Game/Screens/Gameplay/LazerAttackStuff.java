@@ -259,6 +259,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
         armorBlack.setColor(1, 1, 1, 1);
         collectedArmorBulletsText.setColor(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
+        nextLazerAttackTimerText.addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
     }
 
     public void hide() {
