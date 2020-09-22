@@ -568,7 +568,7 @@ public final class Constants {
 
     public static final float PAUSE_TEXT_WIDTH = PAUSE_TEXT_HEIGHT * 900f/422f;
 
-    public static final float PAUSE_3_2_1_HEIGHT = TURRET_RADIUS * 2 * 0.7f;
+    public static final float PAUSE_3_2_1_HEIGHT = TURRET_RADIUS * 2 * 1.3f;
 
 
 
@@ -1083,6 +1083,12 @@ public final class Constants {
     public static final String ASSETS_PAUSE_TEXT = "Pause Text";
 
     public static final String ASSETS_PAUSE_SYMBOL = "Pause Symbol";
+
+    public static final String ASSETS_PAUSE_1 = "1";
+
+    public static final String ASSETS_PAUSE_2 = "2";
+
+    public static final String ASSETS_PAUSE_3 = "3";
 
     public static final String ASSETS_DIMMING_OVERLAY = "Dimming Overlay";
 

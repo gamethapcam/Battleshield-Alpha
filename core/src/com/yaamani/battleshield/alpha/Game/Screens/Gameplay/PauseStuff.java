@@ -3,8 +3,10 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -32,9 +34,9 @@ public class PauseStuff implements Resizable, Updatable {
     private GestureDetector doubleTapToResume;
 
     private MyBitmapFont myBitmapFont;
-    private SimpleText _3;
-    private SimpleText _2;
-    private SimpleText _1;
+    private Image _3;
+    private Image _2;
+    private Image _1;
 
     private Tween pauseSymbolFadesOutWhenLosing;
     //private Timer resumeAfterCountDown; // 3 seconds
@@ -148,7 +150,7 @@ public class PauseStuff implements Resizable, Updatable {
         //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(true);
     }
 
-    private void _3_2_1_Tween(SimpleText text, float percentage, Interpolation interpolation) {
+    private void _3_2_1_Tween(Actor text, float percentage, Interpolation interpolation) {
         Color color = text.getColor();
         if (percentage < 0.3f)
             text.setColor(color.r, color.g, color.b, interpolation.apply(percentage) * 10f / 3f);
@@ -253,18 +255,22 @@ public class PauseStuff implements Resizable, Updatable {
     }*/
 
     private void initialize_3_2_1_SimpleText() {
-        _3 = new SimpleText(myBitmapFont, "3");
-        _2 = new SimpleText(myBitmapFont, "2");
-        _1 = new SimpleText(myBitmapFont, "1");
+        TextureRegion _3TextureRegion = Assets.instance.gameplayAssets.pause3;
+        TextureRegion _2TextureRegion = Assets.instance.gameplayAssets.pause2;
+        TextureRegion _1TextureRegion = Assets.instance.gameplayAssets.pause1;
 
-        _3.setHeight(PAUSE_3_2_1_HEIGHT);
-        _2.setHeight(PAUSE_3_2_1_HEIGHT);
-        _1.setHeight(PAUSE_3_2_1_HEIGHT);
+        _3 = new Image(_3TextureRegion);
+        _2 = new Image(_2TextureRegion);
+        _1 = new Image(_1TextureRegion);
 
-        Color color = new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
+        _3.setSize(PAUSE_3_2_1_HEIGHT*(float) _3TextureRegion.getRegionWidth()/_3TextureRegion.getRegionHeight(), PAUSE_3_2_1_HEIGHT);
+        _2.setSize(PAUSE_3_2_1_HEIGHT*(float) _2TextureRegion.getRegionWidth()/_2TextureRegion.getRegionHeight(), PAUSE_3_2_1_HEIGHT);
+        _1.setSize(PAUSE_3_2_1_HEIGHT*(float) _1TextureRegion.getRegionWidth()/_1TextureRegion.getRegionHeight(), PAUSE_3_2_1_HEIGHT);
+
+        /*Color color = new Color(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);
         _3.setColor(color);
         _2.setColor(color);
-        _1.setColor(color);
+        _1.setColor(color);*/
 
         gameplayScreen.addActor(_3);
         gameplayScreen.addActor(_2);

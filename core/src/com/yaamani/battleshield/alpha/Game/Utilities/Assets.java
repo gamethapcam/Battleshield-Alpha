@@ -172,6 +172,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion portalExit;
 
         public final TextureRegion pauseText;
+        public final TextureRegion pause1;
+        public final TextureRegion pause2;
+        public final TextureRegion pause3;
         public final TextureRegion pauseSymbol;
         public final TextureRegion dimmingOverlay;
 
@@ -217,6 +220,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             portalExit = findRegion(atlas, ASSETS_PORTALS_EXIT);
 
             pauseText = findRegion(atlas, ASSETS_PAUSE_TEXT);
+            pause1 = findRegion(atlas, ASSETS_PAUSE_1);
+            pause2 = findRegion(atlas, ASSETS_PAUSE_2);
+            pause3 = findRegion(atlas, ASSETS_PAUSE_3);
             pauseSymbol = findRegion(atlas, ASSETS_PAUSE_SYMBOL);
             dimmingOverlay = findRegion(atlas, ASSETS_DIMMING_OVERLAY);
 
