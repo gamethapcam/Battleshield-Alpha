@@ -159,6 +159,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion mirrorBullet;
         public final TextureRegion fasterDizzinessRotationBullet;
         public final TextureRegion armorBullet;
+        public final TextureRegion twoPortalExits;
 
         public final TextureRegion armorHalo;
         public final TextureRegion lazerGun;
@@ -166,6 +167,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion armorGlowing;
         public final TextureRegion lazerBeam;
         public final TextureRegion lazerGlow;
+
+        public final TextureRegion portalEntrance;
+        public final TextureRegion portalExit;
 
         public final TextureRegion pauseText;
         public final TextureRegion pauseSymbol;
@@ -200,6 +204,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             mirrorBullet = findRegion(atlas, ASSETS_MIRROR_BULLET);
             fasterDizzinessRotationBullet = findRegion(atlas, ASSETS_FASTER_DIZZINESS_ROTATION);
             armorBullet = findRegion(atlas, ASSETS_ARMOR_BULLET);
+            twoPortalExits = findRegion(atlas, ASSETS_2_PORTAL_EXITS);
 
             armorHalo = findRegion(atlas, ASSETS_ARMOR_HALO);
             lazerGun = findRegion(atlas, ASSETS_LAZER_GUN);
@@ -207,6 +212,9 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             armorGlowing = findRegion(atlas, ASSETS_ARMOR_GLOWING);
             lazerBeam = findRegion(atlas, ASSETS_LAZER_BEAM);
             lazerGlow = findRegion(atlas, ASSETS_LAZER_GLOW);
+
+            portalEntrance = findRegion(atlas, ASSETS_PORTALS_ENTRANCE);
+            portalExit = findRegion(atlas, ASSETS_PORTALS_EXIT);
 
             pauseText = findRegion(atlas, ASSETS_PAUSE_TEXT);
             pauseSymbol = findRegion(atlas, ASSETS_PAUSE_SYMBOL);

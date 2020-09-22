@@ -98,6 +98,8 @@ public final class Constants {
 
     public static final float MM_LAZER_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
 
+    public static final float MM_PORTALS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
+
     public static final float MM_T1_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
     //-------
     public static final float MM_MOUNTAIN_INITIAL_Y = -MM_MOUNTAIN_HEIGHT;
@@ -147,6 +149,8 @@ public final class Constants {
     public static final float MM_DIZZINESS_FINAL_Y = MM_FREE_TXT_FINAL_Y - 13f;
 
     public static final float MM_LAZER_FINAL_Y = MM_DIZZINESS_FINAL_Y - 13f;
+
+    public static final float MM_PORTALS_FINAL_Y = MM_LAZER_FINAL_Y - 13f;
     //-------
     public static final float MM_MOUNTAIN_X_MOVING_AMOUNT = WORLD_SIZE * 0.02f;
 
@@ -165,7 +169,7 @@ public final class Constants {
 
 
     public enum GameplayControllerType {FREE, RESTRICTED}
-    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER}
+    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS}
 
 
     public enum Direction {RIGHT, LEFT}
@@ -1113,5 +1117,13 @@ public final class Constants {
     public static final String ASSETS_LAZER_BEAM = "Lazer Beam";
 
     public static final String ASSETS_LAZER_GLOW = "Lazer Glow";
+
+    public static final String ASSETS_PORTALS_ENTRANCE = "Portal Entrance";
+
+    public static final String ASSETS_PORTALS_EXIT = "Portal Exit";
+
+    public static final String ASSETS_2_PORTAL_EXITS = "2 Portal Exits";
+
+
 
 }

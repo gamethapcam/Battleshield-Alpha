@@ -543,6 +543,10 @@ public class GameplayScreen extends AdvancedScreen {
 
                     setCurrentShieldsMinMaxCount(LAZER_SHIELDS_MIN_COUNT, LAZER_SHIELDS_MAX_COUNT);
                     break;
+
+                case PORTALS:
+
+                    break;
             }
 
         }
