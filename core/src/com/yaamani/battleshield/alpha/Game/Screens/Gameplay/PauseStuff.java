@@ -13,9 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
-import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
@@ -27,9 +25,10 @@ public class PauseStuff implements Resizable, Updatable {
     public static final String TAG = PauseStuff.class.getSimpleName();
 
     private Image pauseSymbol;
-    private Group resumeBounds;
+    private Group pauseHud;
     private Image pauseText;
     private Image dimmingOverlay;
+    private PauseMenu pauseMenu;
 
     private GestureDetector doubleTapToResume;
 
@@ -44,6 +43,7 @@ public class PauseStuff implements Resizable, Updatable {
     private Tween _2Tween;
     private Tween _1Tween;
 
+
     private GameplayScreen gameplayScreen;
 
     public PauseStuff(GameplayScreen gameplayScreen, MyBitmapFont myBitmapFont) {
@@ -51,6 +51,8 @@ public class PauseStuff implements Resizable, Updatable {
         this.myBitmapFont = myBitmapFont;
 
         dimmingOverlay = new Image(Assets.instance.gameplayAssets.dimmingOverlay);
+
+        pauseMenu = new PauseMenu();
 
         initializePauseText();
 
@@ -67,6 +69,7 @@ public class PauseStuff implements Resizable, Updatable {
         initialize_3_2_1_SimpleText();
 
         initialize_3_2_1_Tween();
+
     }
 
     //------------------------------ Super class And Implemented Interfaces ------------------------------
@@ -81,11 +84,13 @@ public class PauseStuff implements Resizable, Updatable {
         pauseText.setPosition(worldWidth / 2f - pauseText.getWidth() / 2f, worldHeight / 2f - pauseText.getHeight() / 2f);
 
         dimmingOverlay.setBounds(0, 0, worldWidth, worldHeight);
-        resumeBounds.setBounds(0, 0, worldWidth, worldHeight);
+        pauseHud.setBounds(0, 0, worldWidth, worldHeight);
 
         _3.setPosition(worldWidth / 2f - _3.getWidth() / 2f, worldHeight / 2f - _3.getHeight() / 2f);
         _2.setPosition(worldWidth / 2f - _2.getWidth() / 2f, worldHeight / 2f - _2.getHeight() / 2f);
         _1.setPosition(worldWidth / 2f - _1.getWidth() / 2f, worldHeight / 2f - _1.getHeight() / 2f);
+
+        pauseMenu.resize(width, height, worldWidth, worldHeight);
     }
 
     @Override
@@ -117,7 +122,7 @@ public class PauseStuff implements Resizable, Updatable {
                 timer.pause();
         }*/
 
-        gameplayScreen.addActor(resumeBounds);
+        gameplayScreen.addActor(pauseHud);
     }
 
     private void resumeTheGame() {
@@ -125,7 +130,7 @@ public class PauseStuff implements Resizable, Updatable {
 
         //resumeAfterCountDown.start();
         _3Tween.start();
-        gameplayScreen.removeActor(resumeBounds);
+        gameplayScreen.removeActor(pauseHud);
 
         /*if (gameplayScreen.isInStarBulletAnimation()) {
 
@@ -179,8 +184,9 @@ public class PauseStuff implements Resizable, Updatable {
     //------------------------------ initializers ------------------------------
 
     private void initializePauseText() {
-        pauseText = new Image(Assets.instance.gameplayAssets.pauseText);
-        pauseText.setSize(PAUSE_TEXT_WIDTH, PAUSE_TEXT_HEIGHT);
+        TextureRegion pauseTextRegion = Assets.instance.gameplayAssets.pauseText;
+        pauseText = new Image(pauseTextRegion);
+        pauseText.setSize(PAUSE_TEXT_HEIGHT*pauseTextRegion.getRegionWidth()/pauseTextRegion.getRegionHeight(), PAUSE_TEXT_HEIGHT);
     }
 
     private void initializeDoubleTapToResume() {
@@ -198,20 +204,10 @@ public class PauseStuff implements Resizable, Updatable {
     }
 
     private void initializeResumeBounds() {
-        resumeBounds = new Group();
-        resumeBounds.addActor(dimmingOverlay);
-        resumeBounds.addActor(pauseText);
-        resumeBounds.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                resumeTheGame();
-                //resumeAfterCountDown.start();
-                //_3Tween.start();
-                //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(false);
-                //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(false);
-                //gameplayScreen.removeActor(resumeBounds);
-            }
-        });
+        pauseHud = new Group();
+        pauseHud.addActor(dimmingOverlay);
+        pauseHud.addActor(pauseText);
+        pauseHud.addActor(pauseMenu);
     }
 
     private void initializePauseSymbol() {
@@ -355,6 +351,92 @@ public class PauseStuff implements Resizable, Updatable {
     // --------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------
 
+
+
+
+
+
+
+    public class PauseMenu extends Group implements Resizable {
+
+        private Image home;
+        private Image resume;
+        private Image restart;
+
+        public PauseMenu() {
+            initializeHome();
+            initializeResume();
+            initializeRestart();
+        }
+
+        @Override
+        public void resize(int width, int height, float worldWidth, float worldHeight) {
+            resume.setX(-resume.getWidth()/2f);
+            home.setX(resume.getX() - PAUSE_MENU_MARGIN_BETWEEN_BUTTONS - home.getWidth());
+            restart.setX(resume.getX() + resume.getWidth() + PAUSE_MENU_MARGIN_BETWEEN_BUTTONS);
+
+            setPosition(worldWidth/2f, PAUSE_MENU_Y);
+        }
+
+        private void initializeHome() {
+            TextureRegion homeRegion = Assets.instance.gameplayAssets.pauseHome;
+            home = new Image(homeRegion);
+
+            home.setSize(PAUSE_MENU_BUTTON_HEIGHT*homeRegion.getRegionWidth()/homeRegion.getRegionHeight(), PAUSE_MENU_BUTTON_HEIGHT);
+
+            addActor(home);
+
+            home.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    gameplayScreen.removeActor(pauseHud);
+                    gameplayScreen.getHealthHandler().stopTheGameplay();
+                    gameplayScreen.getAdvancedStage().switchScreens(gameplayScreen.getGameplayToMainMenu());
+                }
+            });
+        }
+
+        private void initializeResume() {
+            TextureRegion resumeRegion = Assets.instance.gameplayAssets.pauseResume;
+            resume = new Image(resumeRegion);
+
+            resume.setSize(PAUSE_MENU_BUTTON_HEIGHT*resumeRegion.getRegionWidth()/resumeRegion.getRegionHeight(), PAUSE_MENU_BUTTON_HEIGHT);
+
+            addActor(resume);
+
+            resume.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    resumeTheGame();
+                    //resumeAfterCountDown.start();
+                    //_3Tween.start();
+                    //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(false);
+                    //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(false);
+                    //gameplayScreen.removeActor(resumeBounds);
+                }
+            });
+        }
+
+        private void initializeRestart() {
+            TextureRegion restartRegion = Assets.instance.gameplayAssets.pauseRestart;
+            restart = new Image(restartRegion);
+
+            restart.setSize(PAUSE_MENU_BUTTON_HEIGHT*restartRegion.getRegionWidth()/restartRegion.getRegionHeight(), PAUSE_MENU_BUTTON_HEIGHT);
+
+            addActor(restart);
+
+            restart.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    gameplayScreen.removeActor(pauseHud);
+                    gameplayScreen.getHealthHandler().stopTheGameplay();
+                    gameplayScreen.getHealthHandler().newGame();
+                }
+            });
+        }
+    }
 
 }
 

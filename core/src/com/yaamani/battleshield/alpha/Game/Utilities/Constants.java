@@ -564,11 +564,15 @@ public final class Constants {
 
     public static final float PAUSE_SYMBOL_WIDTH = PAUSE_SYMBOL_HEIGHT * 58f/79f;
 
-    public static final float PAUSE_TEXT_HEIGHT = WORLD_SIZE * 422f/1080f;
-
-    public static final float PAUSE_TEXT_WIDTH = PAUSE_TEXT_HEIGHT * 900f/422f;
+    public static final float PAUSE_TEXT_HEIGHT = WORLD_SIZE * 0.25f;
 
     public static final float PAUSE_3_2_1_HEIGHT = TURRET_RADIUS * 2 * 1.3f;
+
+    public static final float PAUSE_MENU_BUTTON_HEIGHT = WORLD_SIZE / 10f;
+
+    public static final float PAUSE_MENU_Y = WORLD_SIZE / 6f;
+
+    public static final float PAUSE_MENU_MARGIN_BETWEEN_BUTTONS = WORLD_SIZE / 20f;
 
 
 
@@ -1015,7 +1019,7 @@ public final class Constants {
 
 
 
-    public static final int PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY = 24;
+    public static final int FINISH_WHEN_STOPPING_THE_GAMEPLAY_INITIAL_CAPACITY = 24;
 
     //public static final int PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY = 16;
 
@@ -1089,6 +1093,12 @@ public final class Constants {
     public static final String ASSETS_PAUSE_2 = "2";
 
     public static final String ASSETS_PAUSE_3 = "3";
+
+    public static final String ASSETS_PAUSE_RESTART = "Restart";
+
+    public static final String ASSETS_PAUSE_RESUME = "Resume";
+
+    public static final String ASSETS_PAUSE_HOME = "Home";
 
     public static final String ASSETS_DIMMING_OVERLAY = "Dimming Overlay";
 

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.LazerAttackStuff;
+import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -57,16 +58,19 @@ public class MainMenuScreen extends AdvancedScreen {
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
 
+    private StarsContainer starsContainer;
+
     private MyBitmapFont myBitmapFont;
 
     //private DifficultyCurveTesting difficultyCurveTesting;
 
 
-    public MainMenuScreen(final AdvancedStage game, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, boolean transform) {
+    public MainMenuScreen(final AdvancedStage game, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, StarsContainer starsContainer, boolean transform) {
         super(game, transform);
 
         this.myBitmapFont = myBitmapFont;
         this.gameplayScreen = gameplayScreen;
+        this.starsContainer = starsContainer;
 
         Random random = new Random();
 
@@ -204,6 +208,19 @@ public class MainMenuScreen extends AdvancedScreen {
     @Override
     public void show() {
         super.show();
+        this.starsContainer.resetCurrentSpeed();
+
+        restricted.setVisible(false);
+        free.setVisible(false);
+
+        crystal.setVisible(false);
+        t1.setVisible(false);
+        dizziness.setVisible(false);
+        lazer.setVisible(false);
+        portals.setVisible(false);
+
+        survival.setVisible(true);
+        planets.setVisible(true);
     }
 
     @Override

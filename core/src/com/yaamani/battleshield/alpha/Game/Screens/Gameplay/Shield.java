@@ -139,7 +139,7 @@ public class Shield extends Actor {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(shieldDisabledTimer);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(shieldDisabledTimer);
         shieldDisabledTimer.finish();
     }
 }

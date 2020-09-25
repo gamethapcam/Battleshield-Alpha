@@ -9,7 +9,6 @@ import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
-import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -1328,7 +1327,7 @@ public class BulletsHandler implements Updatable {
 
         plusMinusBulletsTimer.start();
 
-        gameplayScreen.addToFinishWhenLosing(plusMinusBulletsTimer);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(plusMinusBulletsTimer);
     }
 
     private void initializeD_survival_bulletsPerAttackNumberTween() {
@@ -1362,7 +1361,7 @@ public class BulletsHandler implements Updatable {
 
         // d_survival_bulletsPerAttackNumberTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(d_survival_bulletsPerAttackNumberTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_survival_bulletsPerAttackNumberTween);
     }
 
     /*private void initializeCurrentDifficultLevelTimer() {
@@ -1402,7 +1401,7 @@ public class BulletsHandler implements Updatable {
 
         // d_survival_bulletSpeedMultiplierTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(d_survival_bulletSpeedMultiplierTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_survival_bulletSpeedMultiplierTween);
     }
 
     private void initializeD_crystal_bulletsPerAttackNumberTween() {
@@ -1415,7 +1414,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_crystal_bulletsPerAttackNumberTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_crystal_bulletsPerAttackNumberTween);
     }
 
     private void initializeD_crystal_bulletSpeedMultiplierTween() {
@@ -1427,7 +1426,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_crystal_bulletSpeedMultiplierTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_crystal_bulletSpeedMultiplierTween);
     }
 
     private void initializeD_crystal_fakeWaveProbabilityTween() {
@@ -1439,7 +1438,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_crystal_fakeWaveProbabilityTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_crystal_fakeWaveProbabilityTween);
     }
 
     private void initializeD_dizziness_bulletsPerAttackNumberTween() {
@@ -1451,7 +1450,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_dizziness_bulletsPerAttackNumberTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_dizziness_bulletsPerAttackNumberTween);
 
     }
 
@@ -1464,7 +1463,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_dizziness_bulletSpeedMultiplierTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_dizziness_bulletSpeedMultiplierTween);
     }
 
     private void initializeD_lazer_bulletsPerAttackNumberTween() {
@@ -1476,7 +1475,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_lazer_bulletsPerAttackNumberTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_lazer_bulletsPerAttackNumberTween);
 
     }
 
@@ -1488,7 +1487,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_lazer_bulletSpeedMultiplierTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_lazer_bulletSpeedMultiplierTween);
     }
 
 
@@ -1498,13 +1497,13 @@ public class BulletsHandler implements Updatable {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
 
-                if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
+                if (gameplayScreen.getState() == GameplayScreen.State.STOPPED) return;
 
                 currentBulletSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(currentBulletSpeedTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentBulletSpeedTweenStarBullet_FirstStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(currentBulletSpeedTweenStarBullet_FirstStage);
     }
 
@@ -1513,13 +1512,13 @@ public class BulletsHandler implements Updatable {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
 
-                if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
+                if (gameplayScreen.getState() == GameplayScreen.State.STOPPED) return;
 
                 currentBulletSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(currentBulletSpeedTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentBulletSpeedTweenStarBullet_ThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(currentBulletSpeedTweenStarBullet_ThirdStage);
     }
 
@@ -1538,14 +1537,14 @@ public class BulletsHandler implements Updatable {
             public void onFinish() {
                 super.onFinish();
 
-                if (gameplayScreen.getState() != GameplayScreen.State.LOST) {
+                if (gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
                     starBulletSecondStage.start();
 
                 }
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(starBulletFirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(starBulletFirstStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(starBulletFirstStage);
     }
 
@@ -1565,7 +1564,7 @@ public class BulletsHandler implements Updatable {
             public void onFinish() {
                 super.onFinish();
 
-                if (gameplayScreen.getState() != GameplayScreen.State.LOST) {
+                if (gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
                     StarsContainer starsContainer = gameplayScreen.getStarsContainer();
 
                     //gameplayScreen.getStarsContainer().setInWarpTrailAnimation(false);
@@ -1585,7 +1584,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(starBulletSecondStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(starBulletSecondStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(starBulletSecondStage);
     }
 
@@ -1607,7 +1606,7 @@ public class BulletsHandler implements Updatable {
                 gameplayScreen.setInStarBulletAnimation(false);
                 gameplayScreen.getStarsContainer().setInWarpFastForwardAnimation(false);
 
-                if (gameplayScreen.getState() != GameplayScreen.State.LOST) {
+                if (gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
                     //getCurrentBulletsWaveTimer().resume();
                     getD_survival_bulletSpeedMultiplierTween().resume();
                     getD_survival_bulletsPerAttackNumberTween().resume();
@@ -1623,7 +1622,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(starBulletThirdStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(starBulletThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(starBulletThirdStage);
     }
 

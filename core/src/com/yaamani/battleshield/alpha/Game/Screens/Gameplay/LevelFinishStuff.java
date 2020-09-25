@@ -117,7 +117,7 @@ public class LevelFinishStuff implements Resizable, Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(finishTextTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(finishTextTween);
     }
 
     private void initializeCongratsText() {

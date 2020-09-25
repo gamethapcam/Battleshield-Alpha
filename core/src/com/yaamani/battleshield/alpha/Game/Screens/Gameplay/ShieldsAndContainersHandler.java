@@ -337,7 +337,7 @@ public class ShieldsAndContainersHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(mirrorControlsTimer);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(mirrorControlsTimer);
     }
 
     public void initializeNonBusyContainers(int shieldsMaxCount) {
@@ -361,9 +361,17 @@ public class ShieldsAndContainersHandler implements Updatable {
                 dizzinessBaseRotationalSpeed = speed;
                 gameplayScreen.getStarsContainer().setBaseRadialVelocity(speed * MathUtils.degRad);
             }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (gameplayScreen.getState() == GameplayScreen.State.STOPPED)
+                    gameplayScreen.getStarsContainer().setBaseRadialVelocity(0);
+            }
         };
 
-        gameplayScreen.addToFinishWhenLosing(d_dizziness_rotationalSpeedTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_dizziness_rotationalSpeedTween);
     }
 
     private void initializeDizzinessRotationalSpeedMultiplierTimer() {
@@ -386,6 +394,6 @@ public class ShieldsAndContainersHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(dizzinessRotationalSpeedMultiplierTimer);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(dizzinessRotationalSpeedMultiplierTimer);
     }
 }

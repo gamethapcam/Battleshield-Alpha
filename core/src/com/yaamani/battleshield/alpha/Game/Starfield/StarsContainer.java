@@ -87,7 +87,8 @@ public class StarsContainer extends Group implements Disposable{
             stars.add(star);
         }
 
-        currentStarSpeed = STARS_SPEED;
+
+        setCurrentStarSpeed(STARS_SPEED);
 
         originalFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (viewport.getScreenWidth()), (viewport.getScreenHeight()), false);
         
@@ -241,11 +242,13 @@ public class StarsContainer extends Group implements Disposable{
     }
 
     public void updateCurrentStarSpeed(float bulletsPerAttack) {
-        this.currentStarSpeed = (D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK /(float) bulletsPerAttack) * STARS_SPEED;
+        //this.currentStarSpeed = (D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK /(float) bulletsPerAttack) * STARS_SPEED;
+        setCurrentStarSpeed((D_SURVIVAL_BULLETS_MAX_NUMBER_PER_ATTACK /(float) bulletsPerAttack) * STARS_SPEED);
     }
 
     public void resetCurrentSpeed() {
-        this.currentStarSpeed = STARS_SPEED;
+        //this.currentStarSpeed = STARS_SPEED;
+        setCurrentStarSpeed(STARS_SPEED);
     }
 
     private Texture renderStarsToOriginalFrameBuffer(Batch batch) {
@@ -343,15 +346,15 @@ public class StarsContainer extends Group implements Disposable{
 
     public void setGameplayScreen(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
-        gameplayScreen.addToFinishWhenLosing(radialTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(radialTween);
 
-        gameplayScreen.addToFinishWhenLosing(currentSpeedTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentSpeedTweenStarBullet_FirstStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(currentSpeedTweenStarBullet_FirstStage);
 
-        gameplayScreen.addToFinishWhenLosing(warpStretchFactorTweenStarBullet_SecondStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(warpStretchFactorTweenStarBullet_SecondStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(warpStretchFactorTweenStarBullet_SecondStage);
 
-        gameplayScreen.addToFinishWhenLosing(warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage);
 
         for (Star star : stars) {
@@ -371,6 +374,10 @@ public class StarsContainer extends Group implements Disposable{
         return glassCrackPostProcessingEffect;
     }
 
+    private void setCurrentStarSpeed(float currentStarSpeed) {
+        this.currentStarSpeed = currentStarSpeed;
+    }
+
     // ------------------------ initializers ------------------------
     // ------------------------ initializers ------------------------
     // ------------------------ initializers ------------------------
@@ -379,7 +386,17 @@ public class StarsContainer extends Group implements Disposable{
         currentSpeedTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION, STARS_SPEED, 0) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
-                currentStarSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
+                //currentStarSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
+                setCurrentStarSpeed(myInterpolation.apply(startX, endX, startY, endY, currentX));
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                /*if (gameplayScreen.getState() == GameplayScreen.State.STOPPED)
+                    resetCurrentSpeed();*/
+
             }
         };
 
@@ -442,7 +459,8 @@ public class StarsContainer extends Group implements Disposable{
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 warpFastForwardSpeed = interpolation.apply(1, 0, percentage);
-                currentStarSpeed = interpolation.apply(0, starsSpeedBeforeStarBullet, percentage);
+                //currentStarSpeed = interpolation.apply(0, starsSpeedBeforeStarBullet, percentage);
+                setCurrentStarSpeed(interpolation.apply(0, starsSpeedBeforeStarBullet, percentage));
             }
         };
 

@@ -16,6 +16,7 @@ import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -37,7 +38,7 @@ public class GameplayScreen extends AdvancedScreen {
     private Integer currentShieldsMinCount;
 
 
-    private Array<Timer> finishWhenLosing;
+    private Array<Timer> finishWhenStoppingTheGameplay;
     //private Array<Timer> resumeWhenResumingStarBullet;
 
     private Group containerOfContainers; // Initially created for diseases planet (Dizziness disease).
@@ -49,7 +50,7 @@ public class GameplayScreen extends AdvancedScreen {
     private HealthHandler healthHandler;
 
 
-    public enum State {PLAYING, PAUSED, LOST}
+    public enum State {PLAYING, PAUSED, STOPPED}
     private State state;
     private boolean inStarBulletAnimation = false;
 
@@ -88,6 +89,8 @@ public class GameplayScreen extends AdvancedScreen {
     private SimpleText activeBulletsText; // For debugging
 
 
+    private SimplestTransition gameplayToMainMenu;
+
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
         super(game, transform);
@@ -96,7 +99,7 @@ public class GameplayScreen extends AdvancedScreen {
         this.myBitmapFont = myBitmapFont;
         this.starsContainer = starsContainer;
 
-        finishWhenLosing = new Array<>(false, PAUSE_WHEN_PAUSING_FINISH_WHEN_LOSING_INITIAL_CAPACITY, Timer.class);
+        finishWhenStoppingTheGameplay = new Array<>(false, FINISH_WHEN_STOPPING_THE_GAMEPLAY_INITIAL_CAPACITY, Timer.class);
         //resumeWhenResumingStarBullet = new Array<>(false, PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY, Timer.class);
 
         initializeHandlers(game, starsContainer.getRadialTween());
@@ -436,7 +439,7 @@ public class GameplayScreen extends AdvancedScreen {
             }
         };
 
-        addToFinishWhenLosing(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
+        addToFinishWhenStoppingTheGameplay(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
         //addToResumeWhenResumingStarBullet(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
     }
 
@@ -616,8 +619,8 @@ public class GameplayScreen extends AdvancedScreen {
         return pauseStuff;
     }
 
-    public Timer[] getFinishWhenLosing() {
-        return finishWhenLosing.items;
+    public Timer[] getFinishWhenStoppingTheGameplay() {
+        return finishWhenStoppingTheGameplay.items;
     }
 
     /*public Timer[] getResumeWhenResumingStarBullet() {
@@ -671,6 +674,14 @@ public class GameplayScreen extends AdvancedScreen {
         return lazerAttackStuff;
     }
 
+    public SimplestTransition getGameplayToMainMenu() {
+        return gameplayToMainMenu;
+    }
+
+    public void setGameplayToMainMenu(SimplestTransition gameplayToMainMenu) {
+        this.gameplayToMainMenu = gameplayToMainMenu;
+    }
+
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
@@ -680,8 +691,8 @@ public class GameplayScreen extends AdvancedScreen {
         timePlayedThisTurnSoFar = 0;
     }*/
 
-    public void addToFinishWhenLosing(Timer timer) {
-        finishWhenLosing.add(timer);
+    public void addToFinishWhenStoppingTheGameplay(Timer timer) {
+        finishWhenStoppingTheGameplay.add(timer);
     }
 
     /*public void addToResumeWhenResumingStarBullet(Timer timer) {

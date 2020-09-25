@@ -131,7 +131,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     }
 
     private void handleFinishButton(float secondsLeft) {
-        if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.LOST) {
+        if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
             gameplayScreen.onWaitingForFinishButtonToBePressed();
         }
     }
@@ -274,7 +274,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(scoreTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(scoreTweenStarBullet_FirstStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(scoreTweenStarBullet_FirstStage);
     }
 
@@ -291,7 +291,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(scoreTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(scoreTweenStarBullet_ThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(scoreTweenStarBullet_ThirdStage);
     }
 

@@ -249,7 +249,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         // myProgressBarTween.finish();
         // myProgressBarTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(myProgressBarTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(myProgressBarTween);
     }
 
     private void initializeSurvival_scoreMultiplierTween() {
@@ -272,7 +272,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         // survival_scoreMultiplierTween.start();
 
-        gameplayScreen.addToFinishWhenLosing(survival_scoreMultiplierTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(survival_scoreMultiplierTween);
 
     }
 
@@ -293,7 +293,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(crystal_difficultyLevelTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(crystal_difficultyLevelTween);
     }
 
     private void initializeDizziness_difficultyLevelTween() {
@@ -313,7 +313,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(dizziness_difficultyLevelTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(dizziness_difficultyLevelTween);
     }
 
     private void initializeLazer_difficultyLevelTween() {
@@ -333,7 +333,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(lazer_difficultyLevelTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(lazer_difficultyLevelTween);
     }
 
 

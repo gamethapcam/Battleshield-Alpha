@@ -39,7 +39,7 @@ public class HealthHandler implements Updatable {
                 }
             }
         };
-        gameplayScreen.addToFinishWhenLosing(health.getTweenObj());
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(health.getTweenObj());
 
         //setHealth(1);
     }
@@ -72,8 +72,8 @@ public class HealthHandler implements Updatable {
         affectHealthBy(by, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
     }
 
-    public void playerLost() {
-        gameplayScreen.setState(GameplayScreen.State.LOST);
+    public void stopTheGameplay() {
+        gameplayScreen.setState(GameplayScreen.State.STOPPED);
         gameplayScreen.getBulletsHandler().setRoundTurn(null);
         //gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().finish();
 
@@ -91,43 +91,53 @@ public class HealthHandler implements Updatable {
             it.remove();
         }
 
-
-        gameplayScreen.getScoreTimerStuff().getFadeOutTween().start();
-
-        gameplayScreen.getPauseStuff().getPauseSymbolFadesOutWhenLosing().start();
-
         Bullet.setPlusOrMinusExists(false);
         Bullet.setStarExists(false);
         gameplayScreen.setInStarBulletAnimation(false);
 
-        //gameplayScreen.getScoreStuff().updateBestScoreButDontRegisterToHardDriveYet();
-        gameplayScreen.getGameOverLayer().thePlayerLost();
-
-        Timer[] pauseWhenPausingFinishWhenLosing = gameplayScreen.getFinishWhenLosing();
-        for (int i = 0; i < pauseWhenPausingFinishWhenLosing.length; i++) {
-            if (pauseWhenPausingFinishWhenLosing[i] != null)
-                pauseWhenPausingFinishWhenLosing[i].finish();
+        Timer[] pauseWhenPausingFinishWhenStoppingTheGameplay = gameplayScreen.getFinishWhenStoppingTheGameplay();
+        for (int i = 0; i < pauseWhenPausingFinishWhenStoppingTheGameplay.length; i++) {
+            if (pauseWhenPausingFinishWhenStoppingTheGameplay[i] != null)
+                pauseWhenPausingFinishWhenStoppingTheGameplay[i].finish();
         }
-
-        gameplayScreen.getStarsContainer().setBaseRadialVelocity(-5 * MathUtils.degreesToRadians);
 
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setVisible(false);
 
         gameplayScreen.hideTempProgressBar();
 
-        if (gameplayScreen != null)
-            if (gameplayScreen.getScoreTimerStuff() != null)
-                gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
-
-
         gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
         gameplayScreen.getLazerAttackStuff().resetLazerStuff();
     }
 
+    public void playerLost() {
+        stopTheGameplay();
+
+
+        gameplayScreen.getScoreTimerStuff().getFadeOutTween().start();
+
+        gameplayScreen.getPauseStuff().getPauseSymbolFadesOutWhenLosing().start();
+
+
+
+        //gameplayScreen.getScoreStuff().updateBestScoreButDontRegisterToHardDriveYet();
+        gameplayScreen.getGameOverLayer().thePlayerLost();
+
+
+
+        gameplayScreen.getStarsContainer().setBaseRadialVelocity(-5 * MathUtils.degreesToRadians);
+
+
+
+        if (gameplayScreen != null)
+            if (gameplayScreen.getScoreTimerStuff() != null)
+                gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
+
+    }
+
     public void newGame() {
-        if (gameplayScreen.getState() == GameplayScreen.State.LOST) {
+        if (gameplayScreen.getState() == GameplayScreen.State.STOPPED) {
             gameplayScreen.resize(Gdx.graphics.getWidth(),
                     Gdx.graphics.getHeight(),
                     gameplayScreen.getStage().getViewport().getWorldWidth(),

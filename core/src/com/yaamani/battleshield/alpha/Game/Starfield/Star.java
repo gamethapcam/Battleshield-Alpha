@@ -304,10 +304,10 @@ public class Star {
     void setGameplayScreen(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
-        gameplayScreen.addToFinishWhenLosing(trailWarpTweenStarBullet_SecondStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(trailWarpTweenStarBullet_SecondStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(trailWarpTweenStarBullet_SecondStage);
 
-        gameplayScreen.addToFinishWhenLosing(fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(fastForwardWarpMaxRadiusMinRadiusTweenStarBullet_ThirdStage);
     }
 
@@ -499,7 +499,7 @@ public class Star {
                 if (initialPositionTrailWarpAnimation == null | finalPositionTrailWarpAnimation == null)
                     return;
 
-                if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
+                if (gameplayScreen.getState() == GameplayScreen.State.STOPPED) return;
 
                 linearPosition.x = interpolation.apply(initialPositionTrailWarpAnimation.x, finalPositionTrailWarpAnimation.x, percentage);
                 linearPosition.y = interpolation.apply(initialPositionTrailWarpAnimation.y, finalPositionTrailWarpAnimation.y, percentage);
@@ -513,7 +513,7 @@ public class Star {
             public void onFinish() {
                 super.onFinish();
 
-                if (gameplayScreen.getState() != GameplayScreen.State.LOST)
+                if (gameplayScreen.getState() != GameplayScreen.State.STOPPED)
                     calculateFastForwardWarpStuff();
 
                 /*if  (i == 0)
@@ -529,7 +529,7 @@ public class Star {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
 
-                if (gameplayScreen.getState() == GameplayScreen.State.LOST) return;
+                if (gameplayScreen.getState() == GameplayScreen.State.STOPPED) return;
 
                 fastForwardWarpMinRadius = interpolation.apply(STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MIN, originalRadius, percentage);
                 fastForwardWarpMaxRadius = interpolation.apply(STAR_BULLET_FAST_FORWARD_WARP_RADIUS_MAX, originalRadius, percentage);

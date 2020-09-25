@@ -190,7 +190,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(lazerGunFadeInTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(lazerGunFadeInTween);
     }
 
     private void initializeLazerGlowShrinkingTween() {
@@ -228,7 +228,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(lazerGlowShrinkingTween);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(lazerGlowShrinkingTween);
     }
 
     private void initializeLazerBeamShrinkingTween() {

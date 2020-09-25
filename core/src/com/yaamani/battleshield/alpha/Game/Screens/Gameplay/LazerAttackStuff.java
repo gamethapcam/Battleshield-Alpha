@@ -1,7 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -386,7 +385,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
             }
         };
 
-        gameplayScreen.addToFinishWhenLosing(nextLazerAttackTimer);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(nextLazerAttackTimer);
     }
 
     private void initializeHowManyArmorBulletsThePlayerCollected() {

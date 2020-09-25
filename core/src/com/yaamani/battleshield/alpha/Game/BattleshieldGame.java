@@ -5,14 +5,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DifficultyCurveTesting;
-import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.ResumeGraduallyTesting;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
-import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
@@ -36,6 +33,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     private SimplestTransition loadingAppear;
     private LoadingToMainMenu loadingToMainMenu;
     private MainMenuToGameplay mainMenuToGameplay;
+    private SimplestTransition gameplayToMainMenu;
 
     private MyBitmapFont myBitmapFont;
     private BitmapFont font;
@@ -154,14 +152,17 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
             initializeStarsContainer();
 
             gameplayScreen = new GameplayScreen(game, myBitmapFont, starsContainer, false);
-            mainMenuScreen = new MainMenuScreen(game, myBitmapFont, gameplayScreen, false);
+            mainMenuScreen = new MainMenuScreen(game, myBitmapFont, gameplayScreen, starsContainer, false);
 
             starsContainer.setBulletsHandler(gameplayScreen.getBulletsHandler());
             starsContainer.setGameplayScreen(gameplayScreen);
 
             loadingToMainMenu = new LoadingToMainMenu(game, loadingScreen, mainMenuScreen, starsContainer);
             mainMenuToGameplay = new MainMenuToGameplay(game, mainMenuScreen, gameplayScreen);
+            gameplayToMainMenu = new SimplestTransition(game, gameplayScreen, mainMenuScreen);
+
             mainMenuScreen.setMainMenuToGameplay(mainMenuToGameplay);
+            gameplayScreen.setGameplayToMainMenu(gameplayToMainMenu);
 
             game.switchScreens(loadingToMainMenu);
 
