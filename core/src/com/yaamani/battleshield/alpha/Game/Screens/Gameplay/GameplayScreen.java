@@ -518,10 +518,10 @@ public class GameplayScreen extends AdvancedScreen {
                     scoreTimerStuff.setLevelTime(DIZZINESS_LEVEL_TIME);
                     scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().dizziness();
 
-                    lazerAttackStuff.hide();
-
                     bulletsHandler.setCurrentPlanetSpecialBullets(DIZZINESS_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY);
+
+                    lazerAttackStuff.hide();
 
                     //bulletsHandler.startDizzinessDifficultyTweens();
                     bulletsHandler.getD_dizziness_bulletsPerAttackNumberTween().start();
@@ -548,7 +548,18 @@ public class GameplayScreen extends AdvancedScreen {
                     break;
 
                 case PORTALS:
+                    scoreTimerStuff.setLevelTime(PORTALS_LEVEL_TIME);
+                    scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().portals();
 
+                    bulletsHandler.setCurrentPlanetSpecialBullets(PORTALS_SPECIAL_BULLETS);
+                    bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_PORTALS_SPECIAL_BULLETS_PROBABILITY);
+
+                    lazerAttackStuff.hide();
+
+                    bulletsHandler.getD_portals_bulletsPerAttackNumberTween().start();
+                    bulletsHandler.getD_portals_bulletSpeedMultiplierTween().start();
+
+                    setCurrentShieldsMinMaxCount(PORTALS_SHIELDS_MIN_COUNT, PORTALS_SHIELDS_MAX_COUNT);
                     break;
             }
 

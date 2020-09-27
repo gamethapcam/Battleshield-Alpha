@@ -663,8 +663,8 @@ public class MainMenuScreen extends AdvancedScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
-                        Gdx.app.log(TAG, "Uncomment startPortals(game);");
-                        //startPortals(game);
+                        //Gdx.app.log(TAG, "Uncomment startPortals(game);");
+                        startPortals(game);
                     }
                 }
         );

@@ -412,6 +412,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 currentEffect = effects.armor;
                 gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
                 break;
+            case TWO_EXIT_PORTAL:
+                if (!questionMark) region = Assets.instance.gameplayAssets.twoExitPortal;
+                currentEffect = effects.twoExitPortal;
+                break;
         }
 
         // Next 2 lines are for debugging.
@@ -504,6 +508,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         //Lazer
         private BulletEffect armor;
+
+        //Portals
+        private BulletEffect twoExitPortal;
 
 
 
@@ -627,6 +634,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack();
                 }
             };
+
+            twoExitPortal = new BulletEffect() {
+                @Override
+                public void effect() {
+
+                }
+            };
+
             /*questionMark = new BulletEffect() {
                 @Override
                 public void effect() {

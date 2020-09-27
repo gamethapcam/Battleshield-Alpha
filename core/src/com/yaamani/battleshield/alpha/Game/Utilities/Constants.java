@@ -297,7 +297,7 @@ public final class Constants {
 
     public enum SpecialBullet {
         MINUS, HEART, STAR, ARMOR /*Lazer*/, // Good
-        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, // Bad
+        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, TWO_EXIT_PORTAL /*Portals*/, // Bad
         QUESTION_MARK
     }
 
@@ -995,6 +995,71 @@ public final class Constants {
 
 
 
+    public static final float PORTALS_LEVEL_TIME = 5;
+
+    public static final int PORTALS_SHIELDS_MAX_COUNT = 8;
+
+    public static final int PORTALS_SHIELDS_MIN_COUNT = 4;
+
+    public static final int D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
+
+    public static final SpecialBullet[] PORTALS_SPECIAL_BULLETS = {SpecialBullet.TWO_EXIT_PORTAL};
+
+    public static final float D_PORTALS_SPECIAL_BULLETS_PROBABILITY = 0.25f;
+
+    public static final int D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES = 3;
+
+
+    public static final MyInterpolation D_PORTALS_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
+
+    public static final MyInterpolation D_PORTALS_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
+
+
+    public static final int D_PORTALS_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+
+    public static final int D_PORTALS_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
+
+    public static final int D_PORTALS_BULLETS_MAX_NUMBER_PER_ATTACK = D_PORTALS_BULLETS_MIN_NUMBER_PER_ATTACK + (D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_PORTALS_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+
+    public static final int D_PORTALS_BULLETS_INITIAL_NO_PER_ATTACK = D_PORTALS_BULLETS_MAX_NUMBER_PER_ATTACK;
+
+    public static final Interpolation D_PORTALS_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_PORTALS_DIFFICULTY_TIME_SCALE,
+            D_PORTALS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final float D_PORTALS_BULLETS_SPEED_MULTIPLIER_INITIAL = 1;
+
+    public static final float D_PORTALS_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+
+    public static final float D_PORTALS_BULLETS_SPEED_MULTIPLIER_MAX = D_PORTALS_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_PORTALS_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final Interpolation D_PORTALS_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_PORTALS_DIFFICULTY_TIME_SCALE,
+            D_PORTALS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    
+    
+    public static final Interpolation D_PORTALS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_PORTALS_DIFFICULTY_TIME_SCALE,
+            D_PORTALS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+    public static final Interpolation D_PORTALS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
+            D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.05f,
+            2,
+            D_PORTALS_DIFFICULTY_TIME_SCALE,
+            D_PORTALS_DIFFICULTY_OUTPUT_SCALE
+    );
+
 
 
 
@@ -1138,7 +1203,7 @@ public final class Constants {
 
     public static final String ASSETS_PORTALS_EXIT = "Portal Exit";
 
-    public static final String ASSETS_2_PORTAL_EXITS = "2 Portal Exits";
+    public static final String ASSETS_2_EXIT_PORTAL = "2 Exit Portal";
 
 
 
