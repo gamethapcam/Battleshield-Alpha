@@ -912,16 +912,20 @@ public class BulletsHandler implements Updatable {
         if (firstOpposingContainersDizziness != null & firstContainersAlwaysControlledByOneControllerDizziness != null) {
             int rand = MathUtils.random(1);
             if (rand == 0) {
+                isDouble = true;
                 attachBullets(firstOpposingContainersDizziness, 0, false);
                 attachBullets(secondOpposingContainersDizziness, 1, false);
             } else {
+                isDouble = true;
                 attachBullets(firstContainersAlwaysControlledByOneControllerDizziness, 0, false);
                 attachBullets(secondContainersAlwaysControlledByOneControllerDizziness, 1, false);
             }
         } else if (firstOpposingContainersDizziness != null) {
+            isDouble = true;
             attachBullets(firstOpposingContainersDizziness, 0, false);
             attachBullets(secondOpposingContainersDizziness, 1, false);
         } else if (firstContainersAlwaysControlledByOneControllerDizziness != null) {
+            isDouble = true;
             attachBullets(firstContainersAlwaysControlledByOneControllerDizziness, 0, false);
             attachBullets(secondContainersAlwaysControlledByOneControllerDizziness, 1, false);
         } else {
