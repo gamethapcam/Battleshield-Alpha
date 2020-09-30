@@ -108,6 +108,8 @@ public class HealthHandler implements Updatable {
 
         gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
+        gameplayScreen.getShieldsAndContainersHandler().resetContainersRotation();
+
         gameplayScreen.getLazerAttackStuff().resetLazerStuff();
     }
 

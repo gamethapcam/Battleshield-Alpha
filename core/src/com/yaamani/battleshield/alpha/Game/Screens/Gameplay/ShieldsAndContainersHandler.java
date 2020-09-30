@@ -278,6 +278,10 @@ public class ShieldsAndContainersHandler implements Updatable {
         return dizzinessBaseRotationalSpeed;
     }
 
+    public void resetContainersRotation() {
+        gameplayScreen.getContainerOfContainers().setRotation(0);
+    }
+
     /**
      *
      * @return speed * multiplier.
