@@ -56,6 +56,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private Tween fakeTween; // When the wave is fake.
 
+    private PortalWaveType portalWaveType;
+    private Tween portalTween;
+
     /*private Tween bulletMovement;
     private float initialY;
     private float finalY;*/
@@ -81,13 +84,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         this.viewport = viewport;
 
-        notSpecial(false);
+        notSpecial(false, PortalWaveType.NO_PORTAL);
 
         // setDebug(true);
         // bulletPool.getFree();
 
         initializeFakeTween();
 
+        initializePortalTween();
 
         initializeType();
 
@@ -147,6 +151,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public Tween getFakeTween() {
         return fakeTween;
+    }
+
+    public void setPortalWaveType(PortalWaveType portalWaveType) {
+        this.portalWaveType = portalWaveType;
+        if (portalWaveType == PortalWaveType.PORTAL_ENTRANCE)
+            setColor(1, 1, 1, 0);
     }
 
     public void iamInUseNow() {
@@ -279,6 +289,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
             if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
                 fakeTween.update(delta);
+
+            if (portalWaveType != PortalWaveType.NO_PORTAL) {
+                whenToStartThePortalTween();
+                portalTween.update(delta);
+            }
         }
     }
 
@@ -319,6 +334,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         detachFromBulletsAndShieldObject();
         bulletsHandler.getBulletPool().free(this);
 
+        setColor(1, 1, 1, 1);
 
         handlePlusMinusStarExists();
     }
@@ -328,6 +344,21 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             setPlusOrMinusExists(false);
         else if (currentEffect == effects.star)
             setStarExists(false);
+    }
+
+    private void whenToStartThePortalTween() {
+        switch (portalWaveType) {
+
+            case PORTAL_ENTRANCE:
+                if (!portalTween.isStarted() & getY() > - D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_ORDINARY_HEIGHT)
+                    portalTween.start();
+                break;
+
+            case PORTAL_EXIT:
+                if (!portalTween.isStarted() & getY() > - D_PORTALS_ENTRANCE_EXIT_POSITION)
+                    portalTween.start();
+                break;
+        }
     }
 
     /*private void decideSpecialType() {
@@ -345,8 +376,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
     }*/
 
-    public void notSpecial(boolean fake) {
+    public void notSpecial(boolean fake, PortalWaveType portalWaveType) {
         bulletType = BulletType.ORDINARY;
+
+        setPortalWaveType(portalWaveType);
 
         setSize(BULLETS_ORDINARY_WIDTH, BULLETS_ORDINARY_HEIGHT);
         setOrigin(0, 0);
@@ -364,8 +397,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     }
 
-    public void setSpecial(SpecialBullet specialType, boolean questionMark, boolean fake) {
+    public void setSpecial(SpecialBullet specialType, boolean questionMark, boolean fake, PortalWaveType portalWaveType) {
         bulletType = BulletType.SPECIAL;
+
+        setPortalWaveType(portalWaveType);
 
         setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
         setOrigin(Align.center);
@@ -469,6 +504,39 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 //Gdx.app.log(Bullet.TAG, "" + a);
             }
         };
+    }
+
+    private void initializePortalTween() {
+        portalTween = new Tween(PORTALS_BULLET_PORTAL_TWEEN_DURATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                switch (portalWaveType) {
+
+                    case PORTAL_ENTRANCE:
+                        setColor(1, 1, 1, 1-percentage);
+                        break;
+
+                    case PORTAL_EXIT:
+                        setColor(1, 1, 1, percentage);
+                        break;
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (gameplayScreen.getState() != GameplayScreen.State.PLAYING) return;
+
+                if (portalWaveType == PortalWaveType.PORTAL_ENTRANCE) {
+                    Viewport viewport = getStage().getViewport();
+                    stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
+                    setColor(1, 1, 1, 1);
+                }
+            }
+        };
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(portalTween);
     }
 
     //------------------------------------------------------------------------------------------------------------

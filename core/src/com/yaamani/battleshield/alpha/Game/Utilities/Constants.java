@@ -1004,6 +1004,21 @@ public final class Constants {
     public static final int D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
 
+    public static final float D_PORTALS_PORTAL_PROBABILITY = 0.25f;
+
+    public enum PortalWaveType {PORTAL_ENTRANCE, PORTAL_EXIT, NO_PORTAL}
+
+    public static final float D_PORTALS_ENTRANCE_EXIT_POSITION = WORLD_SIZE * 0.35f;
+
+    public static final float PORTALS_ENTRANCE_EXIT_HEIGHT = TURRET_RADIUS * 1.25f;
+
+    public static final float PORTALS_ENTRANCE_EXIT_WIDTH = PORTALS_ENTRANCE_EXIT_HEIGHT;
+
+    public static final float PORTALS_BULLET_PORTAL_TWEEN_DURATION = 200f;
+
+    public static final float PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION = 0.2f; // sec
+
+
     public static final SpecialBullet[] PORTALS_SPECIAL_BULLETS = {SpecialBullet.TWO_EXIT_PORTAL};
 
     public static final float D_PORTALS_SPECIAL_BULLETS_PROBABILITY = 0.25f;

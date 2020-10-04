@@ -161,7 +161,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
             float currentTime = nextLazerAttackTimer.getPercentage() * nextLazerAttackTimer.getDurationMillis();
 
             if (currentTime >= timestampForTheCurrentBullet & bulletsHandler.getForcedSpecialBullet() == null) {
-                bulletsHandler.forceSpecialBullet(WaveBulletsType.SPECIAL_GOOD, SpecialBullet.ARMOR, false);
+                bulletsHandler.forceSpecialBullet(WaveBulletsType.SPECIAL_GOOD, SpecialBullet.ARMOR, 0);
                 Gdx.app.log(TAG, "Forced armor registered at " + currentTime);
             }
         }
@@ -189,7 +189,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
             BulletsHandler bulletsHandler = gameplayScreen.getBulletsHandler();
             if (bulletsHandler.getForcedSpecialBullet() == null)
-                bulletsHandler.forceSpecialBullet(WaveBulletsType.SPECIAL_GOOD, SpecialBullet.ARMOR, false);
+                bulletsHandler.forceSpecialBullet(WaveBulletsType.SPECIAL_GOOD, SpecialBullet.ARMOR, 0);
 
             if (waitForTheRightMomentToSpawn) {
                 if (theRightMomentToSpawn()) {
