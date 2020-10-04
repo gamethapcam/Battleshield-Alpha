@@ -328,16 +328,20 @@ public class ShieldsAndContainersHandler implements Updatable {
             public void onStart() {
                 super.onStart();
 
-                ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(true);
-                ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
+                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+                    ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(true);
+                    ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
+                }
             }
 
             @Override
             public void onFinish() {
                 super.onFinish();
 
-                ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
-                ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
+                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+                    ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
+                    ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
+                }
             }
         };
 
