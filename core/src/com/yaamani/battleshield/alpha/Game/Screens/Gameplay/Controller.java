@@ -2,11 +2,13 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -29,6 +31,8 @@ public abstract class Controller extends Group implements Resizable {
 
     private boolean usingTouch;
 
+    private Group outputAngleIndicatorContainer;
+
     public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition) {
         setTransform(false);
         gameplayScreen.addActor(this);
@@ -41,6 +45,10 @@ public abstract class Controller extends Group implements Resizable {
         addListener(new MyTouchListener());
 
         usingTouch = false;
+
+        initializeOutputAngleIndicatorContainer();
+
+
 
         //gameplayScreen.addListener(this);
 
@@ -55,6 +63,12 @@ public abstract class Controller extends Group implements Resizable {
     public void act(float delta) {
         super.act(delta);
 
+        if (outputAngle != null) {
+            outputAngleIndicatorContainer.setVisible(true);
+            outputAngleIndicatorContainer.setRotation(getOutputAngle() * MathUtils.radDeg);
+        } else
+            outputAngleIndicatorContainer.setVisible(false);
+
         if (!usingTouch) gamePadPooling();
     }
 
@@ -64,12 +78,19 @@ public abstract class Controller extends Group implements Resizable {
         calculateMarginInWorldUnits();
         calculateNewSizeInWorldUnits();
         calculateNewPositionsInWorldUnits(marginInWorldUnits);
+
+        if (controllerPosition == Direction.RIGHT) {
+            float shiftFromCentre = worldWidth/2f - getX();
+            outputAngleIndicatorContainer.setX(shiftFromCentre);
+        } else {
+            float shiftFromCentre = worldWidth/2f - getWidth();
+            outputAngleIndicatorContainer.setX(getWidth() + shiftFromCentre);
+        }
     }
 
     private void settingBounds(float worldWidth, float worldHeight) {
         if (controllerPosition == Direction.LEFT) setBounds(0, 0, worldWidth/2f - TURRET_RADIUS, worldHeight);
         else setBounds(worldWidth/2f + TURRET_RADIUS, 0, worldWidth/2f - TURRET_RADIUS, worldHeight);
-
     }
 
     private void calculateMarginInWorldUnits() {
@@ -145,8 +166,27 @@ public abstract class Controller extends Group implements Resizable {
     /*public void setControllerSize(float controllerSize) {
         this.controllerSize = controllerSize;
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
+    }*/
+
+
+
+
+    private void initializeOutputAngleIndicatorContainer() {
+        outputAngleIndicatorContainer = new Group();
+        Image outputAngleIndicator = new Image(Assets.instance.mutualAssets.bigCircle);
+        outputAngleIndicator.setSize(CONTROLLER_OUTPUT_ANGLE_INDICATOR_SIZE, CONTROLLER_OUTPUT_ANGLE_INDICATOR_SIZE);
+        //outputAngleIndicator.setColor(Color.SCARLET);
+        outputAngleIndicatorContainer.addActor(outputAngleIndicator);
+        outputAngleIndicator.setX((HEALTH_BAR_RADIUS+SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT)/2f /*- outputAngleIndicator.getWidth()/2f*/);
+        outputAngleIndicator.setY(-outputAngleIndicator.getHeight()/2f);
+        addActor(outputAngleIndicatorContainer);
+        outputAngleIndicatorContainer.setY(WORLD_SIZE/2f);
     }
-*/
+
+
+
+
+
 
 
 

@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    private static final boolean NO_DEATH = false;
+    private static final boolean NO_DEATH = true;
 
 
 
@@ -190,6 +190,10 @@ public final class Constants {
     public static final float CONTROLLER_RESTRICTED_ARCH_ANGLE = 50f*MathUtils.degRad;
 
     public static final float CONTROLLER_RESTRICTED_SAVING_PPI = 50;
+
+    //public static final float CONTROLLER_RESTRICTED_90_SHIFT = 20;
+
+    public static final float CONTROLLER_OUTPUT_ANGLE_INDICATOR_SIZE = WORLD_SIZE / 100f;
 
 
 
@@ -381,7 +385,7 @@ public final class Constants {
 
     //public static final float SHIELDS_THICKNESS = WORLD_SIZE / 90f;
 
-    public static final float SHIELDS_INNER_RADIUS = TURRET_RADIUS * 1.15f;
+    public static final float SHIELDS_INNER_RADIUS = TURRET_RADIUS * 1.15f/*1.25f*/;
 
     public static final float SHIELDS_RADIUS = SHIELDS_INNER_RADIUS + WORLD_SIZE / 90f;
 
