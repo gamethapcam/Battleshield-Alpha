@@ -200,12 +200,20 @@ public class RestrictedController extends Controller {
     @Override
     public Float getOutputAngle() {
         Float oa = super.getOutputAngle();
+        //return oa;
 
         if (oa == null) return null;
 
-        if (mirror)
-            return Math.signum(oa) * MathUtils.PI - oa;
-        else
+        if (mirror) {
+            if (getControllerPosition() == Direction.LEFT)
+                return Math.signum(oa) * MathUtils.PI - oa;
+            else {
+                if (oa >= 0)
+                    return MathUtils.PI - oa;
+                else
+                    return -MathUtils.PI - oa;
+            }
+        } else
             return oa;
     }
 
@@ -257,21 +265,32 @@ public class RestrictedController extends Controller {
 
     private void calculateOutputAngleFromStickAngle() {
         if (getControllerPosition() == Direction.RIGHT) {
-            if (stickAngle >= 0)
-                outputAngle = MathUtils.lerp(0, (90 - 20) * MathUtils.degRad, stickAngle / (archAngle / 2f));
-                //outputAngle = stickAngle / (archAngle / 2f) * MathUtils.PI / 2f;
-            else
-                outputAngle = MathUtils.lerp(0, -(90 - 20) * MathUtils.degRad, -stickAngle / (archAngle / 2f));
-                //outputAngle = -stickAngle / (archAngle / 2f) * -MathUtils.PI / 2f;
+
+            calculateOutputAngleFromStickAngleRight();
+
         } else {
-            if (stickAngle >= 0)
-                //outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.25f, MathUtils.PI * 1.25f, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
-                outputAngle = MathUtils.lerp((90 + 20) * MathUtils.degRad, MathUtils.PI, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
-            else
-                //outputAngle = MathUtils.lerp(-MathUtils.PI/2f * 1.25f, -MathUtils.PI * 1.25f, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
-                outputAngle = MathUtils.lerp(-(90 + 20) * MathUtils.degRad, -MathUtils.PI, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+
+            calculateOutputAngleFromStickAngleLeft();
 
         }
+    }
+
+    private void calculateOutputAngleFromStickAngleRight() {
+        if (stickAngle >= 0)
+            outputAngle = MathUtils.lerp(0, (90 - CONTROLLER_RESTRICTED_90_SHIFT) * MathUtils.degRad, stickAngle / (archAngle / 2f));
+            //outputAngle = stickAngle / (archAngle / 2f) * MathUtils.PI / 2f;
+        else
+            outputAngle = MathUtils.lerp(0, -(90 - CONTROLLER_RESTRICTED_90_SHIFT) * MathUtils.degRad, -stickAngle / (archAngle / 2f));
+        //outputAngle = -stickAngle / (archAngle / 2f) * -MathUtils.PI / 2f;
+    }
+
+    private void calculateOutputAngleFromStickAngleLeft() {
+        if (stickAngle >= 0)
+            //outputAngle = MathUtils.lerp(MathUtils.PI/2f * 1.25f, MathUtils.PI * 1.25f, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            outputAngle = MathUtils.lerp((90 + CONTROLLER_RESTRICTED_90_SHIFT) * MathUtils.degRad, MathUtils.PI, (stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+        else
+            //outputAngle = MathUtils.lerp(-MathUtils.PI/2f * 1.25f, -MathUtils.PI * 1.25f, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
+            outputAngle = MathUtils.lerp(-(90 + CONTROLLER_RESTRICTED_90_SHIFT) * MathUtils.degRad, -MathUtils.PI, (-stickAngle - (MathUtils.PI - archAngle/2f)) / (archAngle/2f));
     }
 
     private void setBgSize() {

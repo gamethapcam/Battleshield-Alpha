@@ -148,6 +148,15 @@ public class ShieldsAndContainersHandler implements Updatable {
         Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDeg(),
                 gameplayScreen.getControllerRight().getAngleDeg()}; // cAs is for controllerAngles.
 
+        if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+            if (((RestrictedController) (gameplayScreen.getControllerLeft())).isMirror()) {
+                // swap
+                Float cAs0 = cAs[0];
+                cAs[0] = cAs[1];
+                cAs[1] = cAs0;
+            }
+        }
+
 
         if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
             float singleShieldAngle = 360f / activeShieldsNum;

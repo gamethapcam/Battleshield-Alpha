@@ -191,7 +191,7 @@ public final class Constants {
 
     public static final float CONTROLLER_RESTRICTED_SAVING_PPI = 50;
 
-    //public static final float CONTROLLER_RESTRICTED_90_SHIFT = 20;
+    public static final float CONTROLLER_RESTRICTED_90_SHIFT = 20;
 
     public static final float CONTROLLER_OUTPUT_ANGLE_INDICATOR_SIZE = WORLD_SIZE / 100f;
 
@@ -733,7 +733,7 @@ public final class Constants {
 
     public static final float D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY = 0.25f;
 
-    public static final float D_CRYSTAL_MIRROR_CONTROLS_DURATION = 1750; // ms
+    public static final float D_CRYSTAL_MIRROR_CONTROLS_DURATION = 1750/*1750000*/; // ms
 
 
     public static final Interpolation D_CRYSTAL_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
