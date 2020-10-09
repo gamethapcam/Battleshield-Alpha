@@ -9,6 +9,8 @@ import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
+import org.jetbrains.annotations.NotNull;
+
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsAndShieldContainer extends Group implements Resizable {
@@ -43,7 +45,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         debugText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
         addActor(debugText);
-        debugText.setVisible(false); // Set to true for debugging.
+        debugText.setVisible(true); // Set to true for debugging.
         debugText.setHeight(WORLD_SIZE/ /*20f*/ 45f);
         debugText.setPosition(-debugText.getWidth()/2f, 12f);
         //debugText.setRotation(90);
@@ -67,7 +69,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         rotationOmegaAlphaTween.update(delta);
 
         if (debugText.isVisible())
-            debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation() + 90), 2), true);
+            debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation()/* + 90*/), 2), true);
     }
 
     @Override
@@ -81,6 +83,13 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         //setPosition(worldWidth / 2f, worldHeight / 2f);
         //setPosition();
+    }
+
+    @Override
+    @NotNull
+    public String toString() {
+        //return super.toString();
+        return "(" + index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation()/* + 90*/), 2) +")";
     }
 
     public Shield getShield() {

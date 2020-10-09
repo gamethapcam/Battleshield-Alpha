@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    private static final boolean NO_DEATH = true;
+    private static final boolean NO_DEATH = false;
 
 
 
@@ -226,6 +226,11 @@ public final class Constants {
             D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
+
+    public static final int SHIELDS_UNIVERSAL_MAX_COUNT = 8;
+
+
+
     public static final float D_SURVIVAL_BULLETS_SPEED_INITIAL = WORLD_SIZE / 3f; // per sec
 
     public static final float D_SURVIVAL_BULLETS_SPEED_MULTIPLIER_INITIAL = 1f;
@@ -245,7 +250,7 @@ public final class Constants {
             D_SURVIVAL_DIFFICULTY_OUTPUT_SCALE
     );
 
-    public static final int SURVIVAL_SHIELDS_MAX_COUNT = 8;
+    public static final int SURVIVAL_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
     public static final int SURVIVAL_SHIELDS_MIN_COUNT = 3;
 
@@ -265,7 +270,7 @@ public final class Constants {
 
     public static final float BULLETS_SPECIAL_WAVE_LENGTH = (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO) * /*BULLETS_MIN_NUMBER_PER_ATTACK*/5;
 
-    public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 2.75f * (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO);
+    public static final float BULLETS_CLEARANCE_BETWEEN_WAVES = 1.5f * (BULLETS_ORDINARY_HEIGHT + BULLETS_DISTANCE_BETWEEN_TWO);
 
     public static final int BULLETS_POOL_INITIAL_CAPACITY = 60;
 
@@ -281,7 +286,7 @@ public final class Constants {
             WaveAttackType.DOUBLE,
             WaveAttackType.DOUBLE,
 
-            WaveAttackType.ROUND
+            //WaveAttackType.ROUND
     };
 
     public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
@@ -664,7 +669,7 @@ public final class Constants {
 
     public static final SpecialBullet[] CRYSTAL_SPECIAL_BULLETS = {SpecialBullet.MIRROR};
 
-    public static final int CRYSTAL_SHIELDS_MAX_COUNT = 8;
+    public static final int CRYSTAL_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
     public static final int CRYSTAL_SHIELDS_MIN_COUNT = 4;
 
@@ -760,7 +765,7 @@ public final class Constants {
 
     public static final float DIZZINESS_LEVEL_TIME = 5; //minutes
 
-    public static final int DIZZINESS_SHIELDS_MAX_COUNT = 8;
+    public static final int DIZZINESS_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
     public static final int DIZZINESS_SHIELDS_MIN_COUNT = 3;
 
@@ -857,7 +862,7 @@ public final class Constants {
 
     public static final float LAZER_LEVEL_TIME = 5/*0.5f*/; //minutes
 
-    public static final int LAZER_SHIELDS_MAX_COUNT = 8;
+    public static final int LAZER_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
     public static final int LAZER_SHIELDS_MIN_COUNT = 4;
 
@@ -1001,7 +1006,7 @@ public final class Constants {
 
     public static final float PORTALS_LEVEL_TIME = 5;
 
-    public static final int PORTALS_SHIELDS_MAX_COUNT = 8;
+    public static final int PORTALS_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
     public static final int PORTALS_SHIELDS_MIN_COUNT = 4;
 

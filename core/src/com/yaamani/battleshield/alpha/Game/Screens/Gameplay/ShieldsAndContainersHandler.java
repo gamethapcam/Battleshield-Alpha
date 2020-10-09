@@ -259,6 +259,8 @@ public class ShieldsAndContainersHandler implements Updatable {
     }
 
     public void setActiveShieldsNum(int activeShieldsNum) {
+        //gameplayScreen.getBulletsHandler().setPreviousActiveShieldsNumber(this.activeShieldsNum);
+
         int shieldsMaxCount = gameplayScreen.getCurrentShieldsMaxCount();
         int shieldsMinCount = gameplayScreen.getCurrentShieldsMinCount();
         if (activeShieldsNum > shieldsMaxCount) this.activeShieldsNum = shieldsMaxCount;
@@ -316,7 +318,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         }
         /*gameplayScreen.getBulletsHandler().setPrevious(null);
         gameplayScreen.getBulletsHandler().setCurrent(null);*/
-        gameplayScreen.getBulletsHandler().clearBusyContainers();
+        //gameplayScreen.getBulletsHandler().dontAddBusyToNonBusyThisTime();
+
     }
 
     public Array<BulletsAndShieldContainer> getNonBusyContainers() {

@@ -675,6 +675,7 @@ public class GameplayScreen extends AdvancedScreen {
         this.currentShieldsMinCount = currentShieldsMinCount;
 
         bulletsHandler.initializeBusyAndNonBusyContainers(currentShieldsMaxCount);
+        bulletsHandler.initializeTempAvailableContainers(currentShieldsMaxCount);
         shieldsAndContainersHandler.initializeNonBusyContainers(currentShieldsMaxCount);
         shieldsAndContainersHandler.initializeOnStartAnglesAndOnEndAngles(currentShieldsMaxCount);
         initializeBulletsAndShieldArray(currentShieldsMaxCount);

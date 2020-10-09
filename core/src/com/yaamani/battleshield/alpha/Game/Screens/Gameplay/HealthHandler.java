@@ -162,7 +162,7 @@ public class HealthHandler implements Updatable {
             gameplayScreen.getBulletsHandler().setBulletsPerAttack(D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK);
             gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
             gameplayScreen.getBulletsHandler().resetCurrentSpeedMultiplier();
-            gameplayScreen.getBulletsHandler().newWave();
+            gameplayScreen.getBulletsHandler().newWave(false, true);
             gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().startMyProgressBarTween();
             /*switch (gameplayScreen.getGameplayMode()) {
                 case SURVIVAL:
