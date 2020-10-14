@@ -1,14 +1,13 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.NetworkManager;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
 import static com.yaamani.battleshield.alpha.MyEngine.MyMath.*;
@@ -30,8 +29,8 @@ public class RestrictedController extends Controller {
 
     private SimpleText outputAngleText; //Debugging
 
-    public RestrictedController(GameplayScreen gameplayScreen, Image stick, float archRadius, float archInnerRadiusRatio, float archAngle, Constants.Direction controllerPosition) {
-        super(gameplayScreen, stick, controllerPosition);
+    public RestrictedController(GameplayScreen gameplayScreen, Image stick, float archRadius, float archInnerRadiusRatio, float archAngle, Direction controllerPosition, NetworkManager networkManager) {
+        super(gameplayScreen, stick, controllerPosition, networkManager);
 
         this.archRadius = archRadius;
         this.archInnerRadiusRatio = archInnerRadiusRatio;
@@ -263,7 +262,13 @@ public class RestrictedController extends Controller {
                 + ", progress = " + (angle - (MathUtils.PI - archAngle/2f)) / (archAngle / 2f));*/
     }
 
-    private void calculateOutputAngleFromStickAngle() {
+    public void calculateOutputAngleFromStickAngle() {
+
+        if (stickAngle == null) {
+            outputAngle = null;
+            return;
+        }
+
         if (getControllerPosition() == Direction.RIGHT) {
 
             calculateOutputAngleFromStickAngleRight();

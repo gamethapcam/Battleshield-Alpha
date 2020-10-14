@@ -1,5 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.Game.NetworkManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.LazerAttackStuff;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -33,6 +35,8 @@ public class MainMenuScreen extends AdvancedScreen {
 
     public static final String TAG = MainMenuScreen.class.getSimpleName();
 
+    private AdvancedStage game;
+
     private Image start;
     private Image survival;
     private Image free;
@@ -48,6 +52,12 @@ public class MainMenuScreen extends AdvancedScreen {
     private SimpleText lazerOmar;
     private SimpleText lazerYamani;
 
+    private SimpleText connectToDesktopServer;
+    private SimpleText connectToAndroidClient;
+    private SimpleText connecting;
+    private SimpleText failedTapToTryAgain;
+    private SimpleText connected;
+
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
     private MyEarthEntity tallGrass;
@@ -57,6 +67,8 @@ public class MainMenuScreen extends AdvancedScreen {
     private MyEarthEntity frontGrass;
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
+
+    private NetworkManager networkManager;
 
     private StarsContainer starsContainer;
 
@@ -68,6 +80,7 @@ public class MainMenuScreen extends AdvancedScreen {
     public MainMenuScreen(final AdvancedStage game, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, StarsContainer starsContainer, boolean transform) {
         super(game, transform);
 
+        this.game = game;
         this.myBitmapFont = myBitmapFont;
         this.gameplayScreen = gameplayScreen;
         this.starsContainer = starsContainer;
@@ -171,6 +184,12 @@ public class MainMenuScreen extends AdvancedScreen {
         addActor(portals);
         addActor(lazerOmar);
         addActor(lazerYamani);
+
+        initializeConnectToDesktopServer();
+        initializeConnectToAndroidClient();
+        initializeConnecting();
+        initializeFailedTapToTryAgain();
+        initializeConnected();
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
     }
@@ -676,6 +695,109 @@ public class MainMenuScreen extends AdvancedScreen {
         game.switchScreens(mainMenuToGameplay);
     }
 
+    private void initializeConnectToDesktopServer() {
+        connectToDesktopServer = new SimpleText(myBitmapFont, "Connect To Desktop Server");
+        if (Gdx.app.getType() == Application.ApplicationType.Android | Gdx.app.getType() == Application.ApplicationType.iOS) {
+            addActor(connectToDesktopServer);
+            connectToDesktopServer.setVisible(true);
+        }
+        connectToDesktopServer.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        connectToDesktopServer.setHeight(5);
+        connectToDesktopServer.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        networkManager.connect();
+                        connectToDesktopServer.setVisible(false);
+                        connecting.setVisible(true);
+                    }
+                }
+        );
+    }
+
+    private void initializeConnectToAndroidClient() {
+        connectToAndroidClient = new SimpleText(myBitmapFont, "Connect To Android Client");
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            addActor(connectToAndroidClient);
+            connectToAndroidClient.setVisible(true);
+        }
+        connectToAndroidClient.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        connectToAndroidClient.setHeight(5);
+        connectToAndroidClient.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        networkManager.connect();
+                        connectToAndroidClient.setVisible(false);
+                        connecting.setVisible(true);
+                    }
+                }
+        );
+    }
+
+    private void initializeConnecting() {
+        connecting = new SimpleText(myBitmapFont, "Connecting...");
+
+        addActor(connecting);
+        connecting.setVisible(false);
+
+        connecting.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        connecting.setHeight(5);
+    }
+
+    private void initializeFailedTapToTryAgain() {
+        failedTapToTryAgain = new SimpleText(myBitmapFont, "Failed .. Tap To Try Again");
+
+        addActor(failedTapToTryAgain);
+        failedTapToTryAgain.setVisible(false);
+
+        failedTapToTryAgain.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        failedTapToTryAgain.setHeight(5);
+        failedTapToTryAgain.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        networkManager.connect();
+                        failedTapToTryAgain.setVisible(false);
+                        connecting.setVisible(true);
+                    }
+                }
+        );
+    }
+
+    private void initializeConnected() {
+        connected = new SimpleText(myBitmapFont, "Connected");
+
+        addActor(connected);
+        connected.setVisible(false);
+
+        connected.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        connected.setHeight(5);
+    }
+
+    public void connectionFailed() {
+        connecting.setVisible(false);
+        failedTapToTryAgain.setVisible(true);
+    }
+
+    public void connectionEstablished() {
+        connecting.setVisible(false);
+        connected.setVisible(true);
+
+        startNetworkReceiverGameplayMode();
+    }
+
+    private void startNetworkReceiverGameplayMode() {
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+            gameplayScreen.setGameplayMode(GameplayMode.NETWORK_RECEIVER);
+            game.switchScreens(mainMenuToGameplay);
+        }
+    }
+
     public void setSurvivalAlpha(float a) {
         survival.setColor(a, a, a, a);
     }
@@ -705,6 +827,11 @@ public class MainMenuScreen extends AdvancedScreen {
     public MyEarthEntity[] getEarthEntities() {
         return earthEntities.items;
     }
+
+    public void setNetworkManager(NetworkManager networkManager) {
+        this.networkManager = networkManager;
+    }
+
 
 
 

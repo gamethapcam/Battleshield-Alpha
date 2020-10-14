@@ -117,6 +117,8 @@ public class BulletsHandler implements Updatable {
     private final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS;*/
 
 
+    private boolean stopHandlingNewWave; // Mainly for desktop when it receives coordinates and stuff from android through the network (When we wanted to improve the controls).
+
 
     //private Timer isThereDoubleWaveTimer;
 
@@ -222,7 +224,9 @@ public class BulletsHandler implements Updatable {
         starBulletSecondStage.update(delta);
         starBulletThirdStage.update(delta);
 
-        handleNewWave();
+
+        if (!stopHandlingNewWave)
+            handleNewWave();
 
 
         //isThereDoubleWaveTimer.update(delta);
@@ -481,6 +485,10 @@ public class BulletsHandler implements Updatable {
     /*public void setPreviousActiveShieldsNumber(int previousActiveShieldsNumber) {
         this.previousActiveShieldsNumber = previousActiveShieldsNumber;
     }*/
+
+    public void setStopHandlingNewWave(boolean stopHandlingNewWave) {
+        this.stopHandlingNewWave = stopHandlingNewWave;
+    }
 
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
@@ -812,9 +820,9 @@ public class BulletsHandler implements Updatable {
         //if (!isVisible()) return;
         isDouble = false;
 
-        Gdx.app.log(TAG, "previousBusy = " + previousBusyContainersRotations.toString());
+        /*Gdx.app.log(TAG, "previousBusy = " + previousBusyContainersRotations.toString());
         Gdx.app.log(TAG, "previousBusyIsFake = " + previousBusyContainersIsFake.toString());
-        Gdx.app.log(TAG, "previousActiveShieldsNum = " + previousActiveShieldsNumber);
+        Gdx.app.log(TAG, "previousActiveShieldsNum = " + previousActiveShieldsNumber);*/
 
 
         if (forceSingle) {
@@ -831,8 +839,8 @@ public class BulletsHandler implements Updatable {
 
             switch (waveAttackType) {
                 case SINGLE:
-                    //newSingleWave(ifSingleConsiderFake);
-                    newDoubleWave();
+                    newSingleWave(ifSingleConsiderFake);
+                    //newDoubleWave();
                     break;
                 case DOUBLE:
                     //newSingleWave();

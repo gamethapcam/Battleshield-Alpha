@@ -2,12 +2,12 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.yaamani.battleshield.alpha.Game.NetworkManager;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -33,7 +33,9 @@ public abstract class Controller extends Group implements Resizable {
 
     private Group outputAngleIndicatorContainer;
 
-    public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition) {
+    private NetworkManager networkManager;
+
+    public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition, NetworkManager networkManager) {
         setTransform(false);
         gameplayScreen.addActor(this);
 
@@ -48,7 +50,7 @@ public abstract class Controller extends Group implements Resizable {
 
         initializeOutputAngleIndicatorContainer();
 
-
+        this.networkManager = networkManager;
 
         //gameplayScreen.addListener(this);
 
@@ -61,6 +63,9 @@ public abstract class Controller extends Group implements Resizable {
 
     @Override
     public void act(float delta) {
+
+        networkReceivingStuff();
+
         super.act(delta);
 
         if (outputAngle != null) {
@@ -70,6 +75,8 @@ public abstract class Controller extends Group implements Resizable {
             outputAngleIndicatorContainer.setVisible(false);
 
         if (!usingTouch) gamePadPooling();
+
+        networkTransmissionStuff();
     }
 
     @Override
@@ -86,6 +93,40 @@ public abstract class Controller extends Group implements Resizable {
             float shiftFromCentre = worldWidth/2f - getWidth();
             outputAngleIndicatorContainer.setX(getWidth() + shiftFromCentre);
         }
+    }
+
+    private void networkReceivingStuff() {
+        if (networkManager.isConnectionEstablished()) {
+
+            boolean newStickAngleComing = false;
+            switch (controllerPosition) {
+
+
+                case LEFT:
+                    if (networkManager.isLeftStickAngleReadyToBeConsumed()) {
+                        stickAngle = networkManager.consumeLeftStickAngle();
+                        newStickAngleComing = true;
+                    }
+                    break;
+                case RIGHT:
+                    if (networkManager.isRightStickAngleReadyToBeConsumed()) {
+                        stickAngle = networkManager.consumeRightStickAngle();
+                        newStickAngleComing = true;
+                    }
+                    break;
+            }
+
+            if (newStickAngleComing) {
+                moveTheStickAccordingToTheStickAngle();
+                if (this instanceof RestrictedController)
+                    ((RestrictedController) this).calculateOutputAngleFromStickAngle();
+            }
+        }
+    }
+
+    private void networkTransmissionStuff() {
+        if (networkManager.isConnectionEstablished())
+            networkManager.prepareStickAngleForTransmissionIfIamMobile(stickAngle, controllerPosition);
     }
 
     private void settingBounds(float worldWidth, float worldHeight) {

@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.Game.NetworkManager;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -90,6 +91,8 @@ public class GameplayScreen extends AdvancedScreen {
 
 
     private SimplestTransition gameplayToMainMenu;
+
+    private NetworkManager networkManager;
 
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
@@ -342,27 +345,31 @@ public class GameplayScreen extends AdvancedScreen {
                     new Image(Assets.instance.gameplayAssets.freeControllerBG),
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_FREE_SMALL_SIZE,
-                    Direction.LEFT);
+                    Direction.LEFT,
+                    networkManager);
 
             controllerRight = new FreeController(this,
                     new Image(Assets.instance.gameplayAssets.freeControllerBG),
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_FREE_SMALL_SIZE,
-                    Direction.RIGHT);
+                    Direction.RIGHT,
+                    networkManager);
         } else {
             controllerLeft = new RestrictedController(this,
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_RESTRICTED_ARCH_RADIUS,
                     CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO,
                     CONTROLLER_RESTRICTED_ARCH_ANGLE,
-                    Direction.LEFT);
+                    Direction.LEFT,
+                    networkManager);
 
             controllerRight = new RestrictedController(this,
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_RESTRICTED_ARCH_RADIUS,
                     CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO,
                     CONTROLLER_RESTRICTED_ARCH_ANGLE,
-                    Direction.RIGHT);
+                    Direction.RIGHT,
+                    networkManager);
         }
 
         /*controllerLeft.setDebug(true);
@@ -490,6 +497,7 @@ public class GameplayScreen extends AdvancedScreen {
             bulletsHandler.getD_survival_bulletsPerAttackNumberTween().start();
             bulletsHandler.getD_survival_bulletSpeedMultiplierTween().start();
 
+            bulletsHandler.setStopHandlingNewWave(false);
             setCurrentShieldsMinMaxCount(SURVIVAL_SHIELDS_MIN_COUNT, SURVIVAL_SHIELDS_MAX_COUNT);
 
 
@@ -511,6 +519,7 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.getD_crystal_bulletSpeedMultiplierTween().start();
                     bulletsHandler.getD_crystal_fakeWaveProbabilityTween().start();
 
+                    bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(CRYSTAL_SHIELDS_MIN_COUNT, CRYSTAL_SHIELDS_MAX_COUNT);
                     break;
 
@@ -528,6 +537,7 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.getD_dizziness_bulletSpeedMultiplierTween().start();
                     shieldsAndContainersHandler.getD_dizziness_rotationalSpeedTween().start();
 
+                    bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(DIZZINESS_SHIELDS_MIN_COUNT, DIZZINESS_SHIELDS_MAX_COUNT);
                     break;
 
@@ -544,6 +554,7 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_lazer_bulletSpeedMultiplierTween().start();
 
+                    bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(LAZER_SHIELDS_MIN_COUNT, LAZER_SHIELDS_MAX_COUNT);
                     break;
 
@@ -559,7 +570,18 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.getD_portals_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_portals_bulletSpeedMultiplierTween().start();
 
+                    bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(PORTALS_SHIELDS_MIN_COUNT, PORTALS_SHIELDS_MAX_COUNT);
+                    break;
+
+                case NETWORK_RECEIVER:
+
+                    scoreTimerStuff.setLevelTime(Float.MAX_VALUE);
+
+                    lazerAttackStuff.hide();
+
+                    bulletsHandler.setStopHandlingNewWave(true);
+                    setCurrentShieldsMinMaxCount(3, SHIELDS_UNIVERSAL_MAX_COUNT);
                     break;
             }
 
@@ -692,6 +714,11 @@ public class GameplayScreen extends AdvancedScreen {
 
     public void setGameplayToMainMenu(SimplestTransition gameplayToMainMenu) {
         this.gameplayToMainMenu = gameplayToMainMenu;
+    }
+
+    public void setNetworkManager(NetworkManager networkManager) {
+        this.networkManager = networkManager;
+        shieldsAndContainersHandler.setNetworkManager(networkManager);
     }
 
     //------------------------------ Other methods ------------------------------

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.Game.NetworkManager;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -41,6 +42,8 @@ public class ShieldsAndContainersHandler implements Updatable {
     private float[] onStartAngles;
     private float[] onEndAngles;
 
+    private NetworkManager networkManager;
+
     public ShieldsAndContainersHandler(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
@@ -55,6 +58,7 @@ public class ShieldsAndContainersHandler implements Updatable {
     public void update(float delta) {
         mirrorControlsTimer.update(delta);
 
+        networkReceivingStuff();
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS) {
             d_dizziness_rotationalSpeedTween.update(delta);
@@ -63,6 +67,8 @@ public class ShieldsAndContainersHandler implements Updatable {
             gameplayScreen.getContainerOfContainers().rotateBy(delta * dizzinessBaseRotationalSpeed * dizzinessRotationalSpeedMultiplier);
             updateStartingAndEndingAngles();
         }
+
+        networkTransmissionStuff();
 
         /*if (gameplayScreen.getGameplayMode() == GameplayMode.DISEASES) {
             baseRotation -= 0.2f;
@@ -78,6 +84,24 @@ public class ShieldsAndContainersHandler implements Updatable {
                 //}
             }
         }*/
+    }
+
+    private void networkReceivingStuff() {
+        if (networkManager == null) return;
+
+        if (networkManager.isConnectionEstablished())
+            if (networkManager.isActiveShieldsNumReadyToBeConsumed()) {
+                byte newlySentActiveShieldsNum = networkManager.consumeActiveShieldsNum();
+                if (newlySentActiveShieldsNum != activeShieldsNum)
+                    setActiveShieldsNum(newlySentActiveShieldsNum);
+            }
+    }
+
+    private void networkTransmissionStuff() {
+        if (networkManager == null) return;
+
+        if (networkManager.isConnectionEstablished())
+            networkManager.prepareActiveShieldsNumForTransmissionIfIamMobile((byte) activeShieldsNum);
     }
 
     // TODO: [FIX A BUG] Sometimes (only sometimes which is really weird) when the gameplay begins the shields and the bullets won't be displayed (But they do exist, meaning that the bullets reduce the health and the shield can be on and block the bullets). And get displayed after a plus or a minus bullet hit the turret. (Not sure if this is a desktop specific or happens on android too) [PATH TO VIDEO = Junk/Shield and bullets don't appear [BUG].mov] .. It looks like it always happen @ the first run of the program on desktop just after I open android studio
@@ -324,6 +348,10 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     public Array<BulletsAndShieldContainer> getNonBusyContainers() {
         return nonBusyContainers;
+    }
+
+    public void setNetworkManager(NetworkManager networkManager) {
+        this.networkManager = networkManager;
     }
 
     /*public GameplayType getGameplayType() {

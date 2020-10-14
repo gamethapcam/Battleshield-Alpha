@@ -112,7 +112,7 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        
+        implementation "com.opencsv:opencsv:4.3"
     }
 }
 

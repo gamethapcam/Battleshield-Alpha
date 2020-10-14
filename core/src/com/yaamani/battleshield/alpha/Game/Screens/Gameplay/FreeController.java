@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.NetworkManager;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 
@@ -19,8 +20,8 @@ public class FreeController extends Controller {
 
     private Image BG;
 
-    public FreeController(GameplayScreen gameplayScreen, Image BG, Image stick, float bgSize, Constants.Direction controllerPosition) {
-        super(gameplayScreen, stick, controllerPosition);
+    public FreeController(GameplayScreen gameplayScreen, Image BG, Image stick, float bgSize, Direction controllerPosition, NetworkManager networkManager) {
+        super(gameplayScreen, stick, controllerPosition, networkManager);
 
         this.BG = BG;
         addActorBefore(stick, this.BG);

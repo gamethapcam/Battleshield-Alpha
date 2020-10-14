@@ -169,7 +169,7 @@ public final class Constants {
 
 
     public enum GameplayControllerType {FREE, RESTRICTED}
-    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS}
+    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS, NETWORK_RECEIVER}
 
 
     public enum Direction {RIGHT, LEFT}

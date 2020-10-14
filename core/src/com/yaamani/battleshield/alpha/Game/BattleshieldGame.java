@@ -35,6 +35,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     private MainMenuToGameplay mainMenuToGameplay;
     private SimplestTransition gameplayToMainMenu;
 
+    private NetworkManager networkManager;
+
     private MyBitmapFont myBitmapFont;
     private BitmapFont font;
 
@@ -63,6 +65,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
         Gdx.app.log(TAG, "" + MyMath.arrayToString(MyMath.gaussianWeights(11)));*/
 
         //new ResumeGraduallyTesting().compareFunctions(MyInterpolation.myExp10, 1000, 10, 50, 100, 1, 4, 0.001f, 5, 2);
+
     }
 
     @Override
@@ -167,6 +170,10 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
             game.switchScreens(loadingToMainMenu);
 
             resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+            networkManager = new NetworkManager(mainMenuScreen, gameplayScreen);
+            mainMenuScreen.setNetworkManager(networkManager);
+            gameplayScreen.setNetworkManager(networkManager);
         }
     }
 
