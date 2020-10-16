@@ -100,8 +100,9 @@ public class ShieldsAndContainersHandler implements Updatable {
     private void networkTransmissionAndStorageStuff() {
         if (networkAndStorageManager == null) return;
 
-        if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isSaveControllerValuesModeEnabled())
-            networkAndStorageManager.prepareActiveShieldsNumForTransmissionAndStorageIfIamMobile((byte) activeShieldsNum);
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+            if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isSaveControllerValuesModeEnabled())
+                networkAndStorageManager.prepareActiveShieldsNumForTransmissionAndStorageIfIamMobile((byte) activeShieldsNum);
     }
 
     // TODO: [FIX A BUG] Sometimes (only sometimes which is really weird) when the gameplay begins the shields and the bullets won't be displayed (But they do exist, meaning that the bullets reduce the health and the shield can be on and block the bullets). And get displayed after a plus or a minus bullet hit the turret. (Not sure if this is a desktop specific or happens on android too) [PATH TO VIDEO = Junk/Shield and bullets don't appear [BUG].mov] .. It looks like it always happen @ the first run of the program on desktop just after I open android studio

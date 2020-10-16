@@ -76,18 +76,22 @@ public class NetworkAndStorageManager implements Disposable {
     private boolean leftStickAngleReadyToBeConsumed;
     private boolean rightStickAngleReadyToBeConsumed;
     private boolean activeShieldsNumReadyToBeConsumed;
+    private boolean bulletsPerAttackReadyToBeConsumed;
 
     private Float currentLeftStickAngle;
     private Float currentRightStickAngle;
     private byte currentActiveShieldsNum;
+    private byte currentBulletsPerAttack;
 
     private boolean leftStickAnglePrepared;
     private boolean rightStickAnglePrepared;
     private boolean activeShieldsNumPrepared;
+    private boolean bulletsPerAttackPrepared;
 
     private Array<Float> allLeftStickAngles;
     private Array<Float> allRightStickAngles;
-    private Array<Byte> allActiveShieldsNum;
+    private Array<Byte> allActiveShieldsNums;
+    private Array<Byte> allBulletsPerAttacks;
 
 
     public NetworkAndStorageManager(MainMenuScreen mainMenuScreen, GameplayScreen gameplayScreen) {
@@ -106,7 +110,8 @@ public class NetworkAndStorageManager implements Disposable {
         int initialCapacity = 30/*min*/ * 60/*sec*/ * 60/*fps*/;
         allLeftStickAngles = new Array<>(true, initialCapacity, Float.class);
         allRightStickAngles = new Array<>(true, initialCapacity, Float.class);
-        allActiveShieldsNum = new Array<>(true, initialCapacity, Byte.class);
+        allActiveShieldsNums = new Array<>(true, initialCapacity, Byte.class);
+        allBulletsPerAttacks = new Array<>(true, initialCapacity, Byte.class);
     }
 
     @Override
@@ -179,6 +184,14 @@ public class NetworkAndStorageManager implements Disposable {
         activeShieldsNumPrepared = true;
     }
 
+    public void prepareBulletsPerAttackForTransmissionAndStorageIfIamMobile(byte bulletsPerAttack) {
+        //if (!connectionEstablished) return;
+        if (Gdx.app.getType() != Application.ApplicationType.Android & Gdx.app.getType() != Application.ApplicationType.iOS) return;
+
+        this.currentBulletsPerAttack = bulletsPerAttack;
+        bulletsPerAttackPrepared = true;
+    }
+
     private void transmit() {
         byte[] leftStickAngleBytes = ByteBuffer.allocate(4).putFloat(currentLeftStickAngle).array();
         byte[] rightStickAngleBytes = ByteBuffer.allocate(4).putFloat(currentRightStickAngle).array();
@@ -192,7 +205,8 @@ public class NetworkAndStorageManager implements Disposable {
                 rightStickAngleBytes[1],
                 rightStickAngleBytes[2],
                 rightStickAngleBytes[3],
-                currentActiveShieldsNum
+                currentActiveShieldsNum,
+                currentBulletsPerAttack
         };
 
         try {
@@ -206,7 +220,8 @@ public class NetworkAndStorageManager implements Disposable {
     private void newEntry() {
         allLeftStickAngles.add(currentLeftStickAngle);
         allRightStickAngles.add(currentRightStickAngle);
-        allActiveShieldsNum.add(currentActiveShieldsNum);
+        allActiveShieldsNums.add(currentActiveShieldsNum);
+        allBulletsPerAttacks.add(currentBulletsPerAttack);
 
         if (saveControllerValuesModeEnabled & (allLeftStickAngles.size - numOfSavedEntries >= NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE))
             saveTheMostRecentEntries(numOfSavedEntries, NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE);
@@ -264,6 +279,11 @@ public class NetworkAndStorageManager implements Disposable {
         return currentActiveShieldsNum;
     }
 
+    public byte consumeBulletsPerAttack() {
+        bulletsPerAttackReadyToBeConsumed = false;
+        return currentBulletsPerAttack;
+    }
+
     public boolean isLeftStickAngleReadyToBeConsumed() {
         return leftStickAngleReadyToBeConsumed;
     }
@@ -274,6 +294,10 @@ public class NetworkAndStorageManager implements Disposable {
 
     public boolean isActiveShieldsNumReadyToBeConsumed() {
         return activeShieldsNumReadyToBeConsumed;
+    }
+
+    public boolean isBulletsPerAttackReadyToBeConsumed() {
+        return bulletsPerAttackReadyToBeConsumed;
     }
 
     private void initializeServerConnectionRunnable() {
@@ -404,7 +428,7 @@ public class NetworkAndStorageManager implements Disposable {
             @Override
             public void run() {
                 while (connectionEstablished | saveControllerValuesModeEnabled) {
-                    if (leftStickAnglePrepared & rightStickAnglePrepared & activeShieldsNumPrepared) {
+                    if (leftStickAnglePrepared & rightStickAnglePrepared & activeShieldsNumPrepared & bulletsPerAttackPrepared) {
 
                         newEntry();
 
@@ -414,6 +438,7 @@ public class NetworkAndStorageManager implements Disposable {
                         leftStickAnglePrepared = false;
                         rightStickAnglePrepared = false;
                         activeShieldsNumPrepared = false;
+                        bulletsPerAttackPrepared = false;
                     }
                 }
             }
@@ -431,6 +456,7 @@ public class NetworkAndStorageManager implements Disposable {
                         byte[] leftStickAngleBytes = {(byte) in.read(), (byte) in.read(), (byte) in.read(), (byte) in.read()};
                         byte[] rightStickAngleBytes = {(byte) in.read(), (byte) in.read(), (byte) in.read(), (byte) in.read()};
                         byte activeShieldsNumberBytes = (byte) in.read();
+                        byte bulletsPerAttackBytes = (byte) in.read();
 
 
                         currentLeftStickAngle = ByteBuffer.wrap(leftStickAngleBytes).getFloat();
@@ -441,16 +467,19 @@ public class NetworkAndStorageManager implements Disposable {
 
                         currentActiveShieldsNum = activeShieldsNumberBytes;
 
+                        currentBulletsPerAttack = bulletsPerAttackBytes;
+
                         newEntry();
 
                         leftStickAngleReadyToBeConsumed = true;
                         rightStickAngleReadyToBeConsumed = true;
                         activeShieldsNumReadyToBeConsumed = true;
+                        bulletsPerAttackReadyToBeConsumed = true;
 
 
 
                     } catch (IOException e) {
-                        //e.printStackTrace();
+                        e.printStackTrace();
                     }
 
                 }
@@ -492,11 +521,13 @@ public class NetworkAndStorageManager implements Disposable {
                 for (int i = start; i < start + len; i++) {
                     float leftStick = allLeftStickAngles.get(i);
                     float rightStick = allRightStickAngles.get(i);
-                    float activeShieldsNum = allActiveShieldsNum.get(i);
+                    byte activeShieldsNum = allActiveShieldsNums.get(i);
+                    byte bulletsPerAttack = allBulletsPerAttacks.get(i);
+
 
                     try {
                         //Gdx.app.log(TAG, "Writing the remaining values.");
-                        fileWriter.write(leftStick + ", " + rightStick + ", " + activeShieldsNum + '\n');
+                        fileWriter.write(leftStick + ", " + rightStick + ", " + activeShieldsNum + ", " + bulletsPerAttack + '\n');
                     } catch (IOException e) {
                         Gdx.app.error(TAG, e.getMessage());
                         e.printStackTrace();

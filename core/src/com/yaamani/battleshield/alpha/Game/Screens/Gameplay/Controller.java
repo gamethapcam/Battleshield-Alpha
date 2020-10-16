@@ -35,6 +35,8 @@ public abstract class Controller extends Group implements Resizable {
 
     private NetworkAndStorageManager networkAndStorageManager;
 
+    private GameplayScreen gameplayScreen;
+
     public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition, NetworkAndStorageManager networkAndStorageManager) {
         setTransform(false);
         gameplayScreen.addActor(this);
@@ -51,6 +53,8 @@ public abstract class Controller extends Group implements Resizable {
         initializeOutputAngleIndicatorContainer();
 
         this.networkAndStorageManager = networkAndStorageManager;
+
+        this.gameplayScreen = gameplayScreen;
 
         //gameplayScreen.addListener(this);
 
@@ -125,8 +129,9 @@ public abstract class Controller extends Group implements Resizable {
     }
 
     private void networkTransmissionAndStorageStuff() {
-        if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isSaveControllerValuesModeEnabled())
-            networkAndStorageManager.prepareStickAngleForTransmissionAndStorageIfIamMobile(stickAngle, controllerPosition);
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+            if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isSaveControllerValuesModeEnabled())
+                networkAndStorageManager.prepareStickAngleForTransmissionAndStorageIfIamMobile(stickAngle, controllerPosition);
     }
 
     private void settingBounds(float worldWidth, float worldHeight) {

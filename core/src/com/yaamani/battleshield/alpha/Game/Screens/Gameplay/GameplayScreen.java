@@ -722,6 +722,7 @@ public class GameplayScreen extends AdvancedScreen {
         shieldsAndContainersHandler.setNetworkAndStorageManager(networkAndStorageManager);
         healthHandler.setNetworkAndStorageManager(networkAndStorageManager);
         levelFinishStuff.setNetworkAndStorageManager(networkAndStorageManager);
+        bulletsHandler.setNetworkAndStorageManager(networkAndStorageManager);
     }
 
 

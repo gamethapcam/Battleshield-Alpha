@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -119,6 +120,7 @@ public class BulletsHandler implements Updatable {
 
     private boolean stopHandlingNewWave; // Mainly for desktop when it receives coordinates and stuff from android through the network (When we wanted to improve the controls).
 
+    private NetworkAndStorageManager networkAndStorageManager;
 
     //private Timer isThereDoubleWaveTimer;
 
@@ -228,6 +230,8 @@ public class BulletsHandler implements Updatable {
         if (!stopHandlingNewWave)
             handleNewWave();
 
+
+        networkTransmissionAndStorageStuff();
 
         //isThereDoubleWaveTimer.update(delta);
 
@@ -490,6 +494,10 @@ public class BulletsHandler implements Updatable {
         this.stopHandlingNewWave = stopHandlingNewWave;
     }
 
+    public void setNetworkAndStorageManager(NetworkAndStorageManager networkAndStorageManager) {
+        this.networkAndStorageManager = networkAndStorageManager;
+    }
+
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
@@ -529,6 +537,13 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "doubleWaveTimer Duration = " + isThereDoubleWaveTimer.getDurationMillis());
         isThereDoubleWaveTimer.start();
     }*/
+
+    private void networkTransmissionAndStorageStuff() {
+        if (networkAndStorageManager != null)
+            if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+                if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isSaveControllerValuesModeEnabled())
+                    networkAndStorageManager.prepareBulletsPerAttackForTransmissionAndStorageIfIamMobile((byte) bulletsPerAttack);
+    }
 
     public void forceSpecialBullet(WaveBulletsType waveBulletsType, SpecialBullet specialBullet, boolean questionMarkAllowed) {
         forcedSpecialBulletAsap = true;
