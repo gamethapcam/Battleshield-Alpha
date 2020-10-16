@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.TweenedFloat;
@@ -17,6 +18,8 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 public class HealthHandler implements Updatable {
 
     private GameplayScreen gameplayScreen;
+
+    private NetworkAndStorageManager networkAndStorageManager;
 
     //private float health; // 0 <= health <= oo
     private TweenedFloat health;
@@ -61,6 +64,10 @@ public class HealthHandler implements Updatable {
         float correctedHealth = MathUtils.clamp(health, 0, Float.MAX_VALUE);
         //this.health = correctedHealth;
         this.health.tween(correctedHealth, durationMillis, interpolation);
+    }
+
+    public void setNetworkAndStorageManager(NetworkAndStorageManager networkAndStorageManager) {
+        this.networkAndStorageManager = networkAndStorageManager;
     }
 
     public void affectHealthBy(float by, float durationMillis, Interpolation interpolation) {
@@ -111,6 +118,10 @@ public class HealthHandler implements Updatable {
         gameplayScreen.getShieldsAndContainersHandler().resetContainersRotation();
 
         gameplayScreen.getLazerAttackStuff().resetLazerStuff();
+
+        if (networkAndStorageManager != null)
+            if (networkAndStorageManager.isSaveControllerValuesModeEnabled())
+                networkAndStorageManager.saveTheMostRecentEntries();
     }
 
     public void playerLost() {
@@ -135,6 +146,11 @@ public class HealthHandler implements Updatable {
         if (gameplayScreen != null)
             if (gameplayScreen.getScoreTimerStuff() != null)
                 gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
+
+
+
+
+
 
     }
 

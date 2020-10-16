@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.yaamani.battleshield.alpha.Game.NetworkManager;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -33,9 +33,9 @@ public abstract class Controller extends Group implements Resizable {
 
     private Group outputAngleIndicatorContainer;
 
-    private NetworkManager networkManager;
+    private NetworkAndStorageManager networkAndStorageManager;
 
-    public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition, NetworkManager networkManager) {
+    public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition, NetworkAndStorageManager networkAndStorageManager) {
         setTransform(false);
         gameplayScreen.addActor(this);
 
@@ -50,7 +50,7 @@ public abstract class Controller extends Group implements Resizable {
 
         initializeOutputAngleIndicatorContainer();
 
-        this.networkManager = networkManager;
+        this.networkAndStorageManager = networkAndStorageManager;
 
         //gameplayScreen.addListener(this);
 
@@ -76,7 +76,7 @@ public abstract class Controller extends Group implements Resizable {
 
         if (!usingTouch) gamePadPooling();
 
-        networkTransmissionStuff();
+        networkTransmissionAndStorageStuff();
     }
 
     @Override
@@ -96,21 +96,21 @@ public abstract class Controller extends Group implements Resizable {
     }
 
     private void networkReceivingStuff() {
-        if (networkManager.isConnectionEstablished()) {
+        if (networkAndStorageManager.isConnectionEstablished()) {
 
             boolean newStickAngleComing = false;
             switch (controllerPosition) {
 
 
                 case LEFT:
-                    if (networkManager.isLeftStickAngleReadyToBeConsumed()) {
-                        stickAngle = networkManager.consumeLeftStickAngle();
+                    if (networkAndStorageManager.isLeftStickAngleReadyToBeConsumed()) {
+                        stickAngle = networkAndStorageManager.consumeLeftStickAngle();
                         newStickAngleComing = true;
                     }
                     break;
                 case RIGHT:
-                    if (networkManager.isRightStickAngleReadyToBeConsumed()) {
-                        stickAngle = networkManager.consumeRightStickAngle();
+                    if (networkAndStorageManager.isRightStickAngleReadyToBeConsumed()) {
+                        stickAngle = networkAndStorageManager.consumeRightStickAngle();
                         newStickAngleComing = true;
                     }
                     break;
@@ -124,9 +124,9 @@ public abstract class Controller extends Group implements Resizable {
         }
     }
 
-    private void networkTransmissionStuff() {
-        if (networkManager.isConnectionEstablished())
-            networkManager.prepareStickAngleForTransmissionIfIamMobile(stickAngle, controllerPosition);
+    private void networkTransmissionAndStorageStuff() {
+        if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isSaveControllerValuesModeEnabled())
+            networkAndStorageManager.prepareStickAngleForTransmissionAndStorageIfIamMobile(stickAngle, controllerPosition);
     }
 
     private void settingBounds(float worldWidth, float worldHeight) {

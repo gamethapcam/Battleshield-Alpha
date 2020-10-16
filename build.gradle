@@ -23,7 +23,8 @@ allprojects {
     version = '1.0'
     ext {
         appName = "Battleshield alpha"
-        gdxVersion = '1.9.10'
+        //gdxVersion = '1.9.10'
+        gdxVersion = '1.9.11'
         roboVMVersion = '2.3.3'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
@@ -79,7 +80,7 @@ project(":android") {
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-        
+
     }
 }
 
@@ -112,7 +113,7 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        implementation "com.opencsv:opencsv:4.3"
+        implementation "com.opencsv:opencsv:4.6"
     }
 }
 

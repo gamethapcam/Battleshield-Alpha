@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
-import com.yaamani.battleshield.alpha.Game.NetworkManager;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -92,7 +92,8 @@ public class GameplayScreen extends AdvancedScreen {
 
     private SimplestTransition gameplayToMainMenu;
 
-    private NetworkManager networkManager;
+    private NetworkAndStorageManager networkAndStorageManager;
+
 
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
@@ -346,14 +347,14 @@ public class GameplayScreen extends AdvancedScreen {
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_FREE_SMALL_SIZE,
                     Direction.LEFT,
-                    networkManager);
+                    networkAndStorageManager);
 
             controllerRight = new FreeController(this,
                     new Image(Assets.instance.gameplayAssets.freeControllerBG),
                     new Image(Assets.instance.gameplayAssets.controllerStick),
                     CONTROLLER_FREE_SMALL_SIZE,
                     Direction.RIGHT,
-                    networkManager);
+                    networkAndStorageManager);
         } else {
             controllerLeft = new RestrictedController(this,
                     new Image(Assets.instance.gameplayAssets.controllerStick),
@@ -361,7 +362,7 @@ public class GameplayScreen extends AdvancedScreen {
                     CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO,
                     CONTROLLER_RESTRICTED_ARCH_ANGLE,
                     Direction.LEFT,
-                    networkManager);
+                    networkAndStorageManager);
 
             controllerRight = new RestrictedController(this,
                     new Image(Assets.instance.gameplayAssets.controllerStick),
@@ -369,7 +370,7 @@ public class GameplayScreen extends AdvancedScreen {
                     CONTROLLER_RESTRICTED_ARCH_INNER_RADIUS_RATIO,
                     CONTROLLER_RESTRICTED_ARCH_ANGLE,
                     Direction.RIGHT,
-                    networkManager);
+                    networkAndStorageManager);
         }
 
         /*controllerLeft.setDebug(true);
@@ -716,10 +717,13 @@ public class GameplayScreen extends AdvancedScreen {
         this.gameplayToMainMenu = gameplayToMainMenu;
     }
 
-    public void setNetworkManager(NetworkManager networkManager) {
-        this.networkManager = networkManager;
-        shieldsAndContainersHandler.setNetworkManager(networkManager);
+    public void setNetworkAndStorageManager(NetworkAndStorageManager networkAndStorageManager) {
+        this.networkAndStorageManager = networkAndStorageManager;
+        shieldsAndContainersHandler.setNetworkAndStorageManager(networkAndStorageManager);
+        healthHandler.setNetworkAndStorageManager(networkAndStorageManager);
+        levelFinishStuff.setNetworkAndStorageManager(networkAndStorageManager);
     }
+
 
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------

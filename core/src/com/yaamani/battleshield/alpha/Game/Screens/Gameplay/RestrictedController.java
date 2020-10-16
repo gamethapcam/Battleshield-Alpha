@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.yaamani.battleshield.alpha.Game.NetworkManager;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
@@ -29,8 +29,8 @@ public class RestrictedController extends Controller {
 
     private SimpleText outputAngleText; //Debugging
 
-    public RestrictedController(GameplayScreen gameplayScreen, Image stick, float archRadius, float archInnerRadiusRatio, float archAngle, Direction controllerPosition, NetworkManager networkManager) {
-        super(gameplayScreen, stick, controllerPosition, networkManager);
+    public RestrictedController(GameplayScreen gameplayScreen, Image stick, float archRadius, float archInnerRadiusRatio, float archAngle, Direction controllerPosition, NetworkAndStorageManager networkAndStorageManager) {
+        super(gameplayScreen, stick, controllerPosition, networkAndStorageManager);
 
         this.archRadius = archRadius;
         this.archInnerRadiusRatio = archInnerRadiusRatio;

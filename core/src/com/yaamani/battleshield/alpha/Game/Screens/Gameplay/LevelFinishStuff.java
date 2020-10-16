@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -21,6 +22,8 @@ public class LevelFinishStuff implements Resizable, Updatable {
     private Tween finishTextTween;
 
     private SimpleText congratsText; //To be changed
+
+    private NetworkAndStorageManager networkAndStorageManager;
 
     public LevelFinishStuff(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
@@ -61,6 +64,9 @@ public class LevelFinishStuff implements Resizable, Updatable {
         return finishTextTween;
     }
 
+    public void setNetworkAndStorageManager(NetworkAndStorageManager networkAndStorageManager) {
+        this.networkAndStorageManager = networkAndStorageManager;
+    }
 
 
 
@@ -91,6 +97,10 @@ public class LevelFinishStuff implements Resizable, Updatable {
                     Bullet bullet = gameplayScreen.getBulletsHandler().getActiveBullets().get(i);
                     bullet.stopUsingTheBullet(worldWidth, worldHeight, true);
                 }
+
+                if (networkAndStorageManager != null)
+                    if (networkAndStorageManager.isSaveControllerValuesModeEnabled())
+                        networkAndStorageManager.saveTheMostRecentEntries();
             }
         });
     }

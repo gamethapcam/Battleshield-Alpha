@@ -5,11 +5,14 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
+import com.yaamani.battleshield.alpha.Game.Utilities.AndroidPermissionHandler;
+import com.yaamani.battleshield.alpha.Game.Utilities.OnPermissionResult;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
@@ -20,9 +23,11 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.saveShieldsWithVariousAngles;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class BattleshieldGame extends AdvancedApplicationAdapter {
+public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPermissionResult {
 
     public static final String TAG = BattleshieldGame.class.getSimpleName();
+
+    private AndroidPermissionHandler androidPermissionHandler;
 
     private StarsContainer starsContainer;
 
@@ -35,12 +40,23 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
     private MainMenuToGameplay mainMenuToGameplay;
     private SimplestTransition gameplayToMainMenu;
 
-    private NetworkManager networkManager;
+    private NetworkAndStorageManager networkAndStorageManager;
 
     private MyBitmapFont myBitmapFont;
     private BitmapFont font;
 
     //private TweenAndMyTweenTesting tweenAndMyTweenTesting;
+
+    private boolean destroyed;
+
+
+    public BattleshieldGame() {
+
+    }
+
+    public BattleshieldGame(AndroidPermissionHandler androidPermissionHandler) {
+        this.androidPermissionHandler = androidPermissionHandler;
+    }
 
     @Override
 	public void create () {
@@ -54,7 +70,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         initializeLoadingScreen();
 
-        Gdx.app.log(TAG, "" + ((BULLETS_ORDINARY_HEIGHT+BULLETS_DISTANCE_BETWEEN_TWO)*D_CRYSTAL_BULLETS_INITIAL_NO_PER_ATTACK/D_SURVIVAL_BULLETS_SPEED_INITIAL));
+
+        //Gdx.app.log(TAG, "" + ((BULLETS_ORDINARY_HEIGHT+BULLETS_DISTANCE_BETWEEN_TWO)*D_CRYSTAL_BULLETS_INITIAL_NO_PER_ATTACK/D_SURVIVAL_BULLETS_SPEED_INITIAL));
 
         //saveProgrammaticallyGeneratedTextures(1080);
 
@@ -66,6 +83,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
         //new ResumeGraduallyTesting().compareFunctions(MyInterpolation.myExp10, 1000, 10, 50, 100, 1, 4, 0.001f, 5, 2);
 
+        destroyed = false;
     }
 
     @Override
@@ -127,13 +145,23 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
 
         if (starsContainer != null) starsContainer.dispose();
-        //gameplayScreen.getScore().registerBestScoreToHardDrive();
+        //gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
         super.dispose();
+        if (networkAndStorageManager != null)
+            networkAndStorageManager.dispose();
         Assets.instance.dispose();
+
+
+        destroyed = true;
+        Gdx.app.log(TAG, "DESTROYED !!!!!!!!! DESTROYED !!!!!!!!! DESTROYED !!!!!!!!! DESTROYED !!!!!!!!!");
     }
 
     public MainMenuToGameplay getMainMenuToGameplay() {
         return mainMenuToGameplay;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
     // ------------------ privates ------------------
@@ -155,7 +183,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
             initializeStarsContainer();
 
             gameplayScreen = new GameplayScreen(game, myBitmapFont, starsContainer, false);
-            mainMenuScreen = new MainMenuScreen(game, myBitmapFont, gameplayScreen, starsContainer, false);
+            mainMenuScreen = new MainMenuScreen(game, androidPermissionHandler, myBitmapFont, gameplayScreen, starsContainer, false);
 
             starsContainer.setBulletsHandler(gameplayScreen.getBulletsHandler());
             starsContainer.setGameplayScreen(gameplayScreen);
@@ -171,9 +199,9 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
 
             resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-            networkManager = new NetworkManager(mainMenuScreen, gameplayScreen);
-            mainMenuScreen.setNetworkManager(networkManager);
-            gameplayScreen.setNetworkManager(networkManager);
+            networkAndStorageManager = new NetworkAndStorageManager(mainMenuScreen, gameplayScreen);
+            mainMenuScreen.setNetworkAndStorageManager(networkAndStorageManager);
+            gameplayScreen.setNetworkAndStorageManager(networkAndStorageManager);
         }
     }
 
@@ -211,5 +239,15 @@ public class BattleshieldGame extends AdvancedApplicationAdapter {
                 "/Users/mac/OneDrive/Battleshield(Alpha)/Non-Finalized Assets/1080p/Gameplay/HealthBarWithVariousAngles");*/
 
         Gdx.app.log(TAG, "Programmatically Generated Textures Saved.");
+    }
+
+    @Override
+    public void permissionGranted(int requestCode) {
+        mainMenuScreen.permissionGranted(requestCode);
+    }
+
+    @Override
+    public void permissionDenied(int requestCode) {
+        mainMenuScreen.permissionDenied(requestCode);
     }
 }

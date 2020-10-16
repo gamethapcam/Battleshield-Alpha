@@ -15,10 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.yaamani.battleshield.alpha.Game.NetworkManager;
+import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.LazerAttackStuff;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
+import com.yaamani.battleshield.alpha.Game.Utilities.AndroidPermissionHandler;
+import com.yaamani.battleshield.alpha.Game.Utilities.OnPermissionResult;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
@@ -31,11 +33,13 @@ import java.util.Random;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
-public class MainMenuScreen extends AdvancedScreen {
+public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult {
 
     public static final String TAG = MainMenuScreen.class.getSimpleName();
 
     private AdvancedStage game;
+
+    private AndroidPermissionHandler androidPermissionHandler;
 
     private Image start;
     private Image survival;
@@ -58,6 +62,9 @@ public class MainMenuScreen extends AdvancedScreen {
     private SimpleText failedTapToTryAgain;
     private SimpleText connected;
 
+    private SimpleText saveControllersAngles;
+    private SimpleText loadControllersAngles;
+
     private Array<MyEarthEntity> earthEntities;
     private MyEarthEntity mountain;
     private MyEarthEntity tallGrass;
@@ -68,7 +75,7 @@ public class MainMenuScreen extends AdvancedScreen {
     private MainMenuToGameplay mainMenuToGameplay;
     private GameplayScreen gameplayScreen;
 
-    private NetworkManager networkManager;
+    private NetworkAndStorageManager networkAndStorageManager;
 
     private StarsContainer starsContainer;
 
@@ -77,10 +84,11 @@ public class MainMenuScreen extends AdvancedScreen {
     //private DifficultyCurveTesting difficultyCurveTesting;
 
 
-    public MainMenuScreen(final AdvancedStage game, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, StarsContainer starsContainer, boolean transform) {
+    public MainMenuScreen(final AdvancedStage game, AndroidPermissionHandler androidPermissionHandler, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, StarsContainer starsContainer, boolean transform) {
         super(game, transform);
 
         this.game = game;
+        this.androidPermissionHandler = androidPermissionHandler;
         this.myBitmapFont = myBitmapFont;
         this.gameplayScreen = gameplayScreen;
         this.starsContainer = starsContainer;
@@ -190,6 +198,9 @@ public class MainMenuScreen extends AdvancedScreen {
         initializeConnecting();
         initializeFailedTapToTryAgain();
         initializeConnected();
+
+        initializeSaveControllersAngles();
+        initializeLoadControllersAngles();
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
     }
@@ -348,6 +359,7 @@ public class MainMenuScreen extends AdvancedScreen {
 
     @Override
     public void dispose() {
+        networkAndStorageManager.dispose();
         super.dispose();
     }
 
@@ -708,7 +720,7 @@ public class MainMenuScreen extends AdvancedScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
-                        networkManager.connect();
+                        networkAndStorageManager.connect();
                         connectToDesktopServer.setVisible(false);
                         connecting.setVisible(true);
                     }
@@ -729,9 +741,11 @@ public class MainMenuScreen extends AdvancedScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
-                        networkManager.connect();
+                        networkAndStorageManager.connect();
                         connectToAndroidClient.setVisible(false);
                         connecting.setVisible(true);
+
+                        loadControllersAngles.setVisible(false);
                     }
                 }
         );
@@ -760,7 +774,7 @@ public class MainMenuScreen extends AdvancedScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
-                        networkManager.connect();
+                        networkAndStorageManager.connect();
                         failedTapToTryAgain.setVisible(false);
                         connecting.setVisible(true);
                     }
@@ -798,6 +812,60 @@ public class MainMenuScreen extends AdvancedScreen {
         }
     }
 
+    private void initializeSaveControllersAngles() {
+        saveControllersAngles = new SimpleText(myBitmapFont, "Save Controller Angles");
+
+        if (Gdx.app.getType() == Application.ApplicationType.Android | Gdx.app.getType() == Application.ApplicationType.iOS)
+            addActor(saveControllersAngles);
+
+        saveControllersAngles.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        saveControllersAngles.setHeight(5);
+        saveControllersAngles.setY(WORLD_SIZE - saveControllersAngles.getHeight());
+
+        saveControllersAngles.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+
+
+                        if (androidPermissionHandler.isWriteToExternalStoragePermissionGranted())
+                            turnOnSaveControllerAngles();
+                        else
+                            androidPermissionHandler.requestWriteToExternalStoragePermission();
+
+
+                    }
+                }
+        );
+    }
+
+    private void turnOnSaveControllerAngles() {
+        networkAndStorageManager.setSaveControllerValuesModeEnabled(true);
+        saveControllersAngles.setColor(Color.LIME);
+    }
+
+    private void initializeLoadControllersAngles() {
+        loadControllersAngles = new SimpleText(myBitmapFont, "Load Controller Angles");
+
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop)
+            addActor(loadControllersAngles);
+
+        loadControllersAngles.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        loadControllersAngles.setHeight(5);
+        loadControllersAngles.setY(WORLD_SIZE - loadControllersAngles.getHeight());
+
+        loadControllersAngles.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        connectToAndroidClient.setVisible(false);
+                    }
+                }
+        );
+    }
+
     public void setSurvivalAlpha(float a) {
         survival.setColor(a, a, a, a);
     }
@@ -828,10 +896,24 @@ public class MainMenuScreen extends AdvancedScreen {
         return earthEntities.items;
     }
 
-    public void setNetworkManager(NetworkManager networkManager) {
-        this.networkManager = networkManager;
+    public void setNetworkAndStorageManager(NetworkAndStorageManager networkAndStorageManager) {
+        this.networkAndStorageManager = networkAndStorageManager;
     }
 
+
+
+
+
+    @Override
+    public void permissionGranted(int requestCode) {
+        if (requestCode == AndroidPermissionHandler.REQUEST_WRITE_TO_EXTERNAL_STORAGE)
+            turnOnSaveControllerAngles();
+    }
+
+    @Override
+    public void permissionDenied(int requestCode) {
+
+    }
 
 
 

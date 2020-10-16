@@ -1,37 +1,42 @@
-package com.yaamani.battleshield.alpha.Game;
+package com.yaamani.battleshield.alpha.Game.ImprovingControlls;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
- * | Left controller stick angle : float(4bytes) | Right controller stick angle : float(4bytes) | Active shields num : byte |
+ * | Left controller stick angle : float(4bytes) | Right controller stick angle : float(4bytes) | Active shields num : byte | Bullets per attack : byte |
  *
  * if angle >= 1000 = null
  */
-public class NetworkManager implements Disposable {
+public class NetworkAndStorageManager implements Disposable {
 
-    public static final String TAG = NetworkManager.class.getSimpleName();
-
-    public static final int PORT_NUMBER = 6969;
-    public static final String HOST_IP = "192.168.1.198";
+    public static final String TAG = NetworkAndStorageManager.class.getSimpleName();
 
     private MainMenuScreen mainMenuScreen;
     private GameplayScreen gameplayScreen;
+
+    // ------------------------ Network stuff ------------------------
+
+    public static final int PORT_NUMBER = 6969;
+    public static final String HOST_IP = "192.168.1.198";
 
     private ServerSocketHints serverSocketHints;
     private ServerSocket serverSocket;
@@ -48,22 +53,44 @@ public class NetworkManager implements Disposable {
     private InputStream in;
     private OutputStream out;
 
+    private Runnable receivingRunnable;
+
+
+
+    // ------------------------ Storage stuff ------------------------
+
+    public static final int NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE = 1/*3*//*min*/ * 60 /*sec*/ * 60/*fps*/;
+
+    private boolean saveControllerValuesModeEnabled;
+    private int numOfSavedEntries;
+
+    private FileHandle fileHandle;
+    //private FileWriter fileWriter;
+
+
+
+    // ------------------------ Data stuff ------------------------
+
+    private Runnable valuesPreparationRunnable;
+
     private boolean leftStickAngleReadyToBeConsumed;
     private boolean rightStickAngleReadyToBeConsumed;
     private boolean activeShieldsNumReadyToBeConsumed;
 
-    private Float leftStickAngle;
-    private Float rightStickAngle;
-    private byte activeShieldsNum;
+    private Float currentLeftStickAngle;
+    private Float currentRightStickAngle;
+    private byte currentActiveShieldsNum;
 
     private boolean leftStickAnglePrepared;
     private boolean rightStickAnglePrepared;
     private boolean activeShieldsNumPrepared;
 
-    private Runnable transmissionRunnable;
-    private Runnable receivingRunnable;
+    private Array<Float> allLeftStickAngles;
+    private Array<Float> allRightStickAngles;
+    private Array<Byte> allActiveShieldsNum;
 
-    public NetworkManager(MainMenuScreen mainMenuScreen, GameplayScreen gameplayScreen) {
+
+    public NetworkAndStorageManager(MainMenuScreen mainMenuScreen, GameplayScreen gameplayScreen) {
 
         this.mainMenuScreen = mainMenuScreen;
         this.gameplayScreen = gameplayScreen;
@@ -73,8 +100,13 @@ public class NetworkManager implements Disposable {
 
         initializeServerConnectionRunnable();
         initializeClientConnectionRunnable();
-        initializeTransmissionRunnable();
+        initializeValuesPreparationRunnable();
         initializeReceivingRunnable();
+
+        int initialCapacity = 30/*min*/ * 60/*sec*/ * 60/*fps*/;
+        allLeftStickAngles = new Array<>(true, initialCapacity, Float.class);
+        allRightStickAngles = new Array<>(true, initialCapacity, Float.class);
+        allActiveShieldsNum = new Array<>(true, initialCapacity, Byte.class);
     }
 
     @Override
@@ -85,10 +117,22 @@ public class NetworkManager implements Disposable {
             desktopSocket.dispose();
         if (mobileSocket != null)
             mobileSocket.dispose();
+        /*if (fileWriter != null) {
+            try {
+                new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries).run();
+                fileWriter.close();
+                Gdx.app.log(TAG, "fileWrite should be closed now.");
+            } catch (IOException e) {
+                Gdx.app.error(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+        }*/
+        if (saveControllerValuesModeEnabled)
+            new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries).run();
     }
 
-    private void createAndStartTransmissionThread() {
-        new Thread(transmissionRunnable).start();
+    private void createAndStartValuesPreperationThread() {
+        new Thread(valuesPreparationRunnable).start();
     }
 
     private void createAndStartReceivingThread() {
@@ -102,56 +146,122 @@ public class NetworkManager implements Disposable {
             new Thread(clientConnectionRunnable).start();
     }
 
-    public void prepareStickAngleForTransmissionIfIamMobile(Float stickAngle, Constants.Direction direction) {
+    public void prepareStickAngleForTransmissionAndStorageIfIamMobile(Float stickAngle, Constants.Direction direction) {
         //if (!connectionEstablished) return;
         if (Gdx.app.getType() != Application.ApplicationType.Android & Gdx.app.getType() != Application.ApplicationType.iOS) return;
 
         if (direction == Constants.Direction.LEFT) {
 
             if (stickAngle != null)
-                leftStickAngle = stickAngle;
+                currentLeftStickAngle = stickAngle;
             else
-                leftStickAngle = 1010f; // Anything greater than 1000
+                currentLeftStickAngle = 1234f; // Anything greater than 1000
 
             leftStickAnglePrepared = true;
 
         } else { // RIGHT
 
             if (stickAngle != null)
-                rightStickAngle = stickAngle;
+                currentRightStickAngle = stickAngle;
             else
-                rightStickAngle = 1010f; // Anything greater than 1000
+                currentRightStickAngle = 1234f; // Anything greater than 1000
 
             rightStickAnglePrepared = true;
 
         }
     }
 
-    public void prepareActiveShieldsNumForTransmissionIfIamMobile(byte activeShieldsNum) {
+    public void prepareActiveShieldsNumForTransmissionAndStorageIfIamMobile(byte activeShieldsNum) {
         //if (!connectionEstablished) return;
         if (Gdx.app.getType() != Application.ApplicationType.Android & Gdx.app.getType() != Application.ApplicationType.iOS) return;
 
-        this.activeShieldsNum = activeShieldsNum;
+        this.currentActiveShieldsNum = activeShieldsNum;
         activeShieldsNumPrepared = true;
+    }
+
+    private void transmit() {
+        byte[] leftStickAngleBytes = ByteBuffer.allocate(4).putFloat(currentLeftStickAngle).array();
+        byte[] rightStickAngleBytes = ByteBuffer.allocate(4).putFloat(currentRightStickAngle).array();
+
+        byte[] all = {
+                leftStickAngleBytes[0],
+                leftStickAngleBytes[1],
+                leftStickAngleBytes[2],
+                leftStickAngleBytes[3],
+                rightStickAngleBytes[0],
+                rightStickAngleBytes[1],
+                rightStickAngleBytes[2],
+                rightStickAngleBytes[3],
+                currentActiveShieldsNum
+        };
+
+        try {
+            out.write(all);
+        } catch (IOException e) {
+            Gdx.app.error(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void newEntry() {
+        allLeftStickAngles.add(currentLeftStickAngle);
+        allRightStickAngles.add(currentRightStickAngle);
+        allActiveShieldsNum.add(currentActiveShieldsNum);
+
+        if (saveControllerValuesModeEnabled & (allLeftStickAngles.size - numOfSavedEntries >= NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE))
+            saveTheMostRecentEntries(numOfSavedEntries, NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE);
+    }
+
+    public void saveTheMostRecentEntries(int start, int len) {
+        new Thread(new WriteEntriesRunnable(start, len)).start();
+    }
+
+    public void saveTheMostRecentEntries() {
+        new Thread(new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries)).start();
     }
 
     public boolean isConnectionEstablished() {
         return connectionEstablished;
     }
 
+    public boolean isSaveControllerValuesModeEnabled() {
+        return saveControllerValuesModeEnabled;
+    }
+
+    public void setSaveControllerValuesModeEnabled(boolean saveControllerValuesModeEnabled) {
+        this.saveControllerValuesModeEnabled = saveControllerValuesModeEnabled;
+
+        //try {
+            FileHandle parentDirectory = Gdx.files.external("Battleshield");
+            if (!parentDirectory.exists())
+                parentDirectory.mkdirs();
+            fileHandle = Gdx.files.external("Battleshield/" + System.currentTimeMillis() + ".csv");
+            //fileWriter = new FileWriter(fileHandle.file());
+
+            //fileWriter.write("Left, " + " Right, " + " ShieldsNum" + '\n');
+            //fileWriter.close();
+
+            createAndStartValuesPreperationThread();
+
+        /*} catch (IOException e) {
+            Gdx.app.error(TAG, e.getMessage());
+            e.printStackTrace();
+        }*/
+    }
+
     public Float consumeLeftStickAngle() {
          leftStickAngleReadyToBeConsumed = false;
-         return leftStickAngle;
+         return currentLeftStickAngle;
     }
 
     public Float consumeRightStickAngle() {
         rightStickAngleReadyToBeConsumed = false;
-        return rightStickAngle;
+        return currentRightStickAngle;
     }
 
     public byte consumeActiveShieldsNum() {
         activeShieldsNumReadyToBeConsumed = false;
-        return activeShieldsNum;
+        return currentActiveShieldsNum;
     }
 
     public boolean isLeftStickAngleReadyToBeConsumed() {
@@ -190,6 +300,7 @@ public class NetworkManager implements Disposable {
                 } catch (GdxRuntimeException e) {
 
                     Gdx.app.error(TAG, e.getMessage());
+                    e.printStackTrace();
 
                     mainMenuScreen.connectionFailed();
                 }
@@ -217,6 +328,7 @@ public class NetworkManager implements Disposable {
                     } catch (GdxRuntimeException e) {
 
                         Gdx.app.error(TAG, e.getMessage());
+                        e.printStackTrace();
 
                         mainMenuScreen.connectionFailed();
                     }
@@ -260,6 +372,7 @@ public class NetworkManager implements Disposable {
                 } catch (GdxRuntimeException e) {
 
                     Gdx.app.error(TAG, e.getMessage());
+                    e.printStackTrace();
 
                     try {
                         Thread.sleep(5000);
@@ -280,40 +393,23 @@ public class NetworkManager implements Disposable {
 
                     out = mobileSocket.getOutputStream();
 
-                    createAndStartTransmissionThread();
+                    createAndStartValuesPreperationThread();
                 }
             }
         };
     }
 
-    private void initializeTransmissionRunnable() {
-        transmissionRunnable = new Runnable() {
+    private void initializeValuesPreparationRunnable() {
+        valuesPreparationRunnable = new Runnable() {
             @Override
             public void run() {
-                while (connectionEstablished) {
+                while (connectionEstablished | saveControllerValuesModeEnabled) {
                     if (leftStickAnglePrepared & rightStickAnglePrepared & activeShieldsNumPrepared) {
 
-                        byte[] leftStickAngleBytes = ByteBuffer.allocate(4).putFloat(leftStickAngle).array();
-                        byte[] rightStickAngleBytes = ByteBuffer.allocate(4).putFloat(rightStickAngle).array();
+                        newEntry();
 
-                        byte[] all = {
-                                leftStickAngleBytes[0],
-                                leftStickAngleBytes[1],
-                                leftStickAngleBytes[2],
-                                leftStickAngleBytes[3],
-                                rightStickAngleBytes[0],
-                                rightStickAngleBytes[1],
-                                rightStickAngleBytes[2],
-                                rightStickAngleBytes[3],
-                                activeShieldsNum
-                        };
-
-                        try {
-                            out.write(all);
-                        } catch (IOException e) {
-                            //e.printStackTrace();
-                            Gdx.app.error(TAG, e.getMessage());
-                        }
+                        if (connectionEstablished)
+                            transmit();
 
                         leftStickAnglePrepared = false;
                         rightStickAnglePrepared = false;
@@ -337,18 +433,21 @@ public class NetworkManager implements Disposable {
                         byte activeShieldsNumberBytes = (byte) in.read();
 
 
-                        leftStickAngle = ByteBuffer.wrap(leftStickAngleBytes).getFloat();
-                        if (leftStickAngle >= 1000f) leftStickAngle = null;
+                        currentLeftStickAngle = ByteBuffer.wrap(leftStickAngleBytes).getFloat();
+                        if (currentLeftStickAngle >= 1000f) currentLeftStickAngle = null;
 
-                        rightStickAngle = ByteBuffer.wrap(rightStickAngleBytes).getFloat();
-                        if (rightStickAngle >= 1000f) rightStickAngle = null;
+                        currentRightStickAngle = ByteBuffer.wrap(rightStickAngleBytes).getFloat();
+                        if (currentRightStickAngle >= 1000f) currentRightStickAngle = null;
 
-                        activeShieldsNum = activeShieldsNumberBytes;
+                        currentActiveShieldsNum = activeShieldsNumberBytes;
 
+                        newEntry();
 
                         leftStickAngleReadyToBeConsumed = true;
                         rightStickAngleReadyToBeConsumed = true;
                         activeShieldsNumReadyToBeConsumed = true;
+
+
 
                     } catch (IOException e) {
                         //e.printStackTrace();
@@ -357,5 +456,63 @@ public class NetworkManager implements Disposable {
                 }
             }
         };
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public class WriteEntriesRunnable implements Runnable {
+
+        private int start;
+        private int len;
+
+        public WriteEntriesRunnable(int start, int len) {
+            super();
+            this.start = start;
+            this.len = len;
+        }
+
+        @Override
+        public void run() {
+
+            FileWriter fileWriter;
+
+            try {
+
+                fileWriter = new FileWriter(fileHandle.file());
+
+
+                for (int i = start; i < start + len; i++) {
+                    float leftStick = allLeftStickAngles.get(i);
+                    float rightStick = allRightStickAngles.get(i);
+                    float activeShieldsNum = allActiveShieldsNum.get(i);
+
+                    try {
+                        //Gdx.app.log(TAG, "Writing the remaining values.");
+                        fileWriter.write(leftStick + ", " + rightStick + ", " + activeShieldsNum + '\n');
+                    } catch (IOException e) {
+                        Gdx.app.error(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                numOfSavedEntries += start+len;
+
+
+                fileWriter.close();
+
+
+            } catch (IOException e) {
+                Gdx.app.error(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 }
