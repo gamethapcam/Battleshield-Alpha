@@ -12,7 +12,8 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    private static final boolean NO_DEATH = false;
+    public static final boolean NO_DEATH = true;
+    public static final boolean DISMISS_STAR = true;
 
 
 
@@ -311,7 +312,7 @@ public final class Constants {
     }
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
-            SpecialBullet.STAR,
+            DISMISS_STAR ? SpecialBullet.HEART : SpecialBullet.STAR,
 
             SpecialBullet.HEART,
             SpecialBullet.HEART,

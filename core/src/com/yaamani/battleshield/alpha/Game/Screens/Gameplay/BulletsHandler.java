@@ -618,6 +618,7 @@ public class BulletsHandler implements Updatable {
     }
 
     public void handleNewWave() {
+
         // If all containers are transparent -> return
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
             if (gameplayScreen.getBulletsAndShieldContainers()[i].getColor().a == 1)
@@ -639,6 +640,11 @@ public class BulletsHandler implements Updatable {
                     newWave(false, true);
 
             }
+
+            if (!currentWaveLastBullet.isInUse())
+                newWave(false, true);
+
+
         } else {
             /*for (BulletsAndShieldContainer container:gameplayScreen.getBulletsAndShieldContainers()) {
                 Gdx.app.log(TAG, "index = " + container.getIndex() + ", a = " + container.getColor().a);
@@ -854,8 +860,8 @@ public class BulletsHandler implements Updatable {
 
             switch (waveAttackType) {
                 case SINGLE:
-                    newSingleWave(ifSingleConsiderFake);
-                    //newDoubleWave();
+                    //newSingleWave(ifSingleConsiderFake);
+                    newDoubleWave();
                     break;
                 case DOUBLE:
                     //newSingleWave();
@@ -902,7 +908,7 @@ public class BulletsHandler implements Updatable {
     //--------------------------------------- Simple waves methods ---------------------------------------
 
     public void newSingleWave(boolean considerFake) {
-        Gdx.app.log(TAG, "NEW SINGLE WAVE");
+        Gdx.app.log(TAG, "----- NEW SINGLE WAVE -----");
 
         BulletsAndShieldContainer container = chooseContainer(ContainerPositioning.RANDOM, false);
         attachBullets(container, 0, false);
@@ -922,7 +928,7 @@ public class BulletsHandler implements Updatable {
 
     private void ordinaryDoubleWave() {
         isDouble = true;
-        Gdx.app.log(TAG, "NEW DOUBLE WAVE");
+        Gdx.app.log(TAG, "----- NEW DOUBLE WAVE -----");
 
         BulletsAndShieldContainer firstContainer = chooseContainer(ContainerPositioning.RANDOM, false);
         BulletsAndShieldContainer secondContainer;
@@ -1185,6 +1191,9 @@ public class BulletsHandler implements Updatable {
 
         busyContainers.add(chosenContainer);
         busyContainersIsFake.add(isFake);
+
+        Gdx.app.log(TAG, "busyContainers = " + busyContainers.toString());
+        
         return chosenContainer;
     }
 
@@ -1235,7 +1244,7 @@ public class BulletsHandler implements Updatable {
 
         calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields();
 
-        float singleShieldRange = 360f/previousActiveShieldsNumber;
+        float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
 
         for (BulletsAndShieldContainer container : nonBusyContainers) {
             float angleDeg = MyMath.deg_0_to_360(container.getRotation());
@@ -1274,7 +1283,7 @@ public class BulletsHandler implements Updatable {
 
         calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields();
 
-        float singleShieldRange = 360f/previousActiveShieldsNumber;
+        float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
 
         for (BulletsAndShieldContainer container : nonBusyContainers) {
             float angleDeg = MyMath.deg_0_to_360(container.getRotation());
@@ -1287,8 +1296,9 @@ public class BulletsHandler implements Updatable {
                 if (excludeBottomLeft & (angleDeg > 180f - singleShieldRange & angleDeg < 180f /*This container is bottom left*/))
                     continue;
 
-                if (excludeTop & (angleDeg == 0 /*This container is top*/))
-                    continue;
+                if (excludeTop)
+                    if (excludeTop & (angleDeg <= 1 /*This container is top*/))
+                        continue;
 
                 tempAvailableLeftContainers[size++] = container;
             }
@@ -1302,7 +1312,7 @@ public class BulletsHandler implements Updatable {
         if (exclusionBasedOnPreviousWaveCalculated)
             return;
 
-        float singleShieldRange = 360f/previousActiveShieldsNumber;
+        float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
 
         for (int i = 0; i < previousBusyContainersRotations.size; i++) {
             if (previousBusyContainersIsFake.get(i))
@@ -1352,16 +1362,20 @@ public class BulletsHandler implements Updatable {
             if (busyContainersIsFake.get(i))
                 continue;
 
-            float singleShieldRange = 360f/previousActiveShieldsNumber;
+            float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
 
-            if (busyContainers.get(i).getRotation() == 0) {
+            BulletsAndShieldContainer container = busyContainers.get(i);
+            float angleDeg = MyMath.deg_0_to_360(container.getRotation());
+
+            if (angleDeg <= 1) {
 
                 excludeTopRight = true;
                 excludeTopLeft = true;
 
                 Gdx.app.log(TAG, "Top right and top left should be excluded (When DOUBLE).");
 
-            } else if (busyContainers.get(i).getRotation() == singleShieldRange | busyContainers.get(i).getRotation() == 360 - singleShieldRange) {
+            } else if (previousActiveShieldsNumber % 2 == 1 &
+                    (angleDeg <= singleShieldRange | angleDeg >= 360 - singleShieldRange)) {
 
                 excludeTop = true;
 
