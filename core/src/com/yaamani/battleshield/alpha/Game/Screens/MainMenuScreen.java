@@ -29,7 +29,13 @@ import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Random;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -213,7 +219,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
 
         cycleAspectRatios();
 
-        gamePadPooling();
+        //gamePadPooling();
     }
 
     @Override
@@ -801,13 +807,13 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         connecting.setVisible(false);
         connected.setVisible(true);
 
-        startNetworkReceiverGameplayMode();
+        startNetworkReceiverValuesLoaderGameplayMode();
     }
 
-    private void startNetworkReceiverGameplayMode() {
+    private void startNetworkReceiverValuesLoaderGameplayMode() {
         if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
             gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
-            gameplayScreen.setGameplayMode(GameplayMode.NETWORK_RECEIVER);
+            gameplayScreen.setGameplayMode(GameplayMode.NETWORK_RECEIVER_VALUES_LOADER);
             game.switchScreens(mainMenuToGameplay);
         }
     }
@@ -861,6 +867,14 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
                         connectToAndroidClient.setVisible(false);
+
+                        //String filePath = System.console().readLine("Please enter file path: ");
+
+
+                        networkAndStorageManager.enableLoadControllerValuesMode();
+
+
+                        startNetworkReceiverValuesLoaderGameplayMode();
                     }
                 }
         );
@@ -1025,7 +1039,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
                     float diff = toBeChanged.getX() - imageWidth;
                     //Gdx.app.log(TAG, "diff = " + diff);
                     if (diff >= 0) {
-                        Gdx.app.log(TAG, "diff = " + diff);
+                        //Gdx.app.log(TAG, "diff = " + diff);
                         toBeChanged.setX(-imageWidth + diff);
                         cycleToBeChanged();
                     }

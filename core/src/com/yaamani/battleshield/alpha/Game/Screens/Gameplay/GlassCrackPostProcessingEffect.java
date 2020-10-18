@@ -58,23 +58,23 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
     @Override
     public void draw(Batch batch, TextureRegion inputTextureRegion, float x, float y, float width, float height) {
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
 
             refractionCrackMapFrameBuffer0.begin();
 
-            /*Gdx.gl.glClearColor(0, 0, 0, 0);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            refractionCrackMapFrameBuffer0.end();
-
-
-
-            refractionCrackMapFrameBuffer1.begin();
-
-            Gdx.gl.glClearColor(0, 0, 0, 0);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            refractionCrackMapFrameBuffer1.end();*/
+//            Gdx.gl.glClearColor(0, 0, 0, 0);
+//            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//
+//            refractionCrackMapFrameBuffer0.end();
+//
+//
+//
+//            refractionCrackMapFrameBuffer1.begin();
+//
+//            Gdx.gl.glClearColor(0, 0, 0, 0);
+//            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//
+//            refractionCrackMapFrameBuffer1.end();
 
             generateCrack();
         }

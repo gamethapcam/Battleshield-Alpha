@@ -89,7 +89,7 @@ public class ShieldsAndContainersHandler implements Updatable {
     private void networkReceivingStuff() {
         if (networkAndStorageManager == null) return;
 
-        if (networkAndStorageManager.isConnectionEstablished())
+        if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isLoadControllerValuesModeEnabled())
             if (networkAndStorageManager.isActiveShieldsNumReadyToBeConsumed()) {
                 byte newlySentActiveShieldsNum = networkAndStorageManager.consumeActiveShieldsNum();
                 if (newlySentActiveShieldsNum != activeShieldsNum)

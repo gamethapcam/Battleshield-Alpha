@@ -78,7 +78,7 @@ public abstract class Controller extends Group implements Resizable {
         } else
             outputAngleIndicatorContainer.setVisible(false);
 
-        if (!usingTouch) gamePadPooling();
+        //if (!usingTouch) gamePadPooling();
 
         networkTransmissionAndStorageStuff();
     }
@@ -100,7 +100,7 @@ public abstract class Controller extends Group implements Resizable {
     }
 
     private void networkReceivingStuff() {
-        if (networkAndStorageManager.isConnectionEstablished()) {
+        if (networkAndStorageManager.isConnectionEstablished() | networkAndStorageManager.isLoadControllerValuesModeEnabled()) {
 
             boolean newStickAngleComing = false;
             switch (controllerPosition) {

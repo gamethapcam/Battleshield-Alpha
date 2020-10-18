@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
@@ -11,22 +12,29 @@ import com.badlogic.gdx.net.SocketHints;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
+import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Scanner;
 
 /**
  * | Left controller stick angle : float(4bytes) | Right controller stick angle : float(4bytes) | Active shields num : byte | Bullets per attack : byte |
  *
  * if angle >= 1000 = null
  */
-public class NetworkAndStorageManager implements Disposable {
+public class NetworkAndStorageManager implements Disposable, Resizable {
 
     public static final String TAG = NetworkAndStorageManager.class.getSimpleName();
 
@@ -67,6 +75,7 @@ public class NetworkAndStorageManager implements Disposable {
     private FileHandle fileHandle;
     //private FileWriter fileWriter;
 
+    private boolean loadControllerValuesModeEnabled;
 
 
     // ------------------------ Data stuff ------------------------
@@ -93,6 +102,13 @@ public class NetworkAndStorageManager implements Disposable {
     private Array<Byte> allActiveShieldsNums;
     private Array<Byte> allBulletsPerAttacks;
 
+    private Array<Float> allLeftStickVelocities;
+    private Array<Float> allRightStickVelocities;
+
+
+
+    private DataMonitoring dataMonitoring;
+
 
     public NetworkAndStorageManager(MainMenuScreen mainMenuScreen, GameplayScreen gameplayScreen) {
 
@@ -107,11 +123,9 @@ public class NetworkAndStorageManager implements Disposable {
         initializeValuesPreparationRunnable();
         initializeReceivingRunnable();
 
-        int initialCapacity = 30/*min*/ * 60/*sec*/ * 60/*fps*/;
-        allLeftStickAngles = new Array<>(true, initialCapacity, Float.class);
-        allRightStickAngles = new Array<>(true, initialCapacity, Float.class);
-        allActiveShieldsNums = new Array<>(true, initialCapacity, Byte.class);
-        allBulletsPerAttacks = new Array<>(true, initialCapacity, Byte.class);
+
+
+        dataMonitoring = new DataMonitoring(mainMenuScreen.getStage().getViewport(), this);
     }
 
     @Override
@@ -134,6 +148,16 @@ public class NetworkAndStorageManager implements Disposable {
         }*/
         if (saveControllerValuesModeEnabled)
             new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries).run();
+    }
+
+    @Override
+    public void resize(int width, int height, float worldWidth, float worldHeight) {
+        dataMonitoring.resize(width, height, worldWidth, worldHeight);
+    }
+
+    public void render() {
+        if (loadControllerValuesModeEnabled)
+            dataMonitoring.render();
     }
 
     private void createAndStartValuesPreperationThread() {
@@ -218,6 +242,19 @@ public class NetworkAndStorageManager implements Disposable {
     }
 
     private void newEntry() {
+
+        if (allLeftStickAngles == null) {
+            int initialCapacity = 30/*min*/ * 60/*sec*/ * 60/*fps*/;
+
+            allLeftStickAngles = new Array<>(true, initialCapacity, Float.class);
+            allRightStickAngles = new Array<>(true, initialCapacity, Float.class);
+            allActiveShieldsNums = new Array<>(true, initialCapacity, Byte.class);
+            allBulletsPerAttacks = new Array<>(true, initialCapacity, Byte.class);
+
+            allLeftStickVelocities = new Array<>(true, initialCapacity, Float.class);
+            allRightStickVelocities = new Array<>(true, initialCapacity, Float.class);
+        }
+
         allLeftStickAngles.add(currentLeftStickAngle);
         allRightStickAngles.add(currentRightStickAngle);
         allActiveShieldsNums.add(currentActiveShieldsNum);
@@ -225,6 +262,37 @@ public class NetworkAndStorageManager implements Disposable {
 
         if (saveControllerValuesModeEnabled & (allLeftStickAngles.size - numOfSavedEntries >= NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE))
             saveTheMostRecentEntries(numOfSavedEntries, NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE);
+
+
+
+
+        if (allLeftStickAngles.size == 1) {
+            allLeftStickVelocities.add(0f);
+        }
+        else {
+            Float previousLeftStickAngle = allLeftStickAngles.get(allLeftStickAngles.size-2);
+            if (previousLeftStickAngle == null | currentLeftStickAngle == null)
+                allLeftStickVelocities.add(0f);
+            else {
+
+                float previous = MyMath.deg_0_to_360(previousLeftStickAngle*MathUtils.radDeg) * MathUtils.degRad;
+                float current = MyMath.deg_0_to_360(currentLeftStickAngle*MathUtils.radDeg) * MathUtils.degRad;
+
+                allLeftStickVelocities.add((current - previous) / (1f / 60f)); // Rad/sec
+            }
+        }
+
+        if (allRightStickAngles.size == 1) {
+            allRightStickVelocities.add(0f);
+        }
+        else {
+            Float previousRightStickAngle = allRightStickAngles.get(allRightStickAngles.size-2);
+            if (previousRightStickAngle == null | currentRightStickAngle == null)
+                allRightStickVelocities.add(0f);
+            else
+                allRightStickVelocities.add((currentRightStickAngle-previousRightStickAngle)/(1f/60f)); // Rad/sec
+        }
+
     }
 
     public void saveTheMostRecentEntries(int start, int len) {
@@ -264,6 +332,89 @@ public class NetworkAndStorageManager implements Disposable {
         }*/
     }
 
+    public boolean isLoadControllerValuesModeEnabled() {
+        return loadControllerValuesModeEnabled;
+    }
+
+    public void enableLoadControllerValuesMode() {
+        this.loadControllerValuesModeEnabled = true;
+
+
+        try {
+
+            Gdx.app.log(TAG, "Please enter the absolute path : ");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+            String filePath = reader.readLine();
+            FileHandle fh = Gdx.files.absolute(filePath);
+
+            Gdx.app.log(TAG, "Loading...");
+
+
+            Scanner fileScanner = new Scanner(fh.file());
+            while (fileScanner.hasNextLine()) {
+
+                String line = fileScanner.nextLine();
+                String[] individualValues = line.split(", ");
+
+                //Gdx.app.log(TAG, Arrays.toString(individualValues));
+
+                currentLeftStickAngle = Float.parseFloat(individualValues[0]);
+                if (currentLeftStickAngle >= 1000f) currentLeftStickAngle = null;
+                //Gdx.app.log(TAG, ""+currentLeftStickAngle);
+
+                currentRightStickAngle = Float.parseFloat(individualValues[1]);
+                if (currentRightStickAngle >= 1000f) currentRightStickAngle = null;
+
+                currentActiveShieldsNum = Byte.parseByte(individualValues[2]);
+
+                currentBulletsPerAttack = Byte.parseByte(individualValues[3]);
+
+
+                newEntry();
+            }
+
+            fileScanner.close();
+
+            /*Gdx.app.log(TAG, "allLeftStickAngles = " + allLeftStickAngles.toString());
+            Gdx.app.log(TAG, "allRightStickAngles = " + allRightStickAngles.toString());
+            Gdx.app.log(TAG, "allActiveShieldsNums = " + allActiveShieldsNums.toString());
+            Gdx.app.log(TAG, "allBulletsPerAttacks = " + allBulletsPerAttacks.toString());*/
+
+            if (allLeftStickVelocities.size < DataMonitoring.PLOTTED_POINTS_PER_FRAME)
+                Gdx.app.error(TAG, "Too short :(");
+            else
+                Gdx.app.log(TAG, "Done.");
+
+            Viewport vp = mainMenuScreen.getStage().getViewport();
+            dataMonitoring.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), vp.getWorldWidth(), vp.getWorldHeight());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setCurrentLeftStickAngle(Float currentLeftStickAngle) {
+        this.currentLeftStickAngle = currentLeftStickAngle;
+        leftStickAngleReadyToBeConsumed = true;
+    }
+
+    void setCurrentRightStickAngle(Float currentRightStickAngle) {
+        this.currentRightStickAngle = currentRightStickAngle;
+        rightStickAngleReadyToBeConsumed = true;
+    }
+
+    void setCurrentActiveShieldsNum(byte currentActiveShieldsNum) {
+        this.currentActiveShieldsNum = currentActiveShieldsNum;
+        activeShieldsNumReadyToBeConsumed = true;
+    }
+
+    void setCurrentBulletsPerAttack(byte currentBulletsPerAttack) {
+        this.currentBulletsPerAttack = currentBulletsPerAttack;
+        bulletsPerAttackReadyToBeConsumed = true;
+    }
+
     public Float consumeLeftStickAngle() {
          leftStickAngleReadyToBeConsumed = false;
          return currentLeftStickAngle;
@@ -298,6 +449,30 @@ public class NetworkAndStorageManager implements Disposable {
 
     public boolean isBulletsPerAttackReadyToBeConsumed() {
         return bulletsPerAttackReadyToBeConsumed;
+    }
+
+    public Array<Float> getAllLeftStickAngles() {
+        return allLeftStickAngles;
+    }
+
+    public Array<Float> getAllRightStickAngles() {
+        return allRightStickAngles;
+    }
+
+    public Array<Byte> getAllActiveShieldsNums() {
+        return allActiveShieldsNums;
+    }
+
+    public Array<Byte> getAllBulletsPerAttacks() {
+        return allBulletsPerAttacks;
+    }
+
+    public Array<Float> getAllLeftStickVelocities() {
+        return allLeftStickVelocities;
+    }
+
+    public Array<Float> getAllRightStickVelocities() {
+        return allRightStickVelocities;
     }
 
     private void initializeServerConnectionRunnable() {
@@ -459,24 +634,21 @@ public class NetworkAndStorageManager implements Disposable {
                         byte bulletsPerAttackBytes = (byte) in.read();
 
 
-                        currentLeftStickAngle = ByteBuffer.wrap(leftStickAngleBytes).getFloat();
-                        if (currentLeftStickAngle >= 1000f) currentLeftStickAngle = null;
+                        Float receivedLeftStickAngle = ByteBuffer.wrap(leftStickAngleBytes).getFloat();
+                        if (receivedLeftStickAngle >= 1000f) receivedLeftStickAngle = null;
+                        setCurrentLeftStickAngle(receivedLeftStickAngle);
 
-                        currentRightStickAngle = ByteBuffer.wrap(rightStickAngleBytes).getFloat();
-                        if (currentRightStickAngle >= 1000f) currentRightStickAngle = null;
+                        Float receivedRightStickAngle = ByteBuffer.wrap(rightStickAngleBytes).getFloat();
+                        if (receivedRightStickAngle >= 1000f) receivedRightStickAngle = null;
+                        setCurrentRightStickAngle(receivedRightStickAngle);
 
-                        currentActiveShieldsNum = activeShieldsNumberBytes;
+                        setCurrentActiveShieldsNum(activeShieldsNumberBytes);
 
-                        currentBulletsPerAttack = bulletsPerAttackBytes;
+                        setCurrentBulletsPerAttack(bulletsPerAttackBytes);
+
+
 
                         newEntry();
-
-                        leftStickAngleReadyToBeConsumed = true;
-                        rightStickAngleReadyToBeConsumed = true;
-                        activeShieldsNumReadyToBeConsumed = true;
-                        bulletsPerAttackReadyToBeConsumed = true;
-
-
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -486,6 +658,20 @@ public class NetworkAndStorageManager implements Disposable {
             }
         };
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

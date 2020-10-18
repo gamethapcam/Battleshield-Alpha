@@ -177,7 +177,7 @@ public class GameplayScreen extends AdvancedScreen {
 
 
         debuggingControls();
-        gamePadPooling();
+        //gamePadPooling();
 
 
         if (Gdx.input.getRotation() != rotation) {
@@ -575,7 +575,7 @@ public class GameplayScreen extends AdvancedScreen {
                     setCurrentShieldsMinMaxCount(PORTALS_SHIELDS_MIN_COUNT, PORTALS_SHIELDS_MAX_COUNT);
                     break;
 
-                case NETWORK_RECEIVER:
+                case NETWORK_RECEIVER_VALUES_LOADER:
 
                     scoreTimerStuff.setLevelTime(Float.MAX_VALUE);
 

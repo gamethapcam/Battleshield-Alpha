@@ -99,7 +99,10 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
         //} else
             //SolidBG.instance.draw();
 
+        if (networkAndStorageManager != null) networkAndStorageManager.render();
+
         super.render();
+
 
         //Gdx.app.log("FPS =", "" + 1f/Gdx.graphics.getDeltaTime());
     }
@@ -116,6 +119,9 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
 
         if (starsContainer != null)
             starsContainer.resize(game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
+
+        if (networkAndStorageManager != null)
+            networkAndStorageManager.resize(width, height, game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
 
         //tweenAndMyTweenTesting.resize(width, height, game.getViewport().getWorldWidth(), game.getViewport().getWorldHeight());
     }
@@ -147,8 +153,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
         if (starsContainer != null) starsContainer.dispose();
         //gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
         super.dispose();
-        if (networkAndStorageManager != null)
-            networkAndStorageManager.dispose();
+        if (networkAndStorageManager != null) networkAndStorageManager.dispose();
         Assets.instance.dispose();
 
 
