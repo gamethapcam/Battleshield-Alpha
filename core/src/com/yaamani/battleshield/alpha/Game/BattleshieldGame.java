@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
@@ -41,6 +42,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
     private SimplestTransition gameplayToMainMenu;
 
     private NetworkAndStorageManager networkAndStorageManager;
+    private Image saving;
+
 
     private MyBitmapFont myBitmapFont;
     private BitmapFont font;
@@ -99,7 +102,19 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
         //} else
             //SolidBG.instance.draw();
 
-        if (networkAndStorageManager != null) networkAndStorageManager.render();
+        if (networkAndStorageManager != null) {
+
+            networkAndStorageManager.render();
+
+            if (networkAndStorageManager.isSaveControllerValuesModeEnabled()) {
+                if (networkAndStorageManager.isCurrentlyWritingToStorage())
+                    saving.setVisible(true);
+                else
+                    saving.setVisible(false);
+            }
+        }
+
+
 
         super.render();
 
@@ -204,9 +219,15 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
 
             resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-            networkAndStorageManager = new NetworkAndStorageManager(mainMenuScreen, gameplayScreen);
+            networkAndStorageManager = new NetworkAndStorageManager(mainMenuScreen, gameplayScreen, myBitmapFont);
             mainMenuScreen.setNetworkAndStorageManager(networkAndStorageManager);
             gameplayScreen.setNetworkAndStorageManager(networkAndStorageManager);
+
+            saving = new Image(Assets.instance.mutualAssets.bigCircle);
+            saving.setSize(5, 5);
+            saving.setPosition(2, 2);
+            saving.setVisible(false);
+            game.addActor(saving);
         }
     }
 

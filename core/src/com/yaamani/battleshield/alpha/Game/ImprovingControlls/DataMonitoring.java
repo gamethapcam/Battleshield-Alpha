@@ -3,25 +3,29 @@ package com.yaamani.battleshield.alpha.Game.ImprovingControlls;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 
 public class DataMonitoring implements Disposable, Resizable {
 
     private static final String TAG = DataMonitoring.class.getSimpleName();
 
-    public static final int PLOTTED_POINTS_PER_FRAME = 300;
+    public static final int PLOTTED_POINTS_PER_FRAME = 250;
     public static final float MIN_MAX = 15;
     public static final String LEFT_TAG = "Left";
     public static final String RIGHT_TAG = "\t\t\t\t\t\t\t\tRight";
 
     private Viewport viewport;
     private ShapeRenderer shapeRenderer;
+    private SpriteBatch spriteBatch;
 
     private NetworkAndStorageManager nsm;
 
@@ -29,22 +33,27 @@ public class DataMonitoring implements Disposable, Resizable {
     private LineGraph rightStickGraph;
     private ProgressBar progressBar;
 
+    private SimpleText bulletsPerAttackText;
+
     private float speed = 1;
     private float currentFrame;
 
 
     private boolean paused;
 
-    public DataMonitoring(Viewport viewport, NetworkAndStorageManager networkAndStorageManager) {
+    public DataMonitoring(Viewport viewport, NetworkAndStorageManager networkAndStorageManager, MyBitmapFont myBitmapFont) {
         this.viewport = viewport;
         shapeRenderer = new ShapeRenderer();
         //shapeRenderer.setAutoShapeType(true);
+        spriteBatch = new SpriteBatch();
 
         this.nsm = networkAndStorageManager;
 
         initializeLeftStickGraph();
         initializeRightStickGraph();
         initializeProgressBar();
+
+        initializeBulletsPerAttackText(myBitmapFont);
     }
 
     public void render() {
@@ -72,7 +81,11 @@ public class DataMonitoring implements Disposable, Resizable {
         if (!paused)
             currentFrame = MathUtils.clamp(currentFrame+speed, 0, nsm.getAllLeftStickAngles().size-1);
         else {
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) & Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+                currentFrame = MathUtils.clamp(currentFrame-3f, 0, nsm.getAllLeftStickAngles().size-1);
+            else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) & Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+                currentFrame = MathUtils.clamp(currentFrame+3f, 0, nsm.getAllLeftStickAngles().size-1);
+            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
                 currentFrame = MathUtils.clamp(currentFrame-0.5f, 0, nsm.getAllLeftStickAngles().size-1);
             else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
                 currentFrame = MathUtils.clamp(currentFrame+0.5f, 0, nsm.getAllLeftStickAngles().size-1);
@@ -97,12 +110,20 @@ public class DataMonitoring implements Disposable, Resizable {
         rightStickGraph.render(shapeRenderer, nsm.getAllRightStickVelocities(), start, len, currentIndex, RIGHT_TAG);
 
 
-
-
-
-
-
         shapeRenderer.end();
+
+
+
+
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        spriteBatch.begin();
+
+
+        bulletsPerAttackText.setCharSequence("" + nsm.getAllBulletsPerAttacks().get(currentIndex), true);
+        bulletsPerAttackText.draw(spriteBatch, 1);
+
+
+        spriteBatch.end();
     }
 
     @Override
@@ -116,6 +137,8 @@ public class DataMonitoring implements Disposable, Resizable {
         if (progressBar != null)
             progressBar.width = worldWidth - 2*progressBar.x;
 
+        if (bulletsPerAttackText != null)
+            bulletsPerAttackText.setX(worldWidth/2f - bulletsPerAttackText.getWidth()/2f);
     }
 
     @Override
@@ -152,6 +175,12 @@ public class DataMonitoring implements Disposable, Resizable {
         progressBar.y = 4;
         progressBar.lineWidth = 0.35f;
         progressBar.sliderRadius = 2f;
+    }
+
+    private void initializeBulletsPerAttackText(MyBitmapFont myBitmapFont) {
+        bulletsPerAttackText = new SimpleText(myBitmapFont, "6");
+        bulletsPerAttackText.setHeight(10);
+        bulletsPerAttackText.setY(15);
     }
 
 

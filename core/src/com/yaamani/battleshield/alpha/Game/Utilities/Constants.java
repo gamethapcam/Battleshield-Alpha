@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    public static final boolean NO_DEATH = true;
+    public static final boolean NO_DEATH = false;
     public static final boolean DISMISS_STAR = true;
 
 
@@ -253,7 +253,7 @@ public final class Constants {
 
     public static final int SURVIVAL_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
-    public static final int SURVIVAL_SHIELDS_MIN_COUNT = 3;
+    public static final int SURVIVAL_SHIELDS_MIN_COUNT = /*3*/4;
 
 
 

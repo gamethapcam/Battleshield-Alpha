@@ -152,6 +152,7 @@ public class GameplayScreen extends AdvancedScreen {
         currentInUseNumText.setVisible(false); // Set to true for debugging.
         currentInUseNumText.setHeight(WORLD_SIZE/22f);
         currentInUseNumText.setY(WORLD_SIZE/22f);
+
     }
 
     //----------------------------- Super Class Methods -------------------------------
@@ -173,6 +174,7 @@ public class GameplayScreen extends AdvancedScreen {
 
 
         super.act(delta);
+
 
 
 
@@ -215,7 +217,6 @@ public class GameplayScreen extends AdvancedScreen {
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.update(delta);
 
         levelFinishStuff.update(delta);
-
 
     }
 
@@ -485,6 +486,13 @@ public class GameplayScreen extends AdvancedScreen {
 
     public void setGameplayMode(GameplayMode gameplayMode) {
         this.gameplayMode = gameplayMode;
+
+
+        if (networkAndStorageManager != null) {
+            if (networkAndStorageManager.isSaveControllerValuesModeEnabled())
+                networkAndStorageManager.getWriteToStorageTimer().start();
+        }
+
 
         if (gameplayMode == GameplayMode.SURVIVAL) {
             //scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().setVisible(true);

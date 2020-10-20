@@ -17,10 +17,11 @@ import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
+import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,10 +68,12 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
 
     // ------------------------ Storage stuff ------------------------
 
-    public static final int NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE = 1/*3*//*min*/ * 60 /*sec*/ * 60/*fps*/;
+    //public static final int NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE = (int) (0.25f/*1*//*min*/ * 60 /*sec*/ * 60/*fps*/);
 
     private boolean saveControllerValuesModeEnabled;
     private int numOfSavedEntries;
+    private Timer writeToStorageTimer;
+    private boolean currentlyWritingToStorage;
 
     private FileHandle fileHandle;
     //private FileWriter fileWriter;
@@ -110,7 +113,7 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
     private DataMonitoring dataMonitoring;
 
 
-    public NetworkAndStorageManager(MainMenuScreen mainMenuScreen, GameplayScreen gameplayScreen) {
+    public NetworkAndStorageManager(MainMenuScreen mainMenuScreen, GameplayScreen gameplayScreen, MyBitmapFont myBitmapFont) {
 
         this.mainMenuScreen = mainMenuScreen;
         this.gameplayScreen = gameplayScreen;
@@ -124,8 +127,17 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
         initializeReceivingRunnable();
 
 
+        writeToStorageTimer = new Timer(15/*sec*/*1000/*ms*/) {
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                saveTheMostRecentEntries();
+                writeToStorageTimer.start();
+            }
+        };
 
-        dataMonitoring = new DataMonitoring(mainMenuScreen.getStage().getViewport(), this);
+
+        dataMonitoring = new DataMonitoring(mainMenuScreen.getStage().getViewport(), this, myBitmapFont);
     }
 
     @Override
@@ -146,8 +158,8 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
                 e.printStackTrace();
             }
         }*/
-        if (saveControllerValuesModeEnabled)
-            new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries).run();
+        /*if (saveControllerValuesModeEnabled)
+            new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries).run();*/
     }
 
     @Override
@@ -156,6 +168,10 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
     }
 
     public void render() {
+
+        if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
+            writeToStorageTimer.update(Gdx.graphics.getDeltaTime());
+
         if (loadControllerValuesModeEnabled)
             dataMonitoring.render();
     }
@@ -260,8 +276,8 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
         allActiveShieldsNums.add(currentActiveShieldsNum);
         allBulletsPerAttacks.add(currentBulletsPerAttack);
 
-        if (saveControllerValuesModeEnabled & (allLeftStickAngles.size - numOfSavedEntries >= NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE))
-            saveTheMostRecentEntries(numOfSavedEntries, NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE);
+        /*if (saveControllerValuesModeEnabled & (allLeftStickAngles.size - numOfSavedEntries >= NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE) & !isCurrentlyWritingToStorage())
+            saveTheMostRecentEntries(numOfSavedEntries, NUM_OF_ENTRIES_TO_SAVE_EACH_SAVE_CYCLE);*/
 
 
 
@@ -295,9 +311,9 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
 
     }
 
-    public void saveTheMostRecentEntries(int start, int len) {
+    /*public void saveTheMostRecentEntries(int start, int len) {
         new Thread(new WriteEntriesRunnable(start, len)).start();
-    }
+    }*/
 
     public void saveTheMostRecentEntries() {
         new Thread(new WriteEntriesRunnable(numOfSavedEntries, allLeftStickAngles.size-numOfSavedEntries)).start();
@@ -473,6 +489,14 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
 
     public Array<Float> getAllRightStickVelocities() {
         return allRightStickVelocities;
+    }
+
+    public Timer getWriteToStorageTimer() {
+        return writeToStorageTimer;
+    }
+
+    public boolean isCurrentlyWritingToStorage() {
+        return currentlyWritingToStorage;
     }
 
     private void initializeServerConnectionRunnable() {
@@ -690,18 +714,26 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
 
         public WriteEntriesRunnable(int start, int len) {
             super();
+
+            Gdx.app.log(TAG, "Saving (start = " + start + ", len = " + len + ").");
+
             this.start = start;
             this.len = len;
+
+
         }
 
         @Override
         public void run() {
 
+            currentlyWritingToStorage = true;
+            Gdx.app.log(TAG, "Writing to storage ....");
+
             FileWriter fileWriter;
 
             try {
 
-                fileWriter = new FileWriter(fileHandle.file());
+                fileWriter = new FileWriter(fileHandle.file(), true);
 
 
                 for (int i = start; i < start + len; i++) {
@@ -720,16 +752,20 @@ public class NetworkAndStorageManager implements Disposable, Resizable {
                     }
                 }
 
-                numOfSavedEntries += start+len;
-
+                numOfSavedEntries += /*start+*/len;
 
                 fileWriter.close();
+
 
 
             } catch (IOException e) {
                 Gdx.app.error(TAG, e.getMessage());
                 e.printStackTrace();
             }
+
+            currentlyWritingToStorage = false;
+            Gdx.app.log(TAG, "Writing to storage is now done.");
+
         }
     }
 }

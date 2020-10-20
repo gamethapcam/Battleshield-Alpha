@@ -641,7 +641,7 @@ public class BulletsHandler implements Updatable {
 
             }
 
-            if (!currentWaveLastBullet.isInUse())
+            if (!currentWaveLastBullet.isInUse() & gameplayScreen.getState() == GameplayScreen.State.PLAYING)
                 newWave(false, true);
 
 
@@ -860,8 +860,8 @@ public class BulletsHandler implements Updatable {
 
             switch (waveAttackType) {
                 case SINGLE:
-                    //newSingleWave(ifSingleConsiderFake);
-                    newDoubleWave();
+                    newSingleWave(ifSingleConsiderFake);
+                    //newDoubleWave();
                     break;
                 case DOUBLE:
                     //newSingleWave();
