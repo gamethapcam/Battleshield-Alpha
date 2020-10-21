@@ -97,15 +97,16 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                     scoreTimer += delta;
 
         checkBestScore();
+        updateBestScoreButDontRegisterToHardDriveYet();
 
         fadeOutTween.update(delta);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             Preferences preferences = Gdx.app.getPreferences(SCORE_PREFERENCES_NAME);
             preferences.putFloat(SCORE_BEST_KEY, 0.0f);
             preferences.flush();
             currentBest = 0;
-        }
+        }*/
 
 
 

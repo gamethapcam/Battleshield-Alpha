@@ -40,7 +40,7 @@ public class BulletsHandler implements Updatable {
     //private boolean dontAddBusyToNonBusyThisTime;
     private BulletsAndShieldContainer[] tempAvailableLeftContainers; // The containers to choose from for the currentWave (Left).
     private BulletsAndShieldContainer[] tempAvailableRightContainers; // The containers to choose from for the currentWave (Right).
-    boolean excludeTop = false, excludeTopRight = false, excludeBottomRight = false, excludeBottomLeft = false, excludeTopLeft = false, exclusionBasedOnPreviousWaveCalculated = false;
+    private boolean excludeTop = false/*, excludeTopRight = false, excludeBottomRight = false, excludeBottomLeft = false, excludeTopLeft = false, exclusionBasedOnPreviousWaveCalculated = false*/;
     private Array<Float> previousBusyContainersRotations;
     private Array<Boolean> previousBusyContainersIsFake;
     private int previousActiveShieldsNumber = SHIELDS_ACTIVE_DEFAULT;
@@ -896,11 +896,11 @@ public class BulletsHandler implements Updatable {
 
     private void falsifyExclusionVars() {
         excludeTop = false;
-        excludeTopRight = false;
+        /*excludeTopRight = false;
         excludeBottomRight = false;
         excludeBottomLeft = false;
         excludeTopLeft = false;
-        exclusionBasedOnPreviousWaveCalculated = false;
+        exclusionBasedOnPreviousWaveCalculated = false;*/
     }
 
     //--------------------------------------- Simple waves methods ---------------------------------------
@@ -931,16 +931,21 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "----- NEW DOUBLE WAVE -----");
 
         BulletsAndShieldContainer firstContainer = chooseContainer(ContainerPositioning.RANDOM, false);
-        BulletsAndShieldContainer secondContainer;
+        BulletsAndShieldContainer secondContainer = null;
 
         if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
             float firstContainerAngleDeg = MyMath.deg_0_to_360(firstContainer.getRotation());
-            if (firstContainerAngleDeg == 0) // Top shield
-                secondContainer = chooseContainer(ContainerPositioning.RANDOM, false);
-            else if (firstContainerAngleDeg > 180) // Right
+            if (firstContainerAngleDeg == 0) {// Top shield (dismiss double wave)
+                //secondContainer = chooseContainer(ContainerPositioning.RANDOM, false);
+            } else if (firstContainerAngleDeg > 180) {// Right
+                excludeTop = true;
                 secondContainer = chooseContainer(ContainerPositioning.LEFT, false);
-            else // Left
+            } else {// Left
+                excludeTop = true;
                 secondContainer = chooseContainer(ContainerPositioning.RIGHT, false);
+            }
+
+
         } else
             secondContainer = chooseContainer(ContainerPositioning.RANDOM, false);
 
@@ -1242,20 +1247,20 @@ public class BulletsHandler implements Updatable {
 
         //calculateWhatContainersToExcludeBasedOnPreviousWave();
 
-        calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields();
+        //calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields();
 
-        float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
+        //float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
 
         for (BulletsAndShieldContainer container : nonBusyContainers) {
             float angleDeg = MyMath.deg_0_to_360(container.getRotation());
-            if (/*angleDeg == 0 | */angleDeg > 180) {
+            if (angleDeg > 180) {
                 // System.out.print(angleDeg + ", ");
 
-                if (excludeTopRight & (angleDeg >= 360 - singleShieldRange /*This container is top right*/))
+                /*if (excludeTopRight & (angleDeg >= 360 - singleShieldRange *//*This container is top right*//*))
                     continue;
 
-                if (excludeBottomRight & (angleDeg > 180 & angleDeg < 180f + singleShieldRange /*This container is bottom right*/))
-                    continue;
+                if (excludeBottomRight & (angleDeg > 180 & angleDeg < 180f + singleShieldRange *//*This container is bottom right*//*))
+                    continue;*/
 
                 tempAvailableRightContainers[size++] = container;
             }
@@ -1281,22 +1286,22 @@ public class BulletsHandler implements Updatable {
 
         //calculateWhatContainersToExcludeBasedOnPreviousWave();
 
-        calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields();
+        //calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields();
 
-        float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
+        //float singleShieldRange = 360f/previousActiveShieldsNumber + 1;
 
         for (BulletsAndShieldContainer container : nonBusyContainers) {
             float angleDeg = MyMath.deg_0_to_360(container.getRotation());
             if (angleDeg < 180) {
                 // System.out.print(angleDeg + ", ");
 
-                if (excludeTopLeft & (angleDeg > 0 & angleDeg <= singleShieldRange /*This container is top left*/))
+                /*if (excludeTopLeft & (angleDeg > 0 & angleDeg <= singleShieldRange *//*This container is top left*//*))
                     continue;
 
-                if (excludeBottomLeft & (angleDeg > 180f - singleShieldRange & angleDeg < 180f /*This container is bottom left*/))
-                    continue;
+                if (excludeBottomLeft & (angleDeg > 180f - singleShieldRange & angleDeg < 180f *//*This container is bottom left*//*))
+                    continue;*/
 
-                if (excludeTop)
+                /*if (excludeTop)*/
                     if (excludeTop & (angleDeg <= 1 /*This container is top*/))
                         continue;
 
@@ -1308,7 +1313,7 @@ public class BulletsHandler implements Updatable {
         return size;
     }
 
-    private void calculateWhatContainersToExcludeBasedOnPreviousWave() {
+    /*private void calculateWhatContainersToExcludeBasedOnPreviousWave() {
         if (exclusionBasedOnPreviousWaveCalculated)
             return;
 
@@ -1319,7 +1324,7 @@ public class BulletsHandler implements Updatable {
                 continue;
 
 
-            float rotation = /*MyMath.deg_0_to_360(previousBusyContainersRotations.get(i).getRotation())*/previousBusyContainersRotations.get(i);
+            float rotation = *//*MyMath.deg_0_to_360(previousBusyContainersRotations.get(i).getRotation())*//*previousBusyContainersRotations.get(i);
             if (rotation == 0f) { // This previous container was top.
 
                 excludeTopLeft = true;
@@ -1355,9 +1360,9 @@ public class BulletsHandler implements Updatable {
         }
 
         exclusionBasedOnPreviousWaveCalculated = true;
-    }
+    }*/
 
-    private void calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields() {
+    /*private void calculateWhatToContainersToExcludeToNotToIntroduceConfusionDuoToTopContainerWhenOddNumberOfShields() {
         for (int i = 0; i < busyContainers.size; i++) {
             if (busyContainersIsFake.get(i))
                 continue;
@@ -1382,7 +1387,7 @@ public class BulletsHandler implements Updatable {
                 Gdx.app.log(TAG, "Top should be excluded (When DOUBLE).");
             }
         }
-    }
+    }*/
 
     private void crystalPlanetFakeWave(BulletsAndShieldContainer container) {
         if (MathUtils.random() > crystalPlanetFakeWaveProbability) return;
