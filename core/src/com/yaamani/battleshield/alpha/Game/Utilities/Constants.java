@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    public static final boolean NO_DEATH = false;
+    public static final boolean NO_DEATH = true;
     public static final boolean DISMISS_STAR = true;
 
 

@@ -48,7 +48,7 @@ public class BulletsHandler implements Updatable {
 
     private Array<BulletsAndShieldContainer> dizzinessLeftContainersDoubleWave; // The containers that can be activated with the left controller (restricted) during the time the bullets of a particular wave hit this container.
     private Array<BulletsAndShieldContainer> dizzinessRightContainersDoubleWave; // The containers that can be activated with the right controller (restricted) during the time the bullets of a particular wave hit this container.
-    private Array<BulletsAndShieldContainer> dizzinessContainersThatChangeControllerDoubleWave; // The containers that can be activated with the right controller (restricted) during the time the bullets of a particular wave hit this container.
+    //private Array<BulletsAndShieldContainer> dizzinessContainersThatChangeControllerDoubleWave;
 
     private int bulletsPerAttack = D_SURVIVAL_BULLETS_INITIAL_NO_PER_ATTACK;
     //private Timer decreaseBulletsPerAttackTimer;
@@ -961,8 +961,8 @@ public class BulletsHandler implements Updatable {
         }
     }
 
-    private BulletsAndShieldContainer firstOpposingContainersDizziness;
-    private BulletsAndShieldContainer secondOpposingContainersDizziness;
+    /*private BulletsAndShieldContainer firstOpposingContainersDizziness;
+    private BulletsAndShieldContainer secondOpposingContainersDizziness;*/
     private BulletsAndShieldContainer firstContainersAlwaysControlledByOneControllerDizziness;
     private BulletsAndShieldContainer secondContainersAlwaysControlledByOneControllerDizziness;
 
@@ -997,15 +997,15 @@ public class BulletsHandler implements Updatable {
 
         populateDizzinessDoubleWaveArrays(afterHowManySecondsTheWaveWillStartHittingTheShield, afterHowManySecondsTheWaveWillStopHittingTheShield);
 
-        firstOpposingContainersDizziness = null;
-        secondOpposingContainersDizziness = null;
+        /*firstOpposingContainersDizziness = null;
+        secondOpposingContainersDizziness = null;*/
         firstContainersAlwaysControlledByOneControllerDizziness = null;
         secondContainersAlwaysControlledByOneControllerDizziness = null;
 
-        dizzinessOpposingContainersDoubleWave();
+        //dizzinessOpposingContainersDoubleWave();
         dizzinessContainersAlwaysControlledByOneControllerDoubleWave();
 
-        if (firstOpposingContainersDizziness != null & firstContainersAlwaysControlledByOneControllerDizziness != null) {
+        /*if (firstOpposingContainersDizziness != null & firstContainersAlwaysControlledByOneControllerDizziness != null) {
             int rand = MathUtils.random(1);
             if (rand == 0) {
                 isDouble = true;
@@ -1020,7 +1020,7 @@ public class BulletsHandler implements Updatable {
             isDouble = true;
             attachBullets(firstOpposingContainersDizziness, 0, false);
             attachBullets(secondOpposingContainersDizziness, 1, false);
-        } else if (firstContainersAlwaysControlledByOneControllerDizziness != null) {
+        } else */if (firstContainersAlwaysControlledByOneControllerDizziness != null) {
             isDouble = true;
             attachBullets(firstContainersAlwaysControlledByOneControllerDizziness, 0, false);
             attachBullets(secondContainersAlwaysControlledByOneControllerDizziness, 1, false);
@@ -1059,7 +1059,7 @@ public class BulletsHandler implements Updatable {
     private void populateDizzinessDoubleWaveArrays(float afterHowManySecondsTheWaveWillStartHittingTheShield, float afterHowManySecondsTheWaveWillStopHittingTheShield) {
         dizzinessLeftContainersDoubleWave.clear();
         dizzinessRightContainersDoubleWave.clear();
-        dizzinessContainersThatChangeControllerDoubleWave.clear();
+        //dizzinessContainersThatChangeControllerDoubleWave.clear();
 
         //Gdx.app.log(TAG, "HittingTime (Start, End) = (" + afterHowManySecondsTheWaveWillStartHittingTheShield + ", " + afterHowManySecondsTheWaveWillStopHittingTheShield + ").");
 
@@ -1088,8 +1088,8 @@ public class BulletsHandler implements Updatable {
             else if (containerPositioningWhenTheWaveStartsHitting == ContainerPositioning.LEFT &
                     containerPositioningWhenTheWaveStopsHitting == ContainerPositioning.LEFT)
                 dizzinessLeftContainersDoubleWave.add(container);
-            else
-                dizzinessContainersThatChangeControllerDoubleWave.add(container);
+            /*else
+                dizzinessContainersThatChangeControllerDoubleWave.add(container);*/
         }
     }
 
@@ -1108,7 +1108,7 @@ public class BulletsHandler implements Updatable {
         else return ContainerPositioning.LEFT;
     }
 
-    private void dizzinessOpposingContainersDoubleWave() {
+    /*private void dizzinessOpposingContainersDoubleWave() {
         // If 2 containers are 180 degrees apart, they're of course guaranteed to be controlled by different controllers (restricted).
 
         int len = dizzinessContainersThatChangeControllerDoubleWave.size;
@@ -1129,7 +1129,7 @@ public class BulletsHandler implements Updatable {
             }
 
         }
-    }
+    }*/
 
     private void dizzinessContainersAlwaysControlledByOneControllerDoubleWave() {
         if (dizzinessLeftContainersDoubleWave.size == 0 | dizzinessRightContainersDoubleWave.size == 0) {
@@ -1962,7 +1962,7 @@ public class BulletsHandler implements Updatable {
         dizzinessRightContainersDoubleWave = new BulletsAndShieldContainer[MathUtils.ceil(DISEASES_SHIELDS_MAX_COUNT/2f)];*/
         dizzinessLeftContainersDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
         dizzinessRightContainersDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
-        dizzinessContainersThatChangeControllerDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
+        //dizzinessContainersThatChangeControllerDoubleWave = new Array<>(false, DIZZINESS_SHIELDS_MAX_COUNT, BulletsAndShieldContainer.class);
     }
 
 
