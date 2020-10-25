@@ -768,7 +768,7 @@ public final class Constants {
 
     public static final int DIZZINESS_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
-    public static final int DIZZINESS_SHIELDS_MIN_COUNT = 3;
+    public static final int DIZZINESS_SHIELDS_MIN_COUNT = 4;
 
     public static final int D_DIZZINESS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 

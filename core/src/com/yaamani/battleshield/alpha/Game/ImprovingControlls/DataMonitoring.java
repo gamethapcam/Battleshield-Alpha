@@ -18,7 +18,7 @@ public class DataMonitoring implements Disposable, Resizable {
 
     private static final String TAG = DataMonitoring.class.getSimpleName();
 
-    public static final int PLOTTED_POINTS_PER_FRAME = 250;
+    public static final int PLOTTED_POINTS_PER_FRAME = 100;
     public static final float MIN_MAX = 15;
     public static final String LEFT_TAG = "Left";
     public static final String RIGHT_TAG = "\t\t\t\t\t\t\t\tRight";
@@ -49,8 +49,8 @@ public class DataMonitoring implements Disposable, Resizable {
 
         this.nsm = networkAndStorageManager;
 
-        initializeLeftStickGraph();
-        initializeRightStickGraph();
+        initializeLeftStickGraph(myBitmapFont);
+        initializeRightStickGraph(myBitmapFont);
         initializeProgressBar();
 
         initializeBulletsPerAttackText(myBitmapFont);
@@ -89,6 +89,11 @@ public class DataMonitoring implements Disposable, Resizable {
                 currentFrame = MathUtils.clamp(currentFrame-0.5f, 0, nsm.getAllLeftStickAngles().size-1);
             else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
                 currentFrame = MathUtils.clamp(currentFrame+0.5f, 0, nsm.getAllLeftStickAngles().size-1);
+            else if (Gdx.input.isKeyJustPressed(Input.Keys.A))
+                currentFrame = MathUtils.clamp(currentFrame-1f, 0, nsm.getAllLeftStickAngles().size-1);
+            else if (Gdx.input.isKeyJustPressed(Input.Keys.D))
+                currentFrame = MathUtils.clamp(currentFrame+1f, 0, nsm.getAllLeftStickAngles().size-1);
+
         }
 
         int currentIndex = MathUtils.floor(currentFrame);
@@ -106,8 +111,8 @@ public class DataMonitoring implements Disposable, Resizable {
         int start = MathUtils.clamp(currentIndex-PLOTTED_POINTS_PER_FRAME/2, 0, nsm.getAllLeftStickVelocities().size-PLOTTED_POINTS_PER_FRAME-1);
         int len = MathUtils.clamp(PLOTTED_POINTS_PER_FRAME, 0, nsm.getAllLeftStickVelocities().size);
 
-        leftStickGraph.render(shapeRenderer, nsm.getAllLeftStickVelocities(), start, len, currentIndex, LEFT_TAG);
-        rightStickGraph.render(shapeRenderer, nsm.getAllRightStickVelocities(), start, len, currentIndex, RIGHT_TAG);
+        leftStickGraph.render(shapeRenderer, spriteBatch, nsm.getAllLeftStickVelocities(), start, len, currentIndex, LEFT_TAG);
+        rightStickGraph.render(shapeRenderer, spriteBatch, nsm.getAllRightStickVelocities(), start, len, currentIndex, RIGHT_TAG);
 
 
         shapeRenderer.end();
@@ -146,8 +151,8 @@ public class DataMonitoring implements Disposable, Resizable {
         shapeRenderer.dispose();
     }
 
-    private void initializeLeftStickGraph() {
-        leftStickGraph = new LineGraph();
+    private void initializeLeftStickGraph(MyBitmapFont myBitmapFont) {
+        leftStickGraph = new LineGraph(myBitmapFont);
         leftStickGraph.width = 40;
         leftStickGraph.height = leftStickGraph.width;
         leftStickGraph.y = Constants.WORLD_SIZE/2f - leftStickGraph.height/2f;
@@ -157,8 +162,8 @@ public class DataMonitoring implements Disposable, Resizable {
         Gdx.app.log(DataMonitoring.TAG, LEFT_TAG + "(min, max) = (" + leftStickGraph.min + ", " + leftStickGraph.max + ").");
     }
 
-    private void initializeRightStickGraph() {
-        rightStickGraph = new LineGraph();
+    private void initializeRightStickGraph(MyBitmapFont myBitmapFont) {
+        rightStickGraph = new LineGraph(myBitmapFont);
         rightStickGraph.width = 40;
         rightStickGraph.height = rightStickGraph.width;
         rightStickGraph.y = Constants.WORLD_SIZE/2f - rightStickGraph.height/2f;
@@ -196,7 +201,14 @@ public class DataMonitoring implements Disposable, Resizable {
 
         public float lineWidth;
 
-        public void render(ShapeRenderer shapeRenderer, Array<Float> points, int start, int len, int pointOfInterestIndex, String tag) {
+        private SimpleText pointOfInterestValueText;
+
+        public LineGraph(MyBitmapFont myBitmapFont) {
+            pointOfInterestValueText = new SimpleText(myBitmapFont, "0.0");
+            pointOfInterestValueText.setHeight(3f);
+        }
+
+        public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, Array<Float> points, int start, int len, int pointOfInterestIndex, String tag) {
 
             shapeRenderer.rectLine(x, y, x, y+height, lineWidth*2);
             shapeRenderer.rectLine(x, y, x+width, y, lineWidth*2);
@@ -244,6 +256,17 @@ public class DataMonitoring implements Disposable, Resizable {
                     shapeRenderer.rectLine(x2, y, x2, y2, 0.1f);
                     shapeRenderer.circle(x2, y2, 1f);
                     shapeRenderer.setColor(Color.WHITE);
+
+                    shapeRenderer.end();
+
+                    spriteBatch.begin();
+                    pointOfInterestValueText.setCharSequence(String.valueOf(point1), true);
+                    pointOfInterestValueText.setPosition(x2, y2);
+                    pointOfInterestValueText.draw(spriteBatch, 1);
+                    spriteBatch.end();
+
+                    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
                 }
             }
 
