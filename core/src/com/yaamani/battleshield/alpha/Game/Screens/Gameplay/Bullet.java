@@ -56,6 +56,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private Tween fakeTween; // When the wave is fake.
 
+
+    private BulletPortalType bulletPortalType = null;
+    private BulletPortalRole bulletPortalRole = null;
+
     /*private Tween bulletMovement;
     private float initialY;
     private float finalY;*/
@@ -147,6 +151,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public Tween getFakeTween() {
         return fakeTween;
+    }
+
+    public void setBulletPortalType(BulletPortalType bulletPortalType) {
+        this.bulletPortalType = bulletPortalType;
+    }
+
+    public void setBulletPortalRole(BulletPortalRole bulletPortalRole) {
+        this.bulletPortalRole = bulletPortalRole;
     }
 
     public void iamInUseNow() {
@@ -256,6 +268,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
             whenTheShieldCompletelyDisappears();
 
+            handlePortalRole();
+
+            handlePortalType();
+
             if (parent != null) {
                 Shield shield;
                 shield = parent.getShield();
@@ -328,6 +344,56 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             setPlusOrMinusExists(false);
         else if (currentEffect == effects.star)
             setStarExists(false);
+    }
+
+    private void handlePortalType() {
+        if (bulletPortalType ==  null) return;
+
+        switch (bulletPortalType) {
+            case PORTAL_ENTRANCE:
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION) {
+                    stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
+                }
+                break;
+            case PORTAL_EXIT:
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION - PORTALS_ENTRANCE_EXIT_DIAMETER /2f) {
+                    //stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
+                    setColor(1, 1, 1, 1);
+                }
+                break;
+        }
+    }
+
+    private void handlePortalRole() {
+        if (bulletPortalRole ==  null) return;
+
+        switch (bulletPortalRole) {
+            case CLOSE_ENTRANCE_PORTAL:
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION) {
+                    parent.hidePortalEntrance();
+                    bulletPortalRole = null;
+                }
+                break;
+            case OPEN_EXIT_PORTAL:
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION + PORTALS_ENTRANCE_EXIT_DIAMETER) {
+                    parent.showPortalExit();
+                    bulletPortalRole = null;
+                }
+                break;
+            case CLOSE_EXIT_PORTAL:
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION) {
+                    parent.hidePortalExit();
+                    bulletPortalRole = null;
+                    gameplayScreen.getBulletsHandler().portalIsOver();
+                }
+                break;
+            case OPEN_AND_CLOSE_EXIT_PORTAL:
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION + PORTALS_ENTRANCE_EXIT_DIAMETER) {
+                    parent.showPortalExit();
+                    bulletPortalRole = BulletPortalRole.CLOSE_EXIT_PORTAL;
+                }
+                break;
+        }
     }
 
     /*private void decideSpecialType() {

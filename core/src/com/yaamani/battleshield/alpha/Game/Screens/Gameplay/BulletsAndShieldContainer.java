@@ -3,6 +3,10 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
@@ -30,6 +34,9 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
+    private Image portalEntrance;
+    private Image portalExit;
+
     private GameplayScreen gameplayScreen;
 
     private SimpleText debugText;
@@ -42,6 +49,9 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         this.index = index;
 
         initializeRotationOmegaAlphaTween(gameplayScreen);
+
+        initializePortalEntrance();
+        initializePortalExit();
 
         debugText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
         addActor(debugText);
@@ -126,9 +136,52 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         rotationOmegaAlphaTween.setNewAlpha(newAlpha);
     }
 
+    public void showPortalEntrance() {
+        portalEntrance.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+    }
+
+    public void showPortalExit() {
+        portalExit.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+    }
+
+    public void hidePortalEntrance() {
+        portalEntrance.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+    }
+
+    public void hidePortalExit() {
+        portalExit.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+    }
+
     private void initializeRotationOmegaAlphaTween(GameplayScreen gameplayScreen) {
         rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, MyInterpolation.myExp10);
         gameplayScreen.addToFinishWhenStoppingTheGameplay(rotationOmegaAlphaTween);
+    }
+
+    private void initializePortalEntrance() {
+        portalEntrance = new Image(Assets.instance.gameplayAssets.portalEntrance);
+        addActor(portalEntrance);
+
+        portalEntrance.setSize(PORTALS_ENTRANCE_EXIT_DIAMETER, Constants.PORTALS_ENTRANCE_EXIT_DIAMETER);
+        portalEntrance.setX(-portalEntrance.getWidth()/2f);
+        portalEntrance.setY(D_PORTALS_ENTRANCE_EXIT_POSITION - portalEntrance.getHeight()/2f);
+
+        //portalEntrance.setVisible(false);
+        portalEntrance.setColor(1, 1, 1, 0);
+        //portalEntrance.setDebug(true);
+    }
+
+    private void initializePortalExit() {
+        portalExit = new Image(Assets.instance.gameplayAssets.portalExit);
+        addActor(portalExit);
+
+        portalExit.setSize(PORTALS_ENTRANCE_EXIT_DIAMETER, Constants.PORTALS_ENTRANCE_EXIT_DIAMETER);
+        portalExit.setX(-portalExit.getWidth()/2f);
+        portalExit.setY(D_PORTALS_ENTRANCE_EXIT_POSITION - portalExit.getHeight()/2f);
+
+        //portalExit.setVisible(false);
+        portalExit.setColor(1, 1, 1, 0);
+
+        //portalExit.setDebug(true);
     }
 
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------

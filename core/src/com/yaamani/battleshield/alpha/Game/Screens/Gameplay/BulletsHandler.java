@@ -34,7 +34,7 @@ public class BulletsHandler implements Updatable {
     private Bullet currentWaveLastBullet;
 
     //private Timer currentBulletsWaveTimer; // Just a timer.
-    public enum ContainerPositioning{RANDOM, RIGHT, LEFT}
+
     private Array<BulletsAndShieldContainer> busyContainers; // Containers with bullets attached during the current wave.
     private Array<Boolean> busyContainersIsFake; // Whether a corresponding container (the same index) has a fake wave or not.
     //private boolean dontAddBusyToNonBusyThisTime;
@@ -89,6 +89,8 @@ public class BulletsHandler implements Updatable {
     private SpecialBullet forcedSpecialBullet = null;
     private boolean forcedSpecialBulletQuestionMarkAllowed = false;
 
+
+    private boolean thereIsAPortal;
 
 
     //private float speedResetTime = 0;
@@ -501,6 +503,10 @@ public class BulletsHandler implements Updatable {
         this.networkAndStorageManager = networkAndStorageManager;
     }
 
+    public void portalIsOver() {
+        thereIsAPortal = false;
+    }
+
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
@@ -562,7 +568,7 @@ public class BulletsHandler implements Updatable {
         forcedSpecialBulletQuestionMarkAllowed = false;
     }
 
-    public void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean isFake) {
+    private void determineTypeThenAttach(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean isFake, BulletPortalType bulletPortalType) {
         waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
         //int specialBulletOrder = 0;
 
@@ -581,6 +587,11 @@ public class BulletsHandler implements Updatable {
 
         //------------------------------------------------------
 
+        attachBullets(parent, indexForDoubleWave, isFake, bulletPortalType);
+    }
+
+
+    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean isFake, BulletPortalType bulletPortalType) {
         float fakeTweenDelay = 0;
         if (isFake) {
             fakeTweenDelay = (Bullet.getR() / currentBulletSpeed*1000)/1.25f - D_CRYSTAL_FAKE_TWEEN_DURATION;
@@ -596,8 +607,26 @@ public class BulletsHandler implements Updatable {
 
                 bullet.notSpecial(isFake);
                 bullet.attachNotSpecialToBulletsAndShieldContainer(parent, i);
+
                 if (isFake)
                     bullet.getFakeTween().start(fakeTweenDelay);
+
+                bullet.setBulletPortalType(bulletPortalType);
+                if (bulletPortalType == BulletPortalType.PORTAL_ENTRANCE) {
+                    if (i == bulletsPerAttack-1)
+                        bullet.setBulletPortalRole(BulletPortalRole.CLOSE_ENTRANCE_PORTAL);
+                } else if (bulletPortalType == BulletPortalType.PORTAL_EXIT) {
+                    bullet.setColor(1, 1, 1, 0);
+
+                    if (bulletsPerAttack > 1) {
+                        if (i == 0)
+                            bullet.setBulletPortalRole(BulletPortalRole.OPEN_EXIT_PORTAL);
+                        else if (i == bulletsPerAttack - 1)
+                            bullet.setBulletPortalRole(BulletPortalRole.CLOSE_EXIT_PORTAL);
+                    } else {
+                        bullet.setBulletPortalRole(BulletPortalRole.OPEN_AND_CLOSE_EXIT_PORTAL);
+                    }
+                }
             }
         } else {
             bullet = bulletPool.obtain();
@@ -606,8 +635,17 @@ public class BulletsHandler implements Updatable {
 
             bullet.setSpecial(currentSpecialBullet, questionMark, isFake);
             bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
+
             if (isFake)
                 bullet.getFakeTween().start(fakeTweenDelay);
+
+            bullet.setBulletPortalType(bulletPortalType);
+            if (bulletPortalType == BulletPortalType.PORTAL_ENTRANCE) {
+                bullet.setBulletPortalRole(BulletPortalRole.CLOSE_ENTRANCE_PORTAL);
+            } else if (bulletPortalType == BulletPortalType.PORTAL_EXIT) {
+                bullet.setColor(1, 1, 1, 0);
+                bullet.setBulletPortalRole(BulletPortalRole.OPEN_AND_CLOSE_EXIT_PORTAL);
+            }
         }
 
 
@@ -620,7 +658,7 @@ public class BulletsHandler implements Updatable {
         }
     }
 
-    public void handleNewWave() {
+    private void handleNewWave() {
 
         // If all containers are transparent -> return
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
@@ -917,6 +955,11 @@ public class BulletsHandler implements Updatable {
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS)
             dizzinessWave(WaveAttackType.SINGLE);
             //dizzinessSafeSingleWave();
+        else if (gameplayScreen.getGameplayMode() == GameplayMode.PORTALS &
+                MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY &
+                !thereIsAPortal &
+                !Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished())
+            portalsSingleWave();
         else
             ordinarySingleWave();
 
@@ -930,7 +973,20 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "----- NEW SINGLE WAVE -----");
 
         firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false);
-        attachBullets(firstContainerChosen, 0, false);
+        determineTypeThenAttach(firstContainerChosen, 0, false, null);
+    }
+
+    private void portalsSingleWave() {
+        Gdx.app.log(TAG, "----- NEW SINGLE WAVE (PORTAL) -----");
+
+        thereIsAPortal = true;
+
+        firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false); // Entrance container
+        determineTypeThenAttach(firstContainerChosen, 0, false, BulletPortalType.PORTAL_ENTRANCE);
+        firstContainerChosen.showPortalEntrance();
+
+        BulletsAndShieldContainer exitContainer = chooseContainer(ContainerPositioning.RANDOM, false);
+        attachBullets(exitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
     }
 
     private void newDoubleWave() {
@@ -972,9 +1028,9 @@ public class BulletsHandler implements Updatable {
             secondContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false);
 
 
-        attachBullets(firstContainerChosen, 0, false);
+        determineTypeThenAttach(firstContainerChosen, 0, false, null);
         if (secondContainerChosen != null)
-            attachBullets(secondContainerChosen, 1, false);
+            determineTypeThenAttach(secondContainerChosen, 1, false, null);
 
     }
 
@@ -1039,11 +1095,11 @@ public class BulletsHandler implements Updatable {
             attachBullets(secondOpposingContainersDizziness, 1, false);
         } else */if (firstContainerChosen != null) {
             if (singleOrDouble == WaveAttackType.SINGLE) {
-                attachBullets(firstContainerChosen, 0, false);
+                determineTypeThenAttach(firstContainerChosen, 0, false, null);
             } else {
                 isDouble = true;
-                attachBullets(firstContainerChosen, 0, false);
-                attachBullets(secondContainerChosen, 1, false);
+                determineTypeThenAttach(firstContainerChosen, 0, false, null);
+                determineTypeThenAttach(secondContainerChosen, 1, false, null);
             }
         } else {
             dizzinessSafeSingleWave();
@@ -1198,7 +1254,7 @@ public class BulletsHandler implements Updatable {
         firstContainerChosen = chooseContainer(fromAngle, toAngle, false);
 
 
-        attachBullets(firstContainerChosen, 0, false);
+        determineTypeThenAttach(firstContainerChosen, 0, false, null);
     }
 
     private BulletsAndShieldContainer chooseContainer(ContainerPositioning positioning, boolean isFake) {
@@ -1524,7 +1580,7 @@ public class BulletsHandler implements Updatable {
             for (int i = 0; i < numOfFakeWaves; i++) {
                 BulletsAndShieldContainer c = chooseContainer(positioning, true);
                 if (c != null)
-                    attachBullets(c, 1, true); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
+                    determineTypeThenAttach(c, 1, true, null); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
             }
     }
 
@@ -1616,7 +1672,7 @@ public class BulletsHandler implements Updatable {
 
         roundTurnPassedActiveShieldsMinusOne = false;
         //attachBullets(current, 0);
-        attachBullets(current, 0, false);
+        determineTypeThenAttach(current, 0, false, null);
         //Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 
@@ -1630,7 +1686,7 @@ public class BulletsHandler implements Updatable {
             if (roundTurn >= roundStart & roundTurnPassedActiveShieldsMinusOne) {
                 roundTurn = null;
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave(false, true);
-            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0, false);
+            } else determineTypeThenAttach(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0, false, null);
         } else {
             roundTurn--;
             if (roundTurn < 0) {
@@ -1640,7 +1696,7 @@ public class BulletsHandler implements Updatable {
             if (roundTurn <= roundStart & roundTurnPassedActiveShieldsMinusOne) {
                 roundTurn = null;
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING) newWave(false, true);
-            } else attachBullets(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0, false);
+            } else determineTypeThenAttach(gameplayScreen.getBulletsAndShieldContainers()[roundTurn], 0, false, null);
         }
         //Gdx.app.log(TAG, "CONTINUE ROUND, " + roundTurn);
     }

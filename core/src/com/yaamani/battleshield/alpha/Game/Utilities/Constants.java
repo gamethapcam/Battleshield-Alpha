@@ -290,6 +290,8 @@ public final class Constants {
             //WaveAttackType.ROUND
     };
 
+    public enum ContainerPositioning{RANDOM, RIGHT, LEFT}
+
     public enum WaveBulletsType {ORDINARY, SPECIAL_GOOD, SPECIAL_BAD}
 
     public enum SpecialBulletType {GOOD, BAD}
@@ -304,11 +306,11 @@ public final class Constants {
 
             WaveBulletsType.SPECIAL_BAD
     };
-
     public enum SpecialBullet {
         MINUS, HEART, STAR, ARMOR /*Lazer*/, // Good
         PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, TWO_EXIT_PORTAL /*Portals*/, // Bad
         QUESTION_MARK
+
     }
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
@@ -1014,6 +1016,19 @@ public final class Constants {
     public static final int D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
 
+    public static final float D_PORTALS_PORTAL_PROBABILITY = 0.35f;
+
+    public enum BulletPortalType {PORTAL_ENTRANCE, PORTAL_EXIT} // PORTAL_ENTRANCE: When the bullet enters the portal, it'll disappear. PORTAL_EXIT: The bullet will come out of the portal and appear.
+
+    public enum BulletPortalRole {CLOSE_ENTRANCE_PORTAL, OPEN_EXIT_PORTAL, CLOSE_EXIT_PORTAL, OPEN_AND_CLOSE_EXIT_PORTAL}
+
+    public static final float D_PORTALS_ENTRANCE_EXIT_POSITION = WORLD_SIZE * 0.35f;
+
+    public static final float PORTALS_ENTRANCE_EXIT_DIAMETER = TURRET_RADIUS * 1.25f;
+
+    public static final float PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION = 0.2f; // sec
+
+
     public static final SpecialBullet[] PORTALS_SPECIAL_BULLETS = {SpecialBullet.TWO_EXIT_PORTAL};
 
     public static final float D_PORTALS_SPECIAL_BULLETS_PROBABILITY = 0.25f;
@@ -1214,7 +1229,5 @@ public final class Constants {
     public static final String ASSETS_PORTALS_EXIT = "Portal Exit";
 
     public static final String ASSETS_2_EXIT_PORTAL = "2 Exit Portal";
-
-
 
 }
