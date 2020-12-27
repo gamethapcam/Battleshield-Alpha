@@ -79,6 +79,9 @@ public class BulletsHandler implements Updatable {
     private Tween d_portals_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
     private Tween d_portals_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
 
+    private Tween d_t1_bulletsPerAttackNumberTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+    private Tween d_t1_bulletSpeedMultiplierTween; // ->->->->->->->->->->-> Difficulty <-<-<-<-<-<-<-<-<-<-<-<-
+
 
 
     private float[] timestampsForArmorBulletsToPrepareForTheNextLazerAttack = new float[MathUtils.ceil(D_LAZER_MAX_NUM_OF_PROVIDED_ARMOR_BULLETS)];
@@ -168,6 +171,9 @@ public class BulletsHandler implements Updatable {
         initializeD_portals_bulletsPerAttackNumberTween();
         initializeD_portals_bulletsSpeedMultiplierTween();
 
+        initializeD_t1_bulletsPerAttackNumberTween();
+        initializeD_t1_bulletsSpeedMultiplierTween();
+
         //initializeCurrentDifficultLevelTimer();
 
         initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
@@ -222,6 +228,10 @@ public class BulletsHandler implements Updatable {
             case PORTALS:
                 d_portals_bulletsPerAttackNumberTween.update(delta);
                 d_portals_bulletSpeedMultiplierTween.update(delta);
+                break;
+            case T1:
+                d_t1_bulletsPerAttackNumberTween.update(delta);
+                d_t1_bulletSpeedMultiplierTween.update(delta);
                 break;
         }
 
@@ -330,6 +340,14 @@ public class BulletsHandler implements Updatable {
 
     public Tween getD_portals_bulletSpeedMultiplierTween() {
         return d_portals_bulletSpeedMultiplierTween;
+    }
+
+    public Tween getD_t1_bulletsPerAttackNumberTween() {
+        return d_t1_bulletsPerAttackNumberTween;
+    }
+
+    public Tween getD_t1_bulletSpeedMultiplierTween() {
+        return d_t1_bulletSpeedMultiplierTween;
     }
 
     /* public BulletsAndShieldContainer getPrevious() {
@@ -1946,7 +1964,28 @@ public class BulletsHandler implements Updatable {
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(d_portals_bulletSpeedMultiplierTween);
     }
-    
+
+    private void initializeD_t1_bulletsPerAttackNumberTween() {
+        d_t1_bulletsPerAttackNumberTween = new Tween(T1_LEVEL_TIME*60*1000, D_T1_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setBulletsPerAttack((int) interpolation.apply(D_T1_BULLETS_INITIAL_NO_PER_ATTACK, D_T1_BULLETS_MIN_NUMBER_PER_ATTACK, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_t1_bulletsPerAttackNumberTween);
+    }
+
+    private void initializeD_t1_bulletsSpeedMultiplierTween() {
+        d_t1_bulletSpeedMultiplierTween = new Tween(T1_LEVEL_TIME*60*1000, D_T1_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                setCurrentSpeedMultiplier(interpolation.apply(D_T1_BULLETS_SPEED_MULTIPLIER_INITIAL, D_T1_BULLETS_SPEED_MULTIPLIER_MAX, percentage));
+            }
+        };
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(d_t1_bulletSpeedMultiplierTween);
+    }
 
     private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
         currentBulletSpeedTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION) {

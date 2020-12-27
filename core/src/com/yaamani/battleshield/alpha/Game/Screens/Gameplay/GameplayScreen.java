@@ -583,6 +583,23 @@ public class GameplayScreen extends AdvancedScreen {
                     setCurrentShieldsMinMaxCount(PORTALS_SHIELDS_MIN_COUNT, PORTALS_SHIELDS_MAX_COUNT);
                     break;
 
+                case T1:
+                    scoreTimerStuff.setLevelTime(T1_LEVEL_TIME);
+                    scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().t1();
+
+                    bulletsHandler.setCurrentPlanetSpecialBullets(T1_SPECIAL_BULLETS);
+                    bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_T1_SPECIAL_BULLETS_PROBABILITY);
+
+                    lazerAttackStuff.hide();
+
+                    bulletsHandler.getD_t1_bulletsPerAttackNumberTween().start();
+                    bulletsHandler.getD_t1_bulletSpeedMultiplierTween().start();
+
+                    bulletsHandler.setStopHandlingNewWave(false);
+                    setCurrentShieldsMinMaxCount(T1_SHIELDS_MIN_COUNT, T1_SHIELDS_MAX_COUNT);
+                    break;
+
+
                 case NETWORK_RECEIVER_VALUES_LOADER:
 
                     scoreTimerStuff.setLevelTime(Float.MAX_VALUE);

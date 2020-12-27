@@ -136,6 +136,9 @@ public class StarsContainer extends Group implements Disposable{
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             calculateTrailWarpStuff();
             inWarpTrailAnimation = !inWarpTrailAnimation;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SEMICOLON)) {
+            glassCrackPostProcessingEffect.generateCrack();
+
         }
 
         //Gdx.app.log(TAG, "" + (int) (Gdx.input.getX()/(float)Gdx.graphics.getWidth() * KERNEL_SIZE));

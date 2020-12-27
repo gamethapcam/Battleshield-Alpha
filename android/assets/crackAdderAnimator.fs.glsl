@@ -296,8 +296,13 @@ void main() {
             // Uncomment to make the curve work.
             // Uncomment to make the curve work.
             // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
+            // Uncomment to make the curve work.
 
-            //outColor.b = rcc; // Uncomment to make the curve work.
+            // outColor.b = rcc; // Uncomment to make the curve work.
 
         }
 

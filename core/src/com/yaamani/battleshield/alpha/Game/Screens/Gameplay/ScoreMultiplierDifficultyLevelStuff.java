@@ -35,6 +35,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
     private Tween dizziness_difficultyLevelTween;
     private Tween lazer_difficultyLevelTween;
     private Tween portals_difficultyLevelTween;
+    private Tween t1_difficultyLevelTween;
 
 
     public ScoreMultiplierDifficultyLevelStuff(GameplayScreen gameplayScreen) {
@@ -48,6 +49,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         initializeDizziness_difficultyLevelTween();
         initializeLazer_difficultyLevelTween();
         initializePortals_difficultyLevelTween();
+        initializeT1_difficultyLevelTween();
     }
 
     @Override
@@ -82,6 +84,9 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
                     break;
                 case PORTALS:
                     portals_difficultyLevelTween.update(delta);
+                    break;
+                case T1:
+                    t1_difficultyLevelTween.update(delta);
                     break;
             }
         }
@@ -205,6 +210,17 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
 
         portals_difficultyLevelTween.start();
+    }
+
+    public void t1() {
+        updateCharSequence(DIFFICULTY_PREFIX, 1);
+
+        myProgressBarTween.setDurationMillis(T1_LEVEL_TIME*60*1000);
+        myProgressBarTween.setInterpolation(D_T1_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
+        myProgressBarTween.start();
+
+
+        t1_difficultyLevelTween.start();
     }
 
     //---------------------------------------- Initializers ---------------------------------------
@@ -370,6 +386,26 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         };
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(portals_difficultyLevelTween);
+    }
+
+    private void initializeT1_difficultyLevelTween() {
+        t1_difficultyLevelTween = new Tween(T1_LEVEL_TIME*60*1000, D_T1_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                int newDifficultyLevel = MathUtils.round(interpolation.apply(1, D_T1_NUMBER_OF_DIFFICULTY_LEVELS, percentage));
+                if (newDifficultyLevel != scoreMultiplierDifficultyLevel) {
+                    scoreMultiplierDifficultyLevel = newDifficultyLevel;
+                    updateCharSequence(DIFFICULTY_PREFIX, newDifficultyLevel);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
+            }
+        };
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(t1_difficultyLevelTween);
     }
 
 

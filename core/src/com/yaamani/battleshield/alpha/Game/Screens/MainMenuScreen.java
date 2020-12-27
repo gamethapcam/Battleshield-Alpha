@@ -582,8 +582,24 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
 
         t1.setY(MM_T1_TXT_FINAL_Y);
 
-
+        t1.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startT1(game);
+                    }
+                }
+        );
     }
+
+
+    private void startT1(final AdvancedStage game) {
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+        gameplayScreen.setGameplayMode(GameplayMode.T1);
+        game.switchScreens(mainMenuToGameplay);
+    }
+
 
     private void initializeDizziness(AdvancedStage game) {
         dizziness = new SimpleText(myBitmapFont, "DIZZINESS");

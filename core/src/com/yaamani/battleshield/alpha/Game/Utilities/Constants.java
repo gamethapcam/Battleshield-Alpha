@@ -170,7 +170,7 @@ public final class Constants {
 
 
     public enum GameplayControllerType {FREE, RESTRICTED}
-    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS, NETWORK_RECEIVER_VALUES_LOADER}
+    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS, T1, NETWORK_RECEIVER_VALUES_LOADER}
 
 
     public enum Direction {RIGHT, LEFT}
@@ -308,7 +308,7 @@ public final class Constants {
     };
     public enum SpecialBullet {
         MINUS, HEART, STAR, ARMOR /*Lazer*/, // Good
-        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, TWO_EXIT_PORTAL /*Portals*/, // Bad
+        PLUS, BOMB, SHIELD_DISABLING, MIRROR /*Crystal*/, FASTER_DIZZINESS_ROTATION /*Dizziness*/, TWO_EXIT_PORTAL /*Portals*/, REWIND /*T1*/, // Bad
         QUESTION_MARK
 
     }
@@ -1092,7 +1092,66 @@ public final class Constants {
 
 
 
+    public static final float T1_LEVEL_TIME = 5;
 
+    public static final int T1_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
+
+    public static final int T1_SHIELDS_MIN_COUNT = 4;
+
+    public static final int D_T1_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
+    public static final float D_T1_SPECIAL_BULLETS_PROBABILITY = 0.35f;
+
+    public static final SpecialBullet[] T1_SPECIAL_BULLETS = {SpecialBullet.REWIND};
+
+
+    public static final MyInterpolation D_T1_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
+
+    public static final MyInterpolation D_T1_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
+
+
+    public static final int D_T1_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+
+    public static final int D_T1_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
+
+    public static final int D_T1_BULLETS_MAX_NUMBER_PER_ATTACK = D_T1_BULLETS_MIN_NUMBER_PER_ATTACK + (D_T1_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_T1_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+
+    public static final int D_T1_BULLETS_INITIAL_NO_PER_ATTACK = D_T1_BULLETS_MAX_NUMBER_PER_ATTACK;
+
+    public static final Interpolation D_T1_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_T1_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_T1_DIFFICULTY_TIME_SCALE,
+            D_T1_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final float D_T1_BULLETS_SPEED_MULTIPLIER_INITIAL = 1;
+
+    public static final float D_T1_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+
+    public static final float D_T1_BULLETS_SPEED_MULTIPLIER_MAX = D_T1_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_T1_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_T1_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final Interpolation D_T1_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_T1_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_T1_DIFFICULTY_TIME_SCALE,
+            D_T1_DIFFICULTY_OUTPUT_SCALE
+    );
+    
+    
+
+    public static final Interpolation D_T1_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_T1_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_T1_DIFFICULTY_TIME_SCALE,
+            D_T1_DIFFICULTY_OUTPUT_SCALE
+    );
+    
+    public static final Interpolation D_T1_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
+            D_T1_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.05f,
+            2,
+            D_T1_DIFFICULTY_TIME_SCALE,
+            D_T1_DIFFICULTY_OUTPUT_SCALE
+    );
 
 
 
@@ -1174,6 +1233,12 @@ public final class Constants {
 
     public static final String ASSETS_FASTER_DIZZINESS_ROTATION = "Faster Dizziness Rotation";
 
+    public static final String ASSETS_ARMOR_BULLET = "Armor";
+
+    public static final String ASSETS_2_EXIT_PORTAL_BULLET = "2 Exit Portal";
+
+    public static final String ASSETS_REWIND_BULLET = "Rewind";
+
     public static final String ASSETS_PAUSE_TEXT = "Pause Text";
 
     public static final String ASSETS_PAUSE_SYMBOL = "Pause Symbol";
@@ -1210,8 +1275,6 @@ public final class Constants {
 
     public static final String ASSETS_T1 = "T1";
 
-    public static final String ASSETS_ARMOR_BULLET = "Armor";
-
     public static final String ASSETS_ARMOR_HALO = "Halo Armor";
 
     public static final String ASSETS_LAZER_GUN = "Lazer Gun";
@@ -1227,7 +1290,5 @@ public final class Constants {
     public static final String ASSETS_PORTALS_ENTRANCE = "Portal Entrance";
 
     public static final String ASSETS_PORTALS_EXIT = "Portal Exit";
-
-    public static final String ASSETS_2_EXIT_PORTAL = "2 Exit Portal";
 
 }
