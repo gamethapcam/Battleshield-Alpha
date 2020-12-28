@@ -482,6 +482,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!questionMark) region = Assets.instance.gameplayAssets.twoExitPortal;
                 currentEffect = effects.twoExitPortal;
                 break;
+            case REWIND:
+                if (!questionMark) region = Assets.instance.gameplayAssets.rewindBullet;
+                currentEffect = effects.rewind;
+                break;
         }
 
         // Next 2 lines are for debugging.
@@ -505,7 +509,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void initializeType() {
         type = new SimpleText(gameplayScreen.getMyBitmapFont(), "Bullet");
         type.setBoundsHeight(BULLETS_SPECIAL_DIAMETER/*WORLD_SIZE/2f*/, BULLETS_SPECIAL_DIAMETER, WORLD_SIZE/30f);
-        //addActor(type);
+        addActor(type); // Uncomment for debugging
     }
 
     /*private void bulletMovementSetDurationAndStart() {
@@ -577,6 +581,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         //Portals
         private BulletEffect twoExitPortal;
+
+        //T1
+        private BulletEffect rewind;
 
 
 
@@ -702,6 +709,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             };
 
             twoExitPortal = new BulletEffect() {
+                @Override
+                public void effect() {
+
+                }
+            };
+
+            rewind = new BulletEffect() {
                 @Override
                 public void effect() {
 

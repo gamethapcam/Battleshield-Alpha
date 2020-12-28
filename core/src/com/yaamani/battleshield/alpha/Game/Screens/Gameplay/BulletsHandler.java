@@ -426,7 +426,7 @@ public class BulletsHandler implements Updatable {
     }
 
     public void resetSpeed() {
-        //speedResetTime = gameplayScreen.getTimePlayedThisTurnSoFar();
+        //speedResetTime = gameplayScreen.getTimePlayedThisRoundSoFar();
         gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().start();
         //currentDifficultyLevelTimer.start();
         d_survival_bulletSpeedMultiplierTween.start();
@@ -447,7 +447,7 @@ public class BulletsHandler implements Updatable {
     }*/
 
     public float getBulletSpeed() {
-        /*int i = (int) *//*floor*//* ((gameplayScreen.getTimePlayedThisTurnSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
+        /*int i = (int) *//*floor*//* ((gameplayScreen.getTimePlayedThisRoundSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
         float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
         if (currentMultiplier <= BULLETS_SPEED_MULTIPLIER_MAX) {

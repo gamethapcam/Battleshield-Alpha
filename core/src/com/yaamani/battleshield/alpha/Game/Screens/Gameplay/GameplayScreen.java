@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
@@ -31,6 +32,7 @@ public class GameplayScreen extends AdvancedScreen {
     public static final String TAG = GameplayScreen.class.getSimpleName();
 
     private Image turret;
+    private float currentTurretRadius;
 
     private GameplayControllerType gameplayControllerType;
     private GameplayMode gameplayMode;
@@ -336,7 +338,8 @@ public class GameplayScreen extends AdvancedScreen {
 
     private void initializeTurret() {
         turret = new Image(Assets.instance.gameplayAssets.turret);
-        turret.setBounds(0, 0, TURRET_RADIUS * 2, TURRET_RADIUS * 2);
+
+        setCurrentTurretRadius(TURRET_RADIUS);
         addActor(turret);
         turret.setColor(1, 1, 1, 1f);
     }
@@ -482,7 +485,10 @@ public class GameplayScreen extends AdvancedScreen {
         return gameplayMode;
     }
 
-
+    private void setCurrentTurretRadius(float radius) {
+        currentTurretRadius = radius;
+        turret.setBounds(0, 0, currentTurretRadius * 2, currentTurretRadius * 2);
+    }
 
     public void setGameplayMode(GameplayMode gameplayMode) {
         this.gameplayMode = gameplayMode;
@@ -501,6 +507,8 @@ public class GameplayScreen extends AdvancedScreen {
             bulletsHandler.setCurrentPlanetSpecialBullets(null);
 
             lazerAttackStuff.hide();
+            healthBar.setVisible(true);
+            setCurrentTurretRadius(TURRET_RADIUS);
 
             //bulletsHandler.startSurvivalDifficultyTweens();
             bulletsHandler.getD_survival_bulletsPerAttackNumberTween().start();
@@ -522,6 +530,8 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_CRYSTAL_SPECIAL_BULLETS_PROBABILITY);
 
                     lazerAttackStuff.hide();
+                    healthBar.setVisible(true);
+                    setCurrentTurretRadius(TURRET_RADIUS);
 
                     //bulletsHandler.startCrystalDifficultyTweens();
                     bulletsHandler.getD_crystal_bulletsPerAttackNumberTween().start();
@@ -540,6 +550,8 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_DIZZINESS_SPECIAL_BULLETS_PROBABILITY);
 
                     lazerAttackStuff.hide();
+                    healthBar.setVisible(true);
+                    setCurrentTurretRadius(TURRET_RADIUS);
 
                     //bulletsHandler.startDizzinessDifficultyTweens();
                     bulletsHandler.getD_dizziness_bulletsPerAttackNumberTween().start();
@@ -560,6 +572,9 @@ public class GameplayScreen extends AdvancedScreen {
                     lazerAttackStuff.calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
                     lazerAttackStuff.getNextLazerAttackTimer().start();
 
+                    healthBar.setVisible(true);
+                    setCurrentTurretRadius(TURRET_RADIUS);
+
                     bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_lazer_bulletSpeedMultiplierTween().start();
 
@@ -575,6 +590,8 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_PORTALS_SPECIAL_BULLETS_PROBABILITY);
 
                     lazerAttackStuff.hide();
+                    healthBar.setVisible(true);
+                    setCurrentTurretRadius(TURRET_RADIUS);
 
                     bulletsHandler.getD_portals_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_portals_bulletSpeedMultiplierTween().start();
@@ -591,6 +608,8 @@ public class GameplayScreen extends AdvancedScreen {
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_T1_SPECIAL_BULLETS_PROBABILITY);
 
                     lazerAttackStuff.hide();
+                    healthBar.setVisible(false);
+                    setCurrentTurretRadius(HEALTH_BAR_RADIUS * HEALTH_BAR_INNER_RADIUS_RATIO);
 
                     bulletsHandler.getD_t1_bulletsPerAttackNumberTween().start();
                     bulletsHandler.getD_t1_bulletSpeedMultiplierTween().start();
@@ -605,6 +624,8 @@ public class GameplayScreen extends AdvancedScreen {
                     scoreTimerStuff.setLevelTime(Float.MAX_VALUE);
 
                     lazerAttackStuff.hide();
+                    healthBar.setVisible(true);
+                    setCurrentTurretRadius(TURRET_RADIUS);
 
                     bulletsHandler.setStopHandlingNewWave(true);
                     setCurrentShieldsMinMaxCount(3, SHIELDS_UNIVERSAL_MAX_COUNT);
@@ -666,8 +687,8 @@ public class GameplayScreen extends AdvancedScreen {
         this.state = state;
     }
 
-    /*public float getTimePlayedThisTurnSoFar() {
-        return timePlayedThisTurnSoFar;
+    /*public float getTimePlayedThisRoundSoFar() {
+        return timePlayedThisRoundSoFar;
     }*/
 
     public MyBitmapFont getMyBitmapFont() {
@@ -756,8 +777,8 @@ public class GameplayScreen extends AdvancedScreen {
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------
 
-    /*public void resetTimePlayedThisTurnSoFar() {
-        timePlayedThisTurnSoFar = 0;
+    /*public void resetTimePlayedThisRoundSoFar() {
+        timePlayedThisRoundSoFar = 0;
     }*/
 
     public void addToFinishWhenStoppingTheGameplay(Timer timer) {
