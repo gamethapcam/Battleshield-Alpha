@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    public static final boolean NO_DEATH = true;
+    public static final boolean NO_DEATH = false;
     public static final boolean DISMISS_STAR = true;
 
 
@@ -1092,7 +1092,7 @@ public final class Constants {
 
 
 
-    public static final float T1_LEVEL_TIME = 5;
+    public static final float T1_LEVEL_TIME = /*5*/0.5f;
 
     public static final int T1_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
@@ -1103,6 +1103,22 @@ public final class Constants {
     public static final float D_T1_SPECIAL_BULLETS_PROBABILITY = 0.35f;
 
     public static final SpecialBullet[] T1_SPECIAL_BULLETS = {SpecialBullet.REWIND};
+
+
+    //public static final float AFFECT_TIMER_TWEEN_DURATION = 500;
+
+    public static final Interpolation AFFECT_TIMER_TWEEN_INTERPOLATION = new ScoreTimerStuff.AffectTimerInterpolation()/*new ScoreTimerStuff.TimePlayedSoFarStarBulletThirdStageInterpolation()*/;
+
+    public static final float AFFECT_TIMER_ORDINARY_AMOUNT = NO_DEATH ? 0 : -500;
+
+    public static final float AFFECT_TIMER_BOMB_AMOUNT = NO_DEATH ? 0 : -2500;
+
+    public static final float AFFECT_TIMER_HEART_AMOUNT = +1000;
+
+
+    public static final Interpolation AFFECT_TIMER_COLOR_TWEEN_INTERPOLATION = Interpolation.pow4In;
+
+    public static final float AFFECT_TIMER_COLOR_TWEEN_DURATION = 500;
 
 
     public static final MyInterpolation D_T1_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;

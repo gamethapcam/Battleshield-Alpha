@@ -23,7 +23,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     public static final String TAG = ScoreTimerStuff.class.getSimpleName();
 
     /**
-     * The scoreTimer variable always stores the seconds played this turn so far. It doesn't matter whether survival mode is being played or a level is being played.
+     * The scoreTimer variable always stores the seconds played this round so far. It doesn't matter whether survival mode is being played or a level is being played.
      */
     private float scoreTimer;
     private float currentBest;
@@ -43,6 +43,10 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     private Tween scoreTweenStarBullet_ThirdStage;
 
     private Tween planetsTimerFlashesWhenZero;
+
+
+    private Tween affectTimerTween;
+    private Tween affectTimerColorTween;
 
     /*private GameplayScreen.ShieldsAndContainersHandler shieldsAndContainersHandler;
     private GameplayScreen.BulletsHandler bulletsHandler;*/
@@ -68,6 +72,9 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         initializePlanetsTimerFlashesWhenZero();
 
         scoreMultiplierDifficultyLevelStuff = new ScoreMultiplierDifficultyLevelStuff(gameplayScreen);
+
+        initializeAffectTimerTween();
+        initializeAffectTimerColorTween();
     }
 
     @Override
@@ -88,6 +95,9 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         scoreMultiplierDifficultyLevelStuff.update(delta);
 
         planetsTimerFlashesWhenZero.update(delta);
+
+        affectTimerTween.update(delta);
+        affectTimerColorTween.update(delta);
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
             if (!gameplayScreen.isInStarBulletAnimation())
@@ -119,6 +129,9 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             handleFinishButton(secondsLeft);
         }
 
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H))
+            affectTimer(AFFECT_TIMER_HEART_AMOUNT);
 
         //updateCharSequenceForScoreText();
     }
@@ -154,7 +167,11 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     }*/
 
     private float calculateSecondsLeft() {
-        return MathUtils.clamp((float) (levelTime * MINUTES_TO_SECONDS - scoreTimer), 0, Float.MAX_VALUE);
+        /*if (scoreTimer > levelTime * MINUTES_TO_SECONDS) {
+            scoreTimer = (float) (levelTime * MINUTES_TO_SECONDS);
+        }*/
+        float secondsLeft = (float) (levelTime * MINUTES_TO_SECONDS - scoreTimer);
+        return MathUtils.clamp((float) (secondsLeft), 0, Float.MAX_VALUE);
     }
 
     private void checkBestScore() {
@@ -182,6 +199,30 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         scoreTimer = 0;
         playerScoredBest = false;
     }
+
+    public void affectTimer(float amountMillis) {
+
+        //Gdx.app.log(TAG, "" + affectTimerTween.isStarted());
+
+        float previous = 0;
+        if (affectTimerTween.isStarted())
+            previous = (1-affectTimerTween.getPercentage()) *
+                    (affectTimerTweenFinalValue - affectTimerTweenInitialValue);
+
+        affectTimerTween.setDurationMillis(Math.abs(amountMillis) * 0.5f/5f);
+
+        affectTimerTweenInitialValue = scoreTimer;
+        affectTimerTweenFinalValue = affectTimerTweenInitialValue +
+                                                       (float) ((amountMillis + Math.signum(amountMillis) * affectTimerTween.getDurationMillis()) * MILLIS_TO_SECONDS) +
+                                                       previous;
+
+        //Gdx.app.log(TAG, "" + (affectTimerTweenFinalValue - affectTimerTweenInitialValue));
+        affectTimerColorTween.start();
+
+        affectTimerTween.start();
+    }
+
+    //public void aff
 
     private void loadBestFromHardDrive() {
         currentBest = preferences.getFloat(SCORE_BEST_KEY);
@@ -323,6 +364,48 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     }
 
 
+    private float affectTimerTweenInitialValue;
+    private float affectTimerTweenFinalValue;
+    //private boolean affectTimerGreen;
+    private void initializeAffectTimerTween() {
+        affectTimerTween = new Tween(AFFECT_TIMER_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                scoreTimer = interpolation.apply(affectTimerTweenInitialValue, affectTimerTweenFinalValue, percentage);
+
+                /*boolean goodForThePlayer = affectTimerTweenFinalValue > affectTimerTweenInitialValue;
+                if (goodForThePlayer)
+                    scoreText.setColor(percentage, 1, percentage, 1);
+                else
+                    scoreText.setColor(1, percentage, percentage, 1);*/
+
+            }
+        };
+    }
+
+    private void initializeAffectTimerColorTween() {
+        affectTimerColorTween = new Tween(AFFECT_TIMER_COLOR_TWEEN_DURATION, AFFECT_TIMER_COLOR_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                boolean goodForThePlayer = affectTimerTweenFinalValue > affectTimerTweenInitialValue;
+                float c = interpolation.apply(percentage);
+                if (goodForThePlayer) {
+                    float g = interpolation.apply(HEALTH_BAR_HEALTH_OVER_FLOW_COLOR.g, 1, percentage);
+                    scoreText.setColor(c, g, c, 1);
+                } else {
+                    if (NO_DEATH) return;
+                    float r = interpolation.apply(HEALTH_BAR_DANGEROUS_ANGLE_COLOR.r, 1, percentage);
+                    scoreText.setColor(r, c, c, 1);
+                }
+            }
+        };
+    }
+
+
+    /**
+     * <a href="https://www.desmos.com/calculator/tatn5ttzue">https://www.desmos.com/calculator/tatn5ttzue</a>
+     *
+     */
     public static class TimePlayedSoFarStarBulletThirdStageInterpolation extends Interpolation {
 
         @Override
@@ -338,6 +421,32 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             float T1 = 0.540199230611f  * a;
 
             return (T8 + T7 + T6 + T5 + T4 + T3 + T2 + T1) / 0.998286620477f;
+        }
+    }
+
+
+    /**
+     * <a href="https://www.desmos.com/calculator/xzmvqzjln7">https://www.desmos.com/calculator/xzmvqzjln7</a>
+     *
+     */
+    public static class AffectTimerInterpolation extends Interpolation {
+
+        @Override
+        public float apply(float a) {
+
+            float T7 = 6.81589f     * a*a*a*a*a*a*a;
+            float T6 = -23.8556f    * a*a*a*a*a*a;
+            float T5 = 33.8071f     * a*a*a*a*a;
+            float T4 = -24.8787f    * a*a*a*a;
+            float T3 = 6.22445f     * a*a*a;
+            float T2 = 3.61423f     * a*a;
+            float T1 = -0.671501f   * a;
+            float T0 = -0.0279216f;
+
+            float const0 = -0.027921646076f;
+            float const1 = 1.05584329215f;
+
+            return ((T0 + T1 + T2 + T3 + T4 + T5 + T6 + T7) - const0) / const1;
         }
     }
 }

@@ -509,7 +509,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void initializeType() {
         type = new SimpleText(gameplayScreen.getMyBitmapFont(), "Bullet");
         type.setBoundsHeight(BULLETS_SPECIAL_DIAMETER/*WORLD_SIZE/2f*/, BULLETS_SPECIAL_DIAMETER, WORLD_SIZE/30f);
-        addActor(type); // Uncomment for debugging
+        //addActor(type); // Uncomment for debugging
     }
 
     /*private void bulletMovementSetDurationAndStart() {
@@ -596,7 +596,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
 
-                    gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
+                    if (gameplayScreen.getGameplayMode() == GameplayMode.T1)
+                        gameplayScreen.getScoreTimerStuff().affectTimer(AFFECT_TIMER_ORDINARY_AMOUNT);
+                    else
+                        gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
                 }
             };
 
@@ -614,7 +617,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             bomb = new BulletEffect() {
                 @Override
                 public void effect() {
-                    gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_BOMB_AFFECT_HEALTH_BY);
+                    if (gameplayScreen.getGameplayMode() == GameplayMode.T1)
+                        gameplayScreen.getScoreTimerStuff().affectTimer(AFFECT_TIMER_BOMB_AMOUNT);
+                    else
+                        gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_BOMB_AFFECT_HEALTH_BY);
+
                     if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL)
                         gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().generateCrack();
                 }
@@ -643,7 +650,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             heart = new BulletEffect() {
                 @Override
                 public void effect() {
-                    gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_HEART_AFFECT_HEALTH_BY);
+                    if (gameplayScreen.getGameplayMode() == GameplayMode.T1)
+                        gameplayScreen.getScoreTimerStuff().affectTimer(AFFECT_TIMER_HEART_AMOUNT);
+                    else
+                        gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_HEART_AFFECT_HEALTH_BY);
                 }
             };
 

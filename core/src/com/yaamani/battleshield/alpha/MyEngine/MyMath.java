@@ -566,8 +566,10 @@ public final class MyMath {
      */
     public static String toMinutesDigitalTimeFormat(float minutesDecimalTimeFormat) {
         int minutes = MathUtils.floor(minutesDecimalTimeFormat);
-        float seconds = minutesDecimalTimeFormat - minutes;
-        return minutes + ":" + (int)(seconds*60);
+        float secondsDecimal = (minutesDecimalTimeFormat - minutes)*60;
+        int seconds = MathUtils.floor(secondsDecimal);
+        //int fraction = MathUtils.floor((secondsDecimal - seconds)*100);
+        return minutes + ":" + seconds /*+ "." + fraction*/;
     }
 
     public static float roundTo(float val, int numOfDigitsAfterTheDecimalPoint) {
