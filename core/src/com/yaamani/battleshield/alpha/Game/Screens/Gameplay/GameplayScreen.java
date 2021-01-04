@@ -810,10 +810,17 @@ public class GameplayScreen extends AdvancedScreen {
         tempProgressBar.setVisible(false);
     }
 
-    public void onWaitingForFinishButtonToBePressed() {
+    public void showFinishButtonAndRelatedStuff() {
         scoreTimerStuff.getPlanetsTimerFlashesWhenZero().start();
         levelFinishStuff.getFinishTextTween().start();
         levelFinishStuff.getFinishText().setVisible(true);
         tempProgressBar.positionBottomLeft();
+    }
+
+    public void hideFinishButtonAndRelatedStuff() {
+        scoreTimerStuff.getPlanetsTimerFlashesWhenZero().pause();
+        levelFinishStuff.getFinishTextTween().pause();
+        levelFinishStuff.getFinishText().setVisible(false);
+        tempProgressBar.positionCentre();
     }
 }

@@ -145,8 +145,14 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     }
 
     private void handleFinishButton(float secondsLeft) {
-        if (secondsLeft == 0 & !planetsTimerFlashesWhenZero.isStarted() & gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
-            gameplayScreen.onWaitingForFinishButtonToBePressed();
+        /*Gdx.app.log(TAG, "secondsLeft = " + secondsLeft +
+                ", planetsTimerFlashesWhenZero.isStarted() = " + planetsTimerFlashesWhenZero.isStarted() +
+                ", gameplayScreen.getState() = " + gameplayScreen.getState());*/
+
+        if (secondsLeft == 0 & (!planetsTimerFlashesWhenZero.isStarted() | planetsTimerFlashesWhenZero.isPaused()) & gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
+            gameplayScreen.showFinishButtonAndRelatedStuff();
+        } else if (secondsLeft > 0 & gameplayScreen.getLevelFinishStuff().getFinishText().isVisible()) {
+            gameplayScreen.hideFinishButtonAndRelatedStuff();
         }
     }
 
@@ -347,6 +353,12 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                     a *= 1 - fadeOutTween.getPercentage();
 
                 scoreText.setColor(SCORE_COLOR.r, SCORE_COLOR.g, SCORE_COLOR.b, a);    
+            }
+
+            @Override
+            public void onPause() {
+                super.onPause();
+                scoreText.setColor(SCORE_COLOR.r, SCORE_COLOR.g, SCORE_COLOR.b, 1);
             }
 
             @Override
