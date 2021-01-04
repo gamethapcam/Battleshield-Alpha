@@ -403,11 +403,11 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                 float c = interpolation.apply(percentage);
                 if (goodForThePlayer) {
                     float g = interpolation.apply(HEALTH_BAR_HEALTH_OVER_FLOW_COLOR.g, 1, percentage);
-                    scoreText.setColor(c, g, c, 1);
+                    scoreText.setColor(c, g, c, scoreText.getColor().a);
                 } else {
                     if (NO_DEATH) return;
                     float r = interpolation.apply(HEALTH_BAR_DANGEROUS_ANGLE_COLOR.r, 1, percentage);
-                    scoreText.setColor(r, c, c, 1);
+                    scoreText.setColor(r, c, c, scoreText.getColor().a);
                 }
             }
         };
