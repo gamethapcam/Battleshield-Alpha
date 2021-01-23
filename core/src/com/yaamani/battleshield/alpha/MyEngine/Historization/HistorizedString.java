@@ -1,20 +1,16 @@
 package com.yaamani.battleshield.alpha.MyEngine.Historization;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
+public class HistorizedString {
 
-public class HistorizedFloat {
-
-    private static final String TAG = HistorizedFloat.class.getSimpleName();
+    private static final String TAG = HistorizedString.class.getSimpleName();
 
     private int theNumOfValuesToBeRecorded;
 
-    private float[] history;
+    private String[] history;
     private int currentIndex = -1;
     private int numOfRecordedValues;
 
@@ -23,11 +19,11 @@ public class HistorizedFloat {
      * @param theNumOfValuesToBeRecorded must be greater than 0.
      * @throws
      */
-    public HistorizedFloat(int theNumOfValuesToBeRecorded) {
+    public HistorizedString(int theNumOfValuesToBeRecorded) {
         if (theNumOfValuesToBeRecorded <= 0)
             throw new ValueOutOfRangeException("theNumOfValuesToBeRecorded(" + theNumOfValuesToBeRecorded + " must be greater than 0.");
         this.theNumOfValuesToBeRecorded = theNumOfValuesToBeRecorded;
-        history = new float[theNumOfValuesToBeRecorded];
+        history = new String[theNumOfValuesToBeRecorded];
     }
 
 
@@ -36,7 +32,7 @@ public class HistorizedFloat {
      * @param theNumOfValuesToBeRecorded must be greater than 0.
      * @param initialValue
      */
-    public HistorizedFloat(int theNumOfValuesToBeRecorded, float initialValue) {
+    public HistorizedString(int theNumOfValuesToBeRecorded, String initialValue) {
         this(theNumOfValuesToBeRecorded);
         setValue(initialValue);
     }
@@ -50,7 +46,7 @@ public class HistorizedFloat {
      * @throws RuntimeException when the value corresponding to the given i isn't recorded yet.
      * @return
      */
-    public float getValue(int i) {
+    public String getValue(int i) {
         if (i > 0 | i <= -theNumOfValuesToBeRecorded)
             throw new ValueOutOfRangeException("i belongs to (-theNumOfValuesToBeRecorded, 0].");
         else if (i*-1 > numOfRecordedValues-1)
@@ -63,18 +59,18 @@ public class HistorizedFloat {
     }
 
     /**
-     * {@link HistorizedFloat#getValue(int)}.
+     * {@link HistorizedString#getValue(int)}.
      * @return getValue(0).
      */
-    public float getValue() {
+    public String getValue() {
         return getValue(0);
     }
 
-    public void setValue(float value) {
+    public void setValue(String value) {
         appendToHistory(value);
     }
 
-    private void appendToHistory(float value) {
+    private void appendToHistory(String value) {
         currentIndex++;
         if (currentIndex >= theNumOfValuesToBeRecorded) currentIndex = 0;
         history[currentIndex] = value;
