@@ -1297,13 +1297,17 @@ public class BulletsHandler implements Updatable {
                 float[] luckyAngles = {0, 0, 0, 0, 135f, 144f, 150f, 154.28572f, 157.5f};
                 float[] luckyAngles2 = {0, 0, 0, 0, 225f, 216f, 210f, 205.71428f, 202.5f}; // Both luckyAngles and luckyAngles2 are valid.
 
-                BulletsAndShieldContainer[] allContainers = gameplayScreen.getBulletsAndShieldContainers();
                 int activeShieldsNum = gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum();
+
+                float luckyAngle;
+                if (MathUtils.random(1) == 0) luckyAngle = luckyAngles[activeShieldsNum];
+                else luckyAngle = luckyAngles2[activeShieldsNum];
+
+                BulletsAndShieldContainer[] allContainers = gameplayScreen.getBulletsAndShieldContainers();
                 BulletsAndShieldContainer toBeChosen = null;
                 for (BulletsAndShieldContainer container : allContainers) {
                     float rotation = MyMath.deg_0_to_360(container.getRotation()/* + gameplayScreen.getContainerOfContainers().getRotation()*/);
-                    if (rotation > luckyAngles[activeShieldsNum]-1f &
-                            rotation < luckyAngles[activeShieldsNum]+1f) {
+                    if (rotation > luckyAngle-1f & rotation < luckyAngle+1f) {
                         toBeChosen = container;
                         break;
                     }

@@ -167,6 +167,18 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         return currentEffect;
     }
 
+    public boolean isFake() {
+        return getCurrentEffect() == getEffects().getFake() | getCurrentEffect() == getEffects().getOrdinaryFake();
+    }
+
+    public boolean isPlus() {
+        return getCurrentEffect() == getEffects().getPlus();
+    }
+
+    public boolean isMinus() {
+        return getCurrentEffect() == getEffects().getMinus();
+    }
+
     public BulletType getBulletType() {
         return bulletType;
     }
@@ -236,7 +248,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void detachFromBulletsAndShieldObject() {
         if (parent != null) {
             parent.removeActor(this);
-            parent.getAttachedBullets().remove(); // dequeue.
+
+            if (parent.getAttachedBullets().peek() == this)
+                parent.getAttachedBullets().remove(); // dequeue.
         }
         parent = null;
     }
@@ -636,7 +650,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
+                    //handler.setActiveShieldsNum(handler.getActiveShieldsNum()+1);
+                    handler.incrementActiveShieldsNum(parent);
                     plusMinusCommon();
                     starsContainer.getRadialTween().start(SpecialBullet.PLUS);
                 }

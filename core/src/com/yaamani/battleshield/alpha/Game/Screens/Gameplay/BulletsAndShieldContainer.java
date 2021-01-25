@@ -29,7 +29,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private boolean inUse;
 
-    private Queue<Bullet> attachedBullets;
+    private LinkedList<Bullet> attachedBullets;
 
    /* private SimpleText rotationText;
     private SimpleText rotationNoMinusText;*/
@@ -123,7 +123,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         return index;
     }
 
-    public Queue<Bullet> getAttachedBullets() {
+    public LinkedList<Bullet> getAttachedBullets() {
         return attachedBullets;
     }
 
@@ -289,8 +289,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         @Override
         public void onFinish() {
             super.onFinish();
-            if (BulletsAndShieldContainer.this.getColor().a == 0)
+            if (BulletsAndShieldContainer.this.getColor().a == 0) {
                 BulletsAndShieldContainer.this.setVisible(false);
+                attachedBullets.clear();
+            }
         }
     }
 }
