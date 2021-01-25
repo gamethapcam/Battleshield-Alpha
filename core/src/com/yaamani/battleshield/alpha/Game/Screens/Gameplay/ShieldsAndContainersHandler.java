@@ -1,5 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,6 +12,8 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
+
+import java.util.Arrays;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -44,6 +47,7 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     private NetworkAndStorageManager networkAndStorageManager;
 
+
     public ShieldsAndContainersHandler(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
 
@@ -52,6 +56,7 @@ public class ShieldsAndContainersHandler implements Updatable {
         initializeD_dizziness_rotationalSpeedTween();
 
         initializeDizzinessRotationalSpeedMultiplierTimer();
+
     }
 
     @Override
@@ -107,7 +112,37 @@ public class ShieldsAndContainersHandler implements Updatable {
 
     // TODO: [FIX A BUG] Sometimes (only sometimes which is really weird) when the gameplay begins the shields and the bullets won't be displayed (But they do exist, meaning that the bullets reduce the health and the shield can be on and block the bullets). And get displayed after a plus or a minus bullet hit the turret. (Not sure if this is a desktop specific or happens on android too) [PATH TO VIDEO = Junk/Shield and bullets don't appear [BUG].mov] .. It looks like it always happen @ the first run of the program on desktop just after I open android studio
 
-    private void setVisibilityAndAlphaForContainers() {
+    private void setRotationForContainers_OLD() {
+        for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
+
+            float oldRotationDeg = gameplayScreen.getBulletsAndShieldContainers()[i].getRotation();
+            gameplayScreen.getBulletsAndShieldContainers()[i].setOldRotationDeg(oldRotationDeg);
+
+            //Gdx.app.log(TAG, "" + oldRotationDeg);
+
+            float startingAngle;
+            if (activeShieldsNum % 2 != 0) startingAngle = 0;
+            else startingAngle = 360f / activeShieldsNum / 2f;
+
+            if (i < activeShieldsNum)
+                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.FREE) {
+                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(startingAngle + i * 360f / activeShieldsNum/* + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum ]*/);
+                } else {
+                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(startingAngle + i * 360f / activeShieldsNum/* + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum]*/);
+
+                }
+            else gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(360);
+        }
+    }
+
+    private void setOmegaForShieldObjects_OLD() {
+        float omegaDeg = 360f / activeShieldsNum;
+        for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
+            gameplayScreen.getBulletsAndShieldContainers()[i].setNewOmegaDeg(omegaDeg);
+        }
+    }
+
+    private void setVisibilityAndAlphaForContainers_OLD() {
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
             if (i < activeShieldsNum) {
                 gameplayScreen.getBulletsAndShieldContainers()[i].setVisible(true);
@@ -116,32 +151,6 @@ public class ShieldsAndContainersHandler implements Updatable {
                 gameplayScreen.getBulletsAndShieldContainers()[i].setNewAlpha(0);
                 //gameplayScreen.getBulletsAndShieldContainers()[i].setVisible(false);
             }
-        }
-    }
-
-    private void setRotationForContainers() {
-        for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
-
-            float oldRotationDeg = gameplayScreen.getBulletsAndShieldContainers()[i].getRotation();
-            gameplayScreen.getBulletsAndShieldContainers()[i].setOldRotationDeg(oldRotationDeg);
-
-            //Gdx.app.log(TAG, "" + oldRotationDeg);
-
-            if (i < activeShieldsNum)
-                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.FREE) {
-                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_FREE_GAMEPLAY[activeShieldsNum ]);
-                } else {
-                    gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */i * 360f / activeShieldsNum + SHIELDS_SHIFT_ANGLES_RESTRICTED_GAMEPLAY[activeShieldsNum]);
-
-                }
-            else gameplayScreen.getBulletsAndShieldContainers()[i].setNewRotationDeg(/*baseRotation + */360);
-        }
-    }
-
-    private void setOmegaForShieldObjects() {
-        float omegaDeg = 360f / activeShieldsNum;
-        for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
-            gameplayScreen.getBulletsAndShieldContainers()[i].setNewOmegaDeg(omegaDeg);
         }
     }
 
@@ -283,6 +292,159 @@ public class ShieldsAndContainersHandler implements Updatable {
         return dizzinessRotationalSpeedMultiplierTimer;
     }
 
+    public void initializeActiveShields(int activeShieldsNum) {
+        int shieldsMaxCount = gameplayScreen.getCurrentShieldsMaxCount();
+        int shieldsMinCount = gameplayScreen.getCurrentShieldsMinCount();
+        if (activeShieldsNum > shieldsMaxCount) this.activeShieldsNum = shieldsMaxCount;
+        else if (activeShieldsNum < shieldsMinCount) this.activeShieldsNum = shieldsMinCount;
+        else this.activeShieldsNum = activeShieldsNum;
+
+
+
+        // inUse
+        for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
+            if (i < activeShieldsNum)
+                gameplayScreen.getBulletsAndShieldContainers()[i].setInUse(true);
+            else
+                gameplayScreen.getBulletsAndShieldContainers()[i].setInUse(false);
+
+        }
+
+
+
+        updateNonBusyContainer();
+
+        setRotationForContainers_OLD();
+        setOmegaForShieldObjects_OLD();
+        setVisibilityAndAlphaForContainers_OLD();
+
+
+
+        startRotationOmegaTweenForAll();
+    }
+
+    public void decrementActiveShieldsNum(BulletsAndShieldContainer toBeDiscardedContainer) {
+        int shieldsMinCount = gameplayScreen.getCurrentShieldsMinCount();
+        activeShieldsNum--;
+        if (activeShieldsNum < shieldsMinCount) {
+            activeShieldsNum++;
+            return;
+        }
+
+        // toBeDiscardedContainer's stuff.
+        toBeDiscardedContainer.setInUse(false);
+        setRotationOmegaTweenParameters(toBeDiscardedContainer, toBeDiscardedContainer.getRotation(), toBeDiscardedContainer.getRotation(), 0, 0);
+
+        //Shifting.
+        int toBeDiscardedIndex = toBeDiscardedContainer.getIndex();
+        BulletsAndShieldContainer[] allContainers = gameplayScreen.getBulletsAndShieldContainers();
+        for (int i = toBeDiscardedIndex+1; i < allContainers.length; i++) {
+            allContainers[i-1] = allContainers[i];
+            allContainers[i-1].setIndex((byte) (i-1));
+        }
+        allContainers[allContainers.length-1] = toBeDiscardedContainer;
+        allContainers[allContainers.length-1].setIndex((byte) (allContainers.length-1));
+        Gdx.app.log(TAG, "toBeDiscardedIndex = " + toBeDiscardedIndex);
+
+        // indexOfTheContainerWithTheNearestBulletToTheShield
+        int indexOfTheContainerWithTheNearestBulletToTheShield = 0;
+        Bullet nearestBulletToTheShield = allContainers[0].getAttachedBullets().peek();
+        for (int i = 1; i < activeShieldsNum; i++) {
+            Bullet currentBullet = allContainers[i].getAttachedBullets().peek();
+            if (nearestBulletToTheShield == null) {
+                nearestBulletToTheShield = currentBullet;
+                indexOfTheContainerWithTheNearestBulletToTheShield = i;
+
+            } else if (currentBullet != null) {
+                if (currentBullet.getY() < nearestBulletToTheShield.getY()) { // Closer
+                    if (currentBullet.getCurrentEffect() != currentBullet.getEffects().getFake() & currentBullet.getCurrentEffect() != currentBullet.getEffects().getOrdinaryFake()) { // Not fake
+                        nearestBulletToTheShield = currentBullet;
+                        indexOfTheContainerWithTheNearestBulletToTheShield = i;
+                    }
+                }
+            }
+        }
+
+        Gdx.app.log(TAG, "indexOfTheContainerWithTheNearestBulletToTheShield = " + indexOfTheContainerWithTheNearestBulletToTheShield);
+
+
+        // Rotation, Omega & Alpha.
+        float startingAngle;
+        if (activeShieldsNum % 2 != 0) startingAngle = 0;
+        else startingAngle = 360f / activeShieldsNum / 2f;
+
+        /*float[] newRotationDeg = {
+                startingAngle,
+                startingAngle + 1 * 360f/activeShieldsNum,
+                startingAngle + 2 * 360f/activeShieldsNum,
+                startingAngle + 3 * 360f/activeShieldsNum,
+                startingAngle + 4 * 360f/activeShieldsNum,
+                startingAngle + 5 * 360f/activeShieldsNum,
+                startingAngle + 6 * 360f/activeShieldsNum,
+                startingAngle + 7 * 360f/activeShieldsNum,
+        };*/
+
+        float[] oldRotationDeg = new float[activeShieldsNum];
+        float[] newRotationDeg = new float[activeShieldsNum];
+        for (int i = 0; i < activeShieldsNum; i++) {
+            oldRotationDeg[i] = MyMath.deg_0_to_360(allContainers[i].getRotation());
+            newRotationDeg[i] = startingAngle + i * 360f/activeShieldsNum;
+        }
+
+
+        int newRotationDegShift = 0;
+        float oldRotationDeg0 = oldRotationDeg[indexOfTheContainerWithTheNearestBulletToTheShield];
+        float newRotationDeg0 = newRotationDeg[indexOfTheContainerWithTheNearestBulletToTheShield];
+        float newRotationDeg1 = newRotationDeg[MyMath.arrayIndexWrapAround(indexOfTheContainerWithTheNearestBulletToTheShield+1, activeShieldsNum)];
+        float newRotationDeg_1 = newRotationDeg[MyMath.arrayIndexWrapAround(indexOfTheContainerWithTheNearestBulletToTheShield-1, activeShieldsNum)];
+        float distance0 = MyMath.distanceBetween2AnglesDeg(oldRotationDeg0, newRotationDeg0);
+        float distance1 = MyMath.distanceBetween2AnglesDeg(oldRotationDeg0, newRotationDeg1);
+        float distance_1 = MyMath.distanceBetween2AnglesDeg(oldRotationDeg0, newRotationDeg_1);
+        if (distance1 < distance0 & distance1 < distance_1) newRotationDegShift = 1; // distance1 is the minimum.
+        else if (distance_1 < distance0 & distance_1 < distance1) newRotationDegShift = -1; // distance_1 is the minimum.
+
+        Gdx.app.log(TAG, "oldRotationDeg = " + Arrays.toString(oldRotationDeg));
+        Gdx.app.log(TAG, "newRotationDeg = " + Arrays.toString(newRotationDeg));
+
+        for (int i = 0; i < activeShieldsNum; i++) {
+
+
+            float _oldRotationDeg = oldRotationDeg[i];
+            float _newRotationDeg = newRotationDeg[MyMath.arrayIndexWrapAround(i+newRotationDegShift, activeShieldsNum)];
+            float distance = Math.abs(_oldRotationDeg - _newRotationDeg);
+            if (distance > 180) {
+                if (_oldRotationDeg > 180)
+                    _newRotationDeg += 360;
+                else if (_newRotationDeg > 180)
+                    _newRotationDeg -= 360f;
+            }
+
+
+            Gdx.app.log(TAG, "i = " + (i));
+            setRotationOmegaTweenParameters(
+                    allContainers[i],
+                    _oldRotationDeg,
+                    _newRotationDeg,
+                    360f / activeShieldsNum,
+                    1
+            );
+        }
+
+        startRotationOmegaTweenForAll();
+
+        updateNonBusyContainer();
+
+    }
+
+    private void setRotationOmegaTweenParameters(BulletsAndShieldContainer container, float oldRotationDeg, float newRotationDeg, float newOmegaDeg, float newAlpha) {
+        container.setNewRotationDeg(newRotationDeg);
+        container.setOldRotationDeg(oldRotationDeg);
+        Gdx.app.log(TAG, "oldRotationDeg = " + oldRotationDeg + ", newRotationDeg = " + newRotationDeg);
+        container.setNewOmegaDeg(newOmegaDeg);
+        container.setNewAlpha(newAlpha);
+
+    }
+
     public void setActiveShieldsNum(int activeShieldsNum) {
         //gameplayScreen.getBulletsHandler().setPreviousActiveShieldsNumber(this.activeShieldsNum);
 
@@ -294,9 +456,12 @@ public class ShieldsAndContainersHandler implements Updatable {
 
         updateNonBusyContainer();
 
-        setVisibilityAndAlphaForContainers();
-        setRotationForContainers();
-        setOmegaForShieldObjects();
+        setRotationForContainers_OLD();
+        setOmegaForShieldObjects_OLD();
+        setVisibilityAndAlphaForContainers_OLD();
+
+
+
         startRotationOmegaTweenForAll();
 
         //updateStartingAndEndingAngles();

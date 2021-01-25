@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
@@ -396,7 +395,8 @@ public class GameplayScreen extends AdvancedScreen {
                 bulletsAndShieldContainers[i] = new BulletsAndShieldContainer(this, containerOfContainers, i);
         }
 
-        shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
+        shieldsAndContainersHandler.initializeActiveShields(SHIELDS_ACTIVE_DEFAULT);
+        //shieldsAndContainersHandler.setActiveShieldsNum(SHIELDS_ACTIVE_DEFAULT);
 
 
         //containerOfContainers.rotateBy(-10f);

@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    public static final boolean NO_DEATH = false;
+    public static final boolean NO_DEATH = true;
     public static final boolean DISMISS_STAR = true;
 
 
@@ -316,6 +316,8 @@ public final class Constants {
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY = {
             DISMISS_STAR ? SpecialBullet.HEART : SpecialBullet.STAR,
 
+            // TODO: Uncomment next commented block.
+            /*SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
@@ -328,8 +330,7 @@ public final class Constants {
             SpecialBullet.HEART,
             SpecialBullet.HEART,
             SpecialBullet.HEART,
-            SpecialBullet.HEART,
-            SpecialBullet.HEART,
+            SpecialBullet.HEART,*/
 
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
@@ -338,20 +339,21 @@ public final class Constants {
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
             SpecialBullet.MINUS,
-            /*SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,
-            SpecialBullet.MINUS,*/
 
-           /*SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,*/
+            // TODO: Comment next uncommented block.
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+            SpecialBullet.MINUS,
+
+            // TODO: Uncomment next commented block.
+            /*SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
             SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK
+            SpecialBullet.QUESTION_MARK*/
     };
 
     public static final SpecialBullet[] GOOD_BULLETS_PROBABILITY_NO_MINUS = MyMath.cloneAndReplace(GOOD_BULLETS_PROBABILITY, SpecialBullet.MINUS, SpecialBullet.HEART);
@@ -362,16 +364,18 @@ public final class Constants {
             SpecialBullet.BOMB,
             SpecialBullet.BOMB,
 
+            // TODO: Uncomment next commented block.
+            /*SpecialBullet.PLUS,
             SpecialBullet.PLUS,
             SpecialBullet.PLUS,
-            SpecialBullet.PLUS,
-            SpecialBullet.PLUS,
+            SpecialBullet.PLUS,*/
 
             SpecialBullet.SHIELD_DISABLING,
             SpecialBullet.SHIELD_DISABLING,
 
-            SpecialBullet.QUESTION_MARK,
-            SpecialBullet.QUESTION_MARK
+            // TODO: Uncomment next commented block.
+            /*SpecialBullet.QUESTION_MARK,
+            SpecialBullet.QUESTION_MARK*/
     };
 
     public static final SpecialBullet[] BAD_BULLETS_PROBABILITY_NO_PLUS = MyMath.cloneAndReplace(BAD_BULLETS_PROBABILITY, SpecialBullet.PLUS, SpecialBullet.BOMB);
@@ -413,7 +417,7 @@ public final class Constants {
 
     public static final float SHIELDS_SAVING_TO_ANGLE = 360f/ SURVIVAL_SHIELDS_MIN_COUNT;
 
-    public static final int SHIELDS_ACTIVE_DEFAULT = 6;
+    public static final int SHIELDS_ACTIVE_DEFAULT = /*6*/SHIELDS_UNIVERSAL_MAX_COUNT;
 
     public static final float SHIELDS_ON_DISPLACEMENT = WORLD_SIZE / 100f;
 

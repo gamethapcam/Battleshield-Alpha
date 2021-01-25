@@ -23,6 +23,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     public static final String TAG = Bullet.class.getSimpleName();
 
     private static boolean plusOrMinusExists = false;
+    private static Bullet currentPlusOrMinusBullet;
     private static boolean starExists = false;
     private static boolean fasterDizzinessRotationExists = false;
     private static float R = 0;
@@ -121,6 +122,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         Bullet.plusOrMinusExists = plusOrMinusExists;
     }
 
+    public static Bullet getCurrentPlusOrMinusBullet() {
+        return currentPlusOrMinusBullet;
+    }
+
+    public static void setCurrentPlusOrMinusBullet(Bullet currentPlusOrMinusBullet) {
+        Bullet.currentPlusOrMinusBullet = currentPlusOrMinusBullet;
+    }
+
     public static boolean isStarExists() {
         return starExists;
     }
@@ -143,6 +152,19 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public boolean isInUse() {
         return inUse;
+    }
+
+    @Override
+    public BulletsAndShieldContainer getParent() {
+        return parent;
+    }
+
+    public Effects getEffects() {
+        return effects;
+    }
+
+    public BulletEffect getCurrentEffect() {
+        return currentEffect;
     }
 
     public BulletType getBulletType() {
@@ -203,6 +225,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         this.parent = parent;
         parent.addActor(this);
+        parent.getAttachedBullets().add(this);
 
         resetPosition(viewport.getWorldWidth(), viewport.getWorldHeight());
 
@@ -211,7 +234,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void detachFromBulletsAndShieldObject() {
-        if (parent != null) parent.removeActor(this);
+        if (parent != null) {
+            parent.removeActor(this);
+            parent.getAttachedBullets().remove(); // dequeue.
+        }
         parent = null;
     }
 
@@ -340,8 +366,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void handlePlusMinusStarExists() {
-        if (currentEffect == effects.minus | currentEffect == effects.plus)
+        if (currentEffect == effects.minus | currentEffect == effects.plus) {
             setPlusOrMinusExists(false);
+            setCurrentPlusOrMinusBullet(null);
+        }
         else if (currentEffect == effects.star)
             setStarExists(false);
     }
@@ -557,7 +585,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     //------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
 
-    private class Effects {
+    public class Effects {
         private BulletEffect ordinary;
 
         private BulletEffect plus;
@@ -641,7 +669,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     ShieldsAndContainersHandler handler = gameplayScreen.getShieldsAndContainersHandler();
-                    handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
+                    //handler.setActiveShieldsNum(handler.getActiveShieldsNum()-1);
+                    handler.decrementActiveShieldsNum(parent);
                     plusMinusCommon();
                     /*radialTweenStars*/starsContainer.getRadialTween().start(SpecialBullet.MINUS);
                 }
@@ -693,6 +722,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     // Nothing
+
+
+                    if (region == Assets.instance.gameplayAssets.minusBullet | region == Assets.instance.gameplayAssets.plusBullet) {
+                        Bullet.setPlusOrMinusExists(false);
+                        Bullet.setCurrentPlusOrMinusBullet(null);
+                    }
+
                 }
             };
 
@@ -748,12 +784,28 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         private void plusMinusCommon() {
             Bullet.setPlusOrMinusExists(false);
+            Bullet.setCurrentPlusOrMinusBullet(null);
             gameplayScreen.getBulletsHandler().startPlusMinusBulletsTween();
         }
 
 
 
 
+        public BulletEffect getOrdinaryFake() {
+            return ordinaryFake;
+        }
+
+        public BulletEffect getFake() {
+            return fake;
+        }
+
+        public BulletEffect getPlus() {
+            return plus;
+        }
+
+        public BulletEffect getMinus() {
+            return minus;
+        }
     }
 
 }

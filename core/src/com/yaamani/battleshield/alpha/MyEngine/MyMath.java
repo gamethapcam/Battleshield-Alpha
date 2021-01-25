@@ -418,6 +418,20 @@ public final class MyMath {
         return result;
     }
 
+    public static float distanceBetween2AnglesDeg(float deg0, float deg1) {
+        deg0 = deg_0_to_360(deg0);
+        deg1 = deg_0_to_360(deg1);
+        float distance = Math.abs(deg0 - deg1);
+        if (distance > 180) distance = 360 - distance;
+        return distance;
+    }
+
+    public static int arrayIndexWrapAround(int index, int length) {
+        int correctIndex = index % length;
+        if (correctIndex < 0) correctIndex += length;
+        return correctIndex;
+    }
+
     public enum Dimension {X, Y}
     public static float toWorldCoordinates(float screenCoordinate, Dimension dimension, Viewport viewport) {
         float worldCoordinate = 0;

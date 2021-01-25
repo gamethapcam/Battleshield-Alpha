@@ -15,6 +15,9 @@ import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletsAndShieldContainer extends Group implements Resizable {
@@ -23,6 +26,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private Shield shield;
     private byte index;
+
+    private boolean inUse;
+
+    private Queue<Bullet> attachedBullets;
 
    /* private SimpleText rotationText;
     private SimpleText rotationNoMinusText;*/
@@ -47,6 +54,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         //gameplayScreen.addActor(this);
         containerOfContainers.addActor(this);
         this.index = index;
+
+        attachedBullets = new LinkedList<>();
 
         initializeRotationOmegaAlphaTween(gameplayScreen);
 
@@ -106,12 +115,28 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         return shield;
     }
 
+    public void setIndex(byte index) {
+        this.index = index;
+    }
+
     public byte getIndex() {
         return index;
     }
 
+    public Queue<Bullet> getAttachedBullets() {
+        return attachedBullets;
+    }
+
     public RotationOmegaAlphaTween getRotationOmegaAlphaTween() {
         return rotationOmegaAlphaTween;
+    }
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
     }
 
     //------------------------------------------------------------
