@@ -17,6 +17,7 @@ import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.BulletPortalRole.CLOSE_EXIT_PORTAL;
 
 public class Bullet extends Group implements Resizable, Pool.Poolable {
 
@@ -375,6 +376,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         detachFromBulletsAndShieldObject();
         bulletsHandler.getBulletPool().free(this);
 
+        bulletPortalType = null;
+        if (bulletPortalRole != null)
+            if (bulletPortalRole == CLOSE_EXIT_PORTAL)
+                closeExitPortalRole();
+        bulletPortalRole = null;
 
         handlePlusMinusStarExists();
     }
@@ -424,18 +430,22 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 break;
             case CLOSE_EXIT_PORTAL:
                 if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION) {
-                    parent.hidePortalExit();
-                    bulletPortalRole = null;
-                    gameplayScreen.getBulletsHandler().portalIsOver();
+                    closeExitPortalRole();
                 }
                 break;
             case OPEN_AND_CLOSE_EXIT_PORTAL:
                 if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION + PORTALS_ENTRANCE_EXIT_DIAMETER) {
                     parent.showPortalExit();
-                    bulletPortalRole = BulletPortalRole.CLOSE_EXIT_PORTAL;
+                    bulletPortalRole = CLOSE_EXIT_PORTAL;
                 }
                 break;
         }
+    }
+
+    private void closeExitPortalRole() {
+        parent.hidePortalExit();
+        bulletPortalRole = null;
+        gameplayScreen.getBulletsHandler().portalIsOver();
     }
 
     /*private void decideSpecialType() {

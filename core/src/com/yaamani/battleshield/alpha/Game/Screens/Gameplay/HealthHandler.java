@@ -166,7 +166,7 @@ public class HealthHandler implements Updatable {
             setHealthValueTo(1f);
 
 
-            gameplayScreen.getScoreTimerStuff().resetScore();
+            //gameplayScreen.getScoreTimerStuff().resetScore();
             //gameplayScreen.getBulletsHandler().resetSpeedResetTime();
             gameplayScreen.getScoreTimerStuff().resetScore();
             SimpleText scoreText = gameplayScreen.getScoreTimerStuff().getScoreText();
@@ -213,6 +213,10 @@ public class HealthHandler implements Updatable {
                 gameplayScreen.getControllerRight().addAction(Actions.alpha(1, 0.2f));
 
 
+            BulletsAndShieldContainer[] allContainers = gameplayScreen.getBulletsAndShieldContainers();
+            for (BulletsAndShieldContainer container : allContainers) {
+                container.cleanContainer();
+            }
 
         }
     }

@@ -177,6 +177,12 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         portalExit.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
     }
 
+    public void cleanContainer() {
+        attachedBullets.clear();
+        hidePortalEntrance();
+        hidePortalExit();
+    }
+
     private void initializeRotationOmegaAlphaTween(GameplayScreen gameplayScreen) {
         rotationOmegaAlphaTween = new RotationOmegaAlphaTween(SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION, MyInterpolation.myExp10);
         gameplayScreen.addToFinishWhenStoppingTheGameplay(rotationOmegaAlphaTween);
@@ -291,7 +297,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             super.onFinish();
             if (BulletsAndShieldContainer.this.getColor().a == 0) {
                 BulletsAndShieldContainer.this.setVisible(false);
-                attachedBullets.clear();
+                cleanContainer();
             }
         }
     }
