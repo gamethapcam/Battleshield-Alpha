@@ -388,6 +388,8 @@ public class GameplayScreen extends AdvancedScreen {
 
         if (bulletsAndShieldContainers == null)
             bulletsAndShieldContainers = new BulletsAndShieldContainer[shieldsMaxCount];
+        else if (bulletsAndShieldContainers.length < shieldsMaxCount)
+            bulletsAndShieldContainers = new BulletsAndShieldContainer[shieldsMaxCount];
 
         for (byte i = 0; i < bulletsAndShieldContainers.length; i++) {
 
@@ -747,6 +749,7 @@ public class GameplayScreen extends AdvancedScreen {
         bulletsHandler.initializeTempAvailableContainers(currentShieldsMaxCount);
         shieldsAndContainersHandler.initializeNonBusyContainers(currentShieldsMaxCount);
         shieldsAndContainersHandler.initializeOnStartAnglesAndOnEndAngles(currentShieldsMaxCount);
+        shieldsAndContainersHandler.initializeOldRotationDegAndNewRotationDeg(currentShieldsMaxCount);
         initializeBulletsAndShieldArray(currentShieldsMaxCount);
 
     }

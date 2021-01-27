@@ -1288,6 +1288,12 @@ public class BulletsHandler implements Updatable {
         determineTypeThenAttach(firstContainerChosen, 0, false, null);
     }
 
+    /**
+     * It chooses the container that will rotate the least amount possible when the effect of a plus bullet or minus bullet takes place.
+     * @param containersToChooseFrom
+     * @param portalType
+     * @return
+     */
     private BulletsAndShieldContainer plusMinusExistsSpecial(BulletsAndShieldContainer[] containersToChooseFrom, BulletPortalType portalType) {
         BulletsAndShieldContainer chosenContainer = null;
 
@@ -2200,10 +2206,19 @@ public class BulletsHandler implements Updatable {
     public void initializeTempAvailableContainers(int shieldsMaxCount) {
         if (tempAvailableLeftContainers == null)
             tempAvailableLeftContainers = new BulletsAndShieldContainer[shieldsMaxCount /*/2*/];
+        else if (tempAvailableLeftContainers.length < shieldsMaxCount)
+            tempAvailableLeftContainers = new BulletsAndShieldContainer[shieldsMaxCount /*/2*/];
+
         if (tempAvailableRightContainers == null)
             tempAvailableRightContainers = new BulletsAndShieldContainer[shieldsMaxCount /*/2*/];
+        else if (tempAvailableRightContainers.length < shieldsMaxCount)
+            tempAvailableRightContainers = new BulletsAndShieldContainer[shieldsMaxCount /*/2*/];
+
         if (tempAvailableRangeContainers == null)
             tempAvailableRangeContainers = new BulletsAndShieldContainer[shieldsMaxCount /*/2*/];
+        else if (tempAvailableRangeContainers.length < shieldsMaxCount)
+            tempAvailableRangeContainers = new BulletsAndShieldContainer[shieldsMaxCount /*/2*/];
+
     }
 
     private void initializeDizzinessDoubleWaveArrays() {

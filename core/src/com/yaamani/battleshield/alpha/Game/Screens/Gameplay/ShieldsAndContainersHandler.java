@@ -45,6 +45,9 @@ public class ShieldsAndContainersHandler implements Updatable {
     private float[] onStartAngles;
     private float[] onEndAngles;
 
+    private float[] oldRotationDeg;
+    private float[] newRotationDeg;
+
     private NetworkAndStorageManager networkAndStorageManager;
 
 
@@ -349,8 +352,8 @@ public class ShieldsAndContainersHandler implements Updatable {
 
 
         // Rotation, Omega & Alpha.
-        float[] oldRotationDeg = calculateOldRotationDegArray();
-        float[] newRotationDeg = calculateNewRotationDegArray();
+        populateOldRotationDegArray();
+        populateNewRotationDegArray();
         Gdx.app.log(TAG, "oldRotationDeg = " + Arrays.toString(oldRotationDeg));
         Gdx.app.log(TAG, "newRotationDeg = " + Arrays.toString(newRotationDeg));
 
@@ -405,8 +408,8 @@ public class ShieldsAndContainersHandler implements Updatable {
         Gdx.app.log(TAG, "indexOfTheContainerWithTheNearestBulletToTheShield = " + indexOfTheContainerWithTheNearestBulletToTheShield);
 
         // Rotation, Omega & Alpha.
-        float[] oldRotationDeg = calculateOldRotationDegArray();
-        float[] newRotationDeg = calculateNewRotationDegArray();
+        populateOldRotationDegArray();
+        populateNewRotationDegArray();
         Gdx.app.log(TAG, "oldRotationDeg = " + Arrays.toString(oldRotationDeg));
         Gdx.app.log(TAG, "newRotationDeg = " + Arrays.toString(newRotationDeg));
 
@@ -511,20 +514,14 @@ public class ShieldsAndContainersHandler implements Updatable {
         return indexOfTheContainerWithTheNearestBulletToTheShield;
     }
 
-    private float[] calculateOldRotationDegArray() {
-        float[] oldRotationDeg = new float[activeShieldsNum];
-
+    private void populateOldRotationDegArray() {
         BulletsAndShieldContainer[] allContainers = gameplayScreen.getBulletsAndShieldContainers();
         for (int i = 0; i < activeShieldsNum; i++) {
             oldRotationDeg[i] = MyMath.deg_0_to_360(allContainers[i].getRotation());
         }
-
-        return oldRotationDeg;
     }
 
-    private float[] calculateNewRotationDegArray() {
-        float[] newRotationDeg = new float[activeShieldsNum];
-
+    private void populateNewRotationDegArray() {
         float startingAngle;
         if (activeShieldsNum % 2 != 0) startingAngle = 0;
         else startingAngle = 360f / activeShieldsNum / 2f;
@@ -532,8 +529,6 @@ public class ShieldsAndContainersHandler implements Updatable {
         for (int i = 0; i < activeShieldsNum; i++) {
             newRotationDeg[i] = startingAngle + i * 360f/activeShieldsNum;
         }
-
-        return newRotationDeg;
     }
 
     private int calculateNewRotationDegShift(float[] oldRotationDeg, float[] newRotationDeg, int indexOfTheContainerWithTheNearestBulletToTheShield) {
@@ -675,8 +670,26 @@ public class ShieldsAndContainersHandler implements Updatable {
     public void initializeOnStartAnglesAndOnEndAngles(int shieldsMaxCount) {
         if (onStartAngles == null)
             onStartAngles = new float[shieldsMaxCount];
+        else if (onStartAngles.length < shieldsMaxCount)
+            onStartAngles = new float[shieldsMaxCount];
+
         if (onEndAngles == null)
             onEndAngles = new float[shieldsMaxCount];
+        else if (onEndAngles.length < shieldsMaxCount)
+            onEndAngles = new float[shieldsMaxCount];
+
+    }
+
+    public void initializeOldRotationDegAndNewRotationDeg(int shieldsMaxCount) {
+        if (oldRotationDeg == null)
+            oldRotationDeg = new float[shieldsMaxCount];
+        else if (oldRotationDeg.length < shieldsMaxCount)
+            oldRotationDeg = new float[shieldsMaxCount];
+
+        if (newRotationDeg == null)
+            newRotationDeg = new float[shieldsMaxCount];
+        else if (newRotationDeg.length < shieldsMaxCount)
+            newRotationDeg = new float[shieldsMaxCount];
     }
 
     private void initializeD_dizziness_rotationalSpeedTween() {
