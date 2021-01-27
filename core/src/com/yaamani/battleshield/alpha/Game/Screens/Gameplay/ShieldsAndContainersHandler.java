@@ -535,7 +535,7 @@ public class ShieldsAndContainersHandler implements Updatable {
         float _oldRotationDeg = oldRotationDeg[indexOfTheContainerWithTheNearestBulletToTheShield];
         float minDistance = MyMath.distanceBetween2AnglesDeg(_oldRotationDeg, newRotationDeg[0]);
         int i_minDistance = 0;
-        for (int i = 1; i < newRotationDeg.length; i++) {
+        for (int i = 1; i < activeShieldsNum; i++) {
             float currentDistance = MyMath.distanceBetween2AnglesDeg(_oldRotationDeg, newRotationDeg[i]);
             if (currentDistance < minDistance) {
                 minDistance = currentDistance;

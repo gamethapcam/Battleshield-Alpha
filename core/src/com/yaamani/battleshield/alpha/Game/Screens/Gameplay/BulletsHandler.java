@@ -1003,9 +1003,13 @@ public class BulletsHandler implements Updatable {
     private void portalsSingleWave() {
         Gdx.app.log(TAG, "----- NEW SINGLE WAVE (PORTAL) -----");
 
+        firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_ENTRANCE); // Entrance container
+        if (firstContainerChosen == null) {
+            ordinarySingleWave();
+            return;
+        }
         thereIsAPortal = true;
 
-        firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_ENTRANCE); // Entrance container
         determineTypeThenAttach(firstContainerChosen, 0, false, BulletPortalType.PORTAL_ENTRANCE);
         firstContainerChosen.showPortalEntrance();
 
@@ -1362,22 +1366,22 @@ public class BulletsHandler implements Updatable {
         switch (positioning) {
             case RIGHT:
 
-                chosenContainer = chooseContainerOnTheRight(nonBusyContainers);
+                chosenContainer = chooseContainerOnTheRight(nonBusyContainers, portalType);
 
                 if (chosenContainer == null) {
                     if (wasRandom)
-                        chosenContainer = chooseContainerOnTheLeft(nonBusyContainers);
+                        chosenContainer = chooseContainerOnTheLeft(nonBusyContainers, portalType);
                     else return null;
                 }
 
                 break;
             case LEFT:
 
-                chosenContainer = chooseContainerOnTheLeft(nonBusyContainers);
+                chosenContainer = chooseContainerOnTheLeft(nonBusyContainers, portalType);
 
                 if (chosenContainer == null) {
                     if (wasRandom)
-                        chosenContainer = chooseContainerOnTheRight(nonBusyContainers);
+                        chosenContainer = chooseContainerOnTheRight(nonBusyContainers, portalType);
                     else return null;
                 }
 
@@ -1401,7 +1405,7 @@ public class BulletsHandler implements Updatable {
         //chosenContainer = plusMinusExistsSpecial(nonBusyContainers, portalType);
 
         //if (chosenContainer == null) {
-            int tempAvailableRangeContainersSize = populateTempAvailableRangeContainers(fromAngleDeg, toAngleDeg, nonBusyContainers);
+            int tempAvailableRangeContainersSize = populateTempAvailableRangeContainers(fromAngleDeg, toAngleDeg, nonBusyContainers, portalType);
             if (tempAvailableRangeContainersSize > 0)
                 chosenContainer = tempAvailableRangeContainers[MathUtils.random(tempAvailableRangeContainersSize-1)];
         //}
@@ -1423,11 +1427,11 @@ public class BulletsHandler implements Updatable {
         return chosenContainer;
     }
 
-    private BulletsAndShieldContainer chooseContainerOnTheLeft(Array<BulletsAndShieldContainer> nonBusyContainers) {
+    private BulletsAndShieldContainer chooseContainerOnTheLeft(Array<BulletsAndShieldContainer> nonBusyContainers, BulletPortalType portalType) {
         BulletsAndShieldContainer chosenContainer;
 
         // Gdx.app.log(TAG, "activeShieldsNum = " + activeShieldsNum);
-        int tempAvailableLeftContainersSize = populateTempAvailableLeftContainers(nonBusyContainers);
+        int tempAvailableLeftContainersSize = populateTempAvailableLeftContainers(nonBusyContainers, portalType);
         Gdx.app.log(TAG, "tempAvailableLeftContainersSize = " + tempAvailableLeftContainersSize);
         if (tempAvailableLeftContainersSize == 0) return null;
         int rand = MathUtils.random(tempAvailableLeftContainersSize - 1);
@@ -1436,11 +1440,11 @@ public class BulletsHandler implements Updatable {
         return chosenContainer;
     }
 
-    private BulletsAndShieldContainer chooseContainerOnTheRight(Array<BulletsAndShieldContainer> nonBusyContainers) {
+    private BulletsAndShieldContainer chooseContainerOnTheRight(Array<BulletsAndShieldContainer> nonBusyContainers, BulletPortalType portalType) {
         BulletsAndShieldContainer chosenContainer;
 
         // Gdx.app.log(TAG, "activeShieldsNum = " + activeShieldsNum);
-        int tempAvailableRightContainersSize = populateTempAvailableRightContainers(nonBusyContainers);
+        int tempAvailableRightContainersSize = populateTempAvailableRightContainers(nonBusyContainers, portalType);
         Gdx.app.log(TAG, "tempAvailableRightContainersSize = " + tempAvailableRightContainersSize);
         if (tempAvailableRightContainersSize == 0) return null;
         int rand = MathUtils.random(tempAvailableRightContainersSize - 1);
@@ -1452,9 +1456,10 @@ public class BulletsHandler implements Updatable {
     /**
      *
      * @param nonBusyContainers
+     * @param portalType
      * @return The size of {{@link #tempAvailableRightContainers}} after populating it.
      */
-    private int populateTempAvailableRightContainers(Array<BulletsAndShieldContainer> nonBusyContainers) {
+    private int populateTempAvailableRightContainers(Array<BulletsAndShieldContainer> nonBusyContainers, BulletPortalType portalType) {
         int size = 0;
         // System.out.print('[' + TAG + "] " + "Non Busy : ");
         for (BulletsAndShieldContainer container : nonBusyContainers) {
@@ -1481,6 +1486,11 @@ public class BulletsHandler implements Updatable {
                 if (excludeBottomRight & (angleDeg > 180 & angleDeg < 180f + singleShieldRange *//*This container is bottom right*//*))
                     continue;*/
 
+                if (portalType == BulletPortalType.PORTAL_ENTRANCE)
+                    if (!container.getAttachedBullets().isEmpty())
+                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER)
+                            continue;
+
                 tempAvailableRightContainers[size++] = container;
             }
         }
@@ -1491,9 +1501,10 @@ public class BulletsHandler implements Updatable {
     /**
      *
      * @param nonBusyContainers
+     * @param portalType
      * @return The size of {{@link #tempAvailableLeftContainers}} after populating it.
      */
-    private int populateTempAvailableLeftContainers(Array<BulletsAndShieldContainer> nonBusyContainers) {
+    private int populateTempAvailableLeftContainers(Array<BulletsAndShieldContainer> nonBusyContainers, BulletPortalType portalType) {
         int size = 0;
         // System.out.print('[' + TAG + "] " + "Non Busy : ");
         for (BulletsAndShieldContainer container : nonBusyContainers) {
@@ -1524,6 +1535,11 @@ public class BulletsHandler implements Updatable {
                     if (excludeTop & (angleDeg <= 1 /*This container is top*/))
                         continue;
 
+                if (portalType == BulletPortalType.PORTAL_ENTRANCE)
+                    if (!container.getAttachedBullets().isEmpty())
+                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER)
+                            continue;
+
                 tempAvailableLeftContainers[size++] = container;
             }
         }
@@ -1532,12 +1548,18 @@ public class BulletsHandler implements Updatable {
         return size;
     }
 
-    private int populateTempAvailableRangeContainers(float fromAngleDeg, float toAngleDeg, Array<BulletsAndShieldContainer> nonBusyContainers) {
+    private int populateTempAvailableRangeContainers(float fromAngleDeg, float toAngleDeg, Array<BulletsAndShieldContainer> nonBusyContainers, BulletPortalType portalType) {
         int size = 0;
 
         for (BulletsAndShieldContainer container : nonBusyContainers) {
             float angleDeg = MyMath.deg_0_to_360(container.getRotation() + gameplayScreen.getContainerOfContainers().getRotation());
             if (angleDeg >= fromAngleDeg & angleDeg <= toAngleDeg) {
+
+                if (portalType == BulletPortalType.PORTAL_ENTRANCE)
+                    if (!container.getAttachedBullets().isEmpty())
+                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER)
+                            continue;
+
                 tempAvailableRangeContainers[size++] = container;
             }
         }
@@ -1638,10 +1660,10 @@ public class BulletsHandler implements Updatable {
         int tempNonBusyContainersSize;
         switch (positioning) {
             case RIGHT:
-                tempNonBusyContainersSize = populateTempAvailableRightContainers(nonBusyContainers);
+                tempNonBusyContainersSize = populateTempAvailableRightContainers(nonBusyContainers, null);
                 break;
             case LEFT:
-                tempNonBusyContainersSize = populateTempAvailableLeftContainers(nonBusyContainers);
+                tempNonBusyContainersSize = populateTempAvailableLeftContainers(nonBusyContainers, null);
                 break;
             default:
                 tempNonBusyContainersSize = nonBusyContainers.size;
