@@ -979,12 +979,11 @@ public class BulletsHandler implements Updatable {
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS)
             dizzinessWave(WaveAttackType.SINGLE);
             //dizzinessSafeSingleWave();
-        else if (gameplayScreen.getGameplayMode() == GameplayMode.PORTALS &
-                MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY &
-                !thereIsAPortal &
-                !Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished())
-            portalsSingleWave();
-        else
+        else if (portalCondition()) {
+            firstContainerChosen = portalWave(ContainerPositioning.RANDOM);
+            if (firstContainerChosen == null)
+                ordinarySingleWave();
+        } else
             ordinarySingleWave();
 
 
@@ -1000,30 +999,42 @@ public class BulletsHandler implements Updatable {
         determineTypeThenAttach(firstContainerChosen, 0, false, null);
     }
 
-    private void portalsSingleWave() {
+    private boolean portalCondition() {
+        return gameplayScreen.getGameplayMode() == GameplayMode.PORTALS &
+                MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY &
+                !thereIsAPortal &
+                !Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished();
+    }
+
+    private BulletsAndShieldContainer portalWave(ContainerPositioning positioning) {
+
+        BulletsAndShieldContainer entranceContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_ENTRANCE);
+        if (entranceContainer == null) {
+            return null;
+        }
         Gdx.app.log(TAG, "----- NEW SINGLE WAVE (PORTAL) -----");
 
-        firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_ENTRANCE); // Entrance container
-        if (firstContainerChosen == null) {
-            ordinarySingleWave();
-            return;
-        }
         thereIsAPortal = true;
 
-        determineTypeThenAttach(firstContainerChosen, 0, false, BulletPortalType.PORTAL_ENTRANCE);
-        firstContainerChosen.showPortalEntrance();
+        determineTypeThenAttach(entranceContainer, 0, false, BulletPortalType.PORTAL_ENTRANCE);
+        entranceContainer.showPortalEntrance();
 
-        BulletsAndShieldContainer exitContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_EXIT);
+        BulletsAndShieldContainer exitContainer = chooseContainer(positioning, false, BulletPortalType.PORTAL_EXIT);
         attachBullets(exitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
+        return exitContainer;
     }
 
     private void newDoubleWave() {
+
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS) {
             dizzinessWave(WaveAttackType.DOUBLE);
+        } else if (portalCondition()) {
+
+            if (!portalsDoubleWave())
+                ordinaryDoubleWave();
+
         } else
             ordinaryDoubleWave();
-
-
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL) {
             crystalPlanetFakeWave(firstContainerChosen);
@@ -1037,29 +1048,48 @@ public class BulletsHandler implements Updatable {
         Gdx.app.log(TAG, "----- NEW DOUBLE WAVE -----");
 
         firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, null);
-        secondContainerChosen = null;
+        secondContainerChosen = chooseSecondContainer(firstContainerChosen);
 
+        determineTypeThenAttach(firstContainerChosen, 0, false, null);
+        determineTypeThenAttach(secondContainerChosen, 1, false, null);
+
+    }
+
+    private BulletsAndShieldContainer chooseSecondContainer(BulletsAndShieldContainer firstContainer) {
+        BulletsAndShieldContainer secondContainer = null;
         if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
-            float firstContainerAngleDeg = MyMath.deg_0_to_360(firstContainerChosen.getRotation() + gameplayScreen.getContainerOfContainers().getRotation());
+            float firstContainerAngleDeg = MyMath.deg_0_to_360(firstContainer.getRotation() + gameplayScreen.getContainerOfContainers().getRotation());
             if (firstContainerAngleDeg == 0) {// Top shield (dismiss double wave)
                 //secondContainerChosenDoubleWave = chooseContainer(ContainerPositioning.RANDOM, false);
             } else if (firstContainerAngleDeg > 180) {// Right
                 excludeTop = true;
-                secondContainerChosen = chooseContainer(ContainerPositioning.LEFT, false, null);
+                secondContainer = chooseContainer(ContainerPositioning.LEFT, false, null);
             } else {// Left
                 excludeTop = true;
-                secondContainerChosen = chooseContainer(ContainerPositioning.RIGHT, false, null);
+                secondContainer = chooseContainer(ContainerPositioning.RIGHT, false, null);
             }
 
 
-        } else
-            secondContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, null);
+        } else {
+            secondContainer = chooseContainer(ContainerPositioning.RANDOM, false, null);
+        }
 
+        return secondContainer;
+    }
 
-        determineTypeThenAttach(firstContainerChosen, 0, false, null);
-        if (secondContainerChosen != null)
-            determineTypeThenAttach(secondContainerChosen, 1, false, null);
+    private boolean portalsDoubleWave() {
+        isDouble = true;
 
+        firstContainerChosen = portalWave(ContainerPositioning.RANDOM);
+        if (firstContainerChosen == null)
+            return false;
+
+        Gdx.app.log(TAG, "----- NEW DOUBLE WAVE (PORTAL) -----");
+
+        secondContainerChosen = chooseSecondContainer(firstContainerChosen);
+        determineTypeThenAttach(secondContainerChosen, 1, false, null);
+
+        return true;
     }
 
     /*private BulletsAndShieldContainer firstOpposingContainersDizziness;
