@@ -66,7 +66,7 @@ public class GameOverLayer extends Group implements Resizable {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.setColor(getColor());
+        //batch.setColor(1, 1, 1, 0.5f);
         batch.draw(gameOverBG, getX(), getY(), getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 

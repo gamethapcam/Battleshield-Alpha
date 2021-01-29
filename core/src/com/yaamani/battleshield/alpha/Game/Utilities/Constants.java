@@ -12,7 +12,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 public final class Constants {
 
 
-    public static final boolean NO_DEATH = true;
+    public static final boolean NO_DEATH = false;
     public static final boolean DISMISS_STAR = true;
 
 
@@ -1015,7 +1015,7 @@ public final class Constants {
     public static final int D_PORTALS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
 
-    public static final float D_PORTALS_PORTAL_PROBABILITY = 0.35f;
+    public static final float D_PORTALS_PORTAL_PROBABILITY = 0.3f;
 
     public enum BulletPortalType {PORTAL_ENTRANCE, PORTAL_EXIT} // PORTAL_ENTRANCE: When the bullet enters the portal, it'll disappear. PORTAL_EXIT: The bullet will come out of the portal and appear.
 

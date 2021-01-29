@@ -124,8 +124,8 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         implementation "com.opencsv:opencsv:4.6"
 
-        implementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-        implementation 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+        /*implementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+        implementation 'org.junit.jupiter:junit-jupiter-engine:5.3.1'*/
         //implementation 'junit:junit:4.12'
 
     }

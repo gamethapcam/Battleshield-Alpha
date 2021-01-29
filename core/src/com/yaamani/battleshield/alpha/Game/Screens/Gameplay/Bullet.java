@@ -17,6 +17,7 @@ import com.yaamani.battleshield.alpha.MyEngine.Resizable;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.BulletPortalRole.CLOSE_ENTRANCE_PORTAL;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.BulletPortalRole.CLOSE_EXIT_PORTAL;
 
 public class Bullet extends Group implements Resizable, Pool.Poolable {
@@ -200,6 +201,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         inUse = true;
         bulletsHandler.getActiveBullets().add(this);
         currentInUseBulletsCount++;
+        //Gdx.app.log(TAG, "using -> " + i);
     }
 
     public void iamNotInUseNow(boolean removeFromActiveBullets) {
@@ -208,6 +210,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (removeFromActiveBullets)
             bulletsHandler.getActiveBullets().removeValue(this, true);
         currentInUseBulletsCount--;
+        if (currentInUseBulletsCount < 0)
+            throw new RuntimeException("currentInUseBulletsCount is less than 0. Maybe a bullet got freed twice.");
+        //Gdx.app.log(TAG, "stopped using -> " + i);
     }
 
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
@@ -368,21 +373,25 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void stopUsingTheBullet(float worldWidth, float worldHeight, boolean removeFromActiveBullets) {
+        /*if (i == 0)
+            Gdx.app.log(TAG, "i = " + i);*/
+
         if (!inUse) return;
 
-        iamNotInUseNow(removeFromActiveBullets);
+        /*if (getColor().a == 0)
+            Gdx.app.log(TAG, "::::::::::::::::::: ALPHA 0 :::::::::::::::::::");*/
+
+        handlePortalTypeWhenStoppingUsingTheBullet();
+        handlePortalRoleWhenStoppingUsingTheBullet();
+
+        bulletsHandler.getBulletPool().free(this);
         //bulletMovement.finish();
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
-        bulletsHandler.getBulletPool().free(this);
-
-        bulletPortalType = null;
-        if (bulletPortalRole != null)
-            if (bulletPortalRole == CLOSE_EXIT_PORTAL)
-                closeExitPortalRole();
-        bulletPortalRole = null;
 
         handlePlusMinusStarExists();
+
+        iamNotInUseNow(removeFromActiveBullets);
     }
 
     private void handlePlusMinusStarExists() {
@@ -410,6 +419,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 }
                 break;
         }
+
+        //bulletPortalType = null;
     }
 
     private void handlePortalRole() {
@@ -418,8 +429,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         switch (bulletPortalRole) {
             case CLOSE_ENTRANCE_PORTAL:
                 if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION) {
-                    parent.hidePortalEntrance();
-                    bulletPortalRole = null;
+                    closeEntrancePortalRole();
                 }
                 break;
             case OPEN_EXIT_PORTAL:
@@ -442,8 +452,33 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
     }
 
+    private void handlePortalTypeWhenStoppingUsingTheBullet() {
+        setColor(1, 1, 1, 1);
+        bulletPortalType = null;
+    }
+
+    private void handlePortalRoleWhenStoppingUsingTheBullet() {
+        if (bulletPortalRole != null) {
+            if (bulletPortalRole == CLOSE_ENTRANCE_PORTAL)
+                closeEntrancePortalRole();
+            else if (bulletPortalRole == CLOSE_EXIT_PORTAL)
+                closeExitPortalRole();
+        }
+        bulletPortalRole = null;
+    }
+
+    private void closeEntrancePortalRole() {
+        parent.hidePortalEntrance();
+        bulletPortalRole = null;
+    }
+
     private void closeExitPortalRole() {
-        parent.hidePortalExit();
+        //if (parent != null)
+        //try {
+            parent.hidePortalExit();
+        //} catch (NullPointerException e) {
+        //    Gdx.app.log(TAG, "i = " + i);
+        //}
         bulletPortalRole = null;
         gameplayScreen.getBulletsHandler().portalIsOver();
     }

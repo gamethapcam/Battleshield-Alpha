@@ -766,7 +766,7 @@ public class BulletsHandler implements Updatable {
 
             if (currentSpecialBullet == SpecialBullet.MINUS) {
 
-                Gdx.app.log(TAG, "Possible MINUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount()) + ", " +
+                Gdx.app.log(TAG, "Possible MINUS (All must be false in order to make the bullet minus) -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount()) + ", " +
                         Bullet.isPlusOrMinusExists() + ", " +
                         Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
@@ -818,7 +818,7 @@ public class BulletsHandler implements Updatable {
 
             if (currentSpecialBullet == SpecialBullet.PLUS) {
 
-                Gdx.app.log(TAG, "Possible PLUS -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount()) + ", " +
+                Gdx.app.log(TAG, "Possible PLUS (All must be false in order to make the bullet plus) -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount()) + ", " +
                         Bullet.isPlusOrMinusExists() + ", " +
                         Bullet.isStarExists() + ", " +
                         !plusMinusBulletsTimer.isFinished() + ", " +
@@ -1000,6 +1000,12 @@ public class BulletsHandler implements Updatable {
     }
 
     private boolean portalCondition() {
+        Gdx.app.log(TAG, "Possible Portal (All must be true in order to spawn a portal wave) -> " +
+                (gameplayScreen.getGameplayMode() == GameplayMode.PORTALS) + ", " +
+                (MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY) + ", " +
+                !thereIsAPortal + ", " + !Bullet.isPlusOrMinusExists() + ", " +
+                plusMinusBulletsTimer.isFinished());
+
         return gameplayScreen.getGameplayMode() == GameplayMode.PORTALS &
                 MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY &
                 !thereIsAPortal &
@@ -1859,8 +1865,10 @@ public class BulletsHandler implements Updatable {
 
             @Override
             public void free(Bullet object) {
-                // Gdx.app.log(TAG, "freed -> " + object.getI());
+                if (!object.isInUse())
+                    Gdx.app.error(TAG, "Potentially freeing a bullet more than once. i = " + object.getI() + ".");
                 super.free(object);
+                //Gdx.app.log(TAG, "free -> " + object.getI());
                 //Gdx.app.log(TAG, "Free bullets in pool = " + getFree());
             }
 
@@ -1868,6 +1876,8 @@ public class BulletsHandler implements Updatable {
             public Bullet obtain() {
                 Bullet bullet = super.obtain();
                 //activeBullets.add(bullet);
+                //Gdx.app.log(TAG, "obtain -> " + bullet.getI());
+
                 return bullet;
             }
         };

@@ -17,6 +17,8 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class HealthHandler implements Updatable {
 
+    private static final String TAG = HealthHandler.class.getSimpleName();
+
     private GameplayScreen gameplayScreen;
 
     private NetworkAndStorageManager networkAndStorageManager;
@@ -120,9 +122,15 @@ public class HealthHandler implements Updatable {
 
         gameplayScreen.getLazerAttackStuff().resetLazerStuff();
 
+        gameplayScreen.getBulletsHandler().portalIsOver();
+
+
         if (networkAndStorageManager != null)
             if (networkAndStorageManager.isSaveControllerValuesModeEnabled())
                 networkAndStorageManager.saveTheMostRecentEntries();
+
+
+        Gdx.app.log(TAG, "");
     }
 
     public void playerLost() {
@@ -149,20 +157,24 @@ public class HealthHandler implements Updatable {
                 gameplayScreen.getScoreTimerStuff().registerBestScoreToHardDrive();
 
 
-
-
-
+        Gdx.app.log(TAG, "XXXXXXXXXXXXXXXXXXXXXXXX Gameplay stopped XXXXXXXXXXXXXXXXXXXXXXXX");
+        Gdx.app.log(TAG, "XXXXXXXXXXXXXXXXXXXXXXXX Gameplay stopped XXXXXXXXXXXXXXXXXXXXXXXX");
+        Gdx.app.log(TAG, "XXXXXXXXXXXXXXXXXXXXXXXX Gameplay stopped XXXXXXXXXXXXXXXXXXXXXXXX");
 
     }
 
     public void newGame() {
         if (gameplayScreen.getState() == GameplayScreen.State.STOPPED) {
+
+            gameplayScreen.setState(GameplayScreen.State.PLAYING);
+
+            gameplayScreen.setGameplayMode(gameplayScreen.getGameplayMode());
+
             gameplayScreen.resize(Gdx.graphics.getWidth(),
                     Gdx.graphics.getHeight(),
                     gameplayScreen.getStage().getViewport().getWorldWidth(),
                     gameplayScreen.getStage().getViewport().getWorldHeight());
 
-            gameplayScreen.setState(GameplayScreen.State.PLAYING);
             setHealthValueTo(1f);
 
 
@@ -205,7 +217,6 @@ public class HealthHandler implements Updatable {
 
             gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
-            gameplayScreen.setGameplayMode(gameplayScreen.getGameplayMode());
 
             if (gameplayScreen.getControllerLeft().getColor().a < 1)
                 gameplayScreen.getControllerLeft().addAction(Actions.alpha(1, 0.2f));
