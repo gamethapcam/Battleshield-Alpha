@@ -661,6 +661,21 @@ public final class Constants {
 
 
 
+    public static final float SPECIAL_BULLET_UI_MARGIN_BETWEEN_ACTORS = SCORE_TXT_MARGIN;
+
+    public static final float SPECIAL_BULLET_UI_X = WORLD_SIZE * 0.38f;
+
+    public static final float SPECIAL_BULLET_UI_Y = WORLD_SIZE - (SCORE_TXT_MARGIN + SCORE_TXT_HEIGHT /*+ BULLET_SPEED_MULTIPLIER_TXT_HEIGHT*/);
+
+    public static final float SPECIAL_BULLET_TEMP_PROGRESS_BAR_UI_WIDTH = WORLD_SIZE / 15f;
+
+    public static final float SPECIAL_BULLET_TEMP_PROGRESS_BAR_UI_PROGRESS_BAR_HEIGHT = WORLD_SIZE / 40f;
+
+    public static final float SPECIAL_BULLET_TEMP_PROGRESS_BAR_UI_MARGIN_BETWEEN_IMAGE_AND_PROGRESS_BAR = WORLD_SIZE / 120f;
+
+
+
+
 
 
     public static final String DIFFICULTY_PREFIX = "Difficulty: ";
@@ -1251,6 +1266,8 @@ public final class Constants {
     public static final String ASSETS_ARMOR_BULLET = "Armor";
 
     public static final String ASSETS_2_EXIT_PORTAL_BULLET = "2 Exit Portal";
+
+    public static final String ASSETS_2_EXIT_PORTAL_BULLET_GLOW = "2 Exit Portal Glow";
 
     public static final String ASSETS_REWIND_BULLET = "Rewind";
 

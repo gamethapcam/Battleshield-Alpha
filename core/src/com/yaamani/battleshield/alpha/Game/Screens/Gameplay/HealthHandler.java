@@ -114,7 +114,7 @@ public class HealthHandler implements Updatable {
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setVisible(false);
 
-        gameplayScreen.hideTempProgressBar();
+        //gameplayScreen.hideTempProgressBar();
 
         gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);
 
@@ -212,7 +212,7 @@ public class HealthHandler implements Updatable {
 
             gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().clearRefractionBuffers();
 
-            gameplayScreen.getTempProgressBar().positionCentre();
+            //gameplayScreen.getTempProgressBar().positionCentre();
             // gameplayScreen.showTempProgressBar();
 
             gameplayScreen.getLevelFinishStuff().getFinishText().setVisible(false);

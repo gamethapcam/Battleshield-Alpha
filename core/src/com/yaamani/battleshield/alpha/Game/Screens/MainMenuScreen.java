@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.LazerAttackStuff;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.SpecialBulletTempProgressBarUI;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.TwoExitPortalUI;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.AndroidPermissionHandler;
 import com.yaamani.battleshield.alpha.Game.Utilities.OnPermissionResult;
@@ -28,14 +30,9 @@ import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.RowOfActors;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Random;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileSystemView;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -88,6 +85,15 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
     private MyBitmapFont myBitmapFont;
 
     //private DifficultyCurveTesting difficultyCurveTesting;
+
+    /*private Image i1;
+    private Image i2;
+    private Image i3;
+    private Image i4;
+    private RowOfActors rowOfActors;
+    private boolean add = true;*/
+    //private SpecialBulletTempProgressBarUI specialBulletTempProgressBarUI;
+    //private TwoExitPortalUI twoExitPortalUI;
 
 
     public MainMenuScreen(final AdvancedStage game, AndroidPermissionHandler androidPermissionHandler, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, StarsContainer starsContainer, boolean transform) {
@@ -209,6 +215,21 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         initializeLoadControllersAngles();
 
         //difficultyCurveTesting = new DifficultyCurveTesting();
+
+        /*i1 = new Image(Assets.instance.gameplayAssets.minusBullet);
+        i2 = new Image(Assets.instance.gameplayAssets.plusBullet);
+        i3 = new Image(Assets.instance.gameplayAssets.rewindBullet);
+        i4 = new Image(Assets.instance.gameplayAssets.starBullet);
+        i1.setSize(5, 5);
+        i2.setSize(5, 5);
+        i3.setSize(5, 5);
+        i4.setSize(5, 5);
+        rowOfActors = new RowOfActors(2);
+        addActor(rowOfActors);*/
+        /*specialBulletTempProgressBarUI = new SpecialBulletTempProgressBarUI(Assets.instance.gameplayAssets.minusBullet);
+        addActor(specialBulletTempProgressBarUI);*/
+        /*twoExitPortalUI = new TwoExitPortalUI(myBitmapFont, Assets.instance.gameplayAssets.twoExitPortal, Assets.instance.gameplayAssets.twoExitPortalGlow);
+        addActor(twoExitPortalUI);*/
     }
 
 
@@ -217,9 +238,27 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         if (!isVisible()) return;
         super.act(delta);
 
-        cycleAspectRatios();
+        //cycleAspectRatios();
 
         //gamePadPooling();
+
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.A))
+            add = true;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.D))
+            add = false;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+            if (add) rowOfActors.addActor(i1);
+            else rowOfActors.removeActor(i1);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+            if (add) rowOfActors.addActor(i2);
+            else rowOfActors.removeActor(i2);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            if (add) rowOfActors.addActor(i3);
+            else rowOfActors.removeActor(i3);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
+            if (add) rowOfActors.addActor(i4);
+            else rowOfActors.removeActor(i4);
+        }*/
     }
 
     @Override

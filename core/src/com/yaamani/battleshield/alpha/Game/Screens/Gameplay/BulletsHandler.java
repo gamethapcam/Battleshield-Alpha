@@ -980,7 +980,7 @@ public class BulletsHandler implements Updatable {
             dizzinessWave(WaveAttackType.SINGLE);
             //dizzinessSafeSingleWave();
         else if (portalCondition()) {
-            firstContainerChosen = portalWave(ContainerPositioning.RANDOM);
+            firstContainerChosen = portalWave();
             if (firstContainerChosen == null)
                 ordinarySingleWave();
         } else
@@ -1012,7 +1012,7 @@ public class BulletsHandler implements Updatable {
                 !Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished();
     }
 
-    private BulletsAndShieldContainer portalWave(ContainerPositioning positioning) {
+    private BulletsAndShieldContainer portalWave() {
 
         BulletsAndShieldContainer entranceContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_ENTRANCE);
         if (entranceContainer == null) {
@@ -1025,7 +1025,7 @@ public class BulletsHandler implements Updatable {
         determineTypeThenAttach(entranceContainer, 0, false, BulletPortalType.PORTAL_ENTRANCE);
         entranceContainer.showPortalEntrance();
 
-        BulletsAndShieldContainer exitContainer = chooseContainer(positioning, false, BulletPortalType.PORTAL_EXIT);
+        BulletsAndShieldContainer exitContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_EXIT);
         attachBullets(exitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
         return exitContainer;
     }
@@ -1086,7 +1086,7 @@ public class BulletsHandler implements Updatable {
     private boolean portalsDoubleWave() {
         isDouble = true;
 
-        firstContainerChosen = portalWave(ContainerPositioning.RANDOM);
+        firstContainerChosen = portalWave();
         if (firstContainerChosen == null)
             return false;
 

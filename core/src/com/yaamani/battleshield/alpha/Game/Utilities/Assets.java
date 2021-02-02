@@ -160,6 +160,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
         public final TextureRegion fasterDizzinessRotationBullet;
         public final TextureRegion armorBullet;
         public final TextureRegion twoExitPortal;
+        public final TextureRegion twoExitPortalGlow;
         public final TextureRegion rewindBullet;
 
         public final TextureRegion armorHalo;
@@ -212,6 +213,7 @@ public final class Assets implements Disposable, AssetErrorListener, Updatable {
             fasterDizzinessRotationBullet = findRegion(atlas, ASSETS_FASTER_DIZZINESS_ROTATION);
             armorBullet = findRegion(atlas, ASSETS_ARMOR_BULLET);
             twoExitPortal = findRegion(atlas, ASSETS_2_EXIT_PORTAL_BULLET);
+            twoExitPortalGlow = findRegion(atlas, ASSETS_2_EXIT_PORTAL_BULLET_GLOW);
             rewindBullet = findRegion(atlas, ASSETS_REWIND_BULLET);
 
             armorHalo = findRegion(atlas, ASSETS_ARMOR_HALO);

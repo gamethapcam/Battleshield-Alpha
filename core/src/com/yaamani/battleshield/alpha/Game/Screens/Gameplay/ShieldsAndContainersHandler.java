@@ -722,8 +722,8 @@ public class ShieldsAndContainersHandler implements Updatable {
                 super.onStart();
 
                 dizzinessRotationalSpeedMultiplier = D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER;
-                TextureRegion r = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
-                gameplayScreen.displayTempProgressBar(r, dizzinessRotationalSpeedMultiplierTimer.getDurationMillis());
+                //TextureRegion r = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
+                gameplayScreen.getFasterDizzinessRotationTempProgressBarUI().displayFor(dizzinessRotationalSpeedMultiplierTimer.getDurationMillis());
             }
 
             @Override

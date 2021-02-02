@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 //import com.badlogic.gdx.controllers.
@@ -17,6 +18,7 @@ import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
+import com.yaamani.battleshield.alpha.MyEngine.RowOfActors;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.TempProgressBar;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
@@ -82,7 +84,12 @@ public class GameplayScreen extends AdvancedScreen {
 
     private HealthBar healthBar;
 
-    private TempProgressBar tempProgressBar;
+    private RowOfActors specialBulletUI;
+    //private TempProgressBar tempProgressBar;
+    private SpecialBulletTempProgressBarUI mirrorTempProgressBarUI;
+    private SpecialBulletTempProgressBarUI rewindTempProgressBarUI;
+    private SpecialBulletTempProgressBarUI fasterDizzinessRotationTempProgressBarUI;
+    private TwoExitPortalUI twoExitPortalUI;
 
     private LevelFinishStuff levelFinishStuff;
 
@@ -139,8 +146,13 @@ public class GameplayScreen extends AdvancedScreen {
                 viewport.getWorldWidth(),
                 viewport.getWorldHeight());*/
 
-        initializeTempProgressBar();
 
+        //initializeTempProgressBar();
+        initializeMirrorTempProgressBarUI();
+        initializeRewindTempProgressBarUI();
+        initializeFasterDizzinessRotationTempProgressBarUI();
+        initializeSpecialBulletUI();
+        initializeTwoExitPortalUI();
 
 
         activeBulletsText = new SimpleText(myBitmapFont, "");
@@ -207,6 +219,8 @@ public class GameplayScreen extends AdvancedScreen {
         //Gdx.app.log(TAG, "free bullets = " + bulletsHandler.getBulletPool().getFree());
         //Gdx.app.log(TAG, "" + bulletsHandler.getCurrentWaveLastBullet());
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.A))
+            mirrorTempProgressBarUI.displayFor(1000);
 
 
         scoreTimerStuff.update(delta);
@@ -321,7 +335,8 @@ public class GameplayScreen extends AdvancedScreen {
 
         whiteTextureHidesEveryThingSecondStageStarBullet.setBounds(-worldWidth, -worldHeight, worldWidth*4, worldHeight*4);
 
-        tempProgressBar.resize(width, height, worldWidth, worldHeight);
+        specialBulletUI.resize(width, height, worldWidth, worldHeight);
+        //tempProgressBar.resize(width, height, worldWidth, worldHeight);
 
         levelFinishStuff.resize(width, height, worldWidth, worldHeight);
 
@@ -457,13 +472,71 @@ public class GameplayScreen extends AdvancedScreen {
         //addToResumeWhenResumingStarBullet(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
     }
 
-    private void initializeTempProgressBar() {
+    private void initializeSpecialBulletUI() {
+        specialBulletUI = new RowOfActors(SPECIAL_BULLET_UI_MARGIN_BETWEEN_ACTORS);
+        addActor(specialBulletUI);
+        specialBulletUI.setPosition(SPECIAL_BULLET_UI_X, SPECIAL_BULLET_UI_Y);
+    }
+
+    /*private void initializeTempProgressBar() {
         tempProgressBar = new TempProgressBar(this, myBitmapFont);
         tempProgressBar.setProgressBarPercentageBarHeightRatio(MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO);
         addActor(tempProgressBar);
+    }*/
+
+    private void initializeMirrorTempProgressBarUI() {
+        TextureRegion region = Assets.instance.gameplayAssets.mirrorBullet;
+        mirrorTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
+            @Override
+            public void onStartingToDisplay() {
+                if (!isTweenStarted()) {
+                    specialBulletUI.addActor(mirrorTempProgressBarUI);
+                }
+            }
+
+            @Override
+            public void onTweenFinish() {
+                specialBulletUI.removeActor(mirrorTempProgressBarUI);
+            }
+        };
     }
 
+    private void initializeRewindTempProgressBarUI() {
+        TextureRegion region = Assets.instance.gameplayAssets.rewindBullet;
+        rewindTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
+            @Override
+            public void onStartingToDisplay() {
+                if (!isTweenStarted())
+                    specialBulletUI.addActor(rewindTempProgressBarUI);
+            }
 
+            @Override
+            public void onTweenFinish() {
+                specialBulletUI.removeActor(rewindTempProgressBarUI);
+            }
+        };
+    }
+
+    private void initializeFasterDizzinessRotationTempProgressBarUI() {
+        TextureRegion region = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
+        fasterDizzinessRotationTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
+            @Override
+            public void onStartingToDisplay() {
+                if (!isTweenStarted())
+                    specialBulletUI.addActor(fasterDizzinessRotationTempProgressBarUI);
+            }
+
+            @Override
+            public void onTweenFinish() {
+                specialBulletUI.removeActor(fasterDizzinessRotationTempProgressBarUI);
+            }
+        };
+    }
+
+    private void initializeTwoExitPortalUI() {
+        twoExitPortalUI = new TwoExitPortalUI(myBitmapFont, Assets.instance.gameplayAssets.twoExitPortal, Assets.instance.gameplayAssets.twoExitPortalGlow);
+        twoExitPortalUI.setVisible(false);
+    }
 
     //------------------------------ Getters And Setters ------------------------------
     //------------------------------ Getters And Setters ------------------------------
@@ -721,9 +794,9 @@ public class GameplayScreen extends AdvancedScreen {
         this.inStarBulletAnimation = inStarBulletAnimation;
     }
 
-    public TempProgressBar getTempProgressBar() {
+    /*public TempProgressBar getTempProgressBar() {
         return tempProgressBar;
-    }
+    }*/
 
     public LevelFinishStuff getLevelFinishStuff() {
         return levelFinishStuff;
@@ -756,6 +829,18 @@ public class GameplayScreen extends AdvancedScreen {
 
     public LazerAttackStuff getLazerAttackStuff() {
         return lazerAttackStuff;
+    }
+
+    public SpecialBulletTempProgressBarUI getMirrorTempProgressBarUI() {
+        return mirrorTempProgressBarUI;
+    }
+
+    public SpecialBulletTempProgressBarUI getRewindTempProgressBarUI() {
+        return rewindTempProgressBarUI;
+    }
+
+    public SpecialBulletTempProgressBarUI getFasterDizzinessRotationTempProgressBarUI() {
+        return fasterDizzinessRotationTempProgressBarUI;
     }
 
     public SimplestTransition getGameplayToMainMenu() {
@@ -798,32 +883,38 @@ public class GameplayScreen extends AdvancedScreen {
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.start(delay ? delayAmount : 0);
     }
 
-    public void displayTempProgressBar(TextureRegion region, float millis) {
+    /*public void displayTempProgressBar(TextureRegion region, float millis) {
         tempProgressBar.display(region, millis);
     }
 
     public void displayTempProgressBar(String charSequence, float millis) {
         tempProgressBar.display(charSequence, millis);
+    }*/
+
+    public void displayTwoExitPortalUI() {
+        twoExitPortalUI.setVisible(true);
+        twoExitPortalUI.resetText();
+        specialBulletUI.addActor(twoExitPortalUI);
     }
 
     /**
      * Calls {@code setVisible(false)}.
      */
-    public void hideTempProgressBar() {
+    /*public void hideTempProgressBar() {
         tempProgressBar.setVisible(false);
-    }
+    }*/
 
     public void showFinishButtonAndRelatedStuff() {
         scoreTimerStuff.getPlanetsTimerFlashesWhenZero().start();
         levelFinishStuff.getFinishTextTween().start();
         levelFinishStuff.getFinishText().setVisible(true);
-        tempProgressBar.positionBottomLeft();
+        //tempProgressBar.positionBottomLeft();
     }
 
     public void hideFinishButtonAndRelatedStuff() {
         scoreTimerStuff.getPlanetsTimerFlashesWhenZero().pause();
         levelFinishStuff.getFinishTextTween().pause();
         levelFinishStuff.getFinishText().setVisible(false);
-        tempProgressBar.positionCentre();
+        //tempProgressBar.positionCentre();
     }
 }

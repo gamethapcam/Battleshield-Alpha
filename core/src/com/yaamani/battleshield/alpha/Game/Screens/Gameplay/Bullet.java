@@ -773,8 +773,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 public void effect() {
                     gameplayScreen.getShieldsAndContainersHandler().startMirrorTimer();
                     float millis = gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimerDuration();
-                    TextureRegion r = Assets.instance.gameplayAssets.mirrorBullet;
-                    gameplayScreen.displayTempProgressBar(r, millis);
+                    gameplayScreen.getMirrorTempProgressBarUI().displayFor(millis);
                 }
             };
 
@@ -817,7 +816,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             twoExitPortal = new BulletEffect() {
                 @Override
                 public void effect() {
-
+                    gameplayScreen.displayTwoExitPortalUI();
                 }
             };
 
