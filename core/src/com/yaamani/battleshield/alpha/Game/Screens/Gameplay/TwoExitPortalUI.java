@@ -53,14 +53,26 @@ public class TwoExitPortalUI extends Group implements Resizable {
         glowingTwoExitPortalBulletImage.setY(twoExitPortalBulletImage.getY() + twoExitPortalBulletImage.getHeight()/2f - glowingTwoExitPortalBulletImage.getHeight()/2f);
     }
 
-    public void toggleGlow() {
-        if (glowingTwoExitPortalBulletImage.getColor().a > 0.5f)
-            glowingTwoExitPortalBulletImage.addAction(Actions.alpha(0, 0.5f));
-        else
-            glowingTwoExitPortalBulletImage.addAction(Actions.alpha(1, 0.5f));
+    public void glow() {
+        if (glowingTwoExitPortalBulletImage.getActions().size > 0) return;
+        if (getParent() == null) return;
+
+        glowingTwoExitPortalBulletImage.addAction(Actions.alpha(1, TWO_EXIT_PORTAL_UI_GLOW_DURATION));
+    }
+
+    public void dimTheGlow() {
+        if (glowingTwoExitPortalBulletImage.getActions().size > 0) return;
+        if (getParent() == null) return;
+
+        glowingTwoExitPortalBulletImage.addAction(Actions.alpha(0, TWO_EXIT_PORTAL_UI_GLOW_DURATION));
     }
 
     public void resetText() {
         text.setCharSequence("0/" + D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES, true);
+    }
+
+    public void updateText(int remainingTwoExitPortals) {
+        int n = D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES;
+        text.setCharSequence( (n - remainingTwoExitPortals) + "/" + n, true);
     }
 }

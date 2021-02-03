@@ -831,6 +831,10 @@ public class GameplayScreen extends AdvancedScreen {
         return lazerAttackStuff;
     }
 
+    public RowOfActors getSpecialBulletUI() {
+        return specialBulletUI;
+    }
+
     public SpecialBulletTempProgressBarUI getMirrorTempProgressBarUI() {
         return mirrorTempProgressBarUI;
     }
@@ -841,6 +845,10 @@ public class GameplayScreen extends AdvancedScreen {
 
     public SpecialBulletTempProgressBarUI getFasterDizzinessRotationTempProgressBarUI() {
         return fasterDizzinessRotationTempProgressBarUI;
+    }
+
+    public TwoExitPortalUI getTwoExitPortalUI() {
+        return twoExitPortalUI;
     }
 
     public SimplestTransition getGameplayToMainMenu() {
@@ -894,7 +902,13 @@ public class GameplayScreen extends AdvancedScreen {
     public void displayTwoExitPortalUI() {
         twoExitPortalUI.setVisible(true);
         twoExitPortalUI.resetText();
-        specialBulletUI.addActor(twoExitPortalUI);
+        if (twoExitPortalUI.getParent() == null)
+            specialBulletUI.addActor(twoExitPortalUI);
+    }
+
+    public void stopDisplayingTwoExitPortalUI() {
+        twoExitPortalUI.setVisible(false);
+        specialBulletUI.removeActor(twoExitPortalUI);
     }
 
     /**

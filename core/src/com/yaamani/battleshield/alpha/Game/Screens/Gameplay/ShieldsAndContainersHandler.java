@@ -645,6 +645,8 @@ public class ShieldsAndContainersHandler implements Updatable {
                 if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
                     ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(true);
                     ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
+
+                    gameplayScreen.getMirrorTempProgressBarUI().displayFor(mirrorControlsTimer.getDurationMillis());
                 }
             }
 

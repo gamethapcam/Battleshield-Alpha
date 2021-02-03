@@ -105,10 +105,9 @@ public class HealthHandler implements Updatable {
         Bullet.setStarExists(false);
         gameplayScreen.setInStarBulletAnimation(false);
 
-        Timer[] pauseWhenPausingFinishWhenStoppingTheGameplay = gameplayScreen.getFinishWhenStoppingTheGameplay();
-        for (int i = 0; i < pauseWhenPausingFinishWhenStoppingTheGameplay.length; i++) {
-            if (pauseWhenPausingFinishWhenStoppingTheGameplay[i] != null)
-                pauseWhenPausingFinishWhenStoppingTheGameplay[i].finish();
+        for (Timer timer : gameplayScreen.getFinishWhenStoppingTheGameplay()) {
+            if (timer != null)
+                timer.finish();
         }
 
         gameplayScreen.getWhiteTextureHidesEveryThingSecondStageStarBullet().setColor(1, 1, 1, 0);
@@ -123,6 +122,8 @@ public class HealthHandler implements Updatable {
         gameplayScreen.getLazerAttackStuff().resetLazerStuff();
 
         gameplayScreen.getBulletsHandler().portalIsOver();
+        gameplayScreen.getBulletsHandler().cancelTwoExitPortalsBulletEffect();
+        gameplayScreen.getSpecialBulletUI().clear();
 
 
         if (networkAndStorageManager != null)

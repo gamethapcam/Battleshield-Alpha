@@ -481,6 +481,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //}
         bulletPortalRole = null;
         gameplayScreen.getBulletsHandler().portalIsOver();
+        gameplayScreen.getTwoExitPortalUI().dimTheGlow();
+        if (gameplayScreen.getTwoExitPortalUI().getParent() != null &
+                gameplayScreen.getBulletsHandler().getRemainingTwoExitPortals() == 0)
+            gameplayScreen.stopDisplayingTwoExitPortalUI();
     }
 
     /*private void decideSpecialType() {
@@ -772,8 +776,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     gameplayScreen.getShieldsAndContainersHandler().startMirrorTimer();
-                    float millis = gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimerDuration();
-                    gameplayScreen.getMirrorTempProgressBarUI().displayFor(millis);
                 }
             };
 
@@ -817,6 +819,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     gameplayScreen.displayTwoExitPortalUI();
+                    gameplayScreen.getBulletsHandler().twoExitPortalsBulletEffect();
                 }
             };
 

@@ -673,6 +673,8 @@ public final class Constants {
 
     public static final float SPECIAL_BULLET_TEMP_PROGRESS_BAR_UI_MARGIN_BETWEEN_IMAGE_AND_PROGRESS_BAR = WORLD_SIZE / 120f;
 
+    public static final float TWO_EXIT_PORTAL_UI_GLOW_DURATION = 0.4f; // sec
+
 
 
 

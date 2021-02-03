@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -32,6 +33,7 @@ import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.RowOfActors;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -259,6 +261,11 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
             if (add) rowOfActors.addActor(i4);
             else rowOfActors.removeActor(i4);
         }*/
+
+        /*Gdx.app.log(TAG, "" + survival.getActions().size);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.A))
+            survival.addAction(Actions.moveBy(-5, 0, 0.25f));*/
+
     }
 
     @Override

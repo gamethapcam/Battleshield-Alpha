@@ -94,6 +94,7 @@ public class BulletsHandler implements Updatable {
 
 
     private boolean thereIsAPortal;
+    private int remainingTwoExitPortals = 0;
 
 
     //private float speedResetTime = 0;
@@ -525,6 +526,18 @@ public class BulletsHandler implements Updatable {
         thereIsAPortal = false;
     }
 
+    public int getRemainingTwoExitPortals() {
+        return remainingTwoExitPortals;
+    }
+
+    public void twoExitPortalsBulletEffect() {
+        remainingTwoExitPortals = D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES;
+    }
+
+    public void cancelTwoExitPortalsBulletEffect() {
+        remainingTwoExitPortals = 0;
+    }
+
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------
@@ -932,7 +945,7 @@ public class BulletsHandler implements Updatable {
                     //newSingleWave();
                     //Gdx.app.log(TAG, "<<<<<<<<<<< Can be double >>>>>>>>>>> " + Bullet.isPlusOrMinusExists() + ", " + plusMinusBulletsTimer.isFinished());
 
-                    if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished()) {
+                    if (!doubleWaveCondition()) {
                         /*if (MathUtils.random(1) == 0)
                             newRoundWave();
                             //newSingleWave();
@@ -968,6 +981,10 @@ public class BulletsHandler implements Updatable {
         excludeBottomLeft = false;
         excludeTopLeft = false;
         exclusionBasedOnPreviousWaveCalculated = false;*/
+    }
+
+    private boolean doubleWaveCondition() {
+        return !(gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished());
     }
 
     //--------------------------------------- Simple waves methods ---------------------------------------
@@ -1027,6 +1044,19 @@ public class BulletsHandler implements Updatable {
 
         BulletsAndShieldContainer exitContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_EXIT);
         attachBullets(exitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
+
+        if (!isDouble & doubleWaveCondition() & remainingTwoExitPortals > 0) {
+            BulletsAndShieldContainer secondExitContainer = chooseSecondContainer(exitContainer);
+            if (secondExitContainer != null) {
+                attachBullets(secondExitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
+                isDouble = true;
+                remainingTwoExitPortals--;
+                gameplayScreen.getTwoExitPortalUI().updateText(remainingTwoExitPortals);
+                gameplayScreen.getTwoExitPortalUI().glow();
+            }
+        }
+
+
         return exitContainer;
     }
 
