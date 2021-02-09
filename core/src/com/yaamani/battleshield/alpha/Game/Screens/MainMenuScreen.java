@@ -57,6 +57,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
     private SimpleText dizziness;
     private SimpleText lazer;
     private SimpleText portals;
+    private SimpleText bigBoss;
 
     private SimpleText lazerOmar;
     private SimpleText lazerYamani;
@@ -185,6 +186,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         initializeLazerOmar(game);
         initializeLazerYamani(game);
         initializePortals(game);
+        initializeBigBoss(game);
 
         //start.setLayoutEnabled(false, earthEntities); //for performance.
 
@@ -204,6 +206,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         addActor(dizziness);
         addActor(lazer);
         addActor(portals);
+        addActor(bigBoss);
         addActor(lazerOmar);
         addActor(lazerYamani);
 
@@ -300,6 +303,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         dizziness.setVisible(false);
         lazer.setVisible(false);
         portals.setVisible(false);
+        bigBoss.setVisible(false);
 
         survival.setVisible(true);
         planets.setVisible(true);
@@ -352,6 +356,11 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         if (portals != null) {
             portals.setHeight(MM_PORTALS_TXT_HEIGHT);
             portals.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - portals.getWidth());
+        }
+
+        if (bigBoss != null) {
+            bigBoss.setHeight(MM_BIG_BOSS_TXT_HEIGHT);
+            bigBoss.setX(worldWidth - MM_SURVIVAL_TXT_X_MARGIN_FROM_RIGHT - bigBoss.getWidth());
         }
 
         if (lazerOmar != null) {
@@ -571,6 +580,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
                         dizziness.setVisible(true);
                         lazer.setVisible(true);
                         portals.setVisible(true);
+                        bigBoss.setVisible(true);
                     }
                 }
         );
@@ -696,6 +706,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
                         t1.setVisible(false);
                         lazer.setVisible(false);
                         portals.setVisible(false);
+                        bigBoss.setVisible(false);
                     }
                 }
         );
@@ -772,6 +783,32 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
     private void startPortals(final AdvancedStage game) {
         gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
         gameplayScreen.setGameplayMode(GameplayMode.PORTALS);
+        game.switchScreens(mainMenuToGameplay);
+    }
+
+    private void initializeBigBoss(final AdvancedStage game) {
+        bigBoss = new SimpleText(myBitmapFont, "BIG BOSS");
+
+        bigBoss.setVisible(false);
+
+        bigBoss.setY(MM_BIG_BOSS_FINAL_Y);
+
+        bigBoss.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+
+        bigBoss.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startBigBoss(game);
+                    }
+                }
+        );
+    }
+
+    private void startBigBoss(final AdvancedStage game) {
+        gameplayScreen.setGameplayControllerType(GameplayControllerType.RESTRICTED);
+        gameplayScreen.setGameplayMode(GameplayMode.BIG_BOSS);
         game.switchScreens(mainMenuToGameplay);
     }
 

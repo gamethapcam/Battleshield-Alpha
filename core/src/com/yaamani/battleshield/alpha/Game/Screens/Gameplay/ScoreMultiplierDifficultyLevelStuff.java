@@ -36,6 +36,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
     private Tween lazer_difficultyLevelTween;
     private Tween portals_difficultyLevelTween;
     private Tween t1_difficultyLevelTween;
+    private Tween bigBoss_difficultyLevelTween;
 
 
     public ScoreMultiplierDifficultyLevelStuff(GameplayScreen gameplayScreen) {
@@ -50,6 +51,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         initializeLazer_difficultyLevelTween();
         initializePortals_difficultyLevelTween();
         initializeT1_difficultyLevelTween();
+        initializeBigBoss_difficultyLevelTween();
     }
 
     @Override
@@ -87,6 +89,9 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
                     break;
                 case T1:
                     t1_difficultyLevelTween.update(delta);
+                    break;
+                case BIG_BOSS:
+                    bigBoss_difficultyLevelTween.update(delta);
                     break;
             }
         }
@@ -221,6 +226,17 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
 
         t1_difficultyLevelTween.start();
+    }
+
+    public void bigBoss() {
+        updateCharSequence(DIFFICULTY_PREFIX, 1);
+
+        myProgressBarTween.setDurationMillis(BIG_BOSS_LEVEL_TIME*60*1000);
+        myProgressBarTween.setInterpolation(D_BIG_BOSS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
+        myProgressBarTween.start();
+
+
+        bigBoss_difficultyLevelTween.start();
     }
 
     //---------------------------------------- Initializers ---------------------------------------
@@ -406,6 +422,27 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         };
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(t1_difficultyLevelTween);
+    }
+
+    private void initializeBigBoss_difficultyLevelTween() {
+        bigBoss_difficultyLevelTween = new Tween(BIG_BOSS_LEVEL_TIME*60*1000, D_BIG_BOSS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                int newDifficultyLevel = MathUtils.round(interpolation.apply(1, D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS, percentage));
+                if (newDifficultyLevel != scoreMultiplierDifficultyLevel) {
+                    scoreMultiplierDifficultyLevel = newDifficultyLevel;
+                    updateCharSequence(DIFFICULTY_PREFIX, newDifficultyLevel);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                // Don't call super.
+            }
+        };
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(bigBoss_difficultyLevelTween);
+
     }
 
 

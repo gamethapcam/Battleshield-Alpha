@@ -72,13 +72,13 @@ public class HealthHandler implements Updatable {
         this.networkAndStorageManager = networkAndStorageManager;
     }
 
-    public void affectHealthBy(float by, float durationMillis, Interpolation interpolation) {
+    public void affectHealth(float amount, float durationMillis, Interpolation interpolation) {
         float healthFinishedValue = health.getCurrentFinalValue();
-        setHealthValueTo(healthFinishedValue + by, durationMillis, interpolation);
+        setHealthValueTo(healthFinishedValue + amount, durationMillis, interpolation);
     }
 
-    public void affectHealthBy(float by) {
-        affectHealthBy(by, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
+    public void affectHealth(float amount) {
+        affectHealth(amount, HEALTH_BAR_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
     }
 
     public void stopTheGameplay() {

@@ -132,7 +132,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
         lazerGlow.setX(lazerBeam.getX() - (lazerGlow.getWidth()-lazerBeam.getWidth())/2f);
     }
 
-    private void affectHealth() {
+    private void _affectHealth() {
         LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
         LazerAttackStuff.LazerAttackHealthAffection lazerAttackHealthAffection = lazerAttackStuff.getLazerAttackHealthAffection();
         HealthHandler healthHandler = gameplayScreen.getHealthHandler();
@@ -142,7 +142,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
             if (healthHandler.getHealth().getCurrentFinalValue() > 1)
                 healthHandler.setHealthValueTo(0.6f, LAZER_BEAM_SHRINKING_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
             else
-                healthHandler.affectHealthBy(D_LAZER_YAMANI_HEALTH_AFFECTION_AMOUNT, LAZER_BEAM_SHRINKING_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
+                healthHandler.affectHealth(D_LAZER_YAMANI_HEALTH_AFFECTION_AMOUNT, LAZER_BEAM_SHRINKING_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
 
 
         } else if (lazerAttackHealthAffection.equals(LazerAttackStuff.LazerAttackHealthAffection.OMAR)) {
@@ -156,6 +156,10 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
 
         }
+    }
+
+    private void _affectTimer() {
+        gameplayScreen.getScoreTimerStuff().affectTimer(D_BIG_BOSS_AFFECT_TIMER_LAZER_AMOUNT, LAZER_BEAM_SHRINKING_TWEEN_DURATION, BIG_BOSS_AFFECT_TIMER_LAZER_INTERPOLATION);
     }
 
     //------------------------------ initializers ------------------------------
@@ -184,7 +188,11 @@ public class LazerAttack extends Group implements Updatable, Resizable {
                 if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
                     haloArmorBlinkingTween.start();
                 } else {
-                    affectHealth();
+
+                    if (gameplayScreen.getGameplayMode() == GameplayMode.LAZER)
+                        _affectHealth();
+                    else if (gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS)
+                        _affectTimer();
                 }
 
             }

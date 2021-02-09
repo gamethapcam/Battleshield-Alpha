@@ -96,8 +96,6 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
         planetsTimerFlashesWhenZero.update(delta);
 
-        affectTimerTween.update(delta);
-        affectTimerColorTween.update(delta);
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
             if (!gameplayScreen.isInStarBulletAnimation())
@@ -105,6 +103,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                     scoreTimer += delta * scoreMultiplierDifficultyLevelStuff.getScoreMultiplierDifficultyLevel();
                 else
                     scoreTimer += delta;
+
 
         checkBestScore();
         updateBestScoreButDontRegisterToHardDriveYet();
@@ -120,6 +119,21 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
 
 
+        updateCharSequenceForScoreText();
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H))
+            affectTimer(D_T1_AFFECT_TIMER_HEART_AMOUNT);
+
+        //updateCharSequenceForScoreText();
+    }
+
+    public void updateAffectTimerTweens(float delta) {
+        affectTimerTween.update(delta);
+        affectTimerColorTween.update(delta);
+    }
+
+    public void updateCharSequenceForScoreText() {
         if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
             updateCharSequenceForScoreTextWhenSurvival();
         else {
@@ -128,12 +142,6 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
             handleFinishButton(secondsLeft);
         }
-
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-            affectTimer(AFFECT_TIMER_HEART_AMOUNT);
-
-        //updateCharSequenceForScoreText();
     }
 
     private void updateCharSequenceForScoreTextWhenSurvival() {
@@ -207,6 +215,11 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     }
 
     public void affectTimer(float amountMillis) {
+        float durationMillis = Math.abs(amountMillis) * 0.5f/5f;
+        affectTimer(amountMillis, durationMillis, AFFECT_TIMER_TWEEN_INTERPOLATION);
+    }
+
+    public void affectTimer(float amountMillis, float durationMillis, Interpolation interpolation) {
 
         //Gdx.app.log(TAG, "" + affectTimerTween.isStarted());
 
@@ -215,17 +228,20 @@ public class ScoreTimerStuff implements Resizable, Updatable {
             previous = (1-affectTimerTween.getPercentage()) *
                     (affectTimerTweenFinalValue - affectTimerTweenInitialValue);
 
-        affectTimerTween.setDurationMillis(Math.abs(amountMillis) * 0.5f/5f);
+        affectTimerTween.setDurationMillis(durationMillis);
+        affectTimerTween.setInterpolation(interpolation);
 
         affectTimerTweenInitialValue = scoreTimer;
         affectTimerTweenFinalValue = affectTimerTweenInitialValue +
-                                                       (float) ((amountMillis + Math.signum(amountMillis) * affectTimerTween.getDurationMillis()) * MILLIS_TO_SECONDS) +
-                                                       previous;
+                (float) ((amountMillis + Math.signum(amountMillis) * affectTimerTween.getDurationMillis()) * MILLIS_TO_SECONDS) +
+                previous;
 
         //Gdx.app.log(TAG, "" + (affectTimerTweenFinalValue - affectTimerTweenInitialValue));
-        affectTimerColorTween.start();
-
         affectTimerTween.start();
+
+
+        affectTimerColorTween.setDurationMillis(Math.max(AFFECT_TIMER_COLOR_TWEEN_DURATION, durationMillis));
+        affectTimerColorTween.start();
     }
 
     //public void aff
@@ -380,7 +396,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
     private float affectTimerTweenFinalValue;
     //private boolean affectTimerGreen;
     private void initializeAffectTimerTween() {
-        affectTimerTween = new Tween(AFFECT_TIMER_TWEEN_INTERPOLATION) {
+        affectTimerTween = new Tween() {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 scoreTimer = interpolation.apply(affectTimerTweenInitialValue, affectTimerTweenFinalValue, percentage);
@@ -415,7 +431,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
 
     /**
-     * <a href="https://www.desmos.com/calculator/tatn5ttzue">https://www.desmos.com/calculator/tatn5ttzue</a>
+     * <a href="https://www.desmos.com/calculator/hmqa2au4es">https://www.desmos.com/calculator/hmqa2au4es</a>
      *
      */
     public static class TimePlayedSoFarStarBulletThirdStageInterpolation extends Interpolation {
@@ -438,7 +454,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
 
     /**
-     * <a href="https://www.desmos.com/calculator/xzmvqzjln7">https://www.desmos.com/calculator/xzmvqzjln7</a>
+     * <a href="https://www.desmos.com/calculator/6rsoxhdxha">https://www.desmos.com/calculator/6rsoxhdxha</a>
      *
      */
     public static class AffectTimerInterpolation extends Interpolation {

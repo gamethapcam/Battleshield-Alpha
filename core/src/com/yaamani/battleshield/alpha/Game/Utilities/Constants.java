@@ -101,6 +101,8 @@ public final class Constants {
 
     public static final float MM_PORTALS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
 
+    public static final float MM_BIG_BOSS_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
+
     public static final float MM_T1_TXT_HEIGHT = MM_SURVIVAL_TXT_HEIGHT;
     //-------
     public static final float MM_MOUNTAIN_INITIAL_Y = -MM_MOUNTAIN_HEIGHT;
@@ -152,6 +154,8 @@ public final class Constants {
     public static final float MM_LAZER_FINAL_Y = MM_DIZZINESS_FINAL_Y - 13f;
 
     public static final float MM_PORTALS_FINAL_Y = MM_LAZER_FINAL_Y - 13f;
+
+    public static final float MM_BIG_BOSS_FINAL_Y = MM_PORTALS_FINAL_Y - 13f;
     //-------
     public static final float MM_MOUNTAIN_X_MOVING_AMOUNT = WORLD_SIZE * 0.02f;
 
@@ -170,7 +174,7 @@ public final class Constants {
 
 
     public enum GameplayControllerType {FREE, RESTRICTED}
-    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS, T1, NETWORK_RECEIVER_VALUES_LOADER}
+    public enum GameplayMode {SURVIVAL, CRYSTAL, DIZZINESS, LAZER, PORTALS, T1, BIG_BOSS, NETWORK_RECEIVER_VALUES_LOADER}
 
 
     public enum Direction {RIGHT, LEFT}
@@ -1108,7 +1112,7 @@ public final class Constants {
 
 
 
-    public static final float T1_LEVEL_TIME = /*5*/0.5f;
+    public static final float T1_LEVEL_TIME = 5/*0.5f*/;
 
     public static final int T1_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
@@ -1125,11 +1129,11 @@ public final class Constants {
 
     public static final Interpolation AFFECT_TIMER_TWEEN_INTERPOLATION = new ScoreTimerStuff.AffectTimerInterpolation()/*new ScoreTimerStuff.TimePlayedSoFarStarBulletThirdStageInterpolation()*/;
 
-    public static final float AFFECT_TIMER_ORDINARY_AMOUNT = NO_DEATH ? 0 : -500;
+    public static final float D_T1_AFFECT_TIMER_ORDINARY_AMOUNT = NO_DEATH ? 0 : -500;
 
-    public static final float AFFECT_TIMER_BOMB_AMOUNT = NO_DEATH ? 0 : -2500;
+    public static final float D_T1_AFFECT_TIMER_BOMB_AMOUNT = NO_DEATH ? 0 : -2500;
 
-    public static final float AFFECT_TIMER_HEART_AMOUNT = +1000;
+    public static final float D_T1_AFFECT_TIMER_HEART_AMOUNT = +1000;
 
 
     public static final Interpolation AFFECT_TIMER_COLOR_TWEEN_INTERPOLATION = Interpolation.pow4In;
@@ -1186,6 +1190,96 @@ public final class Constants {
     );
 
 
+
+
+
+
+
+
+
+
+    public static final float BIG_BOSS_LEVEL_TIME = 5;
+
+    public static final int BIG_BOSS_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
+
+    public static final int BIG_BOSS_SHIELDS_MIN_COUNT = 4;
+
+    public static final int D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
+
+    public static final float D_BIG_BOSS_SPECIAL_BULLETS_PROBABILITY = 0.35f;
+
+    public static final SpecialBullet[] BIG_BOSS_SPECIAL_BULLETS = {SpecialBullet.MIRROR, SpecialBullet.FASTER_DIZZINESS_ROTATION, SpecialBullet.TWO_EXIT_PORTAL, SpecialBullet.REWIND};
+
+
+    public static final float D_BIG_BOSS_AFFECT_TIMER_ORDINARY_AMOUNT = NO_DEATH ? 0 : -500;
+
+    public static final float D_BIG_BOSS_AFFECT_TIMER_BOMB_AMOUNT = NO_DEATH ? 0 : -2500;
+
+    public static final float D_BIG_BOSS_AFFECT_TIMER_HEART_AMOUNT = +1000;
+
+    public static final float D_BIG_BOSS_AFFECT_TIMER_LAZER_AMOUNT = NO_DEATH ? 0 : -15000;
+
+    public static final Interpolation BIG_BOSS_AFFECT_TIMER_LAZER_INTERPOLATION = new ScoreTimerStuff.TimePlayedSoFarStarBulletThirdStageInterpolation();
+
+
+    public static final MyInterpolation D_BIG_BOSS_DIFFICULTY_TIME_SCALE = MyInterpolation.myLinear;
+
+    public static final MyInterpolation D_BIG_BOSS_DIFFICULTY_OUTPUT_SCALE = MyInterpolation.myLinear;
+
+
+    public static final float D_BIG_BOSS_ROTATIONAL_SPEED_MIN = -6f; // deg/sec
+
+    public static final float D_BIG_BOSS_ROTATIONAL_SPEED_INCREMENT = -3; // deg/sec
+
+    public static final float D_BIG_BOSS_ROTATIONAL_SPEED_MAX = D_BIG_BOSS_ROTATIONAL_SPEED_MIN + (D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_BIG_BOSS_ROTATIONAL_SPEED_INCREMENT;
+
+    public static final Interpolation D_BIG_BOSS_ROTATIONAL_SPEED_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_BIG_BOSS_DIFFICULTY_TIME_SCALE,
+            D_BIG_BOSS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final int D_BIG_BOSS_BULLETS_MIN_NUMBER_PER_ATTACK = 1;
+
+    public static final int D_BIG_BOSS_BULLETS_NUMBER_PER_ATTACK_DECREMENT = 1;
+
+    public static final int D_BIG_BOSS_BULLETS_MAX_NUMBER_PER_ATTACK = D_BIG_BOSS_BULLETS_MIN_NUMBER_PER_ATTACK + (D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS -1) * D_BIG_BOSS_BULLETS_NUMBER_PER_ATTACK_DECREMENT;
+
+    public static final int D_BIG_BOSS_BULLETS_INITIAL_NO_PER_ATTACK = D_BIG_BOSS_BULLETS_MAX_NUMBER_PER_ATTACK;
+
+    public static final Interpolation D_BIG_BOSS_BULLETS_DECREASE_NUMBER_PER_ATTACK_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_BIG_BOSS_DIFFICULTY_TIME_SCALE,
+            D_BIG_BOSS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+
+    public static final float D_BIG_BOSS_BULLETS_SPEED_MULTIPLIER_INITIAL = 1;
+
+    public static final float D_BIG_BOSS_BULLETS_SPEED_MULTIPLIER_INCREMENT = 0.2f;
+
+    public static final float D_BIG_BOSS_BULLETS_SPEED_MULTIPLIER_MAX = D_BIG_BOSS_BULLETS_SPEED_MULTIPLIER_INITIAL + (D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS-1) * D_BIG_BOSS_BULLETS_SPEED_MULTIPLIER_INCREMENT;
+
+    public static final Interpolation D_BIG_BOSS_BULLETS_INCREASE_SPEED_MULTIPLIER_DIFFICULTY_CURVE = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_BIG_BOSS_DIFFICULTY_TIME_SCALE,
+            D_BIG_BOSS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+    public static final Interpolation D_BIG_BOSS_DIFFICULTY_LEVEL_TWEEN_INTERPOLATION = new MyInterpolation.ConstantCustomScaleIntervals(
+            D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS,
+            D_BIG_BOSS_DIFFICULTY_TIME_SCALE,
+            D_BIG_BOSS_DIFFICULTY_OUTPUT_SCALE
+    );
+
+    public static final Interpolation D_BIG_BOSS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION = new ScoreMultiplierDifficultyLevelStuff.ProgressBarTweenInterpolation(
+            D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS,
+            0.05f,
+            2,
+            D_BIG_BOSS_DIFFICULTY_TIME_SCALE,
+            D_BIG_BOSS_DIFFICULTY_OUTPUT_SCALE
+    );
 
 
 

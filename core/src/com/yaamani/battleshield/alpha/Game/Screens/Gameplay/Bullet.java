@@ -67,6 +67,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private float initialY;
     private float finalY;*/
 
+    private float a;
     private SimpleText iText;
 
     public Bullet(/*AdvancedScreen*/GameplayScreen gameplayScreen, /*Tween*/StarsContainer starsContainer, Viewport viewport, int i) {
@@ -100,7 +101,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         // initializeBulletMovement();
 
-        // setColor(1, 1, 1, 0.2f); //Debugging
+        a = /*1*/0.35f; //Debugging if not 1
+        setColor(1, 1, 1, a);
     }
 
     public int getI() {
@@ -415,7 +417,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             case PORTAL_EXIT:
                 if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION - PORTALS_ENTRANCE_EXIT_DIAMETER /2f) {
                     //stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
-                    setColor(1, 1, 1, 1);
+                    setColor(1, 1, 1, a);
                 }
                 break;
         }
@@ -453,7 +455,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void handlePortalTypeWhenStoppingUsingTheBullet() {
-        setColor(1, 1, 1, 1);
+        setColor(1, 1, 1, a);
         bulletPortalType = null;
     }
 
@@ -687,10 +689,17 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
 
-                    if (gameplayScreen.getGameplayMode() == GameplayMode.T1)
-                        gameplayScreen.getScoreTimerStuff().affectTimer(AFFECT_TIMER_ORDINARY_AMOUNT);
-                    else
-                        gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
+                    switch (gameplayScreen.getGameplayMode()) {
+                        case T1:
+                            gameplayScreen.getScoreTimerStuff().affectTimer(D_T1_AFFECT_TIMER_ORDINARY_AMOUNT);
+                            break;
+                        case BIG_BOSS:
+                            gameplayScreen.getScoreTimerStuff().affectTimer(D_BIG_BOSS_AFFECT_TIMER_ORDINARY_AMOUNT);
+                            break;
+                        default:
+                            gameplayScreen.getHealthHandler().affectHealth(BULLETS_ORDINARY_AFFECT_HEALTH_BY);
+                            break;
+                    }
                 }
             };
 
@@ -709,10 +718,18 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             bomb = new BulletEffect() {
                 @Override
                 public void effect() {
-                    if (gameplayScreen.getGameplayMode() == GameplayMode.T1)
-                        gameplayScreen.getScoreTimerStuff().affectTimer(AFFECT_TIMER_BOMB_AMOUNT);
-                    else
-                        gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_BOMB_AFFECT_HEALTH_BY);
+
+                    switch (gameplayScreen.getGameplayMode()) {
+                        case T1:
+                            gameplayScreen.getScoreTimerStuff().affectTimer(D_T1_AFFECT_TIMER_BOMB_AMOUNT);
+                            break;
+                        case BIG_BOSS:
+                            gameplayScreen.getScoreTimerStuff().affectTimer(D_BIG_BOSS_AFFECT_TIMER_BOMB_AMOUNT);
+                            break;
+                        default:
+                            gameplayScreen.getHealthHandler().affectHealth(BULLETS_BOMB_AFFECT_HEALTH_BY);
+                            break;
+                    }
 
                     if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL)
                         gameplayScreen.getStarsContainer().getGlassCrackPostProcessingEffect().generateCrack();
@@ -743,10 +760,18 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             heart = new BulletEffect() {
                 @Override
                 public void effect() {
-                    if (gameplayScreen.getGameplayMode() == GameplayMode.T1)
-                        gameplayScreen.getScoreTimerStuff().affectTimer(AFFECT_TIMER_HEART_AMOUNT);
-                    else
-                        gameplayScreen.getHealthHandler().affectHealthBy(BULLETS_HEART_AFFECT_HEALTH_BY);
+
+                    switch (gameplayScreen.getGameplayMode()) {
+                        case T1:
+                            gameplayScreen.getScoreTimerStuff().affectTimer(D_T1_AFFECT_TIMER_HEART_AMOUNT);
+                            break;
+                        case BIG_BOSS:
+                            gameplayScreen.getScoreTimerStuff().affectTimer(D_BIG_BOSS_AFFECT_TIMER_HEART_AMOUNT);
+                            break;
+                        default:
+                            gameplayScreen.getHealthHandler().affectHealth(BULLETS_HEART_AFFECT_HEALTH_BY);
+                            break;
+                    }
                 }
             };
 

@@ -101,7 +101,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
     @Override
     public void resize(int width, int height, float worldWidth, float worldHeight) {
         nextLazerAttackTimerText.setHeight(WORLD_SIZE/20f);
-        nextLazerAttackTimerText.setPosition(worldWidth/2 - nextLazerAttackTimerText.getWidth()/2f, WORLD_SIZE*0.9f);
+        nextLazerAttackTimerText.setPosition(worldWidth/2 - nextLazerAttackTimerText.getWidth()/2f, WORLD_SIZE*0.04f);
 
         armorBlack.setHeight(LAZER_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT);
         armorGlowing.setHeight(LAZER_ARMOR_GLOWING_BULLET_HOW_MANY_COLLECTED_UI_HEIGHT);
