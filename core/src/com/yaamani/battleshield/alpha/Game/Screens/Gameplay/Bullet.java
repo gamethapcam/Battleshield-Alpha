@@ -183,6 +183,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         return getCurrentEffect() == getEffects().getMinus();
     }
 
+    public boolean isOrdinary() {
+        return getCurrentEffect() == getEffects().getOrdinaryFake() | getCurrentEffect() == getEffects().getOrdinary();
+    }
+
     public BulletType getBulletType() {
         return bulletType;
     }
@@ -876,7 +880,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
 
 
-
+        public BulletEffect getOrdinary() {
+            return ordinary;
+        }
 
         public BulletEffect getOrdinaryFake() {
             return ordinaryFake;

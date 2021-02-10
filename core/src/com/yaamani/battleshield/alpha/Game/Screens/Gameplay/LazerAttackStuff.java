@@ -437,7 +437,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
                 armorGlowing.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
 
                 lazerAttacking = false;
-                gameplayScreen.getBulletsHandler().newWave(false, true);
+                //gameplayScreen.getBulletsHandler().newWave(false, true);
+                gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet(); // Creates new wave.
+
             }
         };
     }

@@ -18,6 +18,7 @@ import com.yaamani.battleshield.alpha.MyEngine.ValueOutOfRangeException;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Random;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -116,7 +117,7 @@ public class BulletsHandler implements Updatable {
     private boolean isDouble;
     private WaveBulletsType[] waveBulletsType;
     private Float angleDoubleRestricted;
-    private SpecialBullet currentSpecialBullet;
+    private SpecialBullet[] currentSpecialBullets;
     private boolean questionMark = false;
 
 
@@ -145,6 +146,8 @@ public class BulletsHandler implements Updatable {
 
         waveBulletsType = new WaveBulletsType[2];
         waveBulletsType[0] = waveBulletsType[1] = WaveBulletsType.ORDINARY;
+        currentSpecialBullets = new SpecialBullet[2];
+        currentSpecialBullets[0] = currentSpecialBullets[1] = null;
 
         crystalPlanetFakeWaveProbability = D_CRYSTAL_FAKE_WAVE_PROBABILITY_INITIAL;
 
@@ -618,33 +621,33 @@ public class BulletsHandler implements Updatable {
         forcedSpecialBulletQuestionMarkAllowed = false;
     }
 
-    private void determineTypeThenAttach(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean isFake, BulletPortalType bulletPortalType) {
+    private void determineTypeThenAttach(BulletsAndShieldContainer parent, int typeIndexForDoubleWave, boolean isFake) {
         if (parent == null)
             return;
 
-        waveBulletsType[indexForDoubleWave] = WaveBulletsType.ORDINARY;
+        waveBulletsType[typeIndexForDoubleWave] = WaveBulletsType.ORDINARY;
         //int specialBulletOrder = 0;
 
         if (forcedSpecialBulletAsap & !isFake) {
-            waveBulletsType[indexForDoubleWave] = forcedWaveBulletsType;
-            currentSpecialBullet = forcedSpecialBullet;
+            waveBulletsType[typeIndexForDoubleWave] = forcedWaveBulletsType;
+            currentSpecialBullets[typeIndexForDoubleWave] = forcedSpecialBullet;
             questionMark = false;
             if (forcedSpecialBulletQuestionMarkAllowed) {
                 if (MathUtils.random() < FORCED_SPECIAL_BULLET_QUESTION_MARK_PROBABILITY)
                     questionMark = true;
             }
             consumeForcedSpecialBullet();
-            Gdx.app.log(TAG, "" + currentSpecialBullet);
+            //Gdx.app.log(TAG, "currentSpecialBullets = " + Arrays.toString(currentSpecialBullets));
         } else
-            currentSpecialBullet = determineSpecialBullet(indexForDoubleWave);
+            currentSpecialBullets[typeIndexForDoubleWave] = determineSpecialBullet(typeIndexForDoubleWave);
 
         //------------------------------------------------------
 
-        attachBullets(parent, indexForDoubleWave, isFake, bulletPortalType);
+        attachBullets(parent, typeIndexForDoubleWave, isFake);
     }
 
 
-    private void attachBullets(BulletsAndShieldContainer parent, int indexForDoubleWave, boolean isFake, BulletPortalType bulletPortalType) {
+    private void attachBullets(BulletsAndShieldContainer parent, int typeIndexForDoubleWave, boolean isFake) {
         float fakeTweenDelay = 0;
         if (isFake) {
             fakeTweenDelay = (Bullet.getR() / currentBulletSpeed*1000)/1.25f - D_CRYSTAL_FAKE_TWEEN_DURATION;
@@ -652,7 +655,7 @@ public class BulletsHandler implements Updatable {
 
         Bullet bullet = null;
 
-        if (waveBulletsType[indexForDoubleWave] == WaveBulletsType.ORDINARY) {
+        if (waveBulletsType[typeIndexForDoubleWave] == WaveBulletsType.ORDINARY) {
             Gdx.app.log(TAG, "Attaching ORDINARY to " + parent.toString());
             for (int i = 0; i < bulletsPerAttack; i++) {
                 bullet = bulletPool.obtain();
@@ -665,32 +668,18 @@ public class BulletsHandler implements Updatable {
                 if (isFake)
                     bullet.getFakeTween().start(fakeTweenDelay);
 
-                bullet.setBulletPortalType(bulletPortalType);
-                if (bulletPortalType == BulletPortalType.PORTAL_ENTRANCE) {
-                    if (i == bulletsPerAttack-1)
-                        bullet.setBulletPortalRole(BulletPortalRole.CLOSE_ENTRANCE_PORTAL);
-                } else if (bulletPortalType == BulletPortalType.PORTAL_EXIT) {
-                    bullet.setColor(1, 1, 1, 0);
 
-                    if (bulletsPerAttack > 1) {
-                        if (i == 0)
-                            bullet.setBulletPortalRole(BulletPortalRole.OPEN_EXIT_PORTAL);
-                        else if (i == bulletsPerAttack - 1)
-                            bullet.setBulletPortalRole(BulletPortalRole.CLOSE_EXIT_PORTAL);
-                    } else {
-                        bullet.setBulletPortalRole(BulletPortalRole.OPEN_AND_CLOSE_EXIT_PORTAL);
-                    }
-                }
             }
         } else {
-            Gdx.app.log(TAG, "Attaching " + currentSpecialBullet + " to " + parent.toString());
+            Gdx.app.log(TAG, "Attaching " + currentSpecialBullets + " to " + parent.toString());
 
             bullet = bulletPool.obtain();
 
             // Gdx.app.log(TAG, "obtained (Special)    -> " + bullet.getI());
 
+            SpecialBullet currentSpecialBullet = currentSpecialBullets[typeIndexForDoubleWave];
             bullet.setSpecial(currentSpecialBullet, questionMark, isFake);
-            bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, indexForDoubleWave*/);
+            bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, typeIndexForDoubleWave*/);
 
             if (currentSpecialBullet == SpecialBullet.MINUS | currentSpecialBullet == SpecialBullet.PLUS)
                 Bullet.setCurrentPlusOrMinusBullet(bullet);
@@ -698,18 +687,12 @@ public class BulletsHandler implements Updatable {
             if (isFake)
                 bullet.getFakeTween().start(fakeTweenDelay);
 
-            bullet.setBulletPortalType(bulletPortalType);
-            if (bulletPortalType == BulletPortalType.PORTAL_ENTRANCE) {
-                bullet.setBulletPortalRole(BulletPortalRole.CLOSE_ENTRANCE_PORTAL);
-            } else if (bulletPortalType == BulletPortalType.PORTAL_EXIT) {
-                bullet.setColor(1, 1, 1, 0);
-                bullet.setBulletPortalRole(BulletPortalRole.OPEN_AND_CLOSE_EXIT_PORTAL);
-            }
+
         }
 
 
         if (bullet != null) {
-            if (indexForDoubleWave == 1 & currentWaveLastBullet != null) {
+            if (typeIndexForDoubleWave == 1 & currentWaveLastBullet != null) {
                 if (currentWaveLastBullet.getY() < bullet.getY())
                     currentWaveLastBullet = bullet;
             } else
@@ -729,21 +712,24 @@ public class BulletsHandler implements Updatable {
         }
 
         if (currentWaveLastBullet != null) {
-            if (currentWaveLastBullet.getBulletType() == Bullet.BulletType.ORDINARY) {
 
-                if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_ORDINARY_HEIGHT + BULLETS_CLEARANCE_BETWEEN_WAVES))
-                    newWave(false, true);
-
-            } else {
-
-                if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_SPECIAL_DIAMETER / 2f + BULLETS_SPECIAL_WAVE_LENGTH / 2f + BULLETS_CLEARANCE_BETWEEN_WAVES))
-                    newWave(false, true);
-
-            }
 
             if (!currentWaveLastBullet.isInUse() & gameplayScreen.getState() == GameplayScreen.State.PLAYING)
                 newWave(false, true);
 
+            else {
+                if (currentWaveLastBullet.getBulletType() == Bullet.BulletType.ORDINARY) {
+
+                    if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_ORDINARY_HEIGHT + BULLETS_CLEARANCE_BETWEEN_WAVES))
+                        newWave(false, true);
+
+                } else {
+
+                    if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_SPECIAL_DIAMETER / 2f + BULLETS_SPECIAL_WAVE_LENGTH / 2f + BULLETS_CLEARANCE_BETWEEN_WAVES))
+                        newWave(false, true);
+
+                }
+            }
 
         } else {
             /*for (BulletsAndShieldContainer container:gameplayScreen.getBulletsAndShieldContainers()) {
@@ -940,6 +926,8 @@ public class BulletsHandler implements Updatable {
     public void newWave(boolean forceSingle, boolean ifSingleConsiderFake) {
         //if (!isVisible()) return;
         isDouble = false;
+        firstContainerChosen = null;
+        secondContainerChosen = null;
 
         /*Gdx.app.log(TAG, "previousBusy = " + previousBusyContainersRotations.toString());
         Gdx.app.log(TAG, "previousBusyIsFake = " + previousBusyContainersIsFake.toString());
@@ -1009,6 +997,8 @@ public class BulletsHandler implements Updatable {
 
     private boolean doubleWaveCondition() {
         //return !(gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED & Bullet.isPlusOrMinusExists() & !plusMinusBulletsTimer.isFinished());
+        if (gameplayScreen.getBulletsAndShieldContainers()[0].getRotationOmegaAlphaTween().isStarted())
+            return false;
         return gameplayScreen.getGameplayControllerType() != GameplayControllerType.RESTRICTED |
                 (!plusMinusBulletsTimer.isStarted() & !Bullet.isPlusOrMinusExists());
     }
@@ -1022,86 +1012,156 @@ public class BulletsHandler implements Updatable {
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS)
             dizzinessWave(WaveAttackType.SINGLE);
             //dizzinessSafeSingleWave();
-        else if (portalCondition()) {
-            firstContainerChosen = portalWave();
-            if (firstContainerChosen == null)
-                ordinarySingleWave();
-        } else
+        else
             ordinarySingleWave();
 
 
+
+        if (gameplayScreen.getGameplayMode() == GameplayMode.PORTALS | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS)
+            if (portalCondition())
+                transformToPortalWave(firstContainerChosen, 0);
+
         if (considerFake)
             if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS)
-                crystalPlanetFakeWave(firstContainerChosen);
+                addFakeWaves(firstContainerChosen);
+
     }
 
     private void ordinarySingleWave() {
         Gdx.app.log(TAG, "----- NEW SINGLE WAVE -----");
 
         firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, null);
-        determineTypeThenAttach(firstContainerChosen, 0, false, null);
+        determineTypeThenAttach(firstContainerChosen, 0, false);
     }
 
     private boolean portalCondition() {
+        float p = MathUtils.random();
+
         Gdx.app.log(TAG, "Possible Portal (All must be true in order to spawn a portal wave) -> " +
-                (gameplayScreen.getGameplayMode() == GameplayMode.PORTALS) + ", " +
-                (MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY) + ", " +
+                (p < D_PORTALS_PORTAL_PROBABILITY) + ", " +
                 !thereIsAPortal + ", " + !Bullet.isPlusOrMinusExists() + ", " +
                 plusMinusBulletsTimer.isFinished());
 
-        return gameplayScreen.getGameplayMode() == GameplayMode.PORTALS &
-                MathUtils.random() < D_PORTALS_PORTAL_PROBABILITY &
+        return  p < D_PORTALS_PORTAL_PROBABILITY &
                 !thereIsAPortal &
                 !Bullet.isPlusOrMinusExists() & plusMinusBulletsTimer.isFinished();
     }
 
-    private BulletsAndShieldContainer portalWave() {
+    private void transformToPortalWave(BulletsAndShieldContainer exitContainerAfterBulletsAreAttached, int typeIndexForDoubleWave) {
+        if (exitContainerAfterBulletsAreAttached == null)
+            return;
 
         BulletsAndShieldContainer entranceContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_ENTRANCE);
-        if (entranceContainer == null) {
-            return null;
-        }
-        Gdx.app.log(TAG, "----- NEW SINGLE WAVE (PORTAL) -----");
+        if (entranceContainer == null)
+            return;
+
+        Gdx.app.log(TAG, "-- (PORTAL) --");
 
         thereIsAPortal = true;
 
-        determineTypeThenAttach(entranceContainer, 0, false, BulletPortalType.PORTAL_ENTRANCE);
-        entranceContainer.showPortalEntrance();
+        attachBullets(entranceContainer, typeIndexForDoubleWave, false);
+        transformToEntranceWave(entranceContainer);
 
-        BulletsAndShieldContainer exitContainer = chooseContainer(ContainerPositioning.RANDOM, false, BulletPortalType.PORTAL_EXIT);
-        attachBullets(exitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
 
+        BulletsAndShieldContainer exitContainer = exitContainerAfterBulletsAreAttached;
+        transformToExitWave(exitContainer);
+
+        // Two exit portal bullet
         if (!isDouble & doubleWaveCondition() & remainingTwoExitPortals > 0) {
             BulletsAndShieldContainer secondExitContainer = chooseSecondContainer(exitContainer);
             if (secondExitContainer != null) {
-                attachBullets(secondExitContainer, 0, false, BulletPortalType.PORTAL_EXIT);
+                attachBullets(secondExitContainer, typeIndexForDoubleWave, false);
+                transformToExitWave(secondExitContainer);
                 isDouble = true;
                 remainingTwoExitPortals--;
                 gameplayScreen.getTwoExitPortalUI().updateText(remainingTwoExitPortals);
                 gameplayScreen.getTwoExitPortalUI().glow();
             }
         }
+    }
 
+    private void transformToEntranceWave(BulletsAndShieldContainer entranceContainerAfterBulletsAreAttached) {
+        entranceContainerAfterBulletsAreAttached.showPortalEntrance();
 
-        return exitContainer;
+        LinkedList<Bullet> attachedBullets = entranceContainerAfterBulletsAreAttached.getAttachedBullets();
+        Bullet last = attachedBullets.getLast();
+        last.setBulletPortalRole(BulletPortalRole.CLOSE_ENTRANCE_PORTAL);
+
+        if (!last.isOrdinary())
+            last.setBulletPortalType(BulletPortalType.PORTAL_ENTRANCE);
+        else {
+            int i = bulletsPerAttack;
+            Iterator<Bullet> dit = attachedBullets.descendingIterator();
+            while (dit.hasNext()) {
+
+                Bullet bullet = dit.next();
+                bullet.setBulletPortalType(BulletPortalType.PORTAL_ENTRANCE);
+
+                i--;
+                if (i <= 0)
+                    break;
+            }
+        }
+    }
+
+    private void transformToExitWave(BulletsAndShieldContainer exitContainerAfterBulletsAreAttached) {
+        LinkedList<Bullet> attachedBullets = exitContainerAfterBulletsAreAttached.getAttachedBullets();
+
+        Bullet last = attachedBullets.getLast();
+        if (!last.isOrdinary() | bulletsPerAttack == 1) {
+
+            last.setBulletPortalType(BulletPortalType.PORTAL_EXIT);
+            last.setColor(1, 1, 1, 0);
+            last.setBulletPortalRole(BulletPortalRole.OPEN_AND_CLOSE_EXIT_PORTAL);
+
+        } else {
+
+            int i = bulletsPerAttack;
+            Iterator<Bullet> dit = attachedBullets.descendingIterator();
+            while (dit.hasNext()) {
+
+                Bullet bullet = dit.next();
+                bullet.setBulletPortalType(BulletPortalType.PORTAL_EXIT);
+                bullet.setColor(1, 1, 1, 0);
+                if (i == bulletsPerAttack) // last
+                    bullet.setBulletPortalRole(BulletPortalRole.CLOSE_EXIT_PORTAL);
+                else if (i == 1) // first
+                    bullet.setBulletPortalRole(BulletPortalRole.OPEN_EXIT_PORTAL);
+
+                i--;
+                if (i <= 0)
+                    break;
+            }
+        }
+
     }
 
     private void newDoubleWave() {
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS) {
             dizzinessWave(WaveAttackType.DOUBLE);
-        } else if (portalCondition()) {
-
-            if (!portalsDoubleWave())
-                ordinaryDoubleWave();
-
         } else
             ordinaryDoubleWave();
 
+
+        if (gameplayScreen.getGameplayMode() == GameplayMode.PORTALS | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS)
+            if (portalCondition()) {
+
+                BulletsAndShieldContainer chosenExitContainer;
+                if (secondContainerChosen != null)
+                    chosenExitContainer = MathUtils.random(1) == 0 ? firstContainerChosen : secondContainerChosen;
+                else
+                    chosenExitContainer = firstContainerChosen;
+
+                Gdx.app.log(TAG, "chosenExitContainer = " + chosenExitContainer.toString());
+
+                transformToPortalWave(chosenExitContainer, chosenExitContainer == firstContainerChosen ? 0 : 1);
+            }
+
         if (gameplayScreen.getGameplayMode() == GameplayMode.CRYSTAL | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS) {
-            crystalPlanetFakeWave(firstContainerChosen);
+            addFakeWaves(firstContainerChosen);
             if (secondContainerChosen != null)
-                crystalPlanetFakeWave(secondContainerChosen);
+                addFakeWaves(secondContainerChosen);
         }
     }
 
@@ -1112,8 +1172,8 @@ public class BulletsHandler implements Updatable {
         firstContainerChosen = chooseContainer(ContainerPositioning.RANDOM, false, null);
         secondContainerChosen = chooseSecondContainer(firstContainerChosen);
 
-        determineTypeThenAttach(firstContainerChosen, 0, false, null);
-        determineTypeThenAttach(secondContainerChosen, 1, false, null);
+        determineTypeThenAttach(firstContainerChosen, 0, false);
+        determineTypeThenAttach(secondContainerChosen, 1, false);
 
     }
 
@@ -1139,20 +1199,20 @@ public class BulletsHandler implements Updatable {
         return secondContainer;
     }
 
-    private boolean portalsDoubleWave() {
+    /*private boolean portalsDoubleWave() {
         isDouble = true;
 
-        firstContainerChosen = portalWave();
+        firstContainerChosen = addPortalWave();
         if (firstContainerChosen == null)
             return false;
 
         Gdx.app.log(TAG, "----- NEW DOUBLE WAVE (PORTAL) -----");
 
         secondContainerChosen = chooseSecondContainer(firstContainerChosen);
-        determineTypeThenAttach(secondContainerChosen, 1, false, null);
+        determineTypeThenAttach(secondContainerChosen, 1, false);
 
         return true;
-    }
+    }*/
 
     /*private BulletsAndShieldContainer firstOpposingContainersDizziness;
     private BulletsAndShieldContainer secondOpposingContainersDizziness;*/
@@ -1168,7 +1228,7 @@ public class BulletsHandler implements Updatable {
             // U can comment the next 2 lines (and keep the third commented) to skip a wave.
             firstContainerChosen = plusMinusExistsSpecial(gameplayScreen.getBulletsAndShieldContainers(), false, null);
             //registerBusy(firstContainerChosen, false, gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers());
-            determineTypeThenAttach(firstContainerChosen, 0, false, null);
+            determineTypeThenAttach(firstContainerChosen, 0, false);
             //dizzinessSafeSingleWave(null);
             return;
         }
@@ -1221,11 +1281,11 @@ public class BulletsHandler implements Updatable {
             attachBullets(secondOpposingContainersDizziness, 1, false);
         } else */if (firstContainerChosen != null) {
             if (singleOrDouble == WaveAttackType.SINGLE) {
-                determineTypeThenAttach(firstContainerChosen, 0, false, null);
+                determineTypeThenAttach(firstContainerChosen, 0, false);
             } else {
                 isDouble = true;
-                determineTypeThenAttach(firstContainerChosen, 0, false, null);
-                determineTypeThenAttach(secondContainerChosen, 1, false, null);
+                determineTypeThenAttach(firstContainerChosen, 0, false);
+                determineTypeThenAttach(secondContainerChosen, 1, false);
             }
         } else {
             dizzinessSafeSingleWave(null);
@@ -1385,7 +1445,7 @@ public class BulletsHandler implements Updatable {
             firstContainerChosen = chooseContainer(fromAngle, toAngle, false, portalType);
 
 
-        determineTypeThenAttach(firstContainerChosen, 0, false, null);
+        determineTypeThenAttach(firstContainerChosen, 0, false);
     }
 
     /**
@@ -1741,7 +1801,7 @@ public class BulletsHandler implements Updatable {
         }
     }*/
 
-    private void crystalPlanetFakeWave(BulletsAndShieldContainer container) {
+    private void addFakeWaves(BulletsAndShieldContainer container) {
         if (MathUtils.random() > crystalPlanetFakeWaveProbability) return;
 
 
@@ -1788,7 +1848,7 @@ public class BulletsHandler implements Updatable {
             for (int i = 0; i < numOfFakeWaves; i++) {
                 BulletsAndShieldContainer c = chooseContainer(positioning, true, null);
                 if (c != null)
-                    determineTypeThenAttach(c, 1, true, null); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
+                    determineTypeThenAttach(c, 1, true); // The parameter indexForDoubleWave must be 1 to correctly calculate the position of the wave.
             }
     }
 
@@ -1881,7 +1941,7 @@ public class BulletsHandler implements Updatable {
 
         roundTurnPassedActiveShieldsMinusOne = false;
         //attachBullets(current, 0);
-        determineTypeThenAttach(current, 0, false, null);
+        determineTypeThenAttach(current, 0, false);
         //Gdx.app.log(TAG, "NEW ROUND WAVE, " + roundStart + ", " + roundType.toString());
     }
 
@@ -1898,7 +1958,7 @@ public class BulletsHandler implements Updatable {
             } else {
                 BulletsAndShieldContainer c = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
                 registerBusy(c, false, gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers());
-                determineTypeThenAttach(c, 0, false, null);
+                determineTypeThenAttach(c, 0, false);
             }
         } else {
             roundTurn--;
@@ -1912,7 +1972,7 @@ public class BulletsHandler implements Updatable {
             } else {
                 BulletsAndShieldContainer c = gameplayScreen.getBulletsAndShieldContainers()[roundTurn];
                 registerBusy(c, false, gameplayScreen.getShieldsAndContainersHandler().getNonBusyContainers());
-                determineTypeThenAttach(c, 0, false, null);
+                determineTypeThenAttach(c, 0, false);
             }
         }
         //Gdx.app.log(TAG, "CONTINUE ROUND, " + roundTurn);
