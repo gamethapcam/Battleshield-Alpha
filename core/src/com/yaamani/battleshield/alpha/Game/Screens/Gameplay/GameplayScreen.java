@@ -232,6 +232,7 @@ public class GameplayScreen extends AdvancedScreen {
             levelFinishStuff.update(delta);
         }
 
+        bulletsHandler.updatePlusMinusBulletsTween(delta);
         scoreTimerStuff.updateAffectTimerTweens(delta);
         scoreTimerStuff.updateCharSequenceForScoreText();
     }

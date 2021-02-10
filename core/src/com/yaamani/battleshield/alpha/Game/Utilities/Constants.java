@@ -667,7 +667,7 @@ public final class Constants {
 
     public static final float SPECIAL_BULLET_UI_MARGIN_BETWEEN_ACTORS = SCORE_TXT_MARGIN;
 
-    public static final float SPECIAL_BULLET_UI_X = WORLD_SIZE * 0.38f;
+    public static final float SPECIAL_BULLET_UI_X = WORLD_SIZE * 0.415f;
 
     public static final float SPECIAL_BULLET_UI_Y = WORLD_SIZE - (SCORE_TXT_MARGIN + SCORE_TXT_HEIGHT /*+ BULLET_SPEED_MULTIPLIER_TXT_HEIGHT*/);
 

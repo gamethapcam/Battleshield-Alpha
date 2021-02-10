@@ -41,6 +41,9 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private RotationOmegaAlphaTween rotationOmegaAlphaTween; // When the number of shields is increased or decreased, this tween animate its BulletsAndShieldContainer object to the new omega and the new rotation.
 
+    private float rotationWhenTheWaveStartsHittingDizziness;
+    private float rotationWhenTheWaveStopsHittingDizziness;
+
     private Image portalEntrance;
     private Image portalExit;
 
@@ -129,6 +132,22 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     public RotationOmegaAlphaTween getRotationOmegaAlphaTween() {
         return rotationOmegaAlphaTween;
+    }
+
+    public float getRotationWhenTheWaveStartsHittingDizziness() {
+        return rotationWhenTheWaveStartsHittingDizziness;
+    }
+
+    public void setRotationWhenTheWaveStartsHittingDizziness(float rotationWhenTheWaveStartsHittingDizziness) {
+        this.rotationWhenTheWaveStartsHittingDizziness = rotationWhenTheWaveStartsHittingDizziness;
+    }
+
+    public float getRotationWhenTheWaveStopsHittingDizziness() {
+        return rotationWhenTheWaveStopsHittingDizziness;
+    }
+
+    public void setRotationWhenTheWaveStopsHittingDizziness(float rotationWhenTheWaveStopsHittingDizziness) {
+        this.rotationWhenTheWaveStopsHittingDizziness = rotationWhenTheWaveStopsHittingDizziness;
     }
 
     public boolean isInUse() {

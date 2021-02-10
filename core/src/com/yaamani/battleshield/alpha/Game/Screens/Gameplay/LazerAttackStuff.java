@@ -242,9 +242,11 @@ public class LazerAttackStuff implements Updatable, Resizable {
 
     public void incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack() {
         currentNumOfSpawnedArmorBulletsForTheNextAttack++;
+        Gdx.app.log(TAG, "currentNumOfSpawnedArmorBulletsForTheNextAttack++");
     }
 
     public void decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack() {
+        Gdx.app.log(TAG, "currentNumOfSpawnedArmorBulletsForTheNextAttack--");
         currentNumOfSpawnedArmorBulletsForTheNextAttack--;
     }
 

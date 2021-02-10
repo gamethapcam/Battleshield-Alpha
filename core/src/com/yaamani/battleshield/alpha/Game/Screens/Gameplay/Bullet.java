@@ -197,6 +197,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public void setBulletPortalType(BulletPortalType bulletPortalType) {
         this.bulletPortalType = bulletPortalType;
+
+        if (currentEffect == effects.armor & bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
+            gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
     }
 
     public void setBulletPortalRole(BulletPortalRole bulletPortalRole) {
@@ -631,9 +634,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         fakeTween = new Tween(D_CRYSTAL_FAKE_TWEEN_DURATION, CRYSTAL_FAKE_TWEEN_INTERPOLATION) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                float a = interpolation.apply(percentage);
-                setColor(1, 1, 1, a);
-                //Gdx.app.log(Bullet.TAG, "" + a);
+                float alpha = interpolation.apply(0, a, percentage);
+                setColor(1, 1, 1, alpha);
+                //Gdx.app.log(Bullet.TAG, "" + alpha);
             }
         };
     }

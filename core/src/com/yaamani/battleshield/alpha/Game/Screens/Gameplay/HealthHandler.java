@@ -84,6 +84,7 @@ public class HealthHandler implements Updatable {
     public void stopTheGameplay() {
         gameplayScreen.setState(GameplayScreen.State.STOPPED);
         gameplayScreen.getBulletsHandler().setRoundTurn(null);
+        gameplayScreen.getBulletsHandler().clearWave();
         //gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().finish();
 
         float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
