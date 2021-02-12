@@ -101,7 +101,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         // initializeBulletMovement();
 
-        a = /*1*/0.35f; //Debugging if not 1
+        a = 1/*0.35f*/; //Debugging if not 1
         setColor(1, 1, 1, a);
     }
 
@@ -390,6 +390,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         /*if (getColor().a == 0)
             Gdx.app.log(TAG, "::::::::::::::::::: ALPHA 0 :::::::::::::::::::");*/
 
+        handlePlusMinusStarExists();
+
         handlePortalTypeWhenStoppingUsingTheBullet();
         handlePortalRoleWhenStoppingUsingTheBullet();
 
@@ -398,12 +400,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         resetPosition(worldWidth, worldHeight);
         detachFromBulletsAndShieldObject();
 
-        handlePlusMinusStarExists();
-
         iamNotInUseNow(removeFromActiveBullets);
     }
 
     private void handlePlusMinusStarExists() {
+        if (bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
+            return;
+
         if (currentEffect == effects.minus | currentEffect == effects.plus) {
             setPlusOrMinusExists(false);
             setCurrentPlusOrMinusBullet(null);
