@@ -123,6 +123,7 @@ public abstract class AdvancedApplicationAdapter implements ApplicationListener 
     @Override
     public void dispose() {
         game.dispose();
+        MyFrameBuffer.clearBoundFrameBuffers();
     }
 
     private void orientationChangeDetection() {
