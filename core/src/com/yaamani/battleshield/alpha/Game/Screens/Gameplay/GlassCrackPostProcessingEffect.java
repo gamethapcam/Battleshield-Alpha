@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
+import com.yaamani.battleshield.alpha.MyEngine.MyFrameBuffer;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.PostProcessingEffect;
@@ -22,15 +23,15 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
 
     private static final String TAG = GlassCrackPostProcessingEffect.class.getSimpleName();
 
-    /*private FrameBuffer hBlurFrameBuffer;
-    private FrameBuffer vBlurFrameBuffer;*/
+    /*private MyFrameBuffer hBlurFrameBuffer;
+    private MyFrameBuffer vBlurFrameBuffer;*/
 
     //private Texture refractionCrackMap; // For testing
 
-    private FrameBuffer refractionCrackMapFrameBuffer0; //Double buffer
-    private FrameBuffer refractionCrackMapFrameBuffer1; //Double buffer
+    private MyFrameBuffer refractionCrackMapFrameBuffer0; //Double buffer
+    private MyFrameBuffer refractionCrackMapFrameBuffer1; //Double buffer
     private boolean currentBufferIs0 = true;
-    private FrameBuffer currentFBO;
+    private MyFrameBuffer currentFBO;
 
 
     private ShaderProgram refractionShader;
@@ -231,8 +232,8 @@ public class GlassCrackPostProcessingEffect extends PostProcessingEffect {
         int h = Gdx.graphics.getHeight();
         Pixmap.Format f = Pixmap.Format.RGBA8888;
 
-        refractionCrackMapFrameBuffer0 = new FrameBuffer(f, w, h, false);
-        refractionCrackMapFrameBuffer1 = new FrameBuffer(f, w, h, false);
+        refractionCrackMapFrameBuffer0 = new MyFrameBuffer(f, w, h, false);
+        refractionCrackMapFrameBuffer1 = new MyFrameBuffer(f, w, h, false);
 
 
         clearRefractionBuffers();

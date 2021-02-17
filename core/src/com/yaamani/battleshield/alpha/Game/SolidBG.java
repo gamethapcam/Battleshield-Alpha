@@ -14,7 +14,7 @@ public class SolidBG {
         setColor(0, 0, 0);
     }
 
-    void draw() {
+    public void draw() {
         Gdx.gl.glClearColor(r, g, b, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }

@@ -13,7 +13,7 @@ public final class Constants {
 
 
     public static final boolean NO_DEATH = false;
-    public static final boolean DISMISS_STAR = true;
+    public static final boolean DISMISS_STAR = false;
 
 
 
@@ -1044,9 +1044,13 @@ public final class Constants {
 
     public static final float D_PORTALS_ENTRANCE_EXIT_POSITION = WORLD_SIZE * 0.35f;
 
-    public static final float PORTALS_ENTRANCE_EXIT_DIAMETER = TURRET_RADIUS * 1.25f;
+    public static final float PORTALS_ENTRANCE_EXIT_DIAMETER = TURRET_RADIUS * 3f;
 
-    public static final float PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION = 0.2f; // sec
+    public static final float PORTALS_CONTAINER_PORTAL_ALPHA_DURATION = 200f;
+
+    public static final Interpolation PORTALS_CONTAINER_PORTAL_ALPHA_INTERPOLATION = Interpolation.exp5;
+
+    public static final float PORTALS_CONTAINER_HIDE_PORTAL_EXIT_DELAY = 100f;
 
 
     public static final SpecialBullet[] PORTALS_SPECIAL_BULLETS = {SpecialBullet.TWO_EXIT_PORTAL};

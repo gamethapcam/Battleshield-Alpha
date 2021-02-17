@@ -21,7 +21,11 @@ public class AndroidLauncher extends AndroidApplication implements AndroidPermis
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		config.useAccelerometer = false;
+		config.useCompass = false;
+
 		battleshieldGame = new BattleshieldGame(this);
 		initialize(battleshieldGame, config);
 

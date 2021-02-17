@@ -4,17 +4,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 //import com.badlogic.gdx.controllers.
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.SolidBG;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyFrameBuffer;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.RowOfActors;
@@ -70,6 +80,12 @@ public class GameplayScreen extends AdvancedScreen {
     private int rotation;
 
 
+    private MyFrameBuffer originalFrameBuffer;
+
+    private PortalPostProcessingEffect portalPostProcessingEffect;
+
+
+
 
     private LazerAttackStuff lazerAttackStuff;
 
@@ -104,6 +120,10 @@ public class GameplayScreen extends AdvancedScreen {
     private NetworkAndStorageManager networkAndStorageManager;
 
 
+
+
+
+    private Texture badlogic;
 
     public GameplayScreen(AdvancedStage game, MyBitmapFont myBitmapFont, final StarsContainer starsContainer, boolean transform) {
         super(game, transform);
@@ -167,12 +187,33 @@ public class GameplayScreen extends AdvancedScreen {
         currentInUseNumText.setHeight(WORLD_SIZE/22f);
         currentInUseNumText.setY(WORLD_SIZE/22f);
 
+
+        originalFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
+
+        portalPostProcessingEffect = new PortalPostProcessingEffect();
+
+        badlogic = new Texture("badlogic.jpg");
+
     }
 
     //----------------------------- Super Class Methods -------------------------------
     //----------------------------- Super Class Methods -------------------------------
     //----------------------------- Super Class Methods -------------------------------
     //----------------------------- Super Class Methods -------------------------------
+
+
+    @Override
+    public void show() {
+        super.show();
+        addActorAt(0, starsContainer);
+        //starsContainer.remove();
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        getStage().getRoot().addActorAt(0, starsContainer);
+    }
 
     @Override
     public void act(float delta) {
@@ -196,10 +237,10 @@ public class GameplayScreen extends AdvancedScreen {
         //gamePadPooling();
 
 
-        if (Gdx.input.getRotation() != rotation) {
+        //if (Gdx.input.getRotation() != rotation) {
             //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
-        }
-        rotation = Gdx.input.getRotation();
+        //}
+        //rotation = Gdx.input.getRotation();
 
 
         lazerAttackStuff.update(delta);
@@ -310,7 +351,52 @@ public class GameplayScreen extends AdvancedScreen {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+
+
+
+
+        batch.end();
+
+        originalFrameBuffer.begin();
+        batch.begin();
+
+        SolidBG.instance.draw();
+
+        //getChildren().get(10).draw(batch, parentAlpha);
         super.draw(batch, parentAlpha);
+        batch.end();
+        originalFrameBuffer.end();
+
+        Texture originalFrameBufferTexture = originalFrameBuffer.getColorBufferTexture();
+        //originalFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        //batch.begin();
+
+        if (bulletsHandler.isThereAPortal()) {
+
+            portalPostProcessingEffect.draw(batch,
+                    originalFrameBufferTexture,
+                    0,
+                    0,
+                    getStage().getViewport().getWorldWidth(),
+                    getStage().getViewport().getWorldHeight());
+
+        } else {
+
+            batch.begin();
+
+            batch.draw(originalFrameBufferTexture,
+                    0,
+                    0,
+                    getStage().getViewport().getWorldWidth(),
+                    getStage().getViewport().getWorldHeight(),
+                    0,
+                    0,
+                    originalFrameBufferTexture.getWidth(),
+                    originalFrameBufferTexture.getHeight(),
+                    false,
+                    true);
+        }
     }
 
     @Override
@@ -345,6 +431,8 @@ public class GameplayScreen extends AdvancedScreen {
         containerOfContainers.setPosition(worldWidth/2f, worldHeight/2f);
 
         lazerAttackStuff.resize(width, height, worldWidth, worldHeight);
+
+        portalPostProcessingEffect.resize(width, height, worldWidth, worldHeight);
     }
 
     //------------------------------ initializers ------------------------------
@@ -861,6 +949,10 @@ public class GameplayScreen extends AdvancedScreen {
         shieldsAndContainersHandler.initializeOldRotationDegAndNewRotationDeg(currentShieldsMaxCount);
         initializeBulletsAndShieldArray(currentShieldsMaxCount);
 
+    }
+
+    public PortalPostProcessingEffect getPortalPostProcessingEffect() {
+        return portalPostProcessingEffect;
     }
 
     public LazerAttackStuff getLazerAttackStuff() {

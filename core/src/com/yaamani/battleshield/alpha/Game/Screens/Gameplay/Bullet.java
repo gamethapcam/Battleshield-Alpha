@@ -425,7 +425,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 }
                 break;
             case PORTAL_EXIT:
-                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION - PORTALS_ENTRANCE_EXIT_DIAMETER /2f) {
+                if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER/2f) {
                     //stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
                     setColor(1, 1, 1, a);
                 }
@@ -492,7 +492,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //    Gdx.app.log(TAG, "i = " + i);
         //}
         bulletPortalRole = null;
-        gameplayScreen.getBulletsHandler().portalIsOver();
         gameplayScreen.getTwoExitPortalUI().dimTheGlow();
         if (gameplayScreen.getTwoExitPortalUI().getParent() != null &
                 gameplayScreen.getBulletsHandler().getRemainingTwoExitPortals() == 0)

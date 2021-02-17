@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
+import com.yaamani.battleshield.alpha.MyEngine.MyFrameBuffer;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.PostProcessingEffect;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
@@ -21,8 +22,8 @@ public class TrailWarpPostProcessingEffect extends PostProcessingEffect {
     private ShaderProgram bloomStretchShader;
 
 
-    private FrameBuffer hBlurFrameBuffer;
-    private FrameBuffer vBlurFrameBuffer;
+    private MyFrameBuffer hBlurFrameBuffer;
+    private MyFrameBuffer vBlurFrameBuffer;
     private int kernelSize;
     private boolean blurBuffersCleared = false;
 
@@ -40,8 +41,8 @@ public class TrailWarpPostProcessingEffect extends PostProcessingEffect {
         int inputTextureWidthPixelUnits = MyMath.toScreenCoordinates(inputTextureWidthWorldUnits, MyMath.Dimension.X, viewport);
         int inputTextureHeightPixelUnits = MyMath.toScreenCoordinates(inputTextureHeightWorldUnits, MyMath.Dimension.Y, viewport);
 
-        hBlurFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)(inputTextureWidthPixelUnits / blurResDivisor), (int)(inputTextureHeightPixelUnits / blurResDivisor), false);
-        vBlurFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)(inputTextureWidthPixelUnits / blurResDivisor), (int)(inputTextureHeightPixelUnits / blurResDivisor), false);
+        hBlurFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, (int)(inputTextureWidthPixelUnits / blurResDivisor), (int)(inputTextureHeightPixelUnits / blurResDivisor), false);
+        vBlurFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, (int)(inputTextureWidthPixelUnits / blurResDivisor), (int)(inputTextureHeightPixelUnits / blurResDivisor), false);
         this.kernelSize = kernelSize;
 
 
@@ -98,7 +99,7 @@ public class TrailWarpPostProcessingEffect extends PostProcessingEffect {
         return blurFrameBufferTexture;
     }
 
-    private Texture gaussianBlurSinglePass(Batch batch, FrameBuffer out, TextureRegion in, int kernelSize, boolean horizontalPass) {
+    private Texture gaussianBlurSinglePass(Batch batch, MyFrameBuffer out, TextureRegion in, int kernelSize, boolean horizontalPass) {
         boolean batchWasDrawing = batch.isDrawing();
         if (batchWasDrawing)
             batch.end();

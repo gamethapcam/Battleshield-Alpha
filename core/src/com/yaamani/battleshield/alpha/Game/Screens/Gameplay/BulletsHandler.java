@@ -548,8 +548,13 @@ public class BulletsHandler implements Updatable {
         this.networkAndStorageManager = networkAndStorageManager;
     }
 
+    public boolean isThereAPortal() {
+        return thereIsAPortal;
+    }
+
     public void portalIsOver() {
         thereIsAPortal = false;
+        gameplayScreen.getPortalPostProcessingEffect().clearPortalPoints();
     }
 
     public int getRemainingTwoExitPortals() {
@@ -1770,8 +1775,11 @@ public class BulletsHandler implements Updatable {
 
                 if (portalType == BulletPortalType.PORTAL_ENTRANCE)
                     if (!container.getAttachedBullets().isEmpty())
-                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER)
+                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - PORTALS_ENTRANCE_EXIT_DIAMETER/2f)
                             continue;
+
+
+                //if (container.)
 
                 tempAvailableRightContainers[size++] = container;
             }
@@ -1819,7 +1827,7 @@ public class BulletsHandler implements Updatable {
 
                 if (portalType == BulletPortalType.PORTAL_ENTRANCE)
                     if (!container.getAttachedBullets().isEmpty())
-                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER)
+                        if (container.getAttachedBullets().peekLast().getY() > D_PORTALS_ENTRANCE_EXIT_POSITION - PORTALS_ENTRANCE_EXIT_DIAMETER/2f)
                             continue;
 
                 tempAvailableLeftContainers[size++] = container;

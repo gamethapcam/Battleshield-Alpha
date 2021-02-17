@@ -371,6 +371,94 @@ public final class MyMath {
         return "Avg = " + MyMath.averageOfArray(arr) + ", Median = " + MyMath.medianOfArray(arr, arrLengthExcludingNulls) + ", Max = " + MyMath.maxOfArray(arr, arrLengthExcludingNulls) + ", Min = " + MyMath.minOfArray(arr);
     }
 
+    public static void shiftElement(int[] arr, int elementIndex, int toIndex) {
+        int element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static void shiftElement(long[] arr, int elementIndex, int toIndex) {
+        long element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static void shiftElement(short[] arr, int elementIndex, int toIndex) {
+        short element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static void shiftElement(char[] arr, int elementIndex, int toIndex) {
+        char element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static void shiftElement(boolean[] arr, int elementIndex, int toIndex) {
+        boolean element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static void shiftElement(float[] arr, int elementIndex, int toIndex) {
+        float element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static void shiftElement(double[] arr, int elementIndex, int toIndex) {
+        double element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
+    public static <T> void shiftElement(T[] arr, int elementIndex, int toIndex) {
+        T element = arr[elementIndex];
+
+        if (toIndex > elementIndex)  // Shift right.
+            System.arraycopy(arr, elementIndex + 1, arr, elementIndex, toIndex - elementIndex);
+        else  // Shift left.
+            System.arraycopy(arr, toIndex, arr, toIndex + 1, elementIndex - toIndex);
+
+        arr[toIndex] = element;
+    }
+
     //https://martin.ankerl.com/2007/02/11/optimized-exponential-functions-for-java/
     public static double exp(double val) {
         final long tmp = (long) (1512775 * val + 1072632447);

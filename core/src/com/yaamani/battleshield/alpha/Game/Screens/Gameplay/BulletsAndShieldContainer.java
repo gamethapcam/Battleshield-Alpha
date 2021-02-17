@@ -1,9 +1,13 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
@@ -16,7 +20,6 @@ import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
@@ -46,6 +49,13 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
     private Image portalEntrance;
     private Image portalExit;
+    private boolean tweenEntrance; // false = tween exit.
+    private boolean fadeIn; // false = fade out.
+    private Tween portalEntranceExitFadeInOutTween;
+    private int portalPostProcessingEffectIndex;
+    private Affine2 portalTransformationAff;
+    private Matrix3 portalTransformationMat;
+    private Vector3 portalTransformedVec;
 
     private GameplayScreen gameplayScreen;
 
@@ -67,7 +77,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         debugText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
         addActor(debugText);
-        debugText.setVisible(false); // Set to true for debugging.
+        debugText.setVisible(true); // Set to true for debugging.
         debugText.setHeight(WORLD_SIZE/ /*20f*/ 45f);
         debugText.setPosition(-debugText.getWidth()/2f, 12f);
         //debugText.setRotation(90);
@@ -82,6 +92,12 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         addActor(rotationNoMinusText);
         rotationNoMinusText.setBoundsHeight(0, WORLD_SIZE/3f + rotationText.getHeight()*1.2f, WORLD_SIZE/40f);
         rotationNoMinusText.setColor(Color.WHITE);*/
+
+        initializePortalEntranceExitFadeInOutTween();
+
+        portalTransformationAff = new Affine2();
+        portalTransformationMat = new Matrix3();
+        portalTransformedVec = new Vector3();
     }
 
     @Override
@@ -89,6 +105,21 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         super.act(delta);
 
         rotationOmegaAlphaTween.update(delta);
+        portalEntranceExitFadeInOutTween.update(delta);
+
+        if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS) {
+            float portalEntranceAlpha = portalEntrance.getColor().a;
+            float portalExitAlpha = portalExit.getColor().a;
+
+            if (portalEntranceAlpha > 0 | portalExitAlpha > 0) {
+                computePortalTransformedVec();
+                gameplayScreen.getPortalPostProcessingEffect().setPortalPointPosition(
+                        portalPostProcessingEffectIndex,
+                        portalTransformedVec.x,
+                        portalTransformedVec.y
+                );
+            }
+        }
 
         if (debugText.isVisible())
             debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation()/* + 90*/), 2), true);
@@ -181,19 +212,95 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     }
 
     public void showPortalEntrance() {
-        portalEntrance.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        //portalEntrance.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        tweenEntrance = true;
+        fadeIn = true;
+        portalEntranceExitFadeInOutTween.start();
+
+        computePortalTransformedVec();
+        portalPostProcessingEffectIndex = gameplayScreen.getPortalPostProcessingEffect().addPortalPoint(
+                portalTransformedVec.x,
+                portalTransformedVec.y,
+                0
+        );
     }
 
     public void showPortalExit() {
-        portalExit.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        //portalExit.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        tweenEntrance = false;
+        fadeIn = true;
+        portalEntranceExitFadeInOutTween.start();
+
+        computePortalTransformedVec();
+        portalPostProcessingEffectIndex = gameplayScreen.getPortalPostProcessingEffect().addPortalPoint(
+                portalTransformedVec.x,
+                portalTransformedVec.y,
+                0
+        );
     }
 
+    public Matrix3 computePortalTransformationMat() {
+        Group containerOfContainers = gameplayScreen.getContainerOfContainers();
+        portalTransformationAff.idt()
+                .preRotate( MyMath.deg_0_to_360(containerOfContainers.getRotation() + getRotation()) )
+                .preTranslate(containerOfContainers.getX(), containerOfContainers.getY());
+        portalTransformationMat.set(portalTransformationAff);
+
+        Gdx.app.log(TAG, "portalTransformationMat = \n" + portalTransformationMat.toString());
+
+        return portalTransformationMat;
+    }
+
+    public Vector3 computePortalTransformedVec() {
+        portalTransformedVec.x = portalEntrance.getX() + portalEntrance.getWidth()/2f;
+        portalTransformedVec.y = portalEntrance.getY() + portalEntrance.getWidth()/2f;
+        portalTransformedVec.z = 1;
+
+
+        portalTransformedVec.mul(computePortalTransformationMat());
+        Gdx.app.log(TAG, "(x, y) = " + portalTransformedVec.x + ", " + portalTransformedVec.y);
+
+        return portalTransformedVec;
+    }
+
+   /* public float computePortalTransformedX(Matrix4 transformationMat) {
+        // Left multiply the vector [getX(), getY(), 1] by the transformationMat matrix.
+
+        final float[] l_mat = transformationMat.val;
+        float x = portalEntrance.getX() + portalEntrance.getWidth()/2f;
+        float y = portalEntrance.getY() + portalEntrance.getWidth()/2f;
+        float z = 1;
+
+        float transformedX = x * l_mat[Matrix4.M00]  +  y * l_mat[Matrix4.M01]  +  z * l_mat[Matrix4.M02]  +  l_mat[Matrix4.M03];
+        Gdx.app.log(TAG, "transformedX = " + transformedX);
+        return transformedX;
+    }
+
+    public float computePortalTransformedY(Matrix4 transformationMat) {
+        // Left multiply the vector [getX(), getY(), 1] by the transformationMat matrix.
+
+        final float[] l_mat = transformationMat.val;
+        float x = portalEntrance.getX() + portalEntrance.getWidth()/2f;
+        float y = portalEntrance.getY() + portalEntrance.getWidth()/2f;
+        float z = 1;
+
+        float transformedY = x * l_mat[Matrix4.M10]  +  y * l_mat[Matrix4.M11]  +  z * l_mat[Matrix4.M12]  +  l_mat[Matrix4.M13];
+        Gdx.app.log(TAG, "transformedY = " + transformedY);
+        return transformedY;
+    }*/
+
     public void hidePortalEntrance() {
-        portalEntrance.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        //portalEntrance.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        tweenEntrance = true;
+        fadeIn = false;
+        portalEntranceExitFadeInOutTween.start();
     }
 
     public void hidePortalExit() {
-        portalExit.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        //portalExit.addAction(Actions.alpha(0, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
+        tweenEntrance = false;
+        fadeIn = false;
+        portalEntranceExitFadeInOutTween.start(PORTALS_CONTAINER_HIDE_PORTAL_EXIT_DELAY);
     }
 
     public void cleanContainer() {
@@ -213,7 +320,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         portalEntrance = new Image(Assets.instance.gameplayAssets.portalEntrance);
         addActor(portalEntrance);
 
-        portalEntrance.setSize(PORTALS_ENTRANCE_EXIT_DIAMETER, Constants.PORTALS_ENTRANCE_EXIT_DIAMETER);
+        portalEntrance.setSize(PORTALS_ENTRANCE_EXIT_DIAMETER, PORTALS_ENTRANCE_EXIT_DIAMETER);
         portalEntrance.setX(-portalEntrance.getWidth()/2f);
         portalEntrance.setY(D_PORTALS_ENTRANCE_EXIT_POSITION - portalEntrance.getHeight()/2f);
 
@@ -226,7 +333,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         portalExit = new Image(Assets.instance.gameplayAssets.portalExit);
         addActor(portalExit);
 
-        portalExit.setSize(PORTALS_ENTRANCE_EXIT_DIAMETER, Constants.PORTALS_ENTRANCE_EXIT_DIAMETER);
+        portalExit.setSize(PORTALS_ENTRANCE_EXIT_DIAMETER, PORTALS_ENTRANCE_EXIT_DIAMETER);
         portalExit.setX(-portalExit.getWidth()/2f);
         portalExit.setY(D_PORTALS_ENTRANCE_EXIT_POSITION - portalExit.getHeight()/2f);
 
@@ -234,6 +341,41 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         portalExit.setColor(1, 1, 1, 0);
 
         //portalExit.setDebug(true);
+    }
+
+    private void initializePortalEntranceExitFadeInOutTween() {
+        portalEntranceExitFadeInOutTween = new Tween(PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, PORTALS_CONTAINER_PORTAL_ALPHA_INTERPOLATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+
+                float alpha = fadeIn ? interpolation.apply(0, 1, percentage) : interpolation.apply(1, 0, percentage);
+
+                if (tweenEntrance)
+                    portalEntrance.setColor(1, 1, 1, alpha);
+                else
+                    portalExit.setColor(1, 1, 1, alpha);
+
+                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                    gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
+                            portalPostProcessingEffectIndex,
+                            alpha
+                    );
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                if (!fadeIn) {
+
+                    if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                        gameplayScreen.getPortalPostProcessingEffect().removePortalPoint(portalPostProcessingEffectIndex);
+
+                    if (!tweenEntrance)
+                        gameplayScreen.getBulletsHandler().portalIsOver();
+
+                }
+            }
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -284,9 +426,35 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             //Interpolation interpolation = MyInterpolation.myExp10;
             BulletsAndShieldContainer.this.getColor().a = interpolation.apply(oldAlpha, newAlpha, percentage);
 
+            float portalEntranceAlpha = portalEntrance.getColor().a;
+            float portalExitAlpha = portalExit.getColor().a;
+
+            if (portalEntranceAlpha > 0) {
+                gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
+                        portalPostProcessingEffectIndex,
+                        portalEntranceAlpha
+                );
+            } else if (portalExitAlpha > 0) {
+                gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
+                        portalPostProcessingEffectIndex,
+                        portalExitAlpha
+                );
+            }
+
             if (newOmegaDeg == null | newRotationDeg == null) return;
             BulletsAndShieldContainer.this.getShield().setOmegaDeg(interpolation.apply(oldOmegaDeg, newOmegaDeg, percentage));
             BulletsAndShieldContainer.this.setRotation(interpolation.apply(oldRotationDeg, newRotationDeg, percentage));
+
+
+            if (portalEntranceAlpha > 0 | portalExitAlpha > 0) {
+                computePortalTransformedVec();
+                gameplayScreen.getPortalPostProcessingEffect().setPortalPointPosition(
+                        portalPostProcessingEffectIndex,
+                        portalTransformedVec.x,
+                        portalTransformedVec.y
+                );
+            }
+
 
             if (index == 0) {//Don't repeat for every BulletsAndShieldContainer
                 if (percentage >= 0.6f)

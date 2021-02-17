@@ -19,6 +19,7 @@ import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GlassCrackPostProcessingEffect;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.TrailWarpPostProcessingEffect;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
+import com.yaamani.battleshield.alpha.MyEngine.MyFrameBuffer;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
@@ -37,7 +38,7 @@ public class StarsContainer extends Group implements Disposable{
     private Array<Star> stars;
 
     private Viewport viewport;
-    private FrameBuffer originalFrameBuffer;
+    private MyFrameBuffer originalFrameBuffer;
 
     //private final Vector2 distanceOffset = new Vector2(Wo)
     private Vector2 transitionVelocity = new Vector2(0, 0);
@@ -90,7 +91,7 @@ public class StarsContainer extends Group implements Disposable{
 
         setCurrentStarSpeed(STARS_SPEED);
 
-        originalFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (viewport.getScreenWidth()), (viewport.getScreenHeight()), false);
+        originalFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, (viewport.getScreenWidth()), (viewport.getScreenHeight()), false);
         
         trailWarpPostProcessingEffect = new TrailWarpPostProcessingEffect(viewport, viewport.getWorldWidth(), viewport.getWorldHeight(), STAR_BULLET_TRAIL_WARP_BLUR_RESOLUTION_DIVISOR, STAR_BULLET_TRAIL_WARP_BLUR_KERNEL_SIZE);
 
