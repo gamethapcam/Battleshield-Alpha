@@ -113,10 +113,11 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
             if (portalEntranceAlpha > 0 | portalExitAlpha > 0) {
                 computePortalTransformedVec();
-                gameplayScreen.getPortalPostProcessingEffect().setPortalPointPosition(
-                        portalPostProcessingEffectIndex,
-                        portalTransformedVec.x,
-                        portalTransformedVec.y
+                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                    gameplayScreen.getPortalPostProcessingEffect().setPortalPointPosition(
+                            portalPostProcessingEffectIndex,
+                            portalTransformedVec.x,
+                            portalTransformedVec.y
                 );
             }
         }
@@ -246,7 +247,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                 .preTranslate(containerOfContainers.getX(), containerOfContainers.getY());
         portalTransformationMat.set(portalTransformationAff);
 
-        Gdx.app.log(TAG, "portalTransformationMat = \n" + portalTransformationMat.toString());
+        //Gdx.app.log(TAG, "portalTransformationMat = \n" + portalTransformationMat.toString());
 
         return portalTransformationMat;
     }
@@ -258,7 +259,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
 
         portalTransformedVec.mul(computePortalTransformationMat());
-        Gdx.app.log(TAG, "(x, y) = " + portalTransformedVec.x + ", " + portalTransformedVec.y);
+        //Gdx.app.log(TAG, "(x, y) = " + portalTransformedVec.x + ", " + portalTransformedVec.y);
 
         return portalTransformedVec;
     }
@@ -430,15 +431,17 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             float portalExitAlpha = portalExit.getColor().a;
 
             if (portalEntranceAlpha > 0) {
-                gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
+                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                    gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
                         portalPostProcessingEffectIndex,
                         portalEntranceAlpha
-                );
+                    );
             } else if (portalExitAlpha > 0) {
-                gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
+                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                    gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
                         portalPostProcessingEffectIndex,
                         portalExitAlpha
-                );
+                    );
             }
 
             if (newOmegaDeg == null | newRotationDeg == null) return;
@@ -448,11 +451,12 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
             if (portalEntranceAlpha > 0 | portalExitAlpha > 0) {
                 computePortalTransformedVec();
-                gameplayScreen.getPortalPostProcessingEffect().setPortalPointPosition(
-                        portalPostProcessingEffectIndex,
-                        portalTransformedVec.x,
-                        portalTransformedVec.y
-                );
+                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                    gameplayScreen.getPortalPostProcessingEffect().setPortalPointPosition(
+                            portalPostProcessingEffectIndex,
+                            portalTransformedVec.x,
+                            portalTransformedVec.y
+                    );
             }
 
 

@@ -27,10 +27,17 @@ public class BulletsHandler implements Updatable {
 
     public static final String TAG = BulletsHandler.class.getSimpleName();
 
+
     private GameplayScreen gameplayScreen;
 
     private Pool<Bullet> bulletPool;
     private Array<Bullet> activeBullets;
+
+    private boolean plusOrMinusExists = false;
+    private boolean starExists = false;
+    private boolean fasterDizzinessRotationExists = false;
+
+    private int currentInUseBulletsCount = 0;
 
     private Bullet currentWaveLastBullet;
 
@@ -200,6 +207,34 @@ public class BulletsHandler implements Updatable {
         //currentBulletSpeed = BULLETS_SPEED_INITIAL;
     }
 
+    public int getCurrentInUseBulletsCount() {
+        return currentInUseBulletsCount;
+    }
+
+    public void incrementCurrentInUseBulletsCount() {
+        currentInUseBulletsCount++;
+    }
+
+    public void decrementCurrentInUseBulletsCount() {
+        currentInUseBulletsCount--;
+    }
+
+    public boolean isFasterDizzinessRotationExists() {
+        return fasterDizzinessRotationExists;
+    }
+
+    public void setFasterDizzinessRotationExists(boolean fasterDizzinessRotationExists) {
+        this.fasterDizzinessRotationExists = fasterDizzinessRotationExists;
+    }
+
+    public boolean isStarExists() {
+        return starExists;
+    }
+
+    public void setStarExists(boolean starExists) {
+        this.starExists = starExists;
+    }
+
     @Override
     public void update(float delta) {
         if (!gameplayScreen.isVisible()) return;
@@ -267,7 +302,7 @@ public class BulletsHandler implements Updatable {
         /*if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             newWave();*/
 
-        //Gdx.app.log(TAG, "" + Bullet.isPlusOrMinusExists());
+        //Gdx.app.log(TAG, "" + isPlusOrMinusExists());
         //Gdx.app.log(TAG, "" + plusMinusBulletsTimer.isFinished());
         //Gdx.app.log(TAG, "Free bullets in pool = " + bulletPool.getFree());
     }
@@ -292,6 +327,14 @@ public class BulletsHandler implements Updatable {
 
     public Array<Bullet> getActiveBullets() {
         return activeBullets;
+    }
+
+    public boolean isPlusOrMinusExists() {
+        return plusOrMinusExists;
+    }
+
+    public void setPlusOrMinusExists(boolean plusOrMinusExists) {
+        this.plusOrMinusExists = plusOrMinusExists;
     }
 
     /*public Timer getCurrentBulletsWaveTimer() {
@@ -690,16 +733,23 @@ public class BulletsHandler implements Updatable {
             bullet.setSpecial(currentSpecialBullet, questionMark, isFake);
             bullet.attachSpecialToBulletsAndShieldContainer(parent/*, isDouble, typeIndexForDoubleWave*/);
 
-            if (currentSpecialBullet == SpecialBullet.MINUS | currentSpecialBullet == SpecialBullet.PLUS) {
-                if (!isFake)
-                    Bullet.setCurrentPlusOrMinusBullet(bullet);
-                else
-                    Bullet.setPlusOrMinusExists(false); //It was set to true @ determineSpecialBullet(int).
-            }
+            if (isFake) {
+                switch (currentSpecialBullet) {
+                    case PLUS:
+                    case MINUS:
+                        setPlusOrMinusExists(false); // It was set to true @ determineSpecialBullet(int).
+                        break;
+                    case FASTER_DIZZINESS_ROTATION:
+                        setFasterDizzinessRotationExists(false); // It was set to true @ determineSpecialBullet(int).
+                        break;
+                    case STAR:
+                        setStarExists(false);
+                        break;
+                }
 
-            if (isFake)
+
                 bullet.getFakeTween().start(fakeTweenDelay);
-
+            }
 
         }
 
@@ -787,28 +837,28 @@ public class BulletsHandler implements Updatable {
             if (currentSpecialBullet == SpecialBullet.STAR) {
 
                 Gdx.app.log(TAG, "Possible STAR -> " +
-                        Bullet.isPlusOrMinusExists() + ", " +
-                        Bullet.isStarExists() + ", " +
+                        isPlusOrMinusExists() + ", " +
+                        isStarExists() + ", " +
                         !plusMinusBulletsEffectTimer.isFinished());
 
-                if (Bullet.isPlusOrMinusExists() |
-                        Bullet.isStarExists() |
+                if (isPlusOrMinusExists() |
+                        isStarExists() |
                         !plusMinusBulletsEffectTimer.isFinished()) {
                     currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
-                } else Bullet.setStarExists(true);
+                } else setStarExists(true);
             }
 
             if (currentSpecialBullet == SpecialBullet.MINUS) {
 
                 Gdx.app.log(TAG, "Possible MINUS (All must be false in order to make the bullet minus) -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount()) + ", " +
-                        Bullet.isPlusOrMinusExists() + ", " +
-                        Bullet.isStarExists() + ", " +
+                        isPlusOrMinusExists() + ", " +
+                        isStarExists() + ", " +
                         !plusMinusBulletsEffectTimer.isFinished() + ", " +
                         isDouble);
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount() |
-                        Bullet.isPlusOrMinusExists() |
-                        Bullet.isStarExists() |
+                        isPlusOrMinusExists() |
+                        isStarExists() |
                         !plusMinusBulletsEffectTimer.isFinished() |
                         isDouble/* & indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/) {
@@ -853,14 +903,14 @@ public class BulletsHandler implements Updatable {
             if (currentSpecialBullet == SpecialBullet.PLUS) {
 
                 Gdx.app.log(TAG, "Possible PLUS (All must be false in order to make the bullet plus) -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount()) + ", " +
-                        Bullet.isPlusOrMinusExists() + ", " +
-                        Bullet.isStarExists() + ", " +
+                        isPlusOrMinusExists() + ", " +
+                        isStarExists() + ", " +
                         !plusMinusBulletsEffectTimer.isFinished() + ", " +
                         isDouble);
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount() |
-                        Bullet.isPlusOrMinusExists() |
-                        Bullet.isStarExists() |
+                        isPlusOrMinusExists() |
+                        isStarExists() |
                         !plusMinusBulletsEffectTimer.isFinished() |
                         isDouble /*& indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/) {
@@ -874,8 +924,10 @@ public class BulletsHandler implements Updatable {
         }
 
         if (currentSpecialBullet == SpecialBullet.PLUS | currentSpecialBullet == SpecialBullet.MINUS) {
-            Bullet.setPlusOrMinusExists(true);
-        }
+            setPlusOrMinusExists(true);
+        } else if (currentSpecialBullet == SpecialBullet.FASTER_DIZZINESS_ROTATION)
+            setFasterDizzinessRotationExists(true);
+
 
         /*if (!questionMark)
             Gdx.app.log(TAG, "" + currentSpecialBullet);*/
@@ -1022,7 +1074,7 @@ public class BulletsHandler implements Updatable {
         if (gameplayScreen.getBulletsAndShieldContainers()[0].getRotationOmegaAlphaTween().isStarted())
             return false;
         return gameplayScreen.getGameplayControllerType() != GameplayControllerType.RESTRICTED |
-                (!plusMinusBulletsEffectTimer.isStarted() & !Bullet.isPlusOrMinusExists());
+                (!plusMinusBulletsEffectTimer.isStarted() & !isPlusOrMinusExists());
     }
 
     //--------------------------------------- Simple waves methods ---------------------------------------
@@ -1061,12 +1113,12 @@ public class BulletsHandler implements Updatable {
 
         Gdx.app.log(TAG, "Possible Portal (All must be true in order to spawn a portal wave) -> " +
                 (p < D_PORTALS_PORTAL_PROBABILITY) + ", " +
-                !thereIsAPortal + ", " + !Bullet.isPlusOrMinusExists() + ", " +
+                !thereIsAPortal + ", " + !isPlusOrMinusExists() + ", " +
                 plusMinusBulletsEffectTimer.isFinished());
 
         return  p < D_PORTALS_PORTAL_PROBABILITY &
                 !thereIsAPortal &
-                !Bullet.isPlusOrMinusExists() & plusMinusBulletsEffectTimer.isFinished();
+                !isPlusOrMinusExists() & plusMinusBulletsEffectTimer.isFinished();
     }
 
     private void transformToPortalWave(BulletsAndShieldContainer exitContainerAfterBulletsAreAttached, int typeIndexForDoubleWave) {
@@ -1281,9 +1333,9 @@ public class BulletsHandler implements Updatable {
     private void dizzinessWave(WaveAttackType singleOrDouble) {
         //ordinaryDoubleWave();
 
-        if (Bullet.isPlusOrMinusExists() | plusMinusBulletsEffectTimer.isStarted()) {
+        if (isPlusOrMinusExists() | plusMinusBulletsEffectTimer.isStarted()) {
 
-            Gdx.app.log(TAG, "Bullet.isPlusOrMinusExists() = " + Bullet.isPlusOrMinusExists() +
+            Gdx.app.log(TAG, "Bullet.isPlusOrMinusExists() = " + isPlusOrMinusExists() +
                     ", plusMinusBulletsTimer.isStarted() = " + plusMinusBulletsEffectTimer.isStarted());
 
             // This is the only exception to "Wave must always be on one side" rule. We may change that in the future.
@@ -1295,7 +1347,7 @@ public class BulletsHandler implements Updatable {
             return;
         }
 
-        if (Bullet.isFasterDizzinessRotationExists()) {
+        if (isFasterDizzinessRotationExists()) {
             Gdx.app.log(TAG, "- isFasterDizzinessRotationExists() == true -");
             dizzinessSafeSingleWave(null);
             return;
@@ -1540,7 +1592,7 @@ public class BulletsHandler implements Updatable {
         
         float fromAngle, toAngle;
 
-        if (MathUtils.random(1) == 0 | Bullet.isPlusOrMinusExists()) { // Left
+        if (MathUtils.random(1) == 0 | isPlusOrMinusExists()) { // Left
             fromAngle = 90;
             toAngle = 180;
         } else { // Right
@@ -1616,7 +1668,7 @@ public class BulletsHandler implements Updatable {
         boolean wasRandom = false;
         if (positioning == ContainerPositioning.RANDOM) {
 
-            if (Bullet.isPlusOrMinusExists() | plusMinusBulletsEffectTimer.isStarted())
+            if (isPlusOrMinusExists() | plusMinusBulletsEffectTimer.isStarted())
                 chosenContainer = plusMinusExistsSpecial(nonBusyContainers.items, isFake, portalType);
 
             if (chosenContainer == null) {

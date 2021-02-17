@@ -4,24 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controllers;
 //import com.badlogic.gdx.controllers.
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.SolidBG;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
-import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedScreen;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyFrameBuffer;
@@ -280,7 +274,7 @@ public class GameplayScreen extends AdvancedScreen {
 
     private void debuggingText() {
         if (currentInUseNumText.isVisible())
-            currentInUseNumText.setCharSequence("currentInUse = " + Bullet.getCurrentInUseBulletsCount() + ",                                           active.size = " + bulletsHandler.getActiveBullets().size, true);
+            currentInUseNumText.setCharSequence("currentInUse = " + getBulletsHandler().getCurrentInUseBulletsCount() + ",                                           active.size = " + bulletsHandler.getActiveBullets().size, true);
 
         if (activeBulletsText.isVisible()) {
             StringBuilder activeBullets = new StringBuilder();
@@ -362,7 +356,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         SolidBG.instance.draw();
 
-        //getChildren().get(10).draw(batch, parentAlpha);
+        batch.setColor(1, 1, 1, 1);
         super.draw(batch, parentAlpha);
         batch.end();
         originalFrameBuffer.end();
@@ -371,6 +365,8 @@ public class GameplayScreen extends AdvancedScreen {
         //originalFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         //batch.begin();
+
+        batch.setColor(1, 1, 1, 1);
 
         if (bulletsHandler.isThereAPortal()) {
 

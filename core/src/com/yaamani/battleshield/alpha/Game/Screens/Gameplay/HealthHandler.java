@@ -101,9 +101,8 @@ public class HealthHandler implements Updatable {
             it.remove();
         }
 
-        Bullet.setPlusOrMinusExists(false);
-        Bullet.setCurrentPlusOrMinusBullet(null);
-        Bullet.setStarExists(false);
+        gameplayScreen.getBulletsHandler().setPlusOrMinusExists(false);
+        gameplayScreen.getBulletsHandler().setStarExists(false);
         gameplayScreen.setInStarBulletAnimation(false);
 
         for (Timer timer : gameplayScreen.getFinishWhenStoppingTheGameplay()) {

@@ -24,15 +24,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public static final String TAG = Bullet.class.getSimpleName();
 
-    private static boolean plusOrMinusExists = false;
-    private static Bullet currentPlusOrMinusBullet;
-    private static boolean starExists = false;
-    private static boolean fasterDizzinessRotationExists = false;
     private static float R = 0;
 
-    public static int currentInUseBulletsCount = 0;
-
-    private int i;
+    private final int i;
 
     public enum BulletType {ORDINARY, SPECIAL}
     private BulletType bulletType;
@@ -118,42 +112,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         return R;
     }
 
-    public static boolean isPlusOrMinusExists() {
-        return plusOrMinusExists;
-    }
-
-    public static void setPlusOrMinusExists(boolean plusOrMinusExists) {
-        Bullet.plusOrMinusExists = plusOrMinusExists;
-    }
-
-    public static Bullet getCurrentPlusOrMinusBullet() {
-        return currentPlusOrMinusBullet;
-    }
-
-    public static void setCurrentPlusOrMinusBullet(Bullet currentPlusOrMinusBullet) {
-        Bullet.currentPlusOrMinusBullet = currentPlusOrMinusBullet;
-    }
-
-    public static boolean isStarExists() {
-        return starExists;
-    }
-
-    public static void setStarExists(boolean starExists) {
-        Bullet.starExists = starExists;
-    }
-
-    public static boolean isFasterDizzinessRotationExists() {
-        return fasterDizzinessRotationExists;
-    }
-
-    public static void setFasterDizzinessRotationExists(boolean fasterDizzinessRotationExists) {
-        Bullet.fasterDizzinessRotationExists = fasterDizzinessRotationExists;
-    }
-
-    public static int getCurrentInUseBulletsCount() {
-        return currentInUseBulletsCount;
-    }
-
     public boolean isInUse() {
         return inUse;
     }
@@ -209,7 +167,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     public void iamInUseNow() {
         inUse = true;
         bulletsHandler.getActiveBullets().add(this);
-        currentInUseBulletsCount++;
+        bulletsHandler.incrementCurrentInUseBulletsCount();
         //Gdx.app.log(TAG, "using -> " + i);
     }
 
@@ -218,8 +176,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         inUse = false;
         if (removeFromActiveBullets)
             bulletsHandler.getActiveBullets().removeValue(this, true);
-        currentInUseBulletsCount--;
-        if (currentInUseBulletsCount < 0)
+        bulletsHandler.decrementCurrentInUseBulletsCount();
+        if (bulletsHandler.getCurrentInUseBulletsCount() < 0)
             throw new RuntimeException("currentInUseBulletsCount is less than 0. Maybe a bullet got freed twice.");
         //Gdx.app.log(TAG, "stopped using -> " + i);
     }
@@ -335,7 +293,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                         getY() >= /*SHIELDS_RADIUS-SHIELDS_THICKNESS*/SHIELDS_INNER_RADIUS+SHIELDS_ON_DISPLACEMENT - getHeight() &
                         shield.isOn()) {
                     stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
-                    if (currentEffect == effects.minus | currentEffect == effects.plus) plusOrMinusExists = false;
+                    if (currentEffect == effects.minus | currentEffect == effects.plus) bulletsHandler.setPlusOrMinusExists(false);
                     return;
                 }
             }
@@ -408,11 +366,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             return;
 
         if (currentEffect == effects.minus | currentEffect == effects.plus) {
-            setPlusOrMinusExists(false);
-            setCurrentPlusOrMinusBullet(null);
+            bulletsHandler.setPlusOrMinusExists(false);
         }
         else if (currentEffect == effects.star)
-            setStarExists(false);
+            bulletsHandler.setStarExists(false);
     }
 
     private void handlePortalType() {
@@ -573,12 +530,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             case FASTER_DIZZINESS_ROTATION:
                 if (!questionMark) region = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
                 currentEffect = effects.fasterDizzinessRotation;
-                Bullet.setFasterDizzinessRotationExists(true);
                 break;
             case ARMOR:
                 if (!questionMark) region = Assets.instance.gameplayAssets.armorBullet;
                 currentEffect = effects.armor;
-                gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                if (!fake)
+                    gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
                 break;
             case TWO_EXIT_PORTAL:
                 if (!questionMark) region = Assets.instance.gameplayAssets.twoExitPortal;
@@ -800,7 +757,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     bulletsHandler.startStarBulletStages();
 
                     //starsContainer.getRadialTween().pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION);
-                    Bullet.setStarExists(false);
+                    bulletsHandler.setStarExists(false);
                     gameplayScreen.setInStarBulletAnimation(true);
                     Gdx.app.log(TAG, "STAR BULLET");
                 }
@@ -820,8 +777,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
 
                     if (region == Assets.instance.gameplayAssets.minusBullet | region == Assets.instance.gameplayAssets.plusBullet) {
-                        Bullet.setPlusOrMinusExists(false);
-                        Bullet.setCurrentPlusOrMinusBullet(null);
+                        bulletsHandler.setPlusOrMinusExists(false);
                     }
 
                 }
@@ -838,7 +794,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 @Override
                 public void effect() {
                     gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().start();
-                    Bullet.setFasterDizzinessRotationExists(false);
+                    bulletsHandler.setFasterDizzinessRotationExists(false);
                 }
             };
 
@@ -879,8 +835,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }*/
 
         private void plusMinusCommon() {
-            Bullet.setPlusOrMinusExists(false);
-            Bullet.setCurrentPlusOrMinusBullet(null);
+            bulletsHandler.setPlusOrMinusExists(false);
             gameplayScreen.getBulletsHandler().startPlusMinusBulletsTween();
         }
 

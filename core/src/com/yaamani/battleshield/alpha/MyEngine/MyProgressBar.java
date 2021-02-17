@@ -43,10 +43,12 @@ public class MyProgressBar extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.setColor(getBgColor());
+        Color color = getBgColor();
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         bg.draw(batch, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
-        batch.setColor(getPercentageBarColor());
+        color = getPercentageBarColor();
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         float h = getHeight()*percentageBarHeightRatio;
         percentageBar.draw(batch,
                 getX() + percentageBarX,

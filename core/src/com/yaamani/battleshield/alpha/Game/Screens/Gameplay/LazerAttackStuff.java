@@ -170,9 +170,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
     private void waitingForAllRemainingBulletsToBeCleared() {
         if (!waitingForAllRemainingBulletsToBeCleared) return;
 
-        if (makeSureThatTheCorrectNumOfArmorBulletsAreSpawned(true) /*& Bullet.getCurrentInUseBulletsCount() == 0*/) {
+        if (makeSureThatTheCorrectNumOfArmorBulletsAreSpawned(true) /*& gameplayScreen.getBulletsHandler().getCurrentInUseBulletsCount() == 0*/) {
 
-            if (Bullet.getCurrentInUseBulletsCount() == 0) {
+            if (gameplayScreen.getBulletsHandler().getCurrentInUseBulletsCount() == 0) {
 
                 if (makeSureThatTheCorrectNumOfArmorBulletsAreSpawned(false)) { // When all bullets get cleared, just make sure once more.
                     waitingForAllRemainingBulletsToBeCleared = false;

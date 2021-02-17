@@ -23,7 +23,8 @@ public class NinePatchActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.setColor(getColor());
+        Color color = getColor();
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         ninePatch.draw(batch,
                 getX(),
                 getY(),
