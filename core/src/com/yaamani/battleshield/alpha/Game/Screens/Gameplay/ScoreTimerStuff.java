@@ -39,7 +39,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
     private ScoreMultiplierDifficultyLevelStuff scoreMultiplierDifficultyLevelStuff;
 
-    private MyTween scoreTweenStarBullet_FirstStage;
+    private MyTween scoreSlowMoTween;
     private Tween scoreTweenStarBullet_ThirdStage;
 
     private Tween planetsTimerFlashesWhenZero;
@@ -66,7 +66,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
         initializeFadeOutTween();
 
-        initializeScoreTweenStarBullet_FirstStage();
+        initializeScoreSlowMoTween();
         initializeScoreTweenStarBullet_ThirdStage();
 
         initializePlanetsTimerFlashesWhenZero();
@@ -89,7 +89,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
     @Override
     public void update(float delta) {
-        scoreTweenStarBullet_FirstStage.update(delta);
+        scoreSlowMoTween.update(delta);
         scoreTweenStarBullet_ThirdStage.update(delta);
 
         scoreMultiplierDifficultyLevelStuff.update(delta);
@@ -98,7 +98,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-            if (!gameplayScreen.isInStarBulletAnimation())
+            if (!gameplayScreen.isInStarBulletAnimation() & !gameplayScreen.isInRewindBulletAnimation())
                 if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
                     scoreTimer += delta * scoreMultiplierDifficultyLevelStuff.getScoreMultiplierDifficultyLevel();
                 else
@@ -122,8 +122,8 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         updateCharSequenceForScoreText();
 
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-            affectTimer(D_T1_AFFECT_TIMER_HEART_AMOUNT);
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.H))
+            affectTimer(D_T1_AFFECT_TIMER_HEART_AMOUNT);*/
 
         //updateCharSequenceForScoreText();
     }
@@ -274,14 +274,18 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         return planetsTimerFlashesWhenZero;
     }
 
+    public Tween getAffectTimerTween() {
+        return affectTimerTween;
+    }
+
     public ScoreMultiplierDifficultyLevelStuff getScoreMultiplierDifficultyLevelStuff() {
         return scoreMultiplierDifficultyLevelStuff;
     }
 
-    public void startScoreTweenStarBullet_FirstStage() {
-        scoreTweenStarBullet_FirstStage.setInitialVal(scoreTimer);
-        scoreTweenStarBullet_FirstStage.setFinalVal(scoreTimer + 0.35f * STAR_BULLET_FIRST_STAGE_DURATION * (float) MILLIS_TO_SECONDS);
-        scoreTweenStarBullet_FirstStage.start();
+    public void startScoreSlowMoTween() {
+        scoreSlowMoTween.setInitialVal(scoreTimer);
+        scoreSlowMoTween.setFinalVal(scoreTimer + 0.35f * SLOW_MO_TWEENS_DURATION * (float) MILLIS_TO_SECONDS);
+        scoreSlowMoTween.start();
     }
 
     public void startScoreTweenStarBullet_ThirdStage() {
@@ -329,16 +333,17 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         };
     }
 
-    private void initializeScoreTweenStarBullet_FirstStage() {
-        scoreTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT) {
+    private void initializeScoreSlowMoTween() {
+        scoreSlowMoTween = new MyTween(SLOW_MO_TWEENS_DURATION, SLOW_MO_TWEENS_INTERPOLATION_INTEGRATION_OUT) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
-                if (gameplayScreen.isInStarBulletAnimation())
+                //if (gameplayScreen.isInStarBulletAnimation())
+                if (gameplayScreen.getState() != GameplayScreen.State.STOPPED)
                     scoreTimer = myInterpolation.apply(startX, endX, startY, endY, currentX);
             }
         };
 
-        gameplayScreen.addToFinishWhenStoppingTheGameplay(scoreTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(scoreSlowMoTween);
         //gameplayScreen.addToResumeWhenResumingStarBullet(scoreTweenStarBullet_FirstStage);
     }
 

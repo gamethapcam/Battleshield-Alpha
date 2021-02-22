@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -45,8 +44,8 @@ public class StarsContainer extends Group implements Disposable{
     private Vector2 transitionVelocityMax = new Vector2(0, 0);
 
     private float currentStarSpeed;
-    private float starsSpeedBeforeStarBullet;
-    private MyTween currentSpeedTweenStarBullet_FirstStage; //First stage
+    private float starsSpeedBeforeSlowMo;
+    private MyTween currentStarSpeedSlowMoTween; // Star bullet first stage + Rewind slow mo
 
     private TrailWarpPostProcessingEffect trailWarpPostProcessingEffect;
     private GlassCrackPostProcessingEffect glassCrackPostProcessingEffect;
@@ -60,8 +59,9 @@ public class StarsContainer extends Group implements Disposable{
 
 
     private RadialTween radialTween;
-    private float radialVelocity; // rad/sec
     private float baseRadialVelocity;
+    private float radialVelocity; // rad/sec
+    private MyTween radialVelocitySlowMoTween;
 
     private BulletsHandler bulletsHandler;
 
@@ -98,9 +98,11 @@ public class StarsContainer extends Group implements Disposable{
         glassCrackPostProcessingEffect = new GlassCrackPostProcessingEffect();
 
 
-        initializeCurrentSpeedTweenStarBullet_FirstStage();
+        initializeCurrentStarSpeedSlowMoTween();
 
         initializeRadialTween();
+
+        initializeRadialVelocitySlowMoTween();
 
         initializeWarpStretchFactorTweenStarBullet_SecondStage();
         initializeWarpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage();
@@ -116,7 +118,8 @@ public class StarsContainer extends Group implements Disposable{
     public void act(float delta) {
         if (gameplayScreen.getState() == GameplayScreen.State.PAUSED) return;
 
-        currentSpeedTweenStarBullet_FirstStage.update(delta);
+        currentStarSpeedSlowMoTween.update(delta);
+        radialVelocitySlowMoTween.update(delta);
         radialTween.update(delta);
         warpStretchFactorTweenStarBullet_SecondStage.update(delta);
         warpFastForwardSpeedAndCurrentStarSpeedTweenStarBullet_ThirdStage.update(delta);
@@ -134,7 +137,7 @@ public class StarsContainer extends Group implements Disposable{
                     gameplayScreen);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
             calculateTrailWarpStuff();
             inWarpTrailAnimation = !inWarpTrailAnimation;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SEMICOLON)) {
@@ -239,10 +242,16 @@ public class StarsContainer extends Group implements Disposable{
         }
     }
 
-    public void startCurrentSpeedTweenStarBullet() {
-        starsSpeedBeforeStarBullet = currentStarSpeed;
-        currentSpeedTweenStarBullet_FirstStage.setInitialVal(currentStarSpeed);
-        currentSpeedTweenStarBullet_FirstStage.start();
+    public void startCurrentStarSpeedSlowMoTween() {
+        starsSpeedBeforeSlowMo = currentStarSpeed;
+        currentStarSpeedSlowMoTween.setInitialVal(currentStarSpeed);
+        currentStarSpeedSlowMoTween.start();
+    }
+
+    public void startRadialVelocitySlowMoTween() {
+        radialVelocitySlowMoTween.setInitialVal(radialVelocity);
+        radialVelocitySlowMoTween.setFinalVal(0);
+        radialVelocitySlowMoTween.start();
     }
 
     public void updateCurrentStarSpeed(float bulletsPerAttack) {
@@ -352,7 +361,7 @@ public class StarsContainer extends Group implements Disposable{
         this.gameplayScreen = gameplayScreen;
         gameplayScreen.addToFinishWhenStoppingTheGameplay(radialTween);
 
-        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentSpeedTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentStarSpeedSlowMoTween);
         //gameplayScreen.addToResumeWhenResumingStarBullet(currentSpeedTweenStarBullet_FirstStage);
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(warpStretchFactorTweenStarBullet_SecondStage);
@@ -386,8 +395,8 @@ public class StarsContainer extends Group implements Disposable{
     // ------------------------ initializers ------------------------
     // ------------------------ initializers ------------------------
 
-    private void initializeCurrentSpeedTweenStarBullet_FirstStage() {
-        currentSpeedTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION, STARS_SPEED, 0) {
+    private void initializeCurrentStarSpeedSlowMoTween() {
+        currentStarSpeedSlowMoTween = new MyTween(SLOW_MO_TWEENS_DURATION, SLOW_MO_TWEENS_INTERPOLATION, STARS_SPEED, 0) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
                 //currentStarSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
@@ -435,6 +444,27 @@ public class StarsContainer extends Group implements Disposable{
         //gameplayScreen.addToPauseWhenPausingFinishWhenLosing(radialTween);
     }
 
+    private void initializeRadialVelocitySlowMoTween() {
+        radialVelocitySlowMoTween = new MyTween(SLOW_MO_TWEENS_DURATION, SLOW_MO_TWEENS_INTERPOLATION) {
+            @Override
+            public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
+                //currentStarSpeed = myInterpolation.apply(startX, endX, startY, endY, currentX);
+                radialVelocity = myInterpolation.apply(startX, endX, startY, endY, currentX);
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                /*if (gameplayScreen.getState() == GameplayScreen.State.STOPPED)
+                    resetCurrentSpeed();*/
+
+            }
+        };
+
+        //gameplayScreen.addToPauseWhenPausingFinishWhenLosing(currentSpeedTweenStarBullet_FirstStage);
+    }
+
     private void initializeWarpStretchFactorTweenStarBullet_SecondStage() {
         warpStretchFactorTweenStarBullet_SecondStage = new Tween(STAR_BULLET_SECOND_STAGE_DURATION, STAR_BULLET_SECOND_STAGE_INTERPOLATION) {
 
@@ -464,7 +494,7 @@ public class StarsContainer extends Group implements Disposable{
             public void tween(float percentage, Interpolation interpolation) {
                 warpFastForwardSpeed = interpolation.apply(1, 0, percentage);
                 //currentStarSpeed = interpolation.apply(0, starsSpeedBeforeStarBullet, percentage);
-                setCurrentStarSpeed(interpolation.apply(0, starsSpeedBeforeStarBullet, percentage));
+                setCurrentStarSpeed(interpolation.apply(0, starsSpeedBeforeSlowMo, percentage));
             }
         };
 

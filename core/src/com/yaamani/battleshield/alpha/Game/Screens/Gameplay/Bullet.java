@@ -270,7 +270,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (inUse) {
             /*Gdx.app.log(TAG, "bullet = " + this + ", parentIndex = " + parent.getIndex() + ", parent'sParent = " + (parent.getParent()!=null ? "notNull":"null") + ", getY() = " + getY());*/
 
-            setY(getY() - bulletsHandler.getBulletSpeed() * delta);
+            setY(getY() - bulletsHandler.getCurrentBulletSpeed() * delta);
             //bulletMovement.update(delta);
             // type.setColor(1, 1, 1, type.getColor().a - 0.001f);
             // type.setColor(1, 1, 1, 0.5f);
@@ -284,6 +284,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             handlePortalRole();
 
             handlePortalType();
+
+            if (gameplayScreen.isInRewindBulletAnimation() & !fakeTween.isPaused())
+                fakeTween.pause();
 
             if (parent != null) {
                 Shield shield;
@@ -313,7 +316,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     private void whenTheShieldStartsToDisappear() {
         if (parent.getColor().a < 0.95f) {
-            handlePlusMinusStarExists();
+            handlePlusMinusBulletCausingSlowMoExists();
         }
     }
 
@@ -348,7 +351,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         /*if (getColor().a == 0)
             Gdx.app.log(TAG, "::::::::::::::::::: ALPHA 0 :::::::::::::::::::");*/
 
-        handlePlusMinusStarExists();
+
+
+        handlePlusMinusBulletCausingSlowMoExists();
 
         handlePortalTypeWhenStoppingUsingTheBullet();
         handlePortalRoleWhenStoppingUsingTheBullet();
@@ -361,15 +366,15 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         iamNotInUseNow(removeFromActiveBullets);
     }
 
-    private void handlePlusMinusStarExists() {
+    private void handlePlusMinusBulletCausingSlowMoExists() {
         if (bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
             return;
 
         if (currentEffect == effects.minus | currentEffect == effects.plus) {
             bulletsHandler.setPlusOrMinusExists(false);
         }
-        else if (currentEffect == effects.star)
-            bulletsHandler.setStarExists(false);
+        else if (currentEffect == effects.star | currentEffect == effects.rewind)
+            bulletsHandler.setBulletCausingSlowMoExists(false);
     }
 
     private void handlePortalType() {
@@ -609,7 +614,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     //------------------------------------------------------------------------------------------------------------
 
     @FunctionalInterface
-    private interface BulletEffect {
+    public interface BulletEffect {
         void effect();
     }
 
@@ -757,7 +762,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     bulletsHandler.startStarBulletStages();
 
                     //starsContainer.getRadialTween().pauseGradually(STAR_BULLET_FIRST_STAGE_DURATION);
-                    bulletsHandler.setStarExists(false);
+                    bulletsHandler.setBulletCausingSlowMoExists(false);
                     gameplayScreen.setInStarBulletAnimation(true);
                     Gdx.app.log(TAG, "STAR BULLET");
                 }
@@ -816,6 +821,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             rewind = new BulletEffect() {
                 @Override
                 public void effect() {
+
+                    bulletsHandler.startRewindBulletStages();
+
+                    bulletsHandler.setBulletCausingSlowMoExists(false);
+
+                    gameplayScreen.setInRewindBulletAnimation(true);
 
                 }
             };

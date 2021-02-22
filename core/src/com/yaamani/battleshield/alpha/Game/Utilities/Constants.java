@@ -593,13 +593,13 @@ public final class Constants {
 
     public static final float STAR_BULLET_SCORE_BONUS = 50f; //seconds
 
-    public static final int STAR_BULLET_FIRST_STAGE_DURATION = 1500;
+    public static final int SLOW_MO_TWEENS_DURATION = 1500; // First stage
 
     public static final int STAR_BULLET_SECOND_STAGE_DURATION = 2500;
 
     public static final int STAR_BULLET_THIRD_STAGE_DURATION = 2000;
 
-    public static final int STAR_BULLET_TOTAL_DURATION = STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION + STAR_BULLET_THIRD_STAGE_DURATION;
+    public static final int STAR_BULLET_TOTAL_DURATION = SLOW_MO_TWEENS_DURATION + STAR_BULLET_SECOND_STAGE_DURATION + STAR_BULLET_THIRD_STAGE_DURATION;
 
     /*public static final float STAR_BULLET_TRAIL_WARP_VELOCITY_MULTIPLIER_INITIAL_VALUE = 3;
 
@@ -611,9 +611,9 @@ public final class Constants {
 
     public static final float STAR_BULLET_TRAIL_WARP_TOTAL_DISTANCE = WORLD_SIZE / 8f;
 
-    public static final MyInterpolation STAR_BULLET_FIRST_STAGE_INTERPOLATION = MyInterpolation.myLinear;
+    public static final MyInterpolation SLOW_MO_TWEENS_INTERPOLATION = MyInterpolation.myLinear;
 
-    public static final MyInterpolation STAR_BULLET_FIRST_STAGE_INTERPOLATION_INTEGRATION_OUT = MyInterpolation.myPow2Out;
+    public static final MyInterpolation SLOW_MO_TWEENS_INTERPOLATION_INTEGRATION_OUT = MyInterpolation.myPow2Out;
 
     // The further the star from the center, the faster it'll travel. That's why we have STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MAX and STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MIN.
     public static final float STAR_BULLET_FAST_FORWARD_WARP_VELOCITY_MULTIPLIER_MAX = WORLD_SIZE * 9f;
@@ -1048,7 +1048,7 @@ public final class Constants {
 
     public static final float PORTALS_CONTAINER_PORTAL_ALPHA_DURATION = 200f;
 
-    public static final Interpolation PORTALS_CONTAINER_PORTAL_ALPHA_INTERPOLATION = Interpolation.exp5;
+    public static final MyInterpolation PORTALS_CONTAINER_PORTAL_ALPHA_INTERPOLATION = MyInterpolation.myExp5;
 
     public static final float PORTALS_CONTAINER_HIDE_PORTAL_EXIT_DELAY = 100f;
 
@@ -1210,7 +1210,7 @@ public final class Constants {
 
     public static final int D_BIG_BOSS_NUMBER_OF_DIFFICULTY_LEVELS = 6;
 
-    public static final float D_BIG_BOSS_SPECIAL_BULLETS_PROBABILITY = 0.35f;
+    public static final float D_BIG_BOSS_SPECIAL_BULLETS_PROBABILITY = 0.5f;
 
     public static final SpecialBullet[] BIG_BOSS_SPECIAL_BULLETS = {SpecialBullet.MIRROR, SpecialBullet.FASTER_DIZZINESS_ROTATION, SpecialBullet.TWO_EXIT_PORTAL, SpecialBullet.REWIND};
 

@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -34,7 +35,7 @@ public class BulletsHandler implements Updatable {
     private Array<Bullet> activeBullets;
 
     private boolean plusOrMinusExists = false;
-    private boolean starExists = false;
+    private boolean bulletCausingSlowMoExists = false;
     private boolean fasterDizzinessRotationExists = false;
 
     private int currentInUseBulletsCount = 0;
@@ -109,12 +110,15 @@ public class BulletsHandler implements Updatable {
 
 
     //private float speedResetTime = 0;
-    private MyTween currentBulletSpeedTweenStarBullet_FirstStage;
+    private MyTween currentBulletSpeedSlowMoTween; // Star bullet first stage + Rewind slow mo
     private MyTween currentBulletSpeedTweenStarBullet_ThirdStage;
 
-    private Timer starBulletFirstStage; // Bullets Slow mo
+    private Timer starBulletFirstStage; // Slow mo
     private Timer starBulletSecondStage; // Stars trails
     private Timer starBulletThirdStage; // Stars warp fast
+
+    private Timer rewindBulletFirstStage; // Slow mo
+    // TODO: Don't forget to make the opposite of this slow mo effect at the end. (Like star bullet)
 
     private int roundStart;
     private Integer roundTurn = null;
@@ -193,14 +197,14 @@ public class BulletsHandler implements Updatable {
 
         //initializeCurrentDifficultLevelTimer();
 
-        initializeCurrentBulletSpeedTweenStarBullet_FirstStage();
+        initializeCurrentBulletSpeedSlowMoTween();
         initializeCurrentBulletSpeedTweenStarBullet_ThirdStage();
 
         initializeStarBulletFirstStage();
         initializeStarBulletSecondStage();
         initializeStarBulletThirdStage();
 
-
+        initializeRewindBulletFirstStage();
 
         //resetWaveTimer();
 
@@ -227,12 +231,12 @@ public class BulletsHandler implements Updatable {
         this.fasterDizzinessRotationExists = fasterDizzinessRotationExists;
     }
 
-    public boolean isStarExists() {
-        return starExists;
+    public boolean isBulletCausingSlowMoExists() {
+        return bulletCausingSlowMoExists;
     }
 
-    public void setStarExists(boolean starExists) {
-        this.starExists = starExists;
+    public void setBulletCausingSlowMoExists(boolean bulletCausingSlowMoExists) {
+        this.bulletCausingSlowMoExists = bulletCausingSlowMoExists;
     }
 
     @Override
@@ -284,11 +288,18 @@ public class BulletsHandler implements Updatable {
                 break;
         }
 
-        currentBulletSpeedTweenStarBullet_FirstStage.update(delta);
+        currentBulletSpeedSlowMoTween.update(delta);
         currentBulletSpeedTweenStarBullet_ThirdStage.update(delta);
         starBulletFirstStage.update(delta);
         starBulletSecondStage.update(delta);
         starBulletThirdStage.update(delta);
+
+        rewindBulletFirstStage.update(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            gameplayScreen.setInRewindBulletAnimation(true);
+            startRewindBulletStages();
+        }
 
 
         if (!stopHandlingNewWave)
@@ -313,7 +324,7 @@ public class BulletsHandler implements Updatable {
 
     public void setBulletsPerAttack(int bulletsPerAttack) {
         this.bulletsPerAttack = bulletsPerAttack;
-        if (!currentBulletSpeedTweenStarBullet_FirstStage.isStarted())
+        if (!currentBulletSpeedSlowMoTween.isStarted())
             gameplayScreen.getStarsContainer().updateCurrentStarSpeed(bulletsPerAttack);
     }
 
@@ -516,7 +527,7 @@ public class BulletsHandler implements Updatable {
         return speedResetTime;
     }*/
 
-    public float getBulletSpeed() {
+    public float getCurrentBulletSpeed() {
         /*int i = (int) *//*floor*//* ((gameplayScreen.getTimePlayedThisRoundSoFar() - speedResetTime) / BULLETS_UPDATE_SPEED_MULTIPLIER_EVERY);
         float currentMultiplier = 1 + i * BULLETS_SPEED_MULTIPLIER_INCREMENT;
 
@@ -530,15 +541,15 @@ public class BulletsHandler implements Updatable {
         return currentBulletSpeed;
     }
 
-    public void startCurrentBulletSpeedTweenStarBullet_FirstStage() {
-        currentBulletSpeedTweenStarBullet_FirstStage.setInitialVal(getBulletSpeed());
-        currentBulletSpeedTweenStarBullet_FirstStage.setFinalVal(0);
-        currentBulletSpeedTweenStarBullet_FirstStage.start();
+    public void startCurrentBulletSpeedSlowMoTween() {
+        currentBulletSpeedSlowMoTween.setInitialVal(getCurrentBulletSpeed());
+        currentBulletSpeedSlowMoTween.setFinalVal(0);
+        currentBulletSpeedSlowMoTween.start();
     }
 
     public void startCurrentBulletSpeedTweenStarBullet_ThirdStage() {
         setCurrentSpeedMultiplier(getCurrentSpeedMultiplier());
-        float bulletSpeedAfterStarBullet = getBulletSpeed();
+        float bulletSpeedAfterStarBullet = getCurrentBulletSpeed();
 
         currentBulletSpeedTweenStarBullet_ThirdStage.setInitialVal(0);
         currentBulletSpeedTweenStarBullet_ThirdStage.setFinalVal(bulletSpeedAfterStarBullet);
@@ -551,16 +562,19 @@ public class BulletsHandler implements Updatable {
         //starBulletThirdStage.start(STAR_BULLET_FIRST_STAGE_DURATION + STAR_BULLET_SECOND_STAGE_DURATION);
 
         //getCurrentBulletsWaveTimer().pause();
-        getD_survival_bulletSpeedMultiplierTween().pause();
-        getD_survival_bulletsPerAttackNumberTween().pause();
+        //getD_survival_bulletSpeedMultiplierTween().pause();
+        //getD_survival_bulletsPerAttackNumberTween().pause();
+        gameplayScreen.pauseModeTimers();
+    }
 
-        // Uncomment if you ever decided to make the star bullet available in crystal planet.
-        // getD_crystal_bulletsPerAttackNumberTween().pause();
-        // getD_crystal_bulletSpeedMultiplierTween().pause();
-        // getD_crystal_fakeWaveProbabilityTween().pause();
+    public Timer getRewindBulletFirstStage() {
+        return rewindBulletFirstStage;
+    }
 
-        gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween().pause();
-        gameplayScreen.getScoreTimerStuff().getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween().pause();
+    public void startRewindBulletStages() {
+        Gdx.app.log(TAG, "<< startRewindBulletStages <<");
+        rewindBulletFirstStage.start();
+        gameplayScreen.pauseModeTimers();
     }
 
     public Bullet getCurrentWaveLastBullet() {
@@ -610,6 +624,19 @@ public class BulletsHandler implements Updatable {
 
     public void cancelTwoExitPortalsBulletEffect() {
         remainingTwoExitPortals = 0;
+    }
+
+    public boolean willRewindBulletSlowMoInterfereWithLazerAttack() {
+        boolean willRewindBulletSlowMoInterfereWithLazerAttack = false;
+
+        float theTimeItTakesTheRewindBulletToHitTheTurret = (Bullet.getR() - TURRET_RADIUS) / getCurrentBulletSpeed() * 1000;
+
+        Timer nextLazerAttackTimer = gameplayScreen.getLazerAttackStuff().getNextLazerAttackTimer();
+        float remainingTimeBeforeLazerAttacks = nextLazerAttackTimer.getDurationMillis()*(1-nextLazerAttackTimer.getPercentage());
+        if (remainingTimeBeforeLazerAttacks - theTimeItTakesTheRewindBulletToHitTheTurret < 0)
+            willRewindBulletSlowMoInterfereWithLazerAttack = true;
+
+        return willRewindBulletSlowMoInterfereWithLazerAttack;
     }
 
     //----------------------------------------------------------------------------------------------------------
@@ -743,7 +770,8 @@ public class BulletsHandler implements Updatable {
                         setFasterDizzinessRotationExists(false); // It was set to true @ determineSpecialBullet(int).
                         break;
                     case STAR:
-                        setStarExists(false);
+                    case REWIND:
+                        setBulletCausingSlowMoExists(false);
                         break;
                 }
 
@@ -836,29 +864,29 @@ public class BulletsHandler implements Updatable {
 
             if (currentSpecialBullet == SpecialBullet.STAR) {
 
-                Gdx.app.log(TAG, "Possible STAR -> " +
+                Gdx.app.log(TAG, "Possible STAR (All must be false in order to make the bullet star) -> " +
                         isPlusOrMinusExists() + ", " +
-                        isStarExists() + ", " +
+                        isBulletCausingSlowMoExists() + ", " +
                         !plusMinusBulletsEffectTimer.isFinished());
 
                 if (isPlusOrMinusExists() |
-                        isStarExists() |
+                        isBulletCausingSlowMoExists() |
                         !plusMinusBulletsEffectTimer.isFinished()) {
                     currentSpecialBullet = MyMath.pickRandomElement(GOOD_BULLETS_PROBABILITY, SpecialBullet.QUESTION_MARK, SpecialBullet.STAR);
-                } else setStarExists(true);
+                } else setBulletCausingSlowMoExists(true);
             }
 
             if (currentSpecialBullet == SpecialBullet.MINUS) {
 
                 Gdx.app.log(TAG, "Possible MINUS (All must be false in order to make the bullet minus) -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount()) + ", " +
                         isPlusOrMinusExists() + ", " +
-                        isStarExists() + ", " +
+                        isBulletCausingSlowMoExists() + ", " +
                         !plusMinusBulletsEffectTimer.isFinished() + ", " +
                         isDouble);
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMinCount() |
                         isPlusOrMinusExists() |
-                        isStarExists() |
+                        isBulletCausingSlowMoExists() |
                         !plusMinusBulletsEffectTimer.isFinished() |
                         isDouble/* & indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/) {
@@ -876,6 +904,31 @@ public class BulletsHandler implements Updatable {
                 Random random = new Random();
                 if (random.nextFloat() <= currentPlanetSpecialBulletsProbability) {
                     currentSpecialBullet = MyMath.pickRandomElement(currentPlanetSpecialBullets);
+
+                    if (currentSpecialBullet == SpecialBullet.REWIND) {
+
+                        boolean willRewindBulletSlowMoInterfereWithLazerAttack = willRewindBulletSlowMoInterfereWithLazerAttack();
+
+                        Gdx.app.log(TAG, "Possible REWIND (All must be false in order to make the bullet rewind) -> " +
+                                willRewindBulletSlowMoInterfereWithLazerAttack + ", " +
+                                isPlusOrMinusExists() + ", " +
+                                isBulletCausingSlowMoExists() + ", " +
+                                !plusMinusBulletsEffectTimer.isFinished());
+
+                        if (isPlusOrMinusExists() |
+                                willRewindBulletSlowMoInterfereWithLazerAttack |
+                                isBulletCausingSlowMoExists() |
+                                !plusMinusBulletsEffectTimer.isFinished()) {
+
+                            try {
+                                currentSpecialBullet = MyMath.pickRandomElement(currentPlanetSpecialBullets, SpecialBullet.REWIND);
+                            } catch (IllegalArgumentException e) {
+                                currentSpecialBullet = MyMath.pickRandomElement(BAD_BULLETS_PROBABILITY_NO_PLUS, SpecialBullet.QUESTION_MARK);
+                            }
+
+                        } else setBulletCausingSlowMoExists(true);
+                    }
+
                     return currentSpecialBullet;
                 }
             }
@@ -904,13 +957,13 @@ public class BulletsHandler implements Updatable {
 
                 Gdx.app.log(TAG, "Possible PLUS (All must be false in order to make the bullet plus) -> " + (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount()) + ", " +
                         isPlusOrMinusExists() + ", " +
-                        isStarExists() + ", " +
+                        isBulletCausingSlowMoExists() + ", " +
                         !plusMinusBulletsEffectTimer.isFinished() + ", " +
                         isDouble);
 
                 if (gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum() == gameplayScreen.getCurrentShieldsMaxCount() |
                         isPlusOrMinusExists() |
-                        isStarExists() |
+                        isBulletCausingSlowMoExists() |
                         !plusMinusBulletsEffectTimer.isFinished() |
                         isDouble /*& indexForDoubleWave == 0)|
                         !isThereDoubleWaveTimer.isFinished(*/) {
@@ -1355,8 +1408,8 @@ public class BulletsHandler implements Updatable {
 
         // If containers change positioning more than one, this won't work. Which means The rotational speed should be relatively slow.
 
-        float afterHowManySecondsTheWaveWillStartHittingTheShield = (Bullet.getR()-SHIELDS_RADIUS) / getBulletSpeed();
-        float afterHowManySecondsTheWaveWillStopHittingTheShield = ((Bullet.getR()-SHIELDS_RADIUS) + getBulletsPerAttack()*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getBulletSpeed();
+        float afterHowManySecondsTheWaveWillStartHittingTheShield = (Bullet.getR()-SHIELDS_RADIUS) / getCurrentBulletSpeed();
+        float afterHowManySecondsTheWaveWillStopHittingTheShield = ((Bullet.getR()-SHIELDS_RADIUS) + getBulletsPerAttack()*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT)) / getCurrentBulletSpeed();
 
         if (willDifficultyChangeDuringDoubleWave(afterHowManySecondsTheWaveWillStopHittingTheShield)) {
             Gdx.app.log(TAG, "- willDifficultyChangeDuringDoubleWave() == true -");
@@ -2459,8 +2512,8 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.addToFinishWhenStoppingTheGameplay(d_bigBoss_bulletSpeedMultiplierTween);
     }
 
-    private void initializeCurrentBulletSpeedTweenStarBullet_FirstStage() {
-        currentBulletSpeedTweenStarBullet_FirstStage = new MyTween(STAR_BULLET_FIRST_STAGE_DURATION, STAR_BULLET_FIRST_STAGE_INTERPOLATION) {
+    private void initializeCurrentBulletSpeedSlowMoTween() {
+        currentBulletSpeedSlowMoTween = new MyTween(SLOW_MO_TWEENS_DURATION, SLOW_MO_TWEENS_INTERPOLATION) {
             @Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
 
@@ -2470,7 +2523,7 @@ public class BulletsHandler implements Updatable {
             }
         };
 
-        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentBulletSpeedTweenStarBullet_FirstStage);
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(currentBulletSpeedSlowMoTween);
         //gameplayScreen.addToResumeWhenResumingStarBullet(currentBulletSpeedTweenStarBullet_FirstStage);
     }
 
@@ -2490,14 +2543,14 @@ public class BulletsHandler implements Updatable {
     }
 
     private void initializeStarBulletFirstStage() {
-        starBulletFirstStage = new Timer(STAR_BULLET_FIRST_STAGE_DURATION) {
+        starBulletFirstStage = new Timer(SLOW_MO_TWEENS_DURATION) {
             @Override
             public void onStart() {
                 super.onStart();
 
-                startCurrentBulletSpeedTweenStarBullet_FirstStage();
-                gameplayScreen.getStarsContainer().startCurrentSpeedTweenStarBullet();
-                gameplayScreen.getScoreTimerStuff().startScoreTweenStarBullet_FirstStage();
+                gameplayScreen.getStarsContainer().startCurrentStarSpeedSlowMoTween();
+                startCurrentBulletSpeedSlowMoTween();
+                gameplayScreen.getScoreTimerStuff().startScoreSlowMoTween();
             }
 
             @Override
@@ -2591,6 +2644,45 @@ public class BulletsHandler implements Updatable {
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(starBulletThirdStage);
         //gameplayScreen.addToResumeWhenResumingStarBullet(starBulletThirdStage);
+    }
+
+    private void initializeRewindBulletFirstStage() {
+        rewindBulletFirstStage = new Timer(SLOW_MO_TWEENS_DURATION) {
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                gameplayScreen.getStarsContainer().startCurrentStarSpeedSlowMoTween();
+                gameplayScreen.getStarsContainer().startRadialVelocitySlowMoTween();
+                startCurrentBulletSpeedSlowMoTween();
+                /*if (gameplayScreen.getScoreTimerStuff().getAffectTimerTween().isStarted())
+                    gameplayScreen.getScoreTimerStuff().getAffectTimerTween().finish();
+                gameplayScreen.getScoreTimerStuff().startScoreSlowMoTween();*/
+                gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer().pause();
+                gameplayScreen.getShieldsAndContainersHandler().startDizzinessBaseRotationalSpeedSlowMoTween();
+                if (gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().isStarted())
+                    gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().pause();
+                gameplayScreen.getLazerAttackStuff().getNextLazerAttackTimer().pause();
+                if (thereIsAPortal) {
+                    for (int i = 0; i < gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum(); i++) {
+                        BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
+                        if (container.isPortalEntranceExitFadeInOutTweenStarted())
+                            container.pausePortalEntranceExitFadeInOutTweenGradually(SLOW_MO_TWEENS_DURATION);
+                    }
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
+
+                }
+            }
+        };
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(rewindBulletFirstStage);
     }
 
     public void initializeBusyAndNonBusyContainers(int shieldsMaxCount) {

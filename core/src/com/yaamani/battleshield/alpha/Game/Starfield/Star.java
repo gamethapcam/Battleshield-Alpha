@@ -162,7 +162,7 @@ public class Star {
         linearPosition.x += additionalVelocity.x * delta * z;
         linearPosition.y += additionalVelocity.y * delta * z;
 
-        radialTweenPlusMinusBullet(delta, radialVelocity);
+        radialMotion(delta, radialVelocity);
 
         whenTheStarExitTheScreenBingItBack(inTrailWarpAnimation, r, inWarpFastForwardAnimation);
 
@@ -173,7 +173,7 @@ public class Star {
     }
 
 
-    private void radialTweenPlusMinusBullet(float delta, float radialVelocity) {
+    private void radialMotion(float delta, float radialVelocity) {
         if (/*radialTween.isStarted()*/radialVelocity != 0) {
             float xFromTheCenter = linearPosition.x - viewport.getWorldWidth()/2f;
             float yFromTheCenter = linearPosition.y - viewport.getWorldHeight()/2f;

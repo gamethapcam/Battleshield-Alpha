@@ -26,6 +26,7 @@ import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -39,6 +40,7 @@ public class GameplayScreen extends AdvancedScreen {
 
     private GameplayControllerType gameplayControllerType;
     private GameplayMode gameplayMode;
+    private HashMap<GameplayMode, Array<Timer>> modeTimers;
 
     private Integer currentShieldsMaxCount;
     private Integer currentShieldsMinCount;
@@ -61,6 +63,7 @@ public class GameplayScreen extends AdvancedScreen {
 
     public enum State {PLAYING, PAUSED, STOPPED}
     private State state;
+
     private boolean inStarBulletAnimation = false;
 
     private Image whiteTextureHidesEveryThingSecondStageStarBullet;
@@ -71,7 +74,7 @@ public class GameplayScreen extends AdvancedScreen {
     //private BitmapFont font;
 
 
-    private int rotation;
+    //private int rotation;
 
 
     private MyFrameBuffer originalFrameBuffer;
@@ -79,6 +82,7 @@ public class GameplayScreen extends AdvancedScreen {
     private PortalPostProcessingEffect portalPostProcessingEffect;
 
 
+    private boolean inRewindBulletAnimation = false;
 
 
     private LazerAttackStuff lazerAttackStuff;
@@ -188,6 +192,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         badlogic = new Texture("badlogic.jpg");
 
+        initializeModeTimers();
     }
 
     //----------------------------- Super Class Methods -------------------------------
@@ -255,8 +260,15 @@ public class GameplayScreen extends AdvancedScreen {
         //Gdx.app.log(TAG, "free bullets = " + bulletsHandler.getBulletPool().getFree());
         //Gdx.app.log(TAG, "" + bulletsHandler.getCurrentWaveLastBullet());
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A))
-            mirrorTempProgressBarUI.displayFor(1000);
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.A))
+            mirrorTempProgressBarUI.displayFor(1000);*/
+
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            bulletsHandler.startStarBulletStages();
+            bulletsHandler.setBulletCausingSlowMoExists(false);
+            setInStarBulletAnimation(true);
+        }*/
+
 
 
         if (!lazerAttackStuff.isLazerAttacking()) {
@@ -481,6 +493,64 @@ public class GameplayScreen extends AdvancedScreen {
         controllerRight.setDebug(true);*/
     }
 
+    private void initializeModeTimers() {
+        modeTimers = new HashMap<>();
+
+        Array<Timer> survivalTimers = new Array<>(false, 4, Timer.class);
+        survivalTimers.add(bulletsHandler.getD_survival_bulletsPerAttackNumberTween());
+        survivalTimers.add(bulletsHandler.getD_survival_bulletSpeedMultiplierTween());
+        survivalTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getSurvival_scoreMultiplierTween());
+        survivalTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.SURVIVAL, survivalTimers);
+
+        Array<Timer> crystalTimers = new Array<>(false, 5, Timer.class);
+        crystalTimers.add(bulletsHandler.getD_crystal_bulletsPerAttackNumberTween());
+        crystalTimers.add(bulletsHandler.getD_crystal_bulletSpeedMultiplierTween());
+        crystalTimers.add(bulletsHandler.getD_crystal_fakeWaveProbabilityTween());
+        crystalTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getCrystal_difficultyLevelTween());
+        crystalTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.CRYSTAL, crystalTimers);
+
+        Array<Timer> dizzinessTimers = new Array<>(false, 5, Timer.class);
+        dizzinessTimers.add(bulletsHandler.getD_dizziness_bulletsPerAttackNumberTween());
+        dizzinessTimers.add(bulletsHandler.getD_dizziness_bulletSpeedMultiplierTween());
+        dizzinessTimers.add(shieldsAndContainersHandler.getD_dizziness_rotationalSpeedTween());
+        dizzinessTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getDizziness_difficultyLevelTween());
+        dizzinessTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.DIZZINESS, dizzinessTimers);
+
+        Array<Timer> lazerTimers = new Array<>(false, 5, Timer.class);
+        lazerTimers.add(lazerAttackStuff.getNextLazerAttackTimer());
+        lazerTimers.add(bulletsHandler.getD_lazer_bulletsPerAttackNumberTween());
+        lazerTimers.add(bulletsHandler.getD_lazer_bulletSpeedMultiplierTween());
+        lazerTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getLazer_difficultyLevelTween());
+        lazerTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.LAZER, lazerTimers);
+
+        Array<Timer> portalsTimers = new Array<>(false, 4, Timer.class);
+        portalsTimers.add(bulletsHandler.getD_portals_bulletsPerAttackNumberTween());
+        portalsTimers.add(bulletsHandler.getD_portals_bulletSpeedMultiplierTween());
+        portalsTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getPortals_difficultyLevelTween());
+        portalsTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.PORTALS, portalsTimers);
+
+        Array<Timer> t1Timers = new Array<>(false, 4, Timer.class);
+        t1Timers.add(bulletsHandler.getD_t1_bulletsPerAttackNumberTween());
+        t1Timers.add(bulletsHandler.getD_t1_bulletSpeedMultiplierTween());
+        t1Timers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getT1_difficultyLevelTween());
+        t1Timers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.T1, t1Timers);
+
+        Array<Timer> bigBossTimers = new Array<>(false, 6, Timer.class);
+        bigBossTimers.add(shieldsAndContainersHandler.getD_bigBoss_rotationalSpeedTween());
+        bigBossTimers.add(lazerAttackStuff.getNextLazerAttackTimer());
+        bigBossTimers.add(bulletsHandler.getD_bigBoss_bulletsPerAttackNumberTween());
+        bigBossTimers.add(bulletsHandler.getD_bigBoss_bulletSpeedMultiplierTween());
+        bigBossTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getBigBoss_difficultyLevelTween());
+        bigBossTimers.add(scoreTimerStuff.getScoreMultiplierDifficultyLevelStuff().getMyProgressBarTween());
+        modeTimers.put(GameplayMode.BIG_BOSS, bigBossTimers);
+    }
+
     private void initializeBulletsAndShieldArray(int shieldsMaxCount) {
         if (containerOfContainers == null) {
             containerOfContainers = new Group();
@@ -581,6 +651,12 @@ public class GameplayScreen extends AdvancedScreen {
             }
 
             @Override
+            public void onTween(float percentage, Interpolation interpolation) {
+                if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();
+            }
+
+            @Override
             public void onTweenFinish() {
                 specialBulletUI.removeActor(mirrorTempProgressBarUI);
             }
@@ -597,6 +673,12 @@ public class GameplayScreen extends AdvancedScreen {
             }
 
             @Override
+            public void onTween(float percentage, Interpolation interpolation) {
+                if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();
+            }
+
+            @Override
             public void onTweenFinish() {
                 specialBulletUI.removeActor(rewindTempProgressBarUI);
             }
@@ -610,6 +692,12 @@ public class GameplayScreen extends AdvancedScreen {
             public void onStartingToDisplay() {
                 if (!isTweenStarted())
                     specialBulletUI.addActor(fasterDizzinessRotationTempProgressBarUI);
+            }
+
+            @Override
+            public void onTween(float percentage, Interpolation interpolation) {
+                if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();
             }
 
             @Override
@@ -642,6 +730,10 @@ public class GameplayScreen extends AdvancedScreen {
 
     }
 
+    public HashMap<GameplayMode, Array<Timer>> getModeTimers() {
+        return modeTimers;
+    }
+
     public GameplayMode getGameplayMode() {
         return gameplayMode;
     }
@@ -672,8 +764,6 @@ public class GameplayScreen extends AdvancedScreen {
             setDamageType(DamageType.HEALTH);
 
             //bulletsHandler.startSurvivalDifficultyTweens();
-            bulletsHandler.getD_survival_bulletsPerAttackNumberTween().start();
-            bulletsHandler.getD_survival_bulletSpeedMultiplierTween().start();
 
             bulletsHandler.setStopHandlingNewWave(false);
             setCurrentShieldsMinMaxCount(SURVIVAL_SHIELDS_MIN_COUNT, SURVIVAL_SHIELDS_MAX_COUNT);
@@ -695,9 +785,6 @@ public class GameplayScreen extends AdvancedScreen {
                     setDamageType(DamageType.HEALTH);
 
                     //bulletsHandler.startCrystalDifficultyTweens();
-                    bulletsHandler.getD_crystal_bulletsPerAttackNumberTween().start();
-                    bulletsHandler.getD_crystal_bulletSpeedMultiplierTween().start();
-                    bulletsHandler.getD_crystal_fakeWaveProbabilityTween().start();
 
                     bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(CRYSTAL_SHIELDS_MIN_COUNT, CRYSTAL_SHIELDS_MAX_COUNT);
@@ -715,9 +802,6 @@ public class GameplayScreen extends AdvancedScreen {
                     setDamageType(DamageType.HEALTH);
 
                     //bulletsHandler.startDizzinessDifficultyTweens();
-                    bulletsHandler.getD_dizziness_bulletsPerAttackNumberTween().start();
-                    bulletsHandler.getD_dizziness_bulletSpeedMultiplierTween().start();
-                    shieldsAndContainersHandler.getD_dizziness_rotationalSpeedTween().start();
 
                     bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(DIZZINESS_SHIELDS_MIN_COUNT, DIZZINESS_SHIELDS_MAX_COUNT);
@@ -731,12 +815,8 @@ public class GameplayScreen extends AdvancedScreen {
 
                     lazerAttackStuff.show();
                     lazerAttackStuff.calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
-                    lazerAttackStuff.getNextLazerAttackTimer().start();
 
                     setDamageType(DamageType.HEALTH);
-
-                    bulletsHandler.getD_lazer_bulletsPerAttackNumberTween().start();
-                    bulletsHandler.getD_lazer_bulletSpeedMultiplierTween().start();
 
                     bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(LAZER_SHIELDS_MIN_COUNT, LAZER_SHIELDS_MAX_COUNT);
@@ -753,9 +833,6 @@ public class GameplayScreen extends AdvancedScreen {
 
                     setDamageType(DamageType.HEALTH);
 
-                    bulletsHandler.getD_portals_bulletsPerAttackNumberTween().start();
-                    bulletsHandler.getD_portals_bulletSpeedMultiplierTween().start();
-
                     bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(PORTALS_SHIELDS_MIN_COUNT, PORTALS_SHIELDS_MAX_COUNT);
                     break;
@@ -771,9 +848,6 @@ public class GameplayScreen extends AdvancedScreen {
 
                     setDamageType(DamageType.TIME);
 
-                    bulletsHandler.getD_t1_bulletsPerAttackNumberTween().start();
-                    bulletsHandler.getD_t1_bulletSpeedMultiplierTween().start();
-
                     bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(T1_SHIELDS_MIN_COUNT, T1_SHIELDS_MAX_COUNT);
                     break;
@@ -784,16 +858,11 @@ public class GameplayScreen extends AdvancedScreen {
 
                     bulletsHandler.setCurrentPlanetSpecialBullets(BIG_BOSS_SPECIAL_BULLETS);
                     bulletsHandler.setCurrentPlanetSpecialBulletsProbability(D_BIG_BOSS_SPECIAL_BULLETS_PROBABILITY);
-                    shieldsAndContainersHandler.getD_bigBoss_rotationalSpeedTween().start();
 
                     lazerAttackStuff.show();
                     lazerAttackStuff.calculateCurrentNecessaryNumOfArmorBulletsForTheNextAttack();
-                    lazerAttackStuff.getNextLazerAttackTimer().start();
 
                     setDamageType(DamageType.TIME);
-
-                    bulletsHandler.getD_bigBoss_bulletsPerAttackNumberTween().start();
-                    bulletsHandler.getD_bigBoss_bulletSpeedMultiplierTween().start();
 
                     bulletsHandler.setStopHandlingNewWave(false);
                     setCurrentShieldsMinMaxCount(BIG_BOSS_SHIELDS_MIN_COUNT, BIG_BOSS_SHIELDS_MAX_COUNT);
@@ -815,6 +884,10 @@ public class GameplayScreen extends AdvancedScreen {
         }
 
         //scoreTimerStuff.gameplayModeStuff(gameplayMode);
+        Array<Timer> timers = modeTimers.get(gameplayMode);
+        if (timers != null)
+            for (Timer timer : timers)
+                timer.start();
 
         healthHandler.newGame();
     }
@@ -951,6 +1024,14 @@ public class GameplayScreen extends AdvancedScreen {
         return portalPostProcessingEffect;
     }
 
+    public boolean isInRewindBulletAnimation() {
+        return inRewindBulletAnimation;
+    }
+
+    public void setInRewindBulletAnimation(boolean inRewindBulletAnimation) {
+        this.inRewindBulletAnimation = inRewindBulletAnimation;
+    }
+
     public LazerAttackStuff getLazerAttackStuff() {
         return lazerAttackStuff;
     }
@@ -1008,6 +1089,12 @@ public class GameplayScreen extends AdvancedScreen {
     /*public void addToResumeWhenResumingStarBullet(Timer timer) {
         resumeWhenResumingStarBullet.add(timer);
     }*/
+
+    public void pauseModeTimers() {
+        Array<Timer> timers = getModeTimers().get(getGameplayMode());
+        for (Timer timer : timers)
+            timer.pause();
+    }
 
     public void startWhiteTextureHidesEveryThingSecondStageTweenStarBullet(boolean reversed, boolean delay) {
         whiteTextureHidesEveryThingSecondStageTweenStarBullet.setReversed(reversed);

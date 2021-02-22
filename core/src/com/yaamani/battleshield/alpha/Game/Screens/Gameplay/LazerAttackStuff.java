@@ -146,7 +146,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
     private float calculateTheTimeLeftForTheLastBulletToDisappear() {
         BulletsHandler bulletsHandler = gameplayScreen.getBulletsHandler();
         float distanceFromTheCentreOfTheTurret = bulletsHandler.getCurrentWaveLastBullet().getY();
-        return (distanceFromTheCentreOfTheTurret-TURRET_RADIUS) / bulletsHandler.getBulletSpeed() * 1000;
+        return (distanceFromTheCentreOfTheTurret-TURRET_RADIUS) / bulletsHandler.getCurrentBulletSpeed() * 1000;
     }
 
     private void handleArmorBullets() {

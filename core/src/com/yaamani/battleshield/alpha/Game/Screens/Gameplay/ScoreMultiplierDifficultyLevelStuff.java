@@ -140,6 +140,30 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         return survival_scoreMultiplierTween;
     }
 
+    public Tween getCrystal_difficultyLevelTween() {
+        return crystal_difficultyLevelTween;
+    }
+
+    public Tween getDizziness_difficultyLevelTween() {
+        return dizziness_difficultyLevelTween;
+    }
+
+    public Tween getLazer_difficultyLevelTween() {
+        return lazer_difficultyLevelTween;
+    }
+
+    public Tween getPortals_difficultyLevelTween() {
+        return portals_difficultyLevelTween;
+    }
+
+    public Tween getT1_difficultyLevelTween() {
+        return t1_difficultyLevelTween;
+    }
+
+    public Tween getBigBoss_difficultyLevelTween() {
+        return bigBoss_difficultyLevelTween;
+    }
+
     public void setVisible(boolean visible) {
         scoreMultiplierText.setVisible(visible);
         myProgressBar.setVisible(visible);
@@ -167,10 +191,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(D_SURVIVAL_DURATION_OF_EACH_DIFFICULTY_LEVEL * 1000 * D_SURVIVAL_NUMBER_OF_DIFFICULTY_LEVELS);
         myProgressBarTween.setInterpolation(SURVIVAL_SCORE_MULTIPLIER_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        survival_scoreMultiplierTween.start();
     }
 
     public void crystal() {
@@ -178,10 +199,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(CRYSTAL_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_CRYSTAL_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        crystal_difficultyLevelTween.start();
     }
 
     public void dizziness() {
@@ -189,10 +207,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(DIZZINESS_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_DIZZINESS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        dizziness_difficultyLevelTween.start();
     }
 
     public void lazer() {
@@ -200,10 +215,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(LAZER_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_LAZER_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        lazer_difficultyLevelTween.start();
     }
 
     public void portals() {
@@ -211,10 +223,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(PORTALS_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_PORTALS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        portals_difficultyLevelTween.start();
     }
 
     public void t1() {
@@ -222,10 +231,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(T1_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_T1_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        t1_difficultyLevelTween.start();
     }
 
     public void bigBoss() {
@@ -233,10 +239,7 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
 
         myProgressBarTween.setDurationMillis(BIG_BOSS_LEVEL_TIME*60*1000);
         myProgressBarTween.setInterpolation(D_BIG_BOSS_DIFFICULTY_LEVEL_PROGRESS_BAR_TWEEN_INTERPOLATION);
-        myProgressBarTween.start();
 
-
-        bigBoss_difficultyLevelTween.start();
     }
 
     //---------------------------------------- Initializers ---------------------------------------

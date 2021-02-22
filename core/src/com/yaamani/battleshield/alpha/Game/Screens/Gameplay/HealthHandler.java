@@ -102,7 +102,7 @@ public class HealthHandler implements Updatable {
         }
 
         gameplayScreen.getBulletsHandler().setPlusOrMinusExists(false);
-        gameplayScreen.getBulletsHandler().setStarExists(false);
+        gameplayScreen.getBulletsHandler().setBulletCausingSlowMoExists(false);
         gameplayScreen.setInStarBulletAnimation(false);
 
         for (Timer timer : gameplayScreen.getFinishWhenStoppingTheGameplay()) {
@@ -124,6 +124,8 @@ public class HealthHandler implements Updatable {
         gameplayScreen.getBulletsHandler().portalIsOver();
         gameplayScreen.getBulletsHandler().cancelTwoExitPortalsBulletEffect();
         gameplayScreen.getSpecialBulletUI().clear();
+
+        gameplayScreen.setInRewindBulletAnimation(false);
 
 
         if (networkAndStorageManager != null)
