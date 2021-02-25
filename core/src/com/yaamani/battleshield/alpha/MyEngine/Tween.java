@@ -91,6 +91,7 @@ public abstract class Tween extends Timer implements Updatable {
             super.setPercentage(percentage);
         else super.setPercentage(1-percentage);
 
-        if (isFinished() | isPaused()) tween(getPercentage(), interpolation);
+        if (isFinished() | isPaused())
+            tween(getPercentage(), interpolation);
     }
 }

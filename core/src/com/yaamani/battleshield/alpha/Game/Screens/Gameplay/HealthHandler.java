@@ -87,6 +87,9 @@ public class HealthHandler implements Updatable {
         gameplayScreen.getBulletsHandler().clearWave();
         //gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().finish();
 
+        gameplayScreen.finishSlowMoDeltaFractionTween();
+        gameplayScreen.revertSlowMoDeltaFractionTo1();
+
         float worldWidth = gameplayScreen.getStage().getViewport().getWorldWidth();
         float worldHeight = gameplayScreen.getStage().getViewport().getWorldHeight();
         /*int len = gameplayScreen.getBulletsHandler().getActiveBullets().size;
@@ -126,6 +129,7 @@ public class HealthHandler implements Updatable {
         gameplayScreen.getSpecialBulletUI().clear();
 
         gameplayScreen.setInRewindBulletAnimation(false);
+        gameplayScreen.setRewinding(false);
 
 
         if (networkAndStorageManager != null)

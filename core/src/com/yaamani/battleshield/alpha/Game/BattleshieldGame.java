@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
@@ -173,6 +174,7 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
         if (networkAndStorageManager != null) networkAndStorageManager.dispose();
         Assets.instance.dispose();
 
+        //Gdx.app.log(TAG, "totalAttachedBullets = " + Bullet.totalAttachedBullets);
 
         destroyed = true;
         Gdx.app.log(TAG, "DESTROYED !!!!!!!!! DESTROYED !!!!!!!!! DESTROYED !!!!!!!!! DESTROYED !!!!!!!!!");

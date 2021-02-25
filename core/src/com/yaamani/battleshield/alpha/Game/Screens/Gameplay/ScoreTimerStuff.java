@@ -98,7 +98,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
 
         if (gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-            if (!gameplayScreen.isInStarBulletAnimation() & !gameplayScreen.isInRewindBulletAnimation())
+            if (!gameplayScreen.isInStarBulletAnimation()/* & !gameplayScreen.isInRewindBulletAnimation()*/)
                 if (gameplayScreen.getGameplayMode() == GameplayMode.SURVIVAL)
                     scoreTimer += delta * scoreMultiplierDifficultyLevelStuff.getScoreMultiplierDifficultyLevel();
                 else

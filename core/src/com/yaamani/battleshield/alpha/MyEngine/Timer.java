@@ -88,6 +88,10 @@ public class Timer implements Updatable {
             if(pauseDelayCurrentTime >= pauseDelayMillis) {
                 inPauseDelay = false;
                 resume();
+            } else if (pauseDelayCurrentTime < 0) {
+                pauseDelayCurrentTime = 0;
+                inPauseDelay = false;
+                return;
             } else return;
         }
 
@@ -99,7 +103,12 @@ public class Timer implements Updatable {
             if(/*currentDelayTime*/ startDelayCurrentTime >= startDelayMillis) {
                 inStartDelay = false;
                 start();
-            } else return;
+            } else if (startDelayCurrentTime < 0) {
+                startDelayCurrentTime = 0;
+                inStartDelay = false;
+                return;
+            }
+            else return;
         }
 
         //if (onUpdate(delta)) return;
@@ -113,6 +122,10 @@ public class Timer implements Updatable {
             if (currentTime >= durationMillis) {
                 finish();
                 //return;
+            } else if (currentTime < 0) {
+                currentTime = 0;
+                started = false;
+                onStart();
             }
             //tween(percentage);
         }

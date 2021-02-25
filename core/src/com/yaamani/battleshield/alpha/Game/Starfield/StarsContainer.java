@@ -332,6 +332,10 @@ public class StarsContainer extends Group implements Disposable{
         return transitionVelocity;
     }
 
+    public MyTween getCurrentStarSpeedSlowMoTween() {
+        return currentStarSpeedSlowMoTween;
+    }
+
     public Star[] getStars() {
         return stars.items;
     }
@@ -355,6 +359,10 @@ public class StarsContainer extends Group implements Disposable{
     public void setBaseRadialVelocity(float baseRadialVelocity) {
         this.baseRadialVelocity = baseRadialVelocity;
         this.radialVelocity = baseRadialVelocity;
+    }
+
+    public MyTween getRadialVelocitySlowMoTween() {
+        return radialVelocitySlowMoTween;
     }
 
     public void setGameplayScreen(GameplayScreen gameplayScreen) {
@@ -387,7 +395,7 @@ public class StarsContainer extends Group implements Disposable{
         return glassCrackPostProcessingEffect;
     }
 
-    private void setCurrentStarSpeed(float currentStarSpeed) {
+    public void setCurrentStarSpeed(float currentStarSpeed) {
         this.currentStarSpeed = currentStarSpeed;
     }
 

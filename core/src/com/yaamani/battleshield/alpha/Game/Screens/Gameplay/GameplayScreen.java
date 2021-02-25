@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.RewindEngine;
 import com.yaamani.battleshield.alpha.Game.SolidBG;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
@@ -82,7 +83,18 @@ public class GameplayScreen extends AdvancedScreen {
     private PortalPostProcessingEffect portalPostProcessingEffect;
 
 
+    private float slowMoDeltaFraction = 1;
+    private Tween slowMoDeltaFractionTween;
+    private Finishable slowMoDeltaFractionTweenOnFinish;
+    private Tween rewindNegativeDeltaFractionTween;
+
+    /**
+     * Includes the slow mo stage that happens before the rewinding itself.
+     */
     private boolean inRewindBulletAnimation = false;
+    private boolean rewinding = false;
+    private Finishable rewindSlowMoFirstStageOnFinish;
+    private RewindEngine rewindEngine;
 
 
     private LazerAttackStuff lazerAttackStuff;
@@ -165,6 +177,15 @@ public class GameplayScreen extends AdvancedScreen {
                 viewport.getWorldWidth(),
                 viewport.getWorldHeight());*/
 
+        initializeModeTimers();
+
+        initializeSlowMoDeltaFractionTween();
+        initializeRewindNegativeDeltaFractionTween();
+
+        initializeRewindSlowMoFirstStageOnFinish();
+
+        rewindEngine = new RewindEngine(this);
+
 
         //initializeTempProgressBar();
         initializeMirrorTempProgressBarUI();
@@ -190,9 +211,8 @@ public class GameplayScreen extends AdvancedScreen {
 
         portalPostProcessingEffect = new PortalPostProcessingEffect();
 
-        badlogic = new Texture("badlogic.jpg");
 
-        initializeModeTimers();
+        badlogic = new Texture("badlogic.jpg");
     }
 
     //----------------------------- Super Class Methods -------------------------------
@@ -225,7 +245,9 @@ public class GameplayScreen extends AdvancedScreen {
 
 
 
-
+        slowMoDeltaFractionTween.update(delta);
+        rewindNegativeDeltaFractionTween.update(delta);
+        delta = slowMoDeltaFraction*delta;
 
         super.act(delta);
 
@@ -240,6 +262,8 @@ public class GameplayScreen extends AdvancedScreen {
             //resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), getStage().getViewport().getWorldWidth(), getStage().getViewport().getWorldHeight());
         //}
         //rotation = Gdx.input.getRotation();
+
+        rewindEngine.update(delta);
 
 
         lazerAttackStuff.update(delta);
@@ -626,6 +650,43 @@ public class GameplayScreen extends AdvancedScreen {
 
         addToFinishWhenStoppingTheGameplay(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
         //addToResumeWhenResumingStarBullet(whiteTextureHidesEveryThingSecondStageTweenStarBullet);
+    }
+
+    private void initializeSlowMoDeltaFractionTween() {
+        slowMoDeltaFractionTween = new Tween(SLOW_MO_TWEENS_DURATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                slowMoDeltaFraction = interpolation.apply(1, 0, percentage);
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (getState() == State.STOPPED) return;
+
+                slowMoDeltaFractionTweenOnFinish.onFinish();
+            }
+        };
+    }
+
+    private void initializeRewindSlowMoFirstStageOnFinish() {
+        rewindSlowMoFirstStageOnFinish = new Finishable() {
+            @Override
+            public void onFinish() {
+                setRewinding(true);
+                rewindNegativeDeltaFractionTween.start();
+            }
+        };
+    }
+
+    private void initializeRewindNegativeDeltaFractionTween() {
+        rewindNegativeDeltaFractionTween = new Tween(SLOW_MO_TWEENS_DURATION) {
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                slowMoDeltaFraction = interpolation.apply(0, REWIND_SPEED, percentage);
+            }
+        };
     }
 
     private void initializeSpecialBulletUI() {
@@ -1024,12 +1085,29 @@ public class GameplayScreen extends AdvancedScreen {
         return portalPostProcessingEffect;
     }
 
+    public RewindEngine getRewindEngine() {
+        return rewindEngine;
+    }
+
     public boolean isInRewindBulletAnimation() {
         return inRewindBulletAnimation;
     }
 
     public void setInRewindBulletAnimation(boolean inRewindBulletAnimation) {
         this.inRewindBulletAnimation = inRewindBulletAnimation;
+    }
+
+    public boolean isRewinding() {
+        return rewinding;
+    }
+
+    public void setRewinding(boolean rewinding) {
+        this.rewinding = rewinding;
+        rewindEngine.
+    }
+
+    public Finishable getRewindSlowMoFirstStageOnFinish() {
+        return rewindSlowMoFirstStageOnFinish;
     }
 
     public LazerAttackStuff getLazerAttackStuff() {
@@ -1141,5 +1219,37 @@ public class GameplayScreen extends AdvancedScreen {
         levelFinishStuff.getFinishTextTween().pause();
         levelFinishStuff.getFinishText().setVisible(false);
         //tempProgressBar.positionCentre();
+    }
+
+    public void startSlowMoDeltaFractionTween(boolean reversed, Finishable onFinish) {
+        slowMoDeltaFractionTweenOnFinish = onFinish;
+        slowMoDeltaFractionTween.setReversed(reversed);
+        slowMoDeltaFractionTween.start();
+    }
+
+    public void finishSlowMoDeltaFractionTween() {
+        slowMoDeltaFractionTweenOnFinish = null;
+        slowMoDeltaFractionTween.setReversed(false);
+        slowMoDeltaFractionTween.finish();
+    }
+
+    public void revertSlowMoDeltaFractionTo1() {
+        slowMoDeltaFraction = 1;
+    }
+
+
+
+
+
+
+
+
+
+    // --------------------------------------------------------
+    // --------------------------------------------------------
+    // --------------------------------------------------------
+
+    public interface Finishable {
+        void onFinish();
     }
 }

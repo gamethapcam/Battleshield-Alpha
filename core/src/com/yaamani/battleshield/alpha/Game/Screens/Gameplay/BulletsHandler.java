@@ -117,8 +117,7 @@ public class BulletsHandler implements Updatable {
     private Timer starBulletSecondStage; // Stars trails
     private Timer starBulletThirdStage; // Stars warp fast
 
-    private Timer rewindBulletFirstStage; // Slow mo
-    // TODO: Don't forget to make the opposite of this slow mo effect at the end. (Like star bullet)
+
 
     private int roundStart;
     private Integer roundTurn = null;
@@ -204,7 +203,7 @@ public class BulletsHandler implements Updatable {
         initializeStarBulletSecondStage();
         initializeStarBulletThirdStage();
 
-        initializeRewindBulletFirstStage();
+        //initializeRewindBulletFirstStage();
 
         //resetWaveTimer();
 
@@ -253,6 +252,8 @@ public class BulletsHandler implements Updatable {
         //plusMinusBulletsTimer.update(delta);
         //decreaseBulletsPerAttackTimer.update(delta);
 
+
+
         switch (gameplayScreen.getGameplayMode()) {
             case SURVIVAL:
                 d_survival_bulletsPerAttackNumberTween.update(delta);
@@ -294,11 +295,9 @@ public class BulletsHandler implements Updatable {
         starBulletSecondStage.update(delta);
         starBulletThirdStage.update(delta);
 
-        rewindBulletFirstStage.update(delta);
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             gameplayScreen.setInRewindBulletAnimation(true);
-            startRewindBulletStages();
+            gameplayScreen.startSlowMoDeltaFractionTween(false, gameplayScreen.getRewindSlowMoFirstStageOnFinish());
         }
 
 
@@ -567,15 +566,14 @@ public class BulletsHandler implements Updatable {
         gameplayScreen.pauseModeTimers();
     }
 
-    public Timer getRewindBulletFirstStage() {
+    /*public Timer getRewindBulletFirstStage() {
         return rewindBulletFirstStage;
-    }
+    }*/
 
-    public void startRewindBulletStages() {
+    /*public void startRewindBulletStages() {
         Gdx.app.log(TAG, "<< startRewindBulletStages <<");
         rewindBulletFirstStage.start();
-        gameplayScreen.pauseModeTimers();
-    }
+    }*/
 
     public Bullet getCurrentWaveLastBullet() {
         return currentWaveLastBullet;
@@ -2223,7 +2221,7 @@ public class BulletsHandler implements Updatable {
     //------------------------------ initializers ------------------------------
 
     private void initializeBulletPool() {
-        bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY) {
+        bulletPool = new Pool<Bullet>(BULLETS_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
 
             private int instantiatedObjects = 0;
 
@@ -2646,30 +2644,32 @@ public class BulletsHandler implements Updatable {
         //gameplayScreen.addToResumeWhenResumingStarBullet(starBulletThirdStage);
     }
 
-    private void initializeRewindBulletFirstStage() {
+    /*private void initializeRewindBulletFirstStage() {
         rewindBulletFirstStage = new Timer(SLOW_MO_TWEENS_DURATION) {
             @Override
             public void onStart() {
                 super.onStart();
 
-                gameplayScreen.getStarsContainer().startCurrentStarSpeedSlowMoTween();
-                gameplayScreen.getStarsContainer().startRadialVelocitySlowMoTween();
-                startCurrentBulletSpeedSlowMoTween();
-                /*if (gameplayScreen.getScoreTimerStuff().getAffectTimerTween().isStarted())
-                    gameplayScreen.getScoreTimerStuff().getAffectTimerTween().finish();
-                gameplayScreen.getScoreTimerStuff().startScoreSlowMoTween();*/
-                gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer().pause();
-                gameplayScreen.getShieldsAndContainersHandler().startDizzinessBaseRotationalSpeedSlowMoTween();
-                if (gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().isStarted())
-                    gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().pause();
-                gameplayScreen.getLazerAttackStuff().getNextLazerAttackTimer().pause();
-                if (thereIsAPortal) {
-                    for (int i = 0; i < gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum(); i++) {
-                        BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
-                        if (container.isPortalEntranceExitFadeInOutTweenStarted())
-                            container.pausePortalEntranceExitFadeInOutTweenGradually(SLOW_MO_TWEENS_DURATION);
-                    }
-                }
+//                gameplayScreen.getStarsContainer().startCurrentStarSpeedSlowMoTween();
+//                gameplayScreen.getStarsContainer().startRadialVelocitySlowMoTween();
+//                startCurrentBulletSpeedSlowMoTween();
+//                gameplayScreen.getShieldsAndContainersHandler().startDizzinessBaseRotationalSpeedSlowMoTween();
+//                if (thereIsAPortal) {
+//                    for (int i = 0; i < gameplayScreen.getShieldsAndContainersHandler().getActiveShieldsNum(); i++) {
+//                        BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[i];
+//                        if (container.isPortalEntranceExitFadeInOutTweenStarted())
+//                            container.pausePortalEntranceExitFadeInOutTweenGradually(SLOW_MO_TWEENS_DURATION);
+//                    }
+//                }
+                gameplayScreen.getSlowMoDeltaFractionTween().setReversed(false);
+                gameplayScreen.getSlowMoDeltaFractionTween().start();
+
+//                if (gameplayScreen.getScoreTimerStuff().getAffectTimerTween().isStarted())
+//                    gameplayScreen.getScoreTimerStuff().getAffectTimerTween().finish();
+//                gameplayScreen.getScoreTimerStuff().startScoreSlowMoTween();
+
+
+
             }
 
             @Override
@@ -2677,13 +2677,37 @@ public class BulletsHandler implements Updatable {
                 super.onFinish();
 
                 if (gameplayScreen.getState() != GameplayScreen.State.STOPPED) {
+                    gameplayScreen.setRewinding(true);
 
+
+
+                    gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer().pause();
+                    if (gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().isStarted()) {
+                        gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().pause();
+                    }
+                    //gameplayScreen.getLazerAttackStuff().getNextLazerAttackTimer().pause();
+
+                    gameplayScreen.pauseModeTimers();
+
+
+
+
+//                    float starSpeed = gameplayScreen.getStarsContainer().getCurrentStarSpeedSlowMoTween().getInitialVal();
+//                    gameplayScreen.getStarsContainer().setCurrentStarSpeed(starSpeed);
+//                    float baseRadialVelocity = gameplayScreen.getStarsContainer().getBaseRadialVelocity();
+//                    gameplayScreen.getStarsContainer().setBaseRadialVelocity(baseRadialVelocity);
+//
+//                    currentBulletSpeed = currentBulletSpeedSlowMoTween.getInitialVal();
+//
+//                    gameplayScreen.getShieldsAndContainersHandler().revertDizzinessBaseRotationalSpeedAfterSlowMo();
+                    gameplayScreen.getSlowMoDeltaFractionTween().setReversed(true);
+                    gameplayScreen.getSlowMoDeltaFractionTween().start();
                 }
             }
         };
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(rewindBulletFirstStage);
-    }
+    }*/
 
     public void initializeBusyAndNonBusyContainers(int shieldsMaxCount) {
         if (busyContainers == null) {

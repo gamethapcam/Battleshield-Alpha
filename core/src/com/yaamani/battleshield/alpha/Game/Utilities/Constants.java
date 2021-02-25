@@ -1309,6 +1309,20 @@ public final class Constants {
 
 
 
+
+
+
+    public static final int REWIND_BULLET_EVENT_POOL_INITIAL_CAPACITY = 150;
+
+    public static final float REWIND_SPEED = -3;
+
+
+
+
+
+
+
+
     public static final String ASSETS_LOGO_ALONE = "Logo.png";
 
     public static final String ASSETS_ALL = "All.atlas";

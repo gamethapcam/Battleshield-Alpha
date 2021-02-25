@@ -368,9 +368,9 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             public void onStart() {
                 super.onStart();
 
-                Timer rewindBulletFirstStage = gameplayScreen.getBulletsHandler().getRewindBulletFirstStage();
+                /*Timer rewindBulletFirstStage = gameplayScreen.getBulletsHandler().getRewindBulletFirstStage();
                 if (rewindBulletFirstStage.isStarted())
-                    pauseGradually((1-rewindBulletFirstStage.getPercentage()) * rewindBulletFirstStage.getDurationMillis());
+                    pauseGradually((1-rewindBulletFirstStage.getPercentage()) * rewindBulletFirstStage.getDurationMillis());*/
             }
 
             /*@Override

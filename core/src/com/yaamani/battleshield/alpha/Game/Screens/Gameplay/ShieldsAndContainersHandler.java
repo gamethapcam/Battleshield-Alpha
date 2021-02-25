@@ -203,6 +203,8 @@ public class ShieldsAndContainersHandler implements Updatable {
     }
 
     public void handleOnShields() {
+        if (gameplayScreen.isRewinding()) return;
+
         Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDeg(),
                 gameplayScreen.getControllerRight().getAngleDeg()}; // cAs is for controllerAngles.
 
@@ -316,10 +318,18 @@ public class ShieldsAndContainersHandler implements Updatable {
         return dizzinessRotationalSpeedMultiplierTimer;
     }
 
+    public MyTween getDizzinessBaseRotationalSpeedSlowMoTween() {
+        return dizzinessBaseRotationalSpeedSlowMoTween;
+    }
+
     public void startDizzinessBaseRotationalSpeedSlowMoTween() {
         dizzinessBaseRotationalSpeedSlowMoTween.setInitialVal(dizzinessBaseRotationalSpeed);
         dizzinessBaseRotationalSpeedSlowMoTween.setFinalVal(0);
         dizzinessBaseRotationalSpeedSlowMoTween.start();
+    }
+
+    public void revertDizzinessBaseRotationalSpeedAfterSlowMo() {
+        dizzinessBaseRotationalSpeed = dizzinessBaseRotationalSpeedSlowMoTween.getInitialVal();
     }
 
     public void initializeActiveShields(int activeShieldsNum) {
