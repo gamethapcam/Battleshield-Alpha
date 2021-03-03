@@ -1314,7 +1314,9 @@ public final class Constants {
 
     public static final int REWIND_BULLET_EVENT_POOL_INITIAL_CAPACITY = 150;
 
-    public static final float REWIND_SPEED = -3;
+    public static final float REWIND_SPEED = -2f;
+
+    public static final float REWIND_MAX_SAVING_TIME = 10; // sec
 
 
 

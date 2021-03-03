@@ -87,6 +87,7 @@ public class GameplayScreen extends AdvancedScreen {
     private Tween slowMoDeltaFractionTween;
     private Finishable slowMoDeltaFractionTweenOnFinish;
     private Tween rewindNegativeDeltaFractionTween;
+    private Tween rewindNegativeToPositiveDeltaFractionTween;
 
     /**
      * Includes the slow mo stage that happens before the rewinding itself.
@@ -181,6 +182,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         initializeSlowMoDeltaFractionTween();
         initializeRewindNegativeDeltaFractionTween();
+        initializeRewindNegativeToPositiveDeltaFractionTween();
 
         initializeRewindSlowMoFirstStageOnFinish();
 
@@ -247,6 +249,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         slowMoDeltaFractionTween.update(delta);
         rewindNegativeDeltaFractionTween.update(delta);
+        rewindNegativeToPositiveDeltaFractionTween.update(delta);
         delta = slowMoDeltaFraction*delta;
 
         super.act(delta);
@@ -689,6 +692,34 @@ public class GameplayScreen extends AdvancedScreen {
         };
     }
 
+    private void initializeRewindNegativeToPositiveDeltaFractionTween() {
+        rewindNegativeToPositiveDeltaFractionTween = new Tween(SLOW_MO_TWEENS_DURATION/2f) {
+
+            boolean passedZero = false;
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                passedZero = false;
+            }
+
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                slowMoDeltaFraction = interpolation.apply(REWIND_SPEED, 1, percentage);
+                if (slowMoDeltaFraction >= 0 & !passedZero) {
+                    passedZero = true;
+                    setRewinding(false);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                setInRewindBulletAnimation(false);
+            }
+        };
+    }
+
     private void initializeSpecialBulletUI() {
         specialBulletUI = new RowOfActors(SPECIAL_BULLET_UI_MARGIN_BETWEEN_ACTORS);
         addActor(specialBulletUI);
@@ -713,8 +744,8 @@ public class GameplayScreen extends AdvancedScreen {
 
             @Override
             public void onTween(float percentage, Interpolation interpolation) {
-                if (isInRewindBulletAnimation() & !isTweenPaused())
-                    pauseTween();
+                /*if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();*/
             }
 
             @Override
@@ -735,8 +766,8 @@ public class GameplayScreen extends AdvancedScreen {
 
             @Override
             public void onTween(float percentage, Interpolation interpolation) {
-                if (isInRewindBulletAnimation() & !isTweenPaused())
-                    pauseTween();
+                /*if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();*/
             }
 
             @Override
@@ -757,8 +788,8 @@ public class GameplayScreen extends AdvancedScreen {
 
             @Override
             public void onTween(float percentage, Interpolation interpolation) {
-                if (isInRewindBulletAnimation() & !isTweenPaused())
-                    pauseTween();
+                /*if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();*/
             }
 
             @Override
@@ -1097,13 +1128,27 @@ public class GameplayScreen extends AdvancedScreen {
         this.inRewindBulletAnimation = inRewindBulletAnimation;
     }
 
+    public Tween getRewindNegativeToPositiveDeltaFractionTween() {
+        return rewindNegativeToPositiveDeltaFractionTween;
+    }
+
     public boolean isRewinding() {
         return rewinding;
     }
 
     public void setRewinding(boolean rewinding) {
         this.rewinding = rewinding;
-        rewindEngine.
+        if (rewinding) {
+            bulletsHandler.setStopHandlingNewWave(true);
+            rewindEngine.startRewinding();
+        } else {
+            bulletsHandler.setStopHandlingNewWave(false);
+            for (Timer timer : modeTimers.get(getGameplayMode())) {
+                if (!timer.isStarted())
+                    timer.start();
+            }
+            slowMoDeltaFraction = 1; // Just to make sure it's 1
+        }
     }
 
     public Finishable getRewindSlowMoFirstStageOnFinish() {

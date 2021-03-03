@@ -188,7 +188,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void attachNotSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent, int order) {
-        readyToBeAttached(parent);
+        readyToBeAttached(parent, true);
 
         setY(getY() + order*(BULLETS_DISTANCE_BETWEEN_TWO + BULLETS_ORDINARY_HEIGHT));
 
@@ -196,7 +196,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     public void attachSpecialToBulletsAndShieldContainer(BulletsAndShieldContainer parent/*, boolean isDouble, int indexForDoubleWave*/) {
-        readyToBeAttached(parent);
+        readyToBeAttached(parent, true);
 
         //if (isDouble & indexForDoubleWave == 1) {
             //float totalDistance = gameplayScreen.getBulletsHandler().getCurrentBulletsWaveTimer().getDurationMillis() * BULLETS_SPEED_INITIAL / 1000f;
@@ -210,14 +210,15 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //bulletMovementSetDurationAndStart();
     }
 
-    private void readyToBeAttached(BulletsAndShieldContainer parent) {
+    private void readyToBeAttached(BulletsAndShieldContainer parent, boolean resetPosition) {
         iamInUseNow();
 
         this.parent = parent;
         parent.addActor(this);
         parent.getAttachedBullets().add(this);
 
-        resetPosition(viewport.getWorldWidth(), viewport.getWorldHeight());
+        if (resetPosition)
+            resetPosition(viewport.getWorldWidth(), viewport.getWorldHeight());
 
         handleRewindEventWhenAttaching();
 
@@ -226,7 +227,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void handleRewindEventWhenAttaching() {
-        currentBulletRecord = gameplayScreen.getRewindEngine().obtainBulletRecord();
+        if (gameplayScreen.isRewinding()) return;
+
+
         currentBulletRecord.inPosY = getY();
         currentBulletRecord.parentContainer = parent;
     }
@@ -298,6 +301,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         if (gameplayScreen.isRewinding()) {
 
+            if (getY() >= currentBulletRecord.inPosY)
+                stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
 
 
             return;
@@ -390,6 +395,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     }
 
     private void handleRewindEventWhenStopping() {
+        if (gameplayScreen.isRewinding()) return;
+
         currentBulletRecord.outPosY = getY();
         gameplayScreen.getRewindEngine().pushRewindEvent(currentBulletRecord);
     }
@@ -418,7 +425,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (getY() <= D_PORTALS_ENTRANCE_EXIT_POSITION - BULLETS_SPECIAL_DIAMETER/2f) {
                     //stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
                     setColor(1, 1, 1, a);
-                    currentBulletRecord.inPosY = getY();
+                    if (currentBulletRecord.inPosY == Bullet.getR())
+                        currentBulletRecord.inPosY = getY();
                 }
                 break;
         }
@@ -507,16 +515,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     public void notSpecial(boolean fake) {
         bulletType = BulletType.ORDINARY;
 
-        setSize(BULLETS_ORDINARY_WIDTH, BULLETS_ORDINARY_HEIGHT);
-        setOrigin(0, 0);
-        setRotation(0);
+        notSpecialDimensions();
         region = Assets.instance.gameplayAssets.bullet;
         if (fake)
             currentEffect = effects.ordinaryFake;
         else
             currentEffect = effects.ordinary;
 
-        handleRewindEventWhenDeterminingType(fake, region);
+        handleRewindEventWhenDeterminingType(null, false, fake);
 
         if (type != null) {
             type.setVisible(true);
@@ -524,12 +530,16 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         }
     }
 
+    private void notSpecialDimensions() {
+        setSize(BULLETS_ORDINARY_WIDTH, BULLETS_ORDINARY_HEIGHT);
+        setOrigin(0, 0);
+        setRotation(0);
+    }
+
     public void setSpecial(SpecialBullet specialType, boolean questionMark, boolean fake) {
         bulletType = BulletType.SPECIAL;
 
-        setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
-        setOrigin(Align.center);
-        setY(getY() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_HEIGHT)/2f);
+        specialDimensions();
 
         if (type != null) type.setVisible(true);
 
@@ -569,8 +579,12 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             case ARMOR:
                 if (!questionMark) region = Assets.instance.gameplayAssets.armorBullet;
                 currentEffect = effects.armor;
-                if (!fake)
-                    gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                if (!fake) {
+                    if (!gameplayScreen.isRewinding())
+                        gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                    else if (currentBulletRecord.effectTookPlace)
+                        gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                }
                 break;
             case TWO_EXIT_PORTAL:
                 if (!questionMark) region = Assets.instance.gameplayAssets.twoExitPortal;
@@ -592,18 +606,51 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (questionMark)
             region = Assets.instance.gameplayAssets.questionMarkBullet;
 
-        handleRewindEventWhenDeterminingType(fake, region);
+        handleRewindEventWhenDeterminingType(specialType, questionMark, fake);
 
 
         if (type != null) type.setCharSequence("" + specialType, true);
     }
 
-    private void handleRewindEventWhenDeterminingType(boolean fake, TextureRegion region) {
-        if (currentBulletRecord == null)
-            return;
+    private void specialDimensions() {
+        setSize(BULLETS_SPECIAL_DIAMETER, BULLETS_SPECIAL_DIAMETER);
+        setOrigin(Align.center);
+        setY(getY() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_HEIGHT)/2f);
+    }
 
+    private void handleRewindEventWhenDeterminingType(SpecialBullet specialType, boolean questionMark, boolean fake) {
+        if (gameplayScreen.isRewinding()) return;
+
+        currentBulletRecord = gameplayScreen.getRewindEngine().obtainBulletRecord();
+
+        currentBulletRecord.bulletType = bulletType;
+        currentBulletRecord.specialType = specialType;
+        currentBulletRecord.questionMark = questionMark;
         currentBulletRecord.wasFake = fake;
-        currentBulletRecord.region = region;
+        //currentBulletRecord.region = region;
+
+    }
+
+    public void attachForRewinding(BulletRecord bulletRecord) {
+        currentBulletRecord = bulletRecord;
+
+        setY(bulletRecord.outPosY);
+
+        if (bulletRecord.wasFake) {
+            fakeTween.start();
+            fakeTween.setPercentage(0.99f);
+        }
+
+        bulletType = bulletRecord.bulletType;
+        if (bulletRecord.bulletType == BulletType.ORDINARY)
+            notSpecial(bulletRecord.wasFake);
+        else // BulletType.SPECIAL
+            setSpecial(bulletRecord.specialType, bulletRecord.questionMark, bulletRecord.wasFake);
+
+        readyToBeAttached(bulletRecord.parentContainer, false);
+
+        if (bulletRecord.effectTookPlace)
+            currentEffect.reverseEffect();
     }
 
     @Override
@@ -657,7 +704,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public class BulletEffect {
         public void effect() {
-            currentBulletRecord.effect = BulletEffect.this;
+            if (!gameplayScreen.isRewinding())
+                //currentBulletRecord.effect = BulletEffect.this;
+                currentBulletRecord.effectTookPlace = true;
+        }
+
+        public void reverseEffect() {
+
         }
     }
 
@@ -896,7 +949,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                     bulletsHandler.setBulletCausingSlowMoExists(false);
 
                     gameplayScreen.setInRewindBulletAnimation(true);
-                    gameplayScreen.getRewindEngine().setDeltaTimeForLastPushedEvent();
                 }
             };
 

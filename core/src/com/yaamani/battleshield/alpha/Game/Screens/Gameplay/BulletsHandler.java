@@ -769,7 +769,7 @@ public class BulletsHandler implements Updatable {
                         break;
                     case STAR:
                     case REWIND:
-                        setBulletCausingSlowMoExists(false);
+                        setBulletCausingSlowMoExists(false); // It was set to true @ determineSpecialBullet(int).
                         break;
                 }
 
