@@ -1312,7 +1312,9 @@ public final class Constants {
 
 
 
-    public static final int REWIND_BULLET_EVENT_POOL_INITIAL_CAPACITY = 150;
+    public static final int REWIND_BULLET_RECORD_POOL_INITIAL_CAPACITY = 150;
+
+    public static final int REWIND_PLUS_MINUS_BULLETS_RECORD_POOL_INITIAL_CAPACITY = 8;
 
     public static final float REWIND_SPEED = -2f;
 

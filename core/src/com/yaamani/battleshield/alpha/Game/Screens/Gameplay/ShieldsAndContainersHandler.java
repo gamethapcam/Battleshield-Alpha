@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PlusMinusBulletsRecord;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -22,8 +23,6 @@ public class ShieldsAndContainersHandler implements Updatable {
     public static final String TAG = ShieldsAndContainersHandler.class.getSimpleName();
 
     //private GameplayType gameplayType;
-
-    private GameplayScreen gameplayScreen;
 
     private int activeShieldsNum;
 
@@ -51,7 +50,12 @@ public class ShieldsAndContainersHandler implements Updatable {
     private float[] oldRotationDeg;
     private float[] newRotationDeg;
 
+    private PlusMinusBulletsRecord currentRecord;
+
+
     private NetworkAndStorageManager networkAndStorageManager;
+
+    private GameplayScreen gameplayScreen;
 
 
     public ShieldsAndContainersHandler(GameplayScreen gameplayScreen) {
@@ -332,6 +336,13 @@ public class ShieldsAndContainersHandler implements Updatable {
         dizzinessBaseRotationalSpeed = dizzinessBaseRotationalSpeedSlowMoTween.getInitialVal();
     }
 
+    public void pushCurrentPlusMinusRecord() {
+        if (currentRecord != null) {
+            gameplayScreen.getRewindEngine().pushRewindEvent(currentRecord);
+            currentRecord = null;
+        }
+    }
+
     public void initializeActiveShields(int activeShieldsNum) {
         int shieldsMaxCount = gameplayScreen.getCurrentShieldsMaxCount();
         int shieldsMinCount = gameplayScreen.getCurrentShieldsMinCount();
@@ -370,6 +381,10 @@ public class ShieldsAndContainersHandler implements Updatable {
             activeShieldsNum++;
             return;
         }
+
+        currentRecord = gameplayScreen.getRewindEngine().obtainPlusMinusBulletsRecord();
+        currentRecord.plus = false;
+        currentRecord.containerIndex = toBeDiscardedContainer.getIndex();
 
         // toBeDiscardedContainer's stuff.
         toBeDiscardedContainer.setInUse(false);
@@ -431,6 +446,10 @@ public class ShieldsAndContainersHandler implements Updatable {
             activeShieldsNum--;
             return;
         }
+
+        currentRecord = gameplayScreen.getRewindEngine().obtainPlusMinusBulletsRecord();
+        currentRecord.plus = true;
+        currentRecord.containerIndex = theContainerWithThePlusAttached.getIndex();
 
         //Shifting.
         int indexOfTheContainerWithThePlusAttached = shiftLeft(theContainerWithThePlusAttached);

@@ -1,8 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.BulletsAndShieldContainer;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 
@@ -19,13 +17,15 @@ public class BulletRecord extends RewindEngine.RewindEvent {
 
     public boolean wasFake;
 
-    public BulletsAndShieldContainer parentContainer;
+    public int parentContainerIndex;
 
     //public TextureRegion region;
 
     public boolean effectTookPlace;
 
-    public GameplayScreen gameplayScreen;
+    public BulletRecord(GameplayScreen gameplayScreen) {
+        super(gameplayScreen);
+    }
 
     @Override
     public void onStart() {
@@ -43,7 +43,7 @@ public class BulletRecord extends RewindEngine.RewindEvent {
                 + specialType + "|"
                 + questionMark + "|"
                 + wasFake + "|"
-                + parentContainer + "|"
+                + parentContainerIndex + "|"
                 + effectTookPlace + "}";
     }
 }

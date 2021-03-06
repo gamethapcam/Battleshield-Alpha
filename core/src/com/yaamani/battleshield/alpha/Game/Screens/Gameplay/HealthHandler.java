@@ -130,6 +130,7 @@ public class HealthHandler implements Updatable {
 
         gameplayScreen.setInRewindBulletAnimation(false);
         gameplayScreen.setRewinding(false);
+        gameplayScreen.getRewindEngine().clearRewindEvents();
 
 
         if (networkAndStorageManager != null)

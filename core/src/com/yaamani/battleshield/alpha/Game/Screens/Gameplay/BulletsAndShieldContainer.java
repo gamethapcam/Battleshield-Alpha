@@ -3,10 +3,12 @@ package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PlusMinusBulletsRecord;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -464,6 +466,15 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
             //oldOmegaDeg = BulletsAndShieldContainer.this.getShield().getOmegaDeg();
             //oldAlpha = newAlpha = 0f;
 
+        }
+
+        @Override
+        public boolean onUpdate(float delta) {
+            //return super.onUpdate(delta);
+            float currentTime = getCurrentTime() + Math.abs(delta) * (float) MyMath.SECONDS_TO_MILLIS;
+            setCurrentTime(MathUtils.clamp(currentTime, 0, getDurationMillis())); // Not affected by rewinding.
+            super.onUpdate(delta);
+            return true;
         }
 
         @Override

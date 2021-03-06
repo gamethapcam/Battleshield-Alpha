@@ -2276,6 +2276,7 @@ public class BulletsHandler implements Updatable {
             public void onFinish() {
                 super.onFinish();
                 //Gdx.app.log(TAG, "plusMinusBulletsTimer isFinished");
+                gameplayScreen.getShieldsAndContainersHandler().pushCurrentPlusMinusRecord();
             }
         };
 

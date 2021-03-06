@@ -134,7 +134,8 @@ public class Timer implements Updatable {
     }
 
     /**
-     * You should return false unless you handled the currentTime or the percentage values in your implementation of onUpdate(float), then return true. This way the Timer class won't update the currentTime value or the percentage, as you've already handled them.
+     * You should return false unless you handled the currentTime or the percentage values in your implementation of onUpdate(float), then return true.
+     * This way the Timer class won't update the currentTime value or the percentage, as you've already handled them.
      * @param delta
      * @return
      */
@@ -207,9 +208,13 @@ public class Timer implements Updatable {
         if (isFinished()) started = true;
     }
 
+    public float getCurrentTime() {
+        return currentTime;
+    }
+
     protected void setCurrentTime(float currentTime) {
         if (currentTime > durationMillis | currentTime < 0)
-            throw new ValueOutOfRangeException("currentTime(" + currentTime + ") must be smaller than durationMillis and greater than 0.");
+            throw new ValueOutOfRangeException("currentTime(" + currentTime + ") must be smaller than durationMillis(" + getDurationMillis() + ") and greater than 0.");
         this.currentTime = currentTime;
         percentage = currentTime / durationMillis;
 

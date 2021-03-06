@@ -231,7 +231,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
 
         currentBulletRecord.inPosY = getY();
-        currentBulletRecord.parentContainer = parent;
+        //currentBulletRecord.parentContainer = parent;
     }
 
     private void detachFromBulletsAndShieldObject() {
@@ -398,6 +398,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (gameplayScreen.isRewinding()) return;
 
         currentBulletRecord.outPosY = getY();
+        currentBulletRecord.parentContainerIndex = parent.getIndex();
         gameplayScreen.getRewindEngine().pushRewindEvent(currentBulletRecord);
     }
 
@@ -647,7 +648,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         else // BulletType.SPECIAL
             setSpecial(bulletRecord.specialType, bulletRecord.questionMark, bulletRecord.wasFake);
 
-        readyToBeAttached(bulletRecord.parentContainer, false);
+        BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[bulletRecord.parentContainerIndex];
+        readyToBeAttached(container, false);
 
         if (bulletRecord.effectTookPlace)
             currentEffect.reverseEffect();
