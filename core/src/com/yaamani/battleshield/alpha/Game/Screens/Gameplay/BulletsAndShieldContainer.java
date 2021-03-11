@@ -1,5 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Interpolation;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PlusMinusBulletsRecord;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PortalRecord;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -52,11 +54,13 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
     private Image portalExit;
     private boolean tweenEntrance; // false = tween exit.
     private boolean fadeIn; // false = fade out.
-    private MyTween portalEntranceExitFadeInOutTween;
+    private Tween portalEntranceExitFadeInOutTween;
     private int portalPostProcessingEffectIndex;
     private Affine2 portalTransformationAff;
     private Matrix3 portalTransformationMat;
     private Vector3 portalTransformedVec;
+
+    private PortalRecord currentPortalRecord;
 
     private GameplayScreen gameplayScreen;
 
@@ -101,11 +105,15 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         portalTransformedVec = new Vector3();
     }
 
+    //public static Tween d;
+    
     @Override
     public void act(float delta) {
         super.act(delta);
 
         rotationOmegaAlphaTween.update(delta);
+        /*if (portalEntranceExitFadeInOutTween == d)
+            Gdx.app.log(TAG, "");*/
         portalEntranceExitFadeInOutTween.update(delta);
 
         if (gameplayScreen.getGameplayMode() == GameplayMode.DIZZINESS | gameplayScreen.getGameplayMode() == GameplayMode.BIG_BOSS) {
@@ -125,6 +133,27 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
 
         if (debugText.isVisible())
             debugText.setCharSequence(index + ", " + MyMath.roundTo(MyMath.deg_0_to_360(getRotation() + gameplayScreen.getContainerOfContainers().getRotation()/* + 90*/), 2), true);
+
+
+        if (currentPortalRecord != null) {
+            currentPortalRecord.duration += delta;
+        }
+
+        if (gameplayScreen.isRewinding()) {
+            if (currentPortalRecord != null) {
+                float durationMillis = (float) (currentPortalRecord.duration*MyMath.SECONDS_TO_MILLIS);
+                if (durationMillis <= PORTALS_CONTAINER_PORTAL_ALPHA_DURATION & !portalEntranceExitFadeInOutTween.isStarted()) {
+                    // When rewinding, this will make the portal fade out.
+                    tweenEntrance = currentPortalRecord.type == BulletPortalType.PORTAL_ENTRANCE;
+                    fadeIn = true;
+                    calculateFadeInOutTweenInitialAndFinalValues();
+                    float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
+                    portalEntranceExitFadeInOutTween.setPercentage(percentage);
+                    /*if (d ==  null & tweenEntrance)
+                        d = portalEntranceExitFadeInOutTween;*/
+                }
+            }
+        }
     }
 
     @Override
@@ -217,7 +246,6 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         //portalEntrance.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
         tweenEntrance = true;
         fadeIn = true;
-        startPortalEntranceExitFadeInOutTween(0);
 
         computePortalTransformedVec();
         portalPostProcessingEffectIndex = gameplayScreen.getPortalPostProcessingEffect().addPortalPoint(
@@ -225,13 +253,18 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                 portalTransformedVec.y,
                 0
         );
+
+        startPortalEntranceExitFadeInOutTween(0);
+
+        currentPortalRecord = gameplayScreen.getRewindEngine().obtainPortalRecord();
+        currentPortalRecord.type = BulletPortalType.PORTAL_ENTRANCE;
+        currentPortalRecord.containerIndex = index;
     }
 
     public void showPortalExit() {
         //portalExit.addAction(Actions.alpha(1, PORTALS_CONTAINER_PORTAL_ALPHA_ACTION_DURATION));
         tweenEntrance = false;
         fadeIn = true;
-        startPortalEntranceExitFadeInOutTween(0);
 
         computePortalTransformedVec();
         portalPostProcessingEffectIndex = gameplayScreen.getPortalPostProcessingEffect().addPortalPoint(
@@ -239,6 +272,46 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                 portalTransformedVec.y,
                 0
         );
+
+        startPortalEntranceExitFadeInOutTween(0);
+
+        currentPortalRecord = gameplayScreen.getRewindEngine().obtainPortalRecord();
+        currentPortalRecord.type = BulletPortalType.PORTAL_EXIT;
+        currentPortalRecord.containerIndex = index;
+    }
+
+    public void showPortalEntranceRewinding(PortalRecord portalRecord) {
+        tweenEntrance = true;
+        fadeIn = false;
+
+        computePortalTransformedVec();
+        portalPostProcessingEffectIndex = gameplayScreen.getPortalPostProcessingEffect().addPortalPoint(
+                portalTransformedVec.x,
+                portalTransformedVec.y,
+                0
+        );
+
+        calculateFadeInOutTweenInitialAndFinalValues();
+        portalEntranceExitFadeInOutTween.setPercentage(0.99f);
+
+        currentPortalRecord = portalRecord;
+    }
+
+    public void showPortalExitRewinding(PortalRecord portalRecord) {
+        tweenEntrance = false;
+        fadeIn = false;
+
+        computePortalTransformedVec();
+        portalPostProcessingEffectIndex = gameplayScreen.getPortalPostProcessingEffect().addPortalPoint(
+                portalTransformedVec.x,
+                portalTransformedVec.y,
+                0
+        );
+
+        calculateFadeInOutTweenInitialAndFinalValues();
+        portalEntranceExitFadeInOutTween.setPercentage(0.99f);
+
+        currentPortalRecord = portalRecord;
     }
 
     public Matrix3 computePortalTransformationMat() {
@@ -309,20 +382,29 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         return portalEntranceExitFadeInOutTween.isStarted();
     }
 
-    public void startPortalEntranceExitFadeInOutTween(float delay) {
+    public void calculateFadeInOutTweenInitialAndFinalValues() {
         if (fadeIn) {
-            portalEntranceExitFadeInOutTween.setInitialVal(0);
-            portalEntranceExitFadeInOutTween.setFinalVal(1);
+            portalEntranceExitFadeInOutTweenInitialValue = 0;
+            portalEntranceExitFadeInOutTweenFinalValue = 1;
         } else {
-            portalEntranceExitFadeInOutTween.setInitialVal(1);
-            portalEntranceExitFadeInOutTween.setFinalVal(0);
+            portalEntranceExitFadeInOutTweenInitialValue = 1;
+            portalEntranceExitFadeInOutTweenFinalValue = 0;
         }
-        portalEntranceExitFadeInOutTween.start(delay);
     }
 
-    public void pausePortalEntranceExitFadeInOutTweenGradually(float gradualPausingDurationMillis) {
-        portalEntranceExitFadeInOutTween.pauseGradually(gradualPausingDurationMillis);
+    public void startPortalEntranceExitFadeInOutTween(float delay) {
+        calculateFadeInOutTweenInitialAndFinalValues();
+
+        if (delay > 0)
+            portalEntranceExitFadeInOutTween.start(delay);
+        else
+            portalEntranceExitFadeInOutTween.start();
+
     }
+
+    /*public void pausePortalEntranceExitFadeInOutTweenGradually(float gradualPausingDurationMillis) {
+        portalEntranceExitFadeInOutTween.pauseGradually(gradualPausingDurationMillis);
+    }*/
 
     public void cleanContainer() {
         attachedBullets.clear();
@@ -364,8 +446,10 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         //portalExit.setDebug(true);
     }
 
+    private float portalEntranceExitFadeInOutTweenInitialValue;
+    private float portalEntranceExitFadeInOutTweenFinalValue;
     private void initializePortalEntranceExitFadeInOutTween() {
-        portalEntranceExitFadeInOutTween = new MyTween(PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, PORTALS_CONTAINER_PORTAL_ALPHA_INTERPOLATION) {
+        portalEntranceExitFadeInOutTween = new Tween(PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, PORTALS_CONTAINER_PORTAL_ALPHA_INTERPOLATION) {
             @Override
             public void onStart() {
                 super.onStart();
@@ -373,26 +457,45 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                 /*Timer rewindBulletFirstStage = gameplayScreen.getBulletsHandler().getRewindBulletFirstStage();
                 if (rewindBulletFirstStage.isStarted())
                     pauseGradually((1-rewindBulletFirstStage.getPercentage()) * rewindBulletFirstStage.getDurationMillis());*/
+
+
+
+                //Gdx.app.log(TAG, "" + gameplayScreen.isRewinding() + " & ((" + tweenEntrance + "&" + (portalEntrance.getColor().a == 0) + ") | (" + !tweenEntrance + "&" + (portalExit.getColor().a == 0) + "))");
+
+                if (gameplayScreen.isRewinding() &
+                        ((tweenEntrance & portalEntrance.getColor().a == 0) | (!tweenEntrance & portalExit.getColor().a == 0))) {
+                    if (fadeIn) {
+                        if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                            gameplayScreen.getPortalPostProcessingEffect().removePortalPoint(portalPostProcessingEffectIndex);
+
+                        currentPortalRecord = null;
+
+                        if (tweenEntrance)
+                            gameplayScreen.getBulletsHandler().portalIsOver();
+                    }
+                }
             }
 
-            /*@Override
+            @Override
             public void tween(float percentage, Interpolation interpolation) {
 
-                float alpha = fadeIn ? interpolation.apply(0, 1, percentage) : interpolation.apply(1, 0, percentage);
+                float alpha = interpolation.apply(portalEntranceExitFadeInOutTweenInitialValue, portalEntranceExitFadeInOutTweenFinalValue, percentage);
 
                 if (tweenEntrance)
                     portalEntrance.setColor(1, 1, 1, alpha);
                 else
                     portalExit.setColor(1, 1, 1, alpha);
 
-                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0)
+                if (gameplayScreen.getPortalPostProcessingEffect().getLastUsedIndex() >= 0) {
+                    //Gdx.app.log(TAG, "Setting the intensity.");
                     gameplayScreen.getPortalPostProcessingEffect().setPortalPointIntensity(
                             portalPostProcessingEffectIndex,
                             alpha
                     );
-            }*/
+                }
+            }
 
-            @Override
+            /*@Override
             public void myTween(MyInterpolation myInterpolation, float startX, float endX, float startY, float endY, float currentX, float percentage) {
 
                 float alpha = myInterpolation.apply(startX, endX, startY, endY, currentX);
@@ -407,7 +510,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                             portalPostProcessingEffectIndex,
                             alpha
                     );
-            }
+            }*/
 
             @Override
             public void onFinish() {
@@ -420,6 +523,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                     if (!tweenEntrance)
                         gameplayScreen.getBulletsHandler().portalIsOver();
 
+                    gameplayScreen.getRewindEngine().pushRewindEvent(currentPortalRecord);
+                    currentPortalRecord = null;
                 }
             }
         };

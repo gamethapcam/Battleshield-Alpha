@@ -51,7 +51,19 @@ public abstract class Tween extends Timer implements Updatable {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        if (!reversed)
+            tween(0, interpolation);
+        else
+            tween(1, interpolation);
+    }
+
+    @Override
     public void onFinish() {
+        super.onFinish();
+
         if (!reversed)
             tween(1, interpolation);
         else tween(0, interpolation);

@@ -607,6 +607,10 @@ public class BulletsHandler implements Updatable {
         return thereIsAPortal;
     }
 
+    public void portalIsOn() {
+        thereIsAPortal = true;
+    }
+
     public void portalIsOver() {
         thereIsAPortal = false;
         gameplayScreen.getPortalPostProcessingEffect().clearPortalPoints();
@@ -1182,7 +1186,7 @@ public class BulletsHandler implements Updatable {
 
         Gdx.app.log(TAG, "-- (PORTAL) --");
 
-        thereIsAPortal = true;
+        portalIsOn();
 
         attachBullets(entranceContainer, typeIndexForDoubleWave, false);
         transformToEntranceWave(entranceContainer);

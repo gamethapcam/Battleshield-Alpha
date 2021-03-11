@@ -205,7 +205,7 @@ public class Timer implements Updatable {
         this.percentage = percentage;
         currentTime = percentage * getDurationMillis();
 
-        if (isFinished()) started = true;
+        if (!isStarted()) started = true;
     }
 
     public float getCurrentTime() {
@@ -218,7 +218,7 @@ public class Timer implements Updatable {
         this.currentTime = currentTime;
         percentage = currentTime / durationMillis;
 
-        if (isFinished()) started = true;
+        if (!isStarted()) started = true;
     }
 
     public boolean isStarted() {

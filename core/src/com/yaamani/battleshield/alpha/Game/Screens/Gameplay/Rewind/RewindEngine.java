@@ -17,6 +17,7 @@ public class RewindEngine implements Updatable {
 
     private Pool<BulletRecord> bulletRecordPool;
     private Pool<PlusMinusBulletsRecord> plusMinusBulletsRecordPool;
+    private Pool<PortalRecord> portalRecordPool;
 
 
 
@@ -37,6 +38,7 @@ public class RewindEngine implements Updatable {
         this.gameplayScreen = gameplayScreen;
         initializeRewindBulletEventPool();
         initializePlusMinusBulletsRecordPool();
+        initializePortalRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -105,14 +107,6 @@ public class RewindEngine implements Updatable {
         // Gdx.app.log(TAG, Arrays.toString(rewindEvents.toArray()));
     }
 
-    public BulletRecord obtainBulletRecord() {
-        return bulletRecordPool.obtain();
-    }
-
-    public PlusMinusBulletsRecord obtainPlusMinusBulletsRecord() {
-        return plusMinusBulletsRecordPool.obtain();
-    }
-
     public void setDeltaTimeForLastPushedEvent() {
         if (!rewindEvents.isEmpty())
             rewindEvents.peek().setDeltaTimeToTheNextEvent(deltaTimeFromTheLastPushedEvent);
@@ -133,8 +127,22 @@ public class RewindEngine implements Updatable {
             bulletRecordPool.free((BulletRecord) event);
         else if (event instanceof PlusMinusBulletsRecord)
             plusMinusBulletsRecordPool.free((PlusMinusBulletsRecord) event);
+        else if (event instanceof PortalRecord)
+            portalRecordPool.free((PortalRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
+    }
+
+    public BulletRecord obtainBulletRecord() {
+        return bulletRecordPool.obtain();
+    }
+
+    public PlusMinusBulletsRecord obtainPlusMinusBulletsRecord() {
+        return plusMinusBulletsRecordPool.obtain();
+    }
+
+    public PortalRecord obtainPortalRecord() {
+        return portalRecordPool.obtain();
     }
 
     public void clearRewindEvents() {
@@ -187,6 +195,23 @@ public class RewindEngine implements Updatable {
             public PlusMinusBulletsRecord obtain() {
                 PlusMinusBulletsRecord obj = super.obtain();
                 obj.containerIndex = -1;
+                return obj;
+            }
+        };
+    }
+
+    private void initializePortalRecordPool() {
+        portalRecordPool = new Pool<PortalRecord>() {
+            @Override
+            protected PortalRecord newObject() {
+                return new PortalRecord(gameplayScreen);
+            }
+
+            @Override
+            public PortalRecord obtain() {
+                PortalRecord obj = super.obtain();
+                obj.containerIndex = -1;
+                obj.duration = 0;
                 return obj;
             }
         };
