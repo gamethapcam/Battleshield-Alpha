@@ -299,6 +299,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         whenTheShieldCompletelyDisappears();
 
+        if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
+            fakeTween.update(delta);
+
         if (gameplayScreen.isRewinding()) {
 
             if (getY() >= currentBulletRecord.inPosY)
@@ -336,9 +339,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
             stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
         }
-
-        if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
-            fakeTween.update(delta);
 
     }
 

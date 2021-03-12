@@ -122,8 +122,12 @@ public class Shield extends Actor {
         shieldDisabledTimer = new Timer(SHIELD_DISABLED_DURATION) {
             @Override
             public void onStart() {
-                setVisible(false);
-                setOn(false);
+                if (gameplayScreen.isRewinding()) {
+                    setVisible(true);
+                } else {
+                    setVisible(false);
+                    setOn(false);
+                }
             }
 
             @Override

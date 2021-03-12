@@ -1244,6 +1244,11 @@ public class BulletsHandler implements Updatable {
                     break;
             }
         }
+
+        /*gameplayScreen.startSlowMoDeltaFractionTween(false, gameplayScreen.getRewindSlowMoFirstStageOnFinish());
+        setBulletCausingSlowMoExists(false);
+
+        gameplayScreen.setInRewindBulletAnimation(true);*/
     }
 
     private void transformToExitWave(BulletsAndShieldContainer exitContainerAfterBulletsAreAttached) {

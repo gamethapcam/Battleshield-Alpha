@@ -184,6 +184,7 @@ public abstract class Controller extends Group implements Resizable {
     }
 
     public Float getOutputAngle() {
+        if (gameplayScreen.isRewinding()) return null;
         /*if (outputAngle >= 0)
             Gdx.app*/
         return outputAngle;

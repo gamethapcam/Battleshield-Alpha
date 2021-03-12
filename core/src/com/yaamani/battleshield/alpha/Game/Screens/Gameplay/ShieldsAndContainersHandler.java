@@ -207,7 +207,7 @@ public class ShieldsAndContainersHandler implements Updatable {
     }
 
     public void handleOnShields() {
-        if (gameplayScreen.isRewinding()) return;
+        //if (gameplayScreen.isRewinding()) return;
 
         Float[] cAs = {gameplayScreen.getControllerLeft().getAngleDeg(),
                 gameplayScreen.getControllerRight().getAngleDeg()}; // cAs is for controllerAngles.
