@@ -175,7 +175,7 @@ public class RewindEngine implements Updatable {
                 obj.outPosY = 0;
                 obj.bulletType = null;
                 obj.specialType = null;
-                obj.wasFake = false;
+                obj.timeAfterFakeTweenFinished = Float.MAX_VALUE/2f;
                 obj.parentContainerIndex = -1;
                 obj.effectTookPlace = false;
 

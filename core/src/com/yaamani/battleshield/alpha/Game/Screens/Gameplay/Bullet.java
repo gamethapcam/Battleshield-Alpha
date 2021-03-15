@@ -302,10 +302,15 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
             fakeTween.update(delta);
 
+        currentBulletRecord.timeAfterFakeTweenFinished += delta;
+
         if (gameplayScreen.isRewinding()) {
 
             if (getY() >= currentBulletRecord.inPosY)
                 stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
+
+            if (currentBulletRecord.timeAfterFakeTweenFinished <= 0 & !fakeTween.isStarted())
+                fakeTween.setPercentage(0.99f);
 
 
             return;
@@ -523,7 +528,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         else
             currentEffect = effects.ordinary;
 
-        handleRewindEventWhenDeterminingType(null, false, fake);
+        handleRewindEventWhenDeterminingType(null, false);
 
         if (type != null) {
             type.setVisible(true);
@@ -607,7 +612,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (questionMark)
             region = Assets.instance.gameplayAssets.questionMarkBullet;
 
-        handleRewindEventWhenDeterminingType(specialType, questionMark, fake);
+        handleRewindEventWhenDeterminingType(specialType, questionMark);
 
 
         if (type != null) type.setCharSequence("" + specialType, true);
@@ -619,7 +624,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         setY(getY() - (BULLETS_SPECIAL_DIAMETER - BULLETS_ORDINARY_HEIGHT)/2f);
     }
 
-    private void handleRewindEventWhenDeterminingType(SpecialBullet specialType, boolean questionMark, boolean fake) {
+    private void handleRewindEventWhenDeterminingType(SpecialBullet specialType, boolean questionMark) {
         if (gameplayScreen.isRewinding()) return;
 
         currentBulletRecord = gameplayScreen.getRewindEngine().obtainBulletRecord();
@@ -627,7 +632,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         currentBulletRecord.bulletType = bulletType;
         currentBulletRecord.specialType = specialType;
         currentBulletRecord.questionMark = questionMark;
-        currentBulletRecord.wasFake = fake;
+        currentBulletRecord.timeAfterFakeTweenFinished = Float.MAX_VALUE/2f;
         //currentBulletRecord.region = region;
 
     }
@@ -637,16 +642,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         setY(bulletRecord.outPosY);
 
-        if (bulletRecord.wasFake) {
-            fakeTween.start();
-            fakeTween.setPercentage(0.99f);
-        }
-
         bulletType = bulletRecord.bulletType;
         if (bulletRecord.bulletType == BulletType.ORDINARY)
-            notSpecial(bulletRecord.wasFake);
+            notSpecial(bulletRecord.timeAfterFakeTweenFinished < Float.MAX_VALUE/2f);
         else // BulletType.SPECIAL
-            setSpecial(bulletRecord.specialType, bulletRecord.questionMark, bulletRecord.wasFake);
+            setSpecial(bulletRecord.specialType, bulletRecord.questionMark, bulletRecord.timeAfterFakeTweenFinished < Float.MAX_VALUE/2f);
 
         BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[bulletRecord.parentContainerIndex];
         readyToBeAttached(container, false);
@@ -687,10 +687,25 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     private void initializeFakeTween() {
         fakeTween = new Tween(D_CRYSTAL_FAKE_TWEEN_DURATION, CRYSTAL_FAKE_TWEEN_INTERPOLATION) {
             @Override
+            public void onStart() {
+                super.onStart();
+                if (gameplayScreen.isRewinding()) {
+                    currentBulletRecord.timeAfterFakeTweenFinished = Float.MAX_VALUE / 2f;
+                    setColor(1, 1, 1, 1);
+                }
+            }
+
+            @Override
             public void tween(float percentage, Interpolation interpolation) {
                 float alpha = interpolation.apply(0, a, percentage);
                 setColor(1, 1, 1, alpha);
                 //Gdx.app.log(Bullet.TAG, "" + alpha);
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                currentBulletRecord.timeAfterFakeTweenFinished = 0;
             }
         };
     }

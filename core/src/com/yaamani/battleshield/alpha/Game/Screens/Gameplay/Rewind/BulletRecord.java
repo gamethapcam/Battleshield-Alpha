@@ -15,7 +15,7 @@ public class BulletRecord extends RewindEngine.RewindEvent {
     public Constants.SpecialBullet specialType;
     public boolean questionMark;
 
-    public boolean wasFake;
+    public float timeAfterFakeTweenFinished;
 
     public int parentContainerIndex;
 
@@ -42,7 +42,7 @@ public class BulletRecord extends RewindEngine.RewindEvent {
                 + bulletType + "|"
                 + specialType + "|"
                 + questionMark + "|"
-                + wasFake + "|"
+                + timeAfterFakeTweenFinished + "|"
                 + parentContainerIndex + "|"
                 + effectTookPlace + "}";
     }
