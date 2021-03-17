@@ -78,6 +78,7 @@ public class SpecialBulletTempProgressBarUI extends Group implements Resizable {
             public void onStart() {
                 super.onStart();
                 setVisible(true);
+                SpecialBulletTempProgressBarUI.this.onTweenStart();
             }
 
             @Override
@@ -103,6 +104,13 @@ public class SpecialBulletTempProgressBarUI extends Group implements Resizable {
     }
 
     /**
+     * Called when the tween of the progress bar starts.
+     */
+    public void onTweenStart() {
+
+    }
+
+    /**
      * Called inside {@link Tween#tween(float, Interpolation)}.
      * @param percentage
      * @param interpolation
@@ -118,20 +126,8 @@ public class SpecialBulletTempProgressBarUI extends Group implements Resizable {
 
     }
 
-    public boolean isTweenStarted() {
-        return tween.isStarted();
-    }
-
-    public boolean isTweenFinished() {
-        return tween.isFinished();
-    }
-
-    public boolean isTweenPaused() {
-        return tween.isPaused();
-    }
-
-    public void pauseTween() {
-        tween.pause();
+    public Tween getTween() {
+        return tween;
     }
 
     @Override

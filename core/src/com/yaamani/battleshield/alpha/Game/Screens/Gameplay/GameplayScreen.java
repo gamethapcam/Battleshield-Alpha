@@ -737,8 +737,19 @@ public class GameplayScreen extends AdvancedScreen {
         mirrorTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
             @Override
             public void onStartingToDisplay() {
-                if (!isTweenStarted()) {
+                if (!getTween().isStarted()) {
                     specialBulletUI.addActor(mirrorTempProgressBarUI);
+                }
+            }
+
+            @Override
+            public void onTweenStart() {
+                super.onTweenStart();
+                if (isRewinding()) {
+                    if (!getTween().isStarted()) {
+                        specialBulletUI.removeActor(mirrorTempProgressBarUI);
+                        setVisible(false);
+                    }
                 }
             }
 
@@ -760,7 +771,7 @@ public class GameplayScreen extends AdvancedScreen {
         rewindTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
             @Override
             public void onStartingToDisplay() {
-                if (!isTweenStarted())
+                if (!getTween().isStarted())
                     specialBulletUI.addActor(rewindTempProgressBarUI);
             }
 
@@ -782,7 +793,7 @@ public class GameplayScreen extends AdvancedScreen {
         fasterDizzinessRotationTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
             @Override
             public void onStartingToDisplay() {
-                if (!isTweenStarted())
+                if (!getTween().isStarted())
                     specialBulletUI.addActor(fasterDizzinessRotationTempProgressBarUI);
             }
 

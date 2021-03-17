@@ -1,10 +1,12 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.MirrorBulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PlusMinusBulletsRecord;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -77,6 +79,9 @@ public class ShieldsAndContainersHandler implements Updatable {
         mirrorControlsTimer.update(delta);
 
         networkReceivingStuff();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M))
+            startMirrorTimer();
 
         switch (gameplayScreen.getGameplayMode()){
             case DIZZINESS:
@@ -698,26 +703,48 @@ public class ShieldsAndContainersHandler implements Updatable {
             public void onStart() {
                 super.onStart();
 
-                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
-                    ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(true);
-                    ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
-
-                    gameplayScreen.getMirrorTempProgressBarUI().displayFor(mirrorControlsTimer.getDurationMillis());
+                if (!gameplayScreen.isRewinding())
+                    initiateMirrorBulletEffect();
+                else {
+                    if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+                        ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
+                        ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
+                    }
                 }
+
+
             }
 
             @Override
             public void onFinish() {
                 super.onFinish();
 
-                if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
-                    ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
-                    ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
+                if (!gameplayScreen.isRewinding()) {
+                    if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+                        ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
+                        ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
+                    }
+
+                    MirrorBulletEffectRecord mirrorBulletEffectRecord = gameplayScreen.getRewindEngine().obtainMirrorBulletEffectRecord();
+                    gameplayScreen.getRewindEngine().pushRewindEvent(mirrorBulletEffectRecord);
+
+                } else {
+
                 }
             }
         };
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(mirrorControlsTimer);
+    }
+
+    public void initiateMirrorBulletEffect() {
+        if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+
+            ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(true);
+            ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
+
+            gameplayScreen.getMirrorTempProgressBarUI().displayFor(mirrorControlsTimer.getDurationMillis());
+        }
     }
 
     public void initializeNonBusyContainers(int shieldsMaxCount) {

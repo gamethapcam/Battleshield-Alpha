@@ -18,6 +18,7 @@ public class RewindEngine implements Updatable {
     private Pool<BulletRecord> bulletRecordPool;
     private Pool<PlusMinusBulletsRecord> plusMinusBulletsRecordPool;
     private Pool<PortalRecord> portalRecordPool;
+    private Pool<MirrorBulletEffectRecord> mirrorBulletEffectRecordPool;
 
 
 
@@ -39,6 +40,7 @@ public class RewindEngine implements Updatable {
         initializeRewindBulletEventPool();
         initializePlusMinusBulletsRecordPool();
         initializePortalRecordPool();
+        initializeMirrorBulletEffectRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -129,6 +131,8 @@ public class RewindEngine implements Updatable {
             plusMinusBulletsRecordPool.free((PlusMinusBulletsRecord) event);
         else if (event instanceof PortalRecord)
             portalRecordPool.free((PortalRecord) event);
+        else if (event instanceof MirrorBulletEffectRecord)
+            mirrorBulletEffectRecordPool.free((MirrorBulletEffectRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
     }
@@ -143,6 +147,10 @@ public class RewindEngine implements Updatable {
 
     public PortalRecord obtainPortalRecord() {
         return portalRecordPool.obtain();
+    }
+
+    public MirrorBulletEffectRecord obtainMirrorBulletEffectRecord() {
+        return mirrorBulletEffectRecordPool.obtain();
     }
 
     public void clearRewindEvents() {
@@ -201,7 +209,7 @@ public class RewindEngine implements Updatable {
     }
 
     private void initializePortalRecordPool() {
-        portalRecordPool = new Pool<PortalRecord>() {
+        portalRecordPool = new Pool<PortalRecord>(REWIND_PORTAL_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
             @Override
             protected PortalRecord newObject() {
                 return new PortalRecord(gameplayScreen);
@@ -213,6 +221,15 @@ public class RewindEngine implements Updatable {
                 obj.containerIndex = -1;
                 obj.duration = 0;
                 return obj;
+            }
+        };
+    }
+
+    private void initializeMirrorBulletEffectRecordPool() {
+        mirrorBulletEffectRecordPool = new Pool<MirrorBulletEffectRecord>(REWIND_MIRROR_BULLET_EFFECT_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+            @Override
+            protected MirrorBulletEffectRecord newObject() {
+                return new MirrorBulletEffectRecord(gameplayScreen);
             }
         };
     }
