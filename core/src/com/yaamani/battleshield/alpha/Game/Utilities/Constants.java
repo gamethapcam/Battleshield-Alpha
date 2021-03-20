@@ -1318,7 +1318,7 @@ public final class Constants {
 
     public static final int REWIND_PORTAL_RECORD_POOL_INITIAL_CAPACITY = 16;
 
-    public static final int REWIND_MIRROR_BULLET_EFFECT_RECORD_POOL_INITIAL_CAPACITY = 8;
+    public static final int REWIND_BULLET_EFFECT_RECORD_POOL_INITIAL_CAPACITY = 100;
 
     public static final float REWIND_SPEED = -2f;
 

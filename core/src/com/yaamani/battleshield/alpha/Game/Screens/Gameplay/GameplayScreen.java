@@ -115,7 +115,7 @@ public class GameplayScreen extends AdvancedScreen {
     private RowOfActors specialBulletUI;
     //private TempProgressBar tempProgressBar;
     private SpecialBulletTempProgressBarUI mirrorTempProgressBarUI;
-    private SpecialBulletTempProgressBarUI rewindTempProgressBarUI;
+    //private SpecialBulletTempProgressBarUI rewindTempProgressBarUI;
     private SpecialBulletTempProgressBarUI fasterDizzinessRotationTempProgressBarUI;
     private TwoExitPortalUI twoExitPortalUI;
 
@@ -191,7 +191,7 @@ public class GameplayScreen extends AdvancedScreen {
 
         //initializeTempProgressBar();
         initializeMirrorTempProgressBarUI();
-        initializeRewindTempProgressBarUI();
+        //initializeRewindTempProgressBarUI();
         initializeFasterDizzinessRotationTempProgressBarUI();
         initializeSpecialBulletUI();
         initializeTwoExitPortalUI();
@@ -747,7 +747,7 @@ public class GameplayScreen extends AdvancedScreen {
                 super.onTweenStart();
                 if (isRewinding()) {
                     if (!getTween().isStarted()) {
-                        specialBulletUI.removeActor(mirrorTempProgressBarUI);
+                        onTweenFinish();
                         setVisible(false);
                     }
                 }
@@ -766,7 +766,7 @@ public class GameplayScreen extends AdvancedScreen {
         };
     }
 
-    private void initializeRewindTempProgressBarUI() {
+    /*private void initializeRewindTempProgressBarUI() {
         TextureRegion region = Assets.instance.gameplayAssets.rewindBullet;
         rewindTempProgressBarUI = new SpecialBulletTempProgressBarUI(region) {
             @Override
@@ -777,8 +777,8 @@ public class GameplayScreen extends AdvancedScreen {
 
             @Override
             public void onTween(float percentage, Interpolation interpolation) {
-                /*if (isInRewindBulletAnimation() & !isTweenPaused())
-                    pauseTween();*/
+                *//*if (isInRewindBulletAnimation() & !isTweenPaused())
+                    pauseTween();*//*
             }
 
             @Override
@@ -786,7 +786,7 @@ public class GameplayScreen extends AdvancedScreen {
                 specialBulletUI.removeActor(rewindTempProgressBarUI);
             }
         };
-    }
+    }*/
 
     private void initializeFasterDizzinessRotationTempProgressBarUI() {
         TextureRegion region = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
@@ -795,6 +795,17 @@ public class GameplayScreen extends AdvancedScreen {
             public void onStartingToDisplay() {
                 if (!getTween().isStarted())
                     specialBulletUI.addActor(fasterDizzinessRotationTempProgressBarUI);
+            }
+
+            @Override
+            public void onTweenStart() {
+                super.onTweenStart();
+                if (isRewinding()) {
+                    if (!getTween().isStarted()) {
+                        onTweenFinish();
+                        setVisible(false);
+                    }
+                }
             }
 
             @Override
@@ -1178,9 +1189,9 @@ public class GameplayScreen extends AdvancedScreen {
         return mirrorTempProgressBarUI;
     }
 
-    public SpecialBulletTempProgressBarUI getRewindTempProgressBarUI() {
+    /*public SpecialBulletTempProgressBarUI getRewindTempProgressBarUI() {
         return rewindTempProgressBarUI;
-    }
+    }*/
 
     public SpecialBulletTempProgressBarUI getFasterDizzinessRotationTempProgressBarUI() {
         return fasterDizzinessRotationTempProgressBarUI;

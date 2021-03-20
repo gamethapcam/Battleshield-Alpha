@@ -18,7 +18,7 @@ public class RewindEngine implements Updatable {
     private Pool<BulletRecord> bulletRecordPool;
     private Pool<PlusMinusBulletsRecord> plusMinusBulletsRecordPool;
     private Pool<PortalRecord> portalRecordPool;
-    private Pool<MirrorBulletEffectRecord> mirrorBulletEffectRecordPool;
+    private Pool<BulletEffectRecord> bulletEffectRecordPool;
 
 
 
@@ -40,7 +40,7 @@ public class RewindEngine implements Updatable {
         initializeRewindBulletEventPool();
         initializePlusMinusBulletsRecordPool();
         initializePortalRecordPool();
-        initializeMirrorBulletEffectRecordPool();
+        initializeBulletEffectRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -131,8 +131,8 @@ public class RewindEngine implements Updatable {
             plusMinusBulletsRecordPool.free((PlusMinusBulletsRecord) event);
         else if (event instanceof PortalRecord)
             portalRecordPool.free((PortalRecord) event);
-        else if (event instanceof MirrorBulletEffectRecord)
-            mirrorBulletEffectRecordPool.free((MirrorBulletEffectRecord) event);
+        else if (event instanceof BulletEffectRecord)
+            bulletEffectRecordPool.free((BulletEffectRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
     }
@@ -149,8 +149,10 @@ public class RewindEngine implements Updatable {
         return portalRecordPool.obtain();
     }
 
-    public MirrorBulletEffectRecord obtainMirrorBulletEffectRecord() {
-        return mirrorBulletEffectRecordPool.obtain();
+    public BulletEffectRecord obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType bulletEffectRecordType) {
+        BulletEffectRecord record = bulletEffectRecordPool.obtain();
+        record.bulletEffectRecordType = bulletEffectRecordType;
+        return record;
     }
 
     public void clearRewindEvents() {
@@ -225,11 +227,11 @@ public class RewindEngine implements Updatable {
         };
     }
 
-    private void initializeMirrorBulletEffectRecordPool() {
-        mirrorBulletEffectRecordPool = new Pool<MirrorBulletEffectRecord>(REWIND_MIRROR_BULLET_EFFECT_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+    private void initializeBulletEffectRecordPool() {
+        bulletEffectRecordPool = new Pool<BulletEffectRecord>(REWIND_BULLET_EFFECT_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
             @Override
-            protected MirrorBulletEffectRecord newObject() {
-                return new MirrorBulletEffectRecord(gameplayScreen);
+            protected BulletEffectRecord newObject() {
+                return new BulletEffectRecord(gameplayScreen);
             }
         };
     }

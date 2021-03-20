@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.MirrorBulletEffectRecord;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PlusMinusBulletsRecord;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -82,6 +82,8 @@ public class ShieldsAndContainersHandler implements Updatable {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.M))
             startMirrorTimer();
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.D))
+            dizzinessRotationalSpeedMultiplierTimer.start();
 
         switch (gameplayScreen.getGameplayMode()){
             case DIZZINESS:
@@ -706,10 +708,7 @@ public class ShieldsAndContainersHandler implements Updatable {
                 if (!gameplayScreen.isRewinding())
                     initiateMirrorBulletEffect();
                 else {
-                    if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
-                        ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
-                        ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
-                    }
+                    endMirrorBulletEffect();
                 }
 
 
@@ -720,12 +719,9 @@ public class ShieldsAndContainersHandler implements Updatable {
                 super.onFinish();
 
                 if (!gameplayScreen.isRewinding()) {
-                    if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
-                        ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
-                        ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
-                    }
+                    endMirrorBulletEffect();
 
-                    MirrorBulletEffectRecord mirrorBulletEffectRecord = gameplayScreen.getRewindEngine().obtainMirrorBulletEffectRecord();
+                    BulletEffectRecord mirrorBulletEffectRecord = gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.MIRROR);
                     gameplayScreen.getRewindEngine().pushRewindEvent(mirrorBulletEffectRecord);
 
                 } else {
@@ -744,6 +740,13 @@ public class ShieldsAndContainersHandler implements Updatable {
             ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(true);
 
             gameplayScreen.getMirrorTempProgressBarUI().displayFor(mirrorControlsTimer.getDurationMillis());
+        }
+    }
+
+    public void endMirrorBulletEffect() {
+        if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+            ((RestrictedController) gameplayScreen.getControllerLeft()).setMirror(false);
+            ((RestrictedController) gameplayScreen.getControllerRight()).setMirror(false);
         }
     }
 
@@ -828,20 +831,40 @@ public class ShieldsAndContainersHandler implements Updatable {
             public void onStart() {
                 super.onStart();
 
-                dizzinessRotationalSpeedMultiplier = D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER;
-                //TextureRegion r = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
-                gameplayScreen.getFasterDizzinessRotationTempProgressBarUI().displayFor(dizzinessRotationalSpeedMultiplierTimer.getDurationMillis());
+                if (!gameplayScreen.isRewinding())
+                    initiateFasterDizzinessRotationBulletEffect();
+                else
+                    endFasterDizzinessRotationBulletEffect();
             }
 
             @Override
             public void onFinish() {
                 super.onFinish();
 
-                dizzinessRotationalSpeedMultiplier = 1;
+                if (!gameplayScreen.isRewinding()) {
+                    endFasterDizzinessRotationBulletEffect();
+
+                    BulletEffectRecord fasterDizzinessRotationBulletEffectRecord =
+                            gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.FASTER_DIZZINESS_ROTATION);
+                    gameplayScreen.getRewindEngine().pushRewindEvent(fasterDizzinessRotationBulletEffectRecord);
+
+                } else {
+
+                }
             }
         };
 
         gameplayScreen.addToFinishWhenStoppingTheGameplay(dizzinessRotationalSpeedMultiplierTimer);
+    }
+
+    public void initiateFasterDizzinessRotationBulletEffect() {
+        dizzinessRotationalSpeedMultiplier = D_DIZZINESS_FASTER_ROTATIONAL_SPEED_BULLET_MULTIPLIER;
+        //TextureRegion r = Assets.instance.gameplayAssets.fasterDizzinessRotationBullet;
+        gameplayScreen.getFasterDizzinessRotationTempProgressBarUI().displayFor(dizzinessRotationalSpeedMultiplierTimer.getDurationMillis());
+    }
+
+    public void endFasterDizzinessRotationBulletEffect() {
+        dizzinessRotationalSpeedMultiplier = 1;
     }
 
     private void initializeDizzinessBaseRotationalSpeedSlowMoTween() {
