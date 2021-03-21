@@ -964,6 +964,13 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
                     gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack();
                 }
+
+                @Override
+                public void reverseEffect() {
+                    super.reverseEffect();
+
+                    gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack();
+                }
             };
 
             twoExitPortal = new BulletEffect() {

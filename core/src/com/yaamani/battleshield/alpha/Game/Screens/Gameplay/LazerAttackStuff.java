@@ -264,6 +264,15 @@ public class LazerAttackStuff implements Updatable, Resizable {
         }
     }
 
+    public void decrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() {
+        if (armorGlowing.getColor().a > 0)
+            //armorGlowing.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+            armorGlowing.setColor(1, 1, 1, 0);
+
+        currentNumOfCollectedArmorBulletsByThePlayerForNextAttack--;
+        updateCharacterSequenceForCollectedArmorBulletsText();
+    }
+
     public void show() {
         nextLazerAttackTimerText.setVisible(true);
         armorBlack.setVisible(true);
