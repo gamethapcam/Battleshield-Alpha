@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.PlusMinusBulletsRecord;
@@ -80,10 +81,21 @@ public class ShieldsAndContainersHandler implements Updatable {
 
         networkReceivingStuff();
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.M))
-            startMirrorTimer();
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.D))
-            dizzinessRotationalSpeedMultiplierTimer.start();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+
+            Pool<Bullet> bulletPool = gameplayScreen.getBulletsHandler().getBulletPool();
+            Bullet b = bulletPool.obtain();
+            b.getEffects().getMirror().effect();
+            bulletPool.free(b);
+
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+
+            Pool<Bullet> bulletPool = gameplayScreen.getBulletsHandler().getBulletPool();
+            Bullet b = bulletPool.obtain();
+            b.getEffects().getFasterDizzinessRotation().effect();
+            bulletPool.free(b);
+        }
+
 
         switch (gameplayScreen.getGameplayMode()){
             case DIZZINESS:
@@ -710,8 +722,16 @@ public class ShieldsAndContainersHandler implements Updatable {
                 else {
                     endMirrorBulletEffect();
                 }
+            }
 
+            @Override
+            public boolean onUpdate(float delta) {
 
+                /*if (gameplayScreen.getGameplayControllerType() == GameplayControllerType.RESTRICTED) {
+                    Gdx.app.log(TAG, "" + ((RestrictedController) gameplayScreen.getControllerLeft()).isMirror());
+                }*/
+
+                return super.onUpdate(delta);
             }
 
             @Override
@@ -722,6 +742,7 @@ public class ShieldsAndContainersHandler implements Updatable {
                     endMirrorBulletEffect();
 
                     BulletEffectRecord mirrorBulletEffectRecord = gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.MIRROR);
+                    mirrorBulletEffectRecord.val = 0.99f;
                     gameplayScreen.getRewindEngine().pushRewindEvent(mirrorBulletEffectRecord);
 
                 } else {
@@ -846,6 +867,7 @@ public class ShieldsAndContainersHandler implements Updatable {
 
                     BulletEffectRecord fasterDizzinessRotationBulletEffectRecord =
                             gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.FASTER_DIZZINESS_ROTATION);
+                    fasterDizzinessRotationBulletEffectRecord.val = 0.99f;
                     gameplayScreen.getRewindEngine().pushRewindEvent(fasterDizzinessRotationBulletEffectRecord);
 
                 } else {

@@ -10,11 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletRecord;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.SimpleText;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Timer;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -497,7 +499,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //    Gdx.app.log(TAG, "i = " + i);
         //}
         bulletPortalRole = null;
-        gameplayScreen.getTwoExitPortalUI().dimTheGlow();
+        //gameplayScreen.getTwoExitPortalUI().dimTheGlow();
         if (gameplayScreen.getTwoExitPortalUI().getParent() != null &
                 gameplayScreen.getBulletsHandler().getRemainingTwoExitPortals() == 0)
             gameplayScreen.stopDisplayingTwoExitPortalUI();
@@ -899,6 +901,14 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 public void effect() {
                     super.effect();
 
+                    Timer mirrorControlsTimer = gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer();
+
+                    if (mirrorControlsTimer.isStarted()) {
+                        BulletEffectRecord mirrorBulletEffectRecord = gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.MIRROR);
+                        mirrorBulletEffectRecord.val = mirrorControlsTimer.getPercentage();
+                        gameplayScreen.getRewindEngine().pushRewindEvent(mirrorBulletEffectRecord);
+                    }
+
                     gameplayScreen.getShieldsAndContainersHandler().startMirrorTimer();
                 }
             };
@@ -932,7 +942,17 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 public void effect() {
                     super.effect();
 
-                    gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().start();
+                    Timer dizzinessRotationalSpeedMultiplierTimer = gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer();
+
+                    if (dizzinessRotationalSpeedMultiplierTimer.isStarted()) {
+
+                        BulletEffectRecord fasterDizzinessRotationBulletEffectRecord =
+                                gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.FASTER_DIZZINESS_ROTATION);
+                        fasterDizzinessRotationBulletEffectRecord.val = dizzinessRotationalSpeedMultiplierTimer.getPercentage();
+                        gameplayScreen.getRewindEngine().pushRewindEvent(fasterDizzinessRotationBulletEffectRecord);
+                    }
+
+                    dizzinessRotationalSpeedMultiplierTimer.start();
                     bulletsHandler.setFasterDizzinessRotationExists(false);
                 }
             };
@@ -1009,6 +1029,22 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         public BulletEffect getMinus() {
             return minus;
+        }
+
+        public BulletEffect getMirror() {
+            return mirror;
+        }
+
+        public BulletEffect getFasterDizzinessRotation() {
+            return fasterDizzinessRotation;
+        }
+
+        public BulletEffect getTwoExitPortal() {
+            return twoExitPortal;
+        }
+
+        public BulletEffect getRewind() {
+            return rewind;
         }
     }
 

@@ -1,12 +1,17 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+
+import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletEffectRecord extends RewindEngine.RewindEvent {
 
-    public enum BulletEffectRecordType {MIRROR, FASTER_DIZZINESS_ROTATION}
+    public enum BulletEffectRecordType {MIRROR, FASTER_DIZZINESS_ROTATION, TWO_EXIT_PORTAL}
 
     public BulletEffectRecordType bulletEffectRecordType;
+
+    public float val;
 
     public BulletEffectRecord(GameplayScreen gameplayScreen) {
         super(gameplayScreen);
@@ -18,15 +23,31 @@ public class BulletEffectRecord extends RewindEngine.RewindEvent {
         switch (bulletEffectRecordType) {
             case MIRROR:
                 gameplayScreen.getShieldsAndContainersHandler().initiateMirrorBulletEffect();
-                gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer().setPercentage(0.99f);
-                gameplayScreen.getMirrorTempProgressBarUI().getTween().setPercentage(0.99f);
+                val = MathUtils.clamp(val, 0.01f, 0.99f);
+                gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer().setPercentage(val);
+                gameplayScreen.getMirrorTempProgressBarUI().getTween().setPercentage(val);
                 break;
 
             case FASTER_DIZZINESS_ROTATION:
                 gameplayScreen.getShieldsAndContainersHandler().initiateFasterDizzinessRotationBulletEffect();
-                gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().setPercentage(0.99f);
-                gameplayScreen.getFasterDizzinessRotationTempProgressBarUI().getTween().setPercentage(0.99f);
+                val = MathUtils.clamp(val, 0.01f, 0.99f);
+                gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().setPercentage(val);
+                gameplayScreen.getFasterDizzinessRotationTempProgressBarUI().getTween().setPercentage(val);
                 break;
+
+            case TWO_EXIT_PORTAL: // Mostly UI stuff.
+                if (val < 0) {
+                    gameplayScreen.displayTwoExitPortalUI();
+                    gameplayScreen.getBulletsHandler().setRemainingTwoExitPortals(0);
+                } else if (val > D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES) {
+                    gameplayScreen.stopDisplayingTwoExitPortalUI();
+                } else {
+                    gameplayScreen.getBulletsHandler().setRemainingTwoExitPortals(Math.round(val));
+                }
+
+                gameplayScreen.getTwoExitPortalUI().updateText(gameplayScreen.getBulletsHandler().getRemainingTwoExitPortals());
+                break;
+
         }
     }
 }

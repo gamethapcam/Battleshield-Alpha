@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedStage;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
@@ -296,8 +297,15 @@ public class BulletsHandler implements Updatable {
         starBulletThirdStage.update(delta);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            gameplayScreen.setInRewindBulletAnimation(true);
-            gameplayScreen.startSlowMoDeltaFractionTween(false, gameplayScreen.getRewindSlowMoFirstStageOnFinish());
+            Pool<Bullet> bulletPool = gameplayScreen.getBulletsHandler().getBulletPool();
+            Bullet b = bulletPool.obtain();
+            b.getEffects().getRewind().effect();
+            bulletPool.free(b);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            Pool<Bullet> bulletPool = gameplayScreen.getBulletsHandler().getBulletPool();
+            Bullet b = bulletPool.obtain();
+            b.getEffects().getTwoExitPortal().effect();
+            bulletPool.free(b);
         }
 
 
@@ -614,6 +622,19 @@ public class BulletsHandler implements Updatable {
     public void portalIsOver() {
         thereIsAPortal = false;
         gameplayScreen.getPortalPostProcessingEffect().clearPortalPoints();
+    }
+
+    public void setRemainingTwoExitPortals(int remainingTwoExitPortals) {
+        if (!gameplayScreen.isRewinding()) {
+            BulletEffectRecord twoExitPortalBulletEffectRecord = gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.TWO_EXIT_PORTAL);
+            twoExitPortalBulletEffectRecord.val = this.remainingTwoExitPortals;
+            gameplayScreen.getRewindEngine().pushRewindEvent(twoExitPortalBulletEffectRecord);
+        }
+        this.remainingTwoExitPortals = remainingTwoExitPortals;
+    }
+
+    public void decrementRemainingTwoExitPortals() {
+        setRemainingTwoExitPortals(remainingTwoExitPortals-1);
     }
 
     public int getRemainingTwoExitPortals() {
@@ -1208,9 +1229,9 @@ public class BulletsHandler implements Updatable {
                 attachBullets(secondExitContainer, typeIndexForDoubleWave, false);
                 transformToExitWave(secondExitContainer);
                 isDouble = true;
-                remainingTwoExitPortals--;
+                decrementRemainingTwoExitPortals();
                 gameplayScreen.getTwoExitPortalUI().updateText(remainingTwoExitPortals);
-                gameplayScreen.getTwoExitPortalUI().glow();
+                //gameplayScreen.getTwoExitPortalUI().glow();
             }
         }
     }

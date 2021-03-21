@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.RewindEngine;
 import com.yaamani.battleshield.alpha.Game.SolidBG;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
@@ -1256,6 +1257,15 @@ public class GameplayScreen extends AdvancedScreen {
     }*/
 
     public void displayTwoExitPortalUI() {
+        if (!isRewinding()) {
+            BulletEffectRecord twoExitPortalBulletEffectRecord = getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.TWO_EXIT_PORTAL);
+            if (!twoExitPortalUI.isVisible())
+                twoExitPortalBulletEffectRecord.val = D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES+1;
+            else
+                twoExitPortalBulletEffectRecord.val = D_PORTALS_TWO_PORTAL_EXIT_NUM_OF_OCCURRENCES;
+            getRewindEngine().pushRewindEvent(twoExitPortalBulletEffectRecord);
+        }
+
         twoExitPortalUI.setVisible(true);
         twoExitPortalUI.resetText();
         if (twoExitPortalUI.getParent() == null)
@@ -1265,6 +1275,12 @@ public class GameplayScreen extends AdvancedScreen {
     public void stopDisplayingTwoExitPortalUI() {
         twoExitPortalUI.setVisible(false);
         specialBulletUI.removeActor(twoExitPortalUI);
+
+        if (!isRewinding()) {
+            BulletEffectRecord twoExitPortalBulletEffectRecord = getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.TWO_EXIT_PORTAL);
+            twoExitPortalBulletEffectRecord.val = -1;
+            getRewindEngine().pushRewindEvent(twoExitPortalBulletEffectRecord);
+        }
     }
 
     /**

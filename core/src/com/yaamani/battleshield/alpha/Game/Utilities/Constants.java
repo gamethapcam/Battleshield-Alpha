@@ -1212,7 +1212,7 @@ public final class Constants {
 
     public static final float D_BIG_BOSS_SPECIAL_BULLETS_PROBABILITY = 0.5f;
 
-    public static final SpecialBullet[] BIG_BOSS_SPECIAL_BULLETS = {SpecialBullet.MIRROR, SpecialBullet.FASTER_DIZZINESS_ROTATION, SpecialBullet.TWO_EXIT_PORTAL, SpecialBullet.REWIND};
+    public static final SpecialBullet[] BIG_BOSS_SPECIAL_BULLETS = {SpecialBullet.MIRROR, SpecialBullet.FASTER_DIZZINESS_ROTATION, SpecialBullet.TWO_EXIT_PORTAL, /*SpecialBullet.REWIND*/};
 
 
     public static final float D_BIG_BOSS_AFFECT_TIMER_ORDINARY_AMOUNT = NO_DEATH ? 0 : -500;
