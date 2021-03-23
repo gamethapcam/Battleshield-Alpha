@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.TouchInputRecord;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
@@ -29,6 +30,7 @@ public abstract class Controller extends Group implements Resizable {
     protected Float stickAngle;
     protected Float outputAngle;
 
+    private MyTouchListener myTouchListener;
     private boolean usingTouch;
 
     private Group outputAngleIndicatorContainer;
@@ -46,7 +48,8 @@ public abstract class Controller extends Group implements Resizable {
 
         this.controllerPosition = controllerPosition;
 
-        addListener(new MyTouchListener());
+        myTouchListener = new MyTouchListener();
+        addListener(myTouchListener);
 
         usingTouch = false;
 
@@ -184,7 +187,7 @@ public abstract class Controller extends Group implements Resizable {
     }
 
     public Float getOutputAngle() {
-        if (gameplayScreen.isRewinding()) return null;
+        //if (gameplayScreen.isRewinding()) return null;
         /*if (outputAngle >= 0)
             Gdx.app*/
         return outputAngle;
@@ -204,6 +207,10 @@ public abstract class Controller extends Group implements Resizable {
 
     public Direction getControllerPosition() {
         return controllerPosition;
+    }
+
+    public MyTouchListener getMyTouchListener() {
+        return myTouchListener;
     }
 
     protected boolean isUsingTouch() {
@@ -239,9 +246,40 @@ public abstract class Controller extends Group implements Resizable {
 
 
 
-    private class MyTouchListener extends InputListener {
+    public class MyTouchListener extends InputListener {
+
+        // Super class method
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            if (gameplayScreen.isRewinding())
+                return super.touchDown(event, x, y, pointer, button);
+            return down(event, x, y, pointer, button);
+        }
+
+        @Override
+        public void touchDragged(InputEvent event, float x, float y, int pointer) {
+            if (gameplayScreen.isRewinding())
+                return;
+            dragged(event, x, y, pointer);
+        }
+
+        @Override
+        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            if (gameplayScreen.isRewinding())
+                return;
+            up(event, x, y, pointer, button);
+        }
+
+
+
+
+
+
+
+        public boolean down(InputEvent event, float x, float y, int pointer, int button) {
+            if (!gameplayScreen.isRewinding())
+                handleRewindEvent(event, x, y, pointer, button, true);
+
             usingTouch = true;
 
             touchDragged(event, x, y, pointer);
@@ -250,17 +288,34 @@ public abstract class Controller extends Group implements Resizable {
             else return super.touchDown(event, x, y, pointer, button);
         }
 
-        @Override
-        public void touchDragged(InputEvent event, float x, float y, int pointer) {
+        public void dragged(InputEvent event, float x, float y, int pointer) {
+            if (!gameplayScreen.isRewinding())
+                handleRewindEvent(event, x, y, pointer, 0, false);
+
             Controller.this.touchDragged(event, x, y, pointer);
             moveTheStickAccordingToTheStickAngle();
         }
 
-        @Override
-        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        public void up(InputEvent event, float x, float y, int pointer, int button) {
+            if (!gameplayScreen.isRewinding())
+                handleRewindEvent(event, x, y, pointer, button, false);
+
             usingTouch = false;
             Controller.this.touchUp(event, x, y, pointer, button);
             //moveTheStickAccordingToTheAngle();
+        }
+
+        private void handleRewindEvent(InputEvent event, float x, float y, int pointer, int button, boolean touchDown) {
+            TouchInputRecord touchInputRecord = gameplayScreen.getRewindEngine().obtainTouchInputRecord();
+            touchInputRecord.controllerPosition = controllerPosition;
+            touchInputRecord.touchDown = touchDown;
+            touchInputRecord.event = event;
+            touchInputRecord.x = x;
+            touchInputRecord.y = y;
+            touchInputRecord.pointer = pointer;
+            touchInputRecord.button = button;
+
+            gameplayScreen.getRewindEngine().pushRewindEvent(touchInputRecord);
         }
     }
 }

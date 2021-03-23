@@ -1311,6 +1311,9 @@ public final class Constants {
 
 
 
+    public static final float REWIND_MAX_SAVING_TIME = 10; // sec
+
+    public static final float REWIND_SPEED = -2f;
 
     public static final int REWIND_BULLET_RECORD_POOL_INITIAL_CAPACITY = 150;
 
@@ -1320,9 +1323,9 @@ public final class Constants {
 
     public static final int REWIND_BULLET_EFFECT_RECORD_POOL_INITIAL_CAPACITY = 100;
 
-    public static final float REWIND_SPEED = -2f;
+    public static final int REWIND_TOUCH_INPUT_RECORD_POOL_INITIAL_CAPACITY = (int) (120/*fps(not 60 future proof)*/ * REWIND_MAX_SAVING_TIME);
 
-    public static final float REWIND_MAX_SAVING_TIME = 10; // sec
+
 
 
 

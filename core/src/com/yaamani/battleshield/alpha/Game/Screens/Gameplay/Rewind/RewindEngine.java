@@ -1,6 +1,9 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
@@ -19,6 +22,7 @@ public class RewindEngine implements Updatable {
     private Pool<PlusMinusBulletsRecord> plusMinusBulletsRecordPool;
     private Pool<PortalRecord> portalRecordPool;
     private Pool<BulletEffectRecord> bulletEffectRecordPool;
+    private Pool<TouchInputRecord> touchInputRecordPool;
 
 
 
@@ -41,6 +45,7 @@ public class RewindEngine implements Updatable {
         initializePlusMinusBulletsRecordPool();
         initializePortalRecordPool();
         initializeBulletEffectRecordPool();
+        initializeTouchInputRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -59,6 +64,8 @@ public class RewindEngine implements Updatable {
             deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession -= delta; // delta passed is negative.
 
 
+            TouchInputRecord lastTouchInputRecord = null;
+
             while (true) {
 
                 // Gdx.app.log(TAG, "currentInUseBulletsCount = " + gameplayScreen.getBulletsHandler().getCurrentInUseBulletsCount());
@@ -68,7 +75,12 @@ public class RewindEngine implements Updatable {
                     if (deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession >= event.deltaTimeToTheNextEvent) {
                         Gdx.app.log(TAG, "@" + deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession + " rewinding " + event.toString());
                         deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession -= event.deltaTimeToTheNextEvent;
-                        rewindEvents.pop().onStart();
+
+                        if (event instanceof TouchInputRecord)
+                            lastTouchInputRecord = (TouchInputRecord) rewindEvents.pop();
+                        else
+                            rewindEvents.pop().onStart();
+
                         freeRewindEvent(event);
                     } else
                         break;
@@ -81,6 +93,9 @@ public class RewindEngine implements Updatable {
                 } else
                     break;
             }
+
+            if (lastTouchInputRecord != null)
+                lastTouchInputRecord.onStart();
         }
     }
 
@@ -133,6 +148,8 @@ public class RewindEngine implements Updatable {
             portalRecordPool.free((PortalRecord) event);
         else if (event instanceof BulletEffectRecord)
             bulletEffectRecordPool.free((BulletEffectRecord) event);
+        else if (event instanceof TouchInputRecord)
+            touchInputRecordPool.free((TouchInputRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
     }
@@ -153,6 +170,10 @@ public class RewindEngine implements Updatable {
         BulletEffectRecord record = bulletEffectRecordPool.obtain();
         record.bulletEffectRecordType = bulletEffectRecordType;
         return record;
+    }
+
+    public TouchInputRecord obtainTouchInputRecord() {
+        return touchInputRecordPool.obtain();
     }
 
     public void clearRewindEvents() {
@@ -232,6 +253,26 @@ public class RewindEngine implements Updatable {
             @Override
             protected BulletEffectRecord newObject() {
                 return new BulletEffectRecord(gameplayScreen);
+            }
+        };
+    }
+
+    private void initializeTouchInputRecordPool() {
+        touchInputRecordPool = new Pool<TouchInputRecord>(REWIND_TOUCH_INPUT_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+            @Override
+            protected TouchInputRecord newObject() {
+                return new TouchInputRecord(gameplayScreen);
+            }
+
+            @Override
+            public TouchInputRecord obtain() {
+                TouchInputRecord obj = super.obtain();
+                obj.controllerPosition = null;
+                obj.event = null;
+                obj.x = -1;
+                obj.y = -1;
+                obj.pointer = -1;
+                return obj;
             }
         };
     }
