@@ -161,6 +161,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
     public void setBulletPortalType(BulletPortalType bulletPortalType) {
         this.bulletPortalType = bulletPortalType;
+        currentBulletRecord.bulletPortalType = bulletPortalType;
 
         if (currentEffect == effects.armor & bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
             gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
@@ -361,7 +362,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             if (gameplayScreen.getBulletsHandler().getCurrentWaveLastBullet() == this)
                 gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
 
-            if (currentEffect.equals(effects.armor)) {
+            if (currentEffect.equals(effects.armor) & !gameplayScreen.isRewinding()) {
                 gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
             }
         }
@@ -385,6 +386,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
         /*if (getColor().a == 0)
             Gdx.app.log(TAG, "::::::::::::::::::: ALPHA 0 :::::::::::::::::::");*/
+
+        if (gameplayScreen.isRewinding()) {
+            if (currentEffect.equals(effects.armor) & currentBulletRecord.bulletPortalType != BulletPortalType.PORTAL_ENTRANCE)
+                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+        }
 
         handleRewindEventWhenStopping();
 
@@ -590,8 +596,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!fake) {
                     if (!gameplayScreen.isRewinding())
                         gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
-                    else if (currentBulletRecord.effectTookPlace)
-                        gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                    /*else if (currentBulletRecord.effectTookPlace)
+                        gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();*/
                 }
                 break;
             case TWO_EXIT_PORTAL:

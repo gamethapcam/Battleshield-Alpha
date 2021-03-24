@@ -6,6 +6,8 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.AffectTimerColorRecord;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.AffectTimerRecord;
 import com.yaamani.battleshield.alpha.MyEngine.MyInterpolation;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.MyTween;
@@ -47,6 +49,9 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
     private Tween affectTimerTween;
     private Tween affectTimerColorTween;
+
+    private AffectTimerRecord currentAffectTimerRecord;
+    private AffectTimerColorRecord currentAffectTimerColorRecord;
 
     /*private GameplayScreen.ShieldsAndContainersHandler shieldsAndContainersHandler;
     private GameplayScreen.BulletsHandler bulletsHandler;*/
@@ -224,9 +229,18 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         //Gdx.app.log(TAG, "" + affectTimerTween.isStarted());
 
         float previous = 0;
-        if (affectTimerTween.isStarted())
-            previous = (1-affectTimerTween.getPercentage()) *
+        if (affectTimerTween.isStarted()) {
+            previous = (1 - affectTimerTween.getPercentage()) *
                     (affectTimerTweenFinalValue - affectTimerTweenInitialValue);
+
+            currentAffectTimerRecord.affectTimerTweenFinalPercentage = affectTimerTween.getPercentage();
+            gameplayScreen.getRewindEngine().pushRewindEvent(currentAffectTimerRecord);
+        }
+
+        if (affectTimerColorTween.isStarted()) {
+            currentAffectTimerColorRecord.affectTimerColorTweenFinalPercentage = affectTimerColorTween.getPercentage();
+            gameplayScreen.getRewindEngine().pushRewindEvent(currentAffectTimerColorRecord);
+        }
 
         affectTimerTween.setDurationMillis(durationMillis);
         affectTimerTween.setInterpolation(interpolation);
@@ -242,9 +256,22 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
         affectTimerColorTween.setDurationMillis(Math.max(AFFECT_TIMER_COLOR_TWEEN_DURATION, durationMillis));
         affectTimerColorTween.start();
-    }
 
-    //public void aff
+
+
+
+
+        currentAffectTimerRecord = gameplayScreen.getRewindEngine().obtainAffectTimerRecord();
+        currentAffectTimerRecord.affectTimerTweenInitialValue = affectTimerTweenInitialValue;
+        currentAffectTimerRecord.affectTimerTweenFinalValue = affectTimerTweenFinalValue;
+        currentAffectTimerRecord.affectTimerTweenDurationMillis = affectTimerTween.getDurationMillis();
+        currentAffectTimerRecord.affectTimerTweenInterpolation = affectTimerTween.getInterpolation();
+
+        currentAffectTimerColorRecord = gameplayScreen.getRewindEngine().obtainAffectTimerColorRecord();
+        currentAffectTimerColorRecord.affectTimerTweenInitialValue = affectTimerTweenInitialValue;
+        currentAffectTimerColorRecord.affectTimerTweenFinalValue = affectTimerTweenFinalValue;
+        currentAffectTimerColorRecord.affectTimerColorTweenDurationMillis = affectTimerColorTween.getDurationMillis();
+    }
 
     private void loadBestFromHardDrive() {
         currentBest = preferences.getFloat(SCORE_BEST_KEY);
@@ -276,6 +303,26 @@ public class ScoreTimerStuff implements Resizable, Updatable {
 
     public Tween getAffectTimerTween() {
         return affectTimerTween;
+    }
+
+    public float getAffectTimerTweenInitialValue() {
+        return affectTimerTweenInitialValue;
+    }
+
+    public void setAffectTimerTweenInitialValue(float affectTimerTweenInitialValue) {
+        this.affectTimerTweenInitialValue = affectTimerTweenInitialValue;
+    }
+
+    public float getAffectTimerTweenFinalValue() {
+        return affectTimerTweenFinalValue;
+    }
+
+    public void setAffectTimerTweenFinalValue(float affectTimerTweenFinalValue) {
+        this.affectTimerTweenFinalValue = affectTimerTweenFinalValue;
+    }
+
+    public Tween getAffectTimerColorTween() {
+        return affectTimerColorTween;
     }
 
     public ScoreMultiplierDifficultyLevelStuff getScoreMultiplierDifficultyLevelStuff() {
@@ -413,11 +460,33 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                     scoreText.setColor(1, percentage, percentage, 1);*/
 
             }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (!gameplayScreen.isRewinding()) {
+                    currentAffectTimerRecord.affectTimerTweenFinalPercentage = 0.99f;
+                    gameplayScreen.getRewindEngine().pushRewindEvent(currentAffectTimerRecord);
+                    currentAffectTimerRecord = null;
+                }
+            }
         };
     }
 
     private void initializeAffectTimerColorTween() {
         affectTimerColorTween = new Tween(AFFECT_TIMER_COLOR_TWEEN_DURATION, AFFECT_TIMER_COLOR_TWEEN_INTERPOLATION) {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                /*if (gameplayScreen.isRewinding())
+                    scoreText.setColor(1, 1, 1, scoreText.getColor().a);*/
+                if (gameplayScreen.isRewinding())
+                    tween(1, getInterpolation());
+            }
+
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 boolean goodForThePlayer = affectTimerTweenFinalValue > affectTimerTweenInitialValue;
@@ -429,6 +498,17 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                     if (NO_DEATH) return;
                     float r = interpolation.apply(HEALTH_BAR_DANGEROUS_ANGLE_COLOR.r, 1, percentage);
                     scoreText.setColor(r, c, c, scoreText.getColor().a);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (!gameplayScreen.isRewinding()) {
+                    currentAffectTimerColorRecord.affectTimerColorTweenFinalPercentage = 0.99f;
+                    gameplayScreen.getRewindEngine().pushRewindEvent(currentAffectTimerColorRecord);
+                    currentAffectTimerColorRecord = null;
                 }
             }
         };

@@ -19,7 +19,7 @@ public class BulletRecord extends RewindEngine.RewindEvent {
 
     public int parentContainerIndex;
 
-    //public TextureRegion region;
+    public Constants.BulletPortalType bulletPortalType;
 
     public boolean effectTookPlace;
 
@@ -44,6 +44,7 @@ public class BulletRecord extends RewindEngine.RewindEvent {
                 + questionMark + "|"
                 + timeAfterFakeTweenFinished + "|"
                 + parentContainerIndex + "|"
+                + bulletPortalType + "|"
                 + effectTookPlace + "}";
     }
 }

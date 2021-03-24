@@ -13,6 +13,8 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class PortalPostProcessingEffect extends PostProcessingEffect implements Resizable {
 
+    private static final String TAG = PortalPostProcessingEffect.class.getSimpleName();
+
     public static final int MAX_PORTAL_POINTS = 3;
 
     private ShaderProgram portalShader;
@@ -39,7 +41,11 @@ public class PortalPostProcessingEffect extends PostProcessingEffect implements 
     }
 
     public int addPortalPoint(float x, float y, float intensity) {
+        Gdx.app.log(TAG, "addPortalPoint");
         lastUsedIndex++;
+        if (lastUsedIndex >= portalPointsX.length) {
+            lastUsedIndex = 0;
+        }
         portalPointsX[lastUsedIndex] = x;
         portalPointsY[lastUsedIndex] = y;
         portalPointsIntensities[lastUsedIndex] = intensity;
@@ -47,6 +53,7 @@ public class PortalPostProcessingEffect extends PostProcessingEffect implements 
     }
 
     public void removePortalPoint(int i) {
+        Gdx.app.log(TAG, "removePortalPoint");
         if (i > lastUsedIndex)
             throw new ArrayIndexOutOfBoundsException("lastUsedIndex = " + lastUsedIndex + ", i = " + i);
 

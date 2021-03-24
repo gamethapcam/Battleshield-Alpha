@@ -1,6 +1,7 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
@@ -23,6 +24,8 @@ public class RewindEngine implements Updatable {
     private Pool<PortalRecord> portalRecordPool;
     private Pool<BulletEffectRecord> bulletEffectRecordPool;
     private Pool<TouchInputRecord> touchInputRecordPool;
+    private Pool<AffectTimerRecord> affectTimerRecordPool;
+    private Pool<AffectTimerColorRecord> affectTimerColorRecordPool;
 
 
 
@@ -46,6 +49,8 @@ public class RewindEngine implements Updatable {
         initializePortalRecordPool();
         initializeBulletEffectRecordPool();
         initializeTouchInputRecordPool();
+        initializeAffectTimerRecordPool();
+        initializeAffectTimerColorRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -150,6 +155,10 @@ public class RewindEngine implements Updatable {
             bulletEffectRecordPool.free((BulletEffectRecord) event);
         else if (event instanceof TouchInputRecord)
             touchInputRecordPool.free((TouchInputRecord) event);
+        else if (event instanceof AffectTimerRecord)
+            affectTimerRecordPool.free((AffectTimerRecord) event);
+        else if (event instanceof AffectTimerColorRecord)
+            affectTimerColorRecordPool.free((AffectTimerColorRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
     }
@@ -174,6 +183,14 @@ public class RewindEngine implements Updatable {
 
     public TouchInputRecord obtainTouchInputRecord() {
         return touchInputRecordPool.obtain();
+    }
+
+    public AffectTimerRecord obtainAffectTimerRecord() {
+        return affectTimerRecordPool.obtain();
+    }
+
+    public AffectTimerColorRecord obtainAffectTimerColorRecord() {
+        return affectTimerColorRecordPool.obtain();
     }
 
     public void clearRewindEvents() {
@@ -208,6 +225,7 @@ public class RewindEngine implements Updatable {
                 obj.specialType = null;
                 obj.timeAfterFakeTweenFinished = Float.MAX_VALUE/2f;
                 obj.parentContainerIndex = -1;
+                obj.bulletPortalType = null;
                 obj.effectTookPlace = false;
 
                 return obj;
@@ -272,6 +290,46 @@ public class RewindEngine implements Updatable {
                 obj.x = -1;
                 obj.y = -1;
                 obj.pointer = -1;
+                return obj;
+            }
+        };
+    }
+
+    private void initializeAffectTimerRecordPool() {
+        affectTimerRecordPool = new Pool<AffectTimerRecord>(REWIND_AFFECT_TIMER_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+            @Override
+            protected AffectTimerRecord newObject() {
+                return new AffectTimerRecord(gameplayScreen);
+            }
+
+            @Override
+            public AffectTimerRecord obtain() {
+                AffectTimerRecord obj = super.obtain();
+                obj.affectTimerTweenInitialValue = -1;
+                obj.affectTimerTweenFinalValue = -1;
+                obj.affectTimerTweenDurationMillis = -1;
+                obj.affectTimerTweenInterpolation = null;
+
+                obj.affectTimerTweenFinalPercentage = -1;
+                return obj;
+            }
+        };
+    }
+
+    private void initializeAffectTimerColorRecordPool() {
+        affectTimerColorRecordPool = new Pool<AffectTimerColorRecord>(REWIND_AFFECT_TIMER_COLOR_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+            @Override
+            protected AffectTimerColorRecord newObject() {
+                return new AffectTimerColorRecord(gameplayScreen);
+            }
+
+            @Override
+            public AffectTimerColorRecord obtain() {
+                AffectTimerColorRecord obj = super.obtain();
+                obj.affectTimerTweenInitialValue = -1;
+                obj.affectTimerTweenFinalValue = -1;
+                obj.affectTimerColorTweenDurationMillis = -1;
+                obj.affectTimerColorTweenFinalPercentage = -1;
                 return obj;
             }
         };
