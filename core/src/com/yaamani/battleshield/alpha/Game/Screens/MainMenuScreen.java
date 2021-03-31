@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.TimelineTesting;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.LazerAttackStuff;
@@ -97,6 +98,9 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
     private boolean add = true;*/
     //private SpecialBulletTempProgressBarUI specialBulletTempProgressBarUI;
     //private TwoExitPortalUI twoExitPortalUI;
+
+    private TimelineTesting timelineTesting;
+
 
 
     public MainMenuScreen(final AdvancedStage game, AndroidPermissionHandler androidPermissionHandler, MyBitmapFont myBitmapFont, GameplayScreen gameplayScreen, StarsContainer starsContainer, boolean transform) {
@@ -235,6 +239,9 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         addActor(specialBulletTempProgressBarUI);*/
         /*twoExitPortalUI = new TwoExitPortalUI(myBitmapFont, Assets.instance.gameplayAssets.twoExitPortal, Assets.instance.gameplayAssets.twoExitPortalGlow);
         addActor(twoExitPortalUI);*/
+
+        timelineTesting = new TimelineTesting(myBitmapFont);
+        addActor(timelineTesting);
     }
 
 
