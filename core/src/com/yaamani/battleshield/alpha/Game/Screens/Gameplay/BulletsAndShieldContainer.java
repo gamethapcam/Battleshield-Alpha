@@ -147,8 +147,8 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                     tweenEntrance = currentPortalRecord.type == BulletPortalType.PORTAL_ENTRANCE;
                     fadeIn = true;
                     calculateFadeInOutTweenInitialAndFinalValues();
-                    float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
-                    portalEntranceExitFadeInOutTween.setPercentage(percentage);
+                    //float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
+                    portalEntranceExitFadeInOutTween.setPercentage(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION/*percentage*/);
                     /*if (d ==  null & tweenEntrance)
                         d = portalEntranceExitFadeInOutTween;*/
                 }
@@ -292,7 +292,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         );
 
         calculateFadeInOutTweenInitialAndFinalValues();
-        portalEntranceExitFadeInOutTween.setPercentage(0.99f);
+        portalEntranceExitFadeInOutTween.setPercentage(1);
 
         currentPortalRecord = portalRecord;
     }
@@ -309,7 +309,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
         );
 
         calculateFadeInOutTweenInitialAndFinalValues();
-        portalEntranceExitFadeInOutTween.setPercentage(0.99f);
+        portalEntranceExitFadeInOutTween.setPercentage(1);
 
         currentPortalRecord = portalRecord;
     }

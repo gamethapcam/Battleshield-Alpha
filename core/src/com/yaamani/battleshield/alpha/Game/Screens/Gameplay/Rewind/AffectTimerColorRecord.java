@@ -25,7 +25,7 @@ public class AffectTimerColorRecord extends RewindEngine.RewindEvent {
         scoreTimerStuff.setAffectTimerTweenInitialValue(affectTimerTweenInitialValue);
         scoreTimerStuff.setAffectTimerTweenFinalValue(affectTimerTweenFinalValue);
         scoreTimerStuff.getAffectTimerColorTween().setDurationMillis(affectTimerColorTweenDurationMillis);
-        float p = MathUtils.clamp(affectTimerColorTweenFinalPercentage * 2, 0.01f, 0.99f);
+        float p = MathUtils.clamp(affectTimerColorTweenFinalPercentage * 2, 0, 1);
         //Gdx.app.log(TAG, affectTimerColorTweenFinalPercentage + ", p = " + p);
         scoreTimerStuff.getAffectTimerColorTween().setPercentage(p);
     }

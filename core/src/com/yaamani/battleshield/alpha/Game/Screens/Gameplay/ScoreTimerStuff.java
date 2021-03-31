@@ -466,7 +466,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                 super.onFinish();
 
                 if (!gameplayScreen.isRewinding()) {
-                    currentAffectTimerRecord.affectTimerTweenFinalPercentage = 0.99f;
+                    currentAffectTimerRecord.affectTimerTweenFinalPercentage = 1;
                     gameplayScreen.getRewindEngine().pushRewindEvent(currentAffectTimerRecord);
                     currentAffectTimerRecord = null;
                 }
@@ -506,7 +506,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
                 super.onFinish();
 
                 if (!gameplayScreen.isRewinding()) {
-                    currentAffectTimerColorRecord.affectTimerColorTweenFinalPercentage = 0.99f;
+                    currentAffectTimerColorRecord.affectTimerColorTweenFinalPercentage = 1;
                     gameplayScreen.getRewindEngine().pushRewindEvent(currentAffectTimerColorRecord);
                     currentAffectTimerColorRecord = null;
                 }

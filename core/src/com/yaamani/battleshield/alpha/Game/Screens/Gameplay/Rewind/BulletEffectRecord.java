@@ -23,14 +23,14 @@ public class BulletEffectRecord extends RewindEngine.RewindEvent {
         switch (bulletEffectRecordType) {
             case MIRROR:
                 gameplayScreen.getShieldsAndContainersHandler().initiateMirrorBulletEffect();
-                val = MathUtils.clamp(val, 0.01f, 0.99f);
+                val = MathUtils.clamp(val, 0, 1);
                 gameplayScreen.getShieldsAndContainersHandler().getMirrorControlsTimer().setPercentage(val);
                 gameplayScreen.getMirrorTempProgressBarUI().getTween().setPercentage(val);
                 break;
 
             case FASTER_DIZZINESS_ROTATION:
                 gameplayScreen.getShieldsAndContainersHandler().initiateFasterDizzinessRotationBulletEffect();
-                val = MathUtils.clamp(val, 0.01f, 0.99f);
+                val = MathUtils.clamp(val, 0, 1);
                 gameplayScreen.getShieldsAndContainersHandler().getDizzinessRotationalSpeedMultiplierTimer().setPercentage(val);
                 gameplayScreen.getFasterDizzinessRotationTempProgressBarUI().getTween().setPercentage(val);
                 break;

@@ -313,7 +313,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 stopUsingTheBullet(viewport.getWorldWidth(), viewport.getWorldHeight(), true);
 
             if (currentBulletRecord.timeAfterFakeTweenFinished <= 0 & !fakeTween.isStarted())
-                fakeTween.setPercentage(0.99f);
+                fakeTween.setPercentage(1);
 
 
             return;

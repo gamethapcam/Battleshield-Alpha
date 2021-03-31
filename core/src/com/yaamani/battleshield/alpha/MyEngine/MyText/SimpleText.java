@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Array;
  * and the other will be changed automatically.
  * </p>
  * <p>
- * padding and kerning may not be supported yet.
+ * padding may not be supported yet.
  * </p>
  */
 
@@ -46,6 +46,8 @@ public class SimpleText extends Actor {
 
         //setDebug(true);
     }
+
+    // TODO: The for loop inside the draw method can be extracted from draw for a bit more efficiency.
 
     @Override
     public void draw(Batch batch, float parentAlpha) {

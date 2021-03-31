@@ -10,11 +10,11 @@ public class Timer implements Updatable {
     private boolean paused = false;
 
     //private long delayTimeStart;
-    private double startDelayCurrentTime;
+    private float startDelayCurrentTime;
     private float startDelayMillis = 0;
     private boolean inStartDelay = false;
 
-    private double pauseDelayCurrentTime;
+    private float pauseDelayCurrentTime;
     private float pauseDelayMillis = 0;
     private boolean inPauseDelay = false;
 
@@ -87,6 +87,7 @@ public class Timer implements Updatable {
             pauseDelayCurrentTime += delta*MyMath.SECONDS_TO_MILLIS;
             if(pauseDelayCurrentTime >= pauseDelayMillis) {
                 inPauseDelay = false;
+                // TODO: Calculate overTime like inStartDelay
                 resume();
             } else if (pauseDelayCurrentTime < 0) {
                 pauseDelayCurrentTime = 0;
@@ -103,6 +104,9 @@ public class Timer implements Updatable {
             if(/*currentDelayTime*/ startDelayCurrentTime >= startDelayMillis) {
                 inStartDelay = false;
                 start();
+                float overTime = startDelayCurrentTime - startDelayMillis;
+                percentage = overTime/durationMillis;
+
             } else if (startDelayCurrentTime < 0) {
                 startDelayCurrentTime = 0;
                 inStartDelay = false;

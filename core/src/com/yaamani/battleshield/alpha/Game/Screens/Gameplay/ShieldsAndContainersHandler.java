@@ -742,7 +742,7 @@ public class ShieldsAndContainersHandler implements Updatable {
                     endMirrorBulletEffect();
 
                     BulletEffectRecord mirrorBulletEffectRecord = gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.MIRROR);
-                    mirrorBulletEffectRecord.val = 0.99f;
+                    mirrorBulletEffectRecord.val = 1;
                     gameplayScreen.getRewindEngine().pushRewindEvent(mirrorBulletEffectRecord);
 
                 } else {
@@ -867,7 +867,7 @@ public class ShieldsAndContainersHandler implements Updatable {
 
                     BulletEffectRecord fasterDizzinessRotationBulletEffectRecord =
                             gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.FASTER_DIZZINESS_ROTATION);
-                    fasterDizzinessRotationBulletEffectRecord.val = 0.99f;
+                    fasterDizzinessRotationBulletEffectRecord.val = 1;
                     gameplayScreen.getRewindEngine().pushRewindEvent(fasterDizzinessRotationBulletEffectRecord);
 
                 } else {

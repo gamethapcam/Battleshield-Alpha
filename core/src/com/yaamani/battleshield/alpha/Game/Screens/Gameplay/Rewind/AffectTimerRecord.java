@@ -25,8 +25,8 @@ public class AffectTimerRecord extends RewindEngine.RewindEvent {
         scoreTimerStuff.setAffectTimerTweenFinalValue(affectTimerTweenFinalValue);
         scoreTimerStuff.getAffectTimerTween().setDurationMillis(affectTimerTweenDurationMillis);
         scoreTimerStuff.getAffectTimerTween().setInterpolation(affectTimerTweenInterpolation);
-        float p = MathUtils.clamp(affectTimerTweenFinalPercentage, 0.01f, 0.99f);
-        scoreTimerStuff.getAffectTimerTween().setPercentage(p);
+        //float p = MathUtils.clamp(affectTimerTweenFinalPercentage, 0.01f, 0.99f);
+        scoreTimerStuff.getAffectTimerTween().setPercentage(/*p*/affectTimerTweenFinalPercentage);
     }
 
     @Override
