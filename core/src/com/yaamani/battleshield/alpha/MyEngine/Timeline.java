@@ -16,8 +16,6 @@ public class Timeline extends Timer {
     private int nextI;
     private LinkedList<Timer> currentlyRunning;
 
-    //private Array<Timer> timersDescendingFinishTime;
-
 
     /**
      *
@@ -32,7 +30,7 @@ public class Timeline extends Timer {
     }
 
     /**
-     * It's recommended to add timers in ascending order based on start time to avoid shifting array elements.
+     * It's recommended to add timers in ascending order based on start time to avoid or minimize shifting array elements.
      * @param timer
      * @param startTimeMillis relative to the starting time of this timeline object.
      */
@@ -57,7 +55,7 @@ public class Timeline extends Timer {
             }
         }
 
-        super.setDurationMillis(startTimeOfEachTimer.peek() + timersAscendingStartTime.peek().getDurationMillis());
+        durationMillis = startTimeOfEachTimer.peek() + timersAscendingStartTime.peek().durationMillis;
     }
 
     @Override
@@ -66,10 +64,19 @@ public class Timeline extends Timer {
 
         nextI = 0;
         currentlyRunning.clear();
+
+        for (Timer timer : timersAscendingStartTime) {
+            timer.setPercentage(0);
+            timer.onUpdate(0);
+            timer.started = false;
+        }
     }
 
     @Override
     public boolean onUpdate(float delta) {
+
+        currentTime += delta*MyMath.SECONDS_TO_MILLIS;
+        percentage = currentTime / durationMillis;
 
         Iterator<Timer> it = currentlyRunning.iterator();
         while (it.hasNext()) {
@@ -77,25 +84,58 @@ public class Timeline extends Timer {
                 it.remove();
         }
 
-        if (nextI < startTimeOfEachTimer.size) {
-            float currentTime = getCurrentTime();
-            float nextStartTime = startTimeOfEachTimer.get(nextI);
+        if (delta > 0) { // O(1) most of the time, theta(n) if all the timers have the same start time.
+            if (nextI < startTimeOfEachTimer.size) {
+                //float currentTime = getCurrentTime();
+                float nextStartTime = startTimeOfEachTimer.get(nextI);
 
-            while (currentTime >= nextStartTime) {
+                while (currentTime >= nextStartTime) {
 
-                Timer nextTimer = timersAscendingStartTime.get(nextI);
-                nextTimer.start();
-                float overTime = currentTime - nextStartTime;
-                nextTimer.setCurrentTime(overTime);
-                currentlyRunning.add(nextTimer);
+                    Timer nextTimer = timersAscendingStartTime.get(nextI);
+                    nextTimer.start();
+                    float overTime = currentTime - nextStartTime;
+                    nextTimer.setCurrentTime(overTime);
+                    currentlyRunning.add(nextTimer);
 
-                nextI++;
-                if (nextI >= startTimeOfEachTimer.size)
-                    break;
-                nextStartTime = startTimeOfEachTimer.get(nextI);
+                    nextI++;
+                    if (nextI >= startTimeOfEachTimer.size)
+                        break;
+                    nextStartTime = startTimeOfEachTimer.get(nextI);
+                }
+            }
+        } else if (delta < 0) { // O(n), theta(n)
+            Timer[] timers = timersAscendingStartTime.items;
+            float[] startTimes = startTimeOfEachTimer.items;
+
+            for (int i = timersAscendingStartTime.size-1; i >= 0; i--) {
+                if (startTimes[i] < currentTime) {
+                    if (!timers[i].isStarted()) {
+                        if (currentTime < startTimes[i] + timers[i].durationMillis) {
+                            timers[i].setCurrentTime(currentTime - startTimes[i]);
+                            timers[i].onUpdate(0);
+                            currentlyRunning.add(timers[i]);
+                        }
+                    }
+                } else {
+                    if (startTimes[i] > currentTime) {
+
+                        timers[i].setPercentage(0);
+                        timers[i].onUpdate(0);
+
+                        if (nextI < timersAscendingStartTime.size) {
+                            if (startTimes[i] < startTimes[nextI])
+                                nextI = i;
+                        } else {
+                            nextI = i;
+                        }
+                    }
+                }
             }
         }
-        return super.onUpdate(delta);
+
+
+
+        return /*super.onUpdate(delta)*/true;
     }
 
     @Override
@@ -125,7 +165,47 @@ public class Timeline extends Timer {
         }
     }
 
-    // TODO: setPercentage, setCurrentTime, -ve delta handling.
+    @Override
+    protected void setCurrentTime(float currentTime) {
+        super.setCurrentTime(currentTime);
+
+        settingCurrentTimeCalculations(currentTime);
+    }
+
+    @Override
+    public void setPercentage(float percentage) {
+        super.setPercentage(percentage);
+
+        settingCurrentTimeCalculations(percentage * durationMillis);
+    }
+
+    private void settingCurrentTimeCalculations(float currentTime) {
+        currentlyRunning.clear();
+
+        Timer[] timers = timersAscendingStartTime.items;
+        float[] startTimes = startTimeOfEachTimer.items;
+
+        nextI = timersAscendingStartTime.size;
+
+        for (int i = timersAscendingStartTime.size-1; i >= 0; i--) {
+            if (startTimes[i] > currentTime) {
+
+                if (startTimes[i] < startTimes[nextI])
+                    nextI = i;
+
+            } else {
+
+                if (startTimes[i] + timers[i].durationMillis > currentTime) {
+                    currentlyRunning.add(timers[i]);
+                    timers[i].setCurrentTime(currentTime - startTimes[i]);
+                    timers[i].onUpdate(0);
+                } else {
+                    timers[i].finish();
+                }
+
+            }
+        }
+    }
 
     @Override
     public void setDurationMillis(float durationMillis) {

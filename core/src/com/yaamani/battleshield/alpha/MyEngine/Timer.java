@@ -2,10 +2,10 @@ package com.yaamani.battleshield.alpha.MyEngine;
 
 public class Timer implements Updatable {
     //private long startTime;
-    private float currentTime;
-    private float durationMillis; // millis
-    private float percentage;
-    private boolean started = false;
+    protected float currentTime;
+    protected float durationMillis; // millis
+    protected float percentage;
+    protected boolean started = false;
     private boolean finished = false;
     private boolean paused = false;
 

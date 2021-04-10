@@ -32,6 +32,8 @@ public class TimelineTesting extends Group {
     private Tween t3;
     private Tween t4;
 
+    private boolean rewinding;
+
     private Timeline timeline;
 
     public TimelineTesting(MyBitmapFont myBitmapFont) {
@@ -121,6 +123,9 @@ public class TimelineTesting extends Group {
     public void act(float delta) {
         super.act(delta);
 
+        if (rewinding)
+            delta *= -1;
+
         t1.update(delta);
         t2.update(delta);
         t3.update(delta);
@@ -136,6 +141,10 @@ public class TimelineTesting extends Group {
             timeline.resume();
         else if (Gdx.input.isKeyJustPressed(Input.Keys.F))
             timeline.finish();
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.COMMA))
+            rewinding = !rewinding;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD))
+            timeline.setPercentage(0.6f);
 
     }
 }
