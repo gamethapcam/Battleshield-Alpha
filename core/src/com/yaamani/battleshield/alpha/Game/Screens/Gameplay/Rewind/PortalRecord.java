@@ -17,7 +17,7 @@ public class PortalRecord extends RewindEngine.RewindEvent {
     }
 
     @Override
-    public void onStart() {
+    public void onStart(float overTimeMillis) {
         if (type == BulletPortalType.PORTAL_ENTRANCE)
             gameplayScreen.getBulletsAndShieldContainers()[containerIndex].showPortalEntranceRewinding(this);
         else
@@ -26,5 +26,14 @@ public class PortalRecord extends RewindEngine.RewindEvent {
         if (!gameplayScreen.getBulletsHandler().isThereAPortal())
             gameplayScreen.getBulletsHandler().portalIsOn();
 
+    }
+
+    @Override
+    public String toString() {
+        return "PortalRecord{" +
+                "type=" + type +
+                ", containerIndex=" + containerIndex +
+                ", duration=" + duration +
+                '}';
     }
 }

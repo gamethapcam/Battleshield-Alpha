@@ -65,11 +65,11 @@ public class Timeline extends Timer {
         nextI = 0;
         currentlyRunning.clear();
 
-        for (Timer timer : timersAscendingStartTime) {
+        /*for (Timer timer : timersAscendingStartTime) {
             timer.setPercentage(0);
             timer.onUpdate(0);
             timer.started = false;
-        }
+        }*/
     }
 
     @Override
@@ -94,8 +94,12 @@ public class Timeline extends Timer {
                     Timer nextTimer = timersAscendingStartTime.get(nextI);
                     nextTimer.start();
                     float overTime = currentTime - nextStartTime;
-                    nextTimer.setCurrentTime(overTime);
-                    currentlyRunning.add(nextTimer);
+                    if (overTime <= nextTimer.getDurationMillis()) {
+                        nextTimer.setCurrentTime(overTime);
+                        currentlyRunning.add(nextTimer);
+                    } else {
+                        nextTimer.finish();
+                    }
 
                     nextI++;
                     if (nextI >= startTimeOfEachTimer.size)
@@ -119,8 +123,8 @@ public class Timeline extends Timer {
                 } else {
                     if (startTimes[i] > currentTime) {
 
-                        timers[i].setPercentage(0);
-                        timers[i].onUpdate(0);
+                        /*timers[i].setPercentage(0);
+                        timers[i].onUpdate(0);*/
 
                         if (nextI < timersAscendingStartTime.size) {
                             if (startTimes[i] < startTimes[nextI])
@@ -166,7 +170,9 @@ public class Timeline extends Timer {
     }
 
     @Override
-    protected void setCurrentTime(float currentTime) {
+    public void setCurrentTime(float currentTime) {
+        // Caution: not well tested.
+
         super.setCurrentTime(currentTime);
 
         settingCurrentTimeCalculations(currentTime);
@@ -174,12 +180,16 @@ public class Timeline extends Timer {
 
     @Override
     public void setPercentage(float percentage) {
+        // Caution: not well tested.
+
         super.setPercentage(percentage);
 
         settingCurrentTimeCalculations(percentage * durationMillis);
     }
 
     private void settingCurrentTimeCalculations(float currentTime) {
+        // Caution: not well tested.
+
         currentlyRunning.clear();
 
         Timer[] timers = timersAscendingStartTime.items;
@@ -211,6 +221,11 @@ public class Timeline extends Timer {
     public void setDurationMillis(float durationMillis) {
         //super.setDurationMillis(durationMillis);
         Gdx.app.error(TAG, "You cannot set the duration for a timeline object. It's calculated internally.");
+    }
+
+    public float getStartTimeOf(Timer addedTimer) {
+        int index = timersAscendingStartTime.indexOf(addedTimer, true);
+        return startTimeOfEachTimer.get(index);
     }
 
     /*public Array<Timer> getTimersAscendingStartTime() {

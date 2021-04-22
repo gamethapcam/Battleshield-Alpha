@@ -1,5 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
+import com.badlogic.gdx.Gdx;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Utilities.Constants;
@@ -21,15 +22,17 @@ public class BulletRecord extends RewindEngine.RewindEvent {
 
     public Constants.BulletPortalType bulletPortalType;
 
-    public boolean effectTookPlace;
+    //public boolean effectTookPlace;
 
     public BulletRecord(GameplayScreen gameplayScreen) {
         super(gameplayScreen);
     }
 
     @Override
-    public void onStart() {
+    public void onStart(float overTimeMillis) {
         Bullet bullet = gameplayScreen.getBulletsHandler().getBulletPool().obtain();
+        /*if (bulletPortalType == Constants.BulletPortalType.PORTAL_ENTRANCE)
+            Gdx.app.log(TAG, "HERE!!");*/
         bullet.attachForRewinding(this);
     }
 
@@ -44,7 +47,7 @@ public class BulletRecord extends RewindEngine.RewindEvent {
                 + questionMark + "|"
                 + timeAfterFakeTweenFinished + "|"
                 + parentContainerIndex + "|"
-                + bulletPortalType + "|"
-                + effectTookPlace + "}";
+                + bulletPortalType/* + "|"
+                + effectTookPlace + "}"*/;
     }
 }

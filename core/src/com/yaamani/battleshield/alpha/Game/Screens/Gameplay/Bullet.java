@@ -163,8 +163,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         this.bulletPortalType = bulletPortalType;
         currentBulletRecord.bulletPortalType = bulletPortalType;
 
-        if (currentEffect == effects.armor & bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
-            gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+        if (currentEffect == effects.armor & bulletPortalType == BulletPortalType.PORTAL_ENTRANCE) {
+            gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack(parent.getIndex());
+        }
     }
 
     public void setBulletPortalRole(BulletPortalRole bulletPortalRole) {
@@ -257,7 +258,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //if (getStage() != null) {
             //Viewport viewport = getStage().getViewport();
             //if (viewport != null)
-                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f);/*worldHeight/3f*/;
+                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f)*0.55f;
         //}
     }
 
@@ -305,6 +306,9 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         if (currentEffect == effects.ordinaryFake | currentEffect == effects.fake)
             fakeTween.update(delta);
 
+        if (currentBulletRecord == null)
+            Gdx.app.log(TAG, "currentBulletRecord = null!!! (" + getParent().getIndex() + ").");
+
         currentBulletRecord.timeAfterFakeTweenFinished += delta;
 
         if (gameplayScreen.isRewinding()) {
@@ -314,7 +318,6 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
 
             if (currentBulletRecord.timeAfterFakeTweenFinished <= 0 & !fakeTween.isStarted())
                 fakeTween.setPercentage(1);
-
 
             return;
         }
@@ -342,6 +345,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //The bullet hits the turret
         if (getY() <= TURRET_RADIUS)  {
             if (parent.getColor().a >= 0.95f) {
+                if (currentBulletRecord.bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
+                    Gdx.app.log(TAG, "Effect took place when ENTRANCE!!!!!!!!!!!!!!!!!!!!!!!!");
                 currentEffect.effect();
             }
 
@@ -363,7 +368,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 gameplayScreen.getBulletsHandler().nullifyCurrentWaveLastBullet();
 
             if (currentEffect.equals(effects.armor) & !gameplayScreen.isRewinding()) {
-                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                int containerI = parent != null ? parent.getIndex() : -1;
+                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack(containerI);
             }
         }
     }
@@ -388,8 +394,11 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             Gdx.app.log(TAG, "::::::::::::::::::: ALPHA 0 :::::::::::::::::::");*/
 
         if (gameplayScreen.isRewinding()) {
-            if (currentEffect.equals(effects.armor) & currentBulletRecord.bulletPortalType != BulletPortalType.PORTAL_ENTRANCE)
-                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+            if (currentEffect.equals(effects.armor) & currentBulletRecord.bulletPortalType != BulletPortalType.PORTAL_ENTRANCE) {
+                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack(parent.getIndex());
+            }
+            if (currentEffect.equals(effects.armor))
+                Gdx.app.log(TAG, "currentBulletRecord.bulletPortalType = " + currentBulletRecord.bulletPortalType);
         }
 
         handleRewindEventWhenStopping();
@@ -594,8 +603,10 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
                 if (!questionMark) region = Assets.instance.gameplayAssets.armorBullet;
                 currentEffect = effects.armor;
                 if (!fake) {
-                    if (!gameplayScreen.isRewinding())
-                        gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();
+                    if (!gameplayScreen.isRewinding()) {
+
+                        gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack(-1);
+                    }
                     /*else if (currentBulletRecord.effectTookPlace)
                         gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfSpawnedArmorBulletsForTheNextAttack();*/
                 }
@@ -659,8 +670,8 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[bulletRecord.parentContainerIndex];
         readyToBeAttached(container, false);
 
-        if (bulletRecord.effectTookPlace)
-            currentEffect.reverseEffect();
+        /*if (bulletRecord.effectTookPlace)
+            currentEffect.reverseEffect();*/
     }
 
     @Override
@@ -727,16 +738,16 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
     //------------------------------------------------------------------------------------------------------------
 
 
-    public class BulletEffect {
+    public static class BulletEffect {
         public void effect() {
-            if (!gameplayScreen.isRewinding())
+            /*if (!gameplayScreen.isRewinding())
                 //currentBulletRecord.effect = BulletEffect.this;
-                currentBulletRecord.effectTookPlace = true;
+                currentBulletRecord.effectTookPlace = true;*/
         }
 
-        public void reverseEffect() {
+        /*public void reverseEffect() {
 
-        }
+        }*/
     }
 
     //------------------------------------------------------------------------------------------------------------
@@ -966,17 +977,23 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
             armor = new BulletEffect() {
                 @Override
                 public void effect() {
-                    super.effect();
-
-                    gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack();
+                    if (gameplayScreen.getLazerAttackStuff().incrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack(parent.getIndex())) {
+                        //super.effect();
+                        // If it was actually incremented, record that the effect took place.
+                        BulletEffectRecord armorEffectRecord =
+                                gameplayScreen.getRewindEngine().obtainBulletEffectRecord(BulletEffectRecord.BulletEffectRecordType.ARMOR);
+                        gameplayScreen.getRewindEngine().pushRewindEvent(armorEffectRecord);
+                    }
                 }
 
-                @Override
+                /*@Override
                 public void reverseEffect() {
                     super.reverseEffect();
 
-                    gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack();
-                }
+                    //if (currentBulletRecord.bulletPortalType == BulletPortalType.PORTAL_ENTRANCE)
+                    //    Gdx.app.log(TAG, "HERE!");
+                    gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack(parent.getIndex());
+                }*/
             };
 
             twoExitPortal = new BulletEffect() {

@@ -2,6 +2,11 @@ package com.yaamani.battleshield.alpha.MyEngine;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.FloatArray;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * @Author Mahmoud Yamani
@@ -304,6 +309,10 @@ public abstract class MyInterpolation extends Interpolation {
             return MyMath.sin(a * MathUtils.PI / 2);
         }
     };
+
+
+
+
 
 
 
@@ -643,6 +652,60 @@ public abstract class MyInterpolation extends Interpolation {
             if (n <= 0)
                 throw new ValueOutOfRangeException("n must be positive.");
             this.n = n;
+        }
+    }
+
+
+    /**
+     * <p>The output will always be the same as long as the seed, initiated by the value {@code l}, is the same.</p>
+     * <p>The random output changes every {@code interval}.</p>
+     */
+    public static class DeterministicRandomInterpolation extends Interpolation {
+
+        private Random random;
+        private float l;
+        private float interval;
+        private float[] randomFloats;
+
+        /**
+         * @param l The output will always be the same as long as the seed, initiated by the value {@code l}, is the same.
+         * @param interval The random output changes every {@code interval}.
+         */
+        public DeterministicRandomInterpolation(long l, float interval) {
+            random = new Random();
+            setL(l);
+            setInterval(interval);
+
+            randomFloats = new float[(int) (1/interval)+1];
+            for (int i = 1; i < randomFloats.length-1; i++)
+                randomFloats[i] = random.nextFloat();
+            randomFloats[0] = 0; // The first interval must be 0.
+            randomFloats[randomFloats.length-1] = 1; // The last interval must be 1.
+        }
+
+        @Override
+        public float apply(float a) {
+            int i = (int) (a/interval);
+            return randomFloats[i];
+        }
+
+        public float getL() {
+            return l;
+        }
+
+        private void setL(long l) {
+            this.l = l;
+            random.setSeed(l);
+        }
+
+        public float getInterval() {
+            return interval;
+        }
+
+        private void setInterval(float interval) {
+            if (interval <= 0 | interval >= 1)
+                throw new ValueOutOfRangeException("interval(" + interval + ") should be between 0 and 1.");
+            this.interval = interval;
         }
     }
 

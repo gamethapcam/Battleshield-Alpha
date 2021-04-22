@@ -99,7 +99,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
     //private SpecialBulletTempProgressBarUI specialBulletTempProgressBarUI;
     //private TwoExitPortalUI twoExitPortalUI;
 
-    private TimelineTesting timelineTesting;
+    //private TimelineTesting timelineTesting;
 
 
 
@@ -240,8 +240,8 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         /*twoExitPortalUI = new TwoExitPortalUI(myBitmapFont, Assets.instance.gameplayAssets.twoExitPortal, Assets.instance.gameplayAssets.twoExitPortalGlow);
         addActor(twoExitPortalUI);*/
 
-        timelineTesting = new TimelineTesting(myBitmapFont);
-        addActor(timelineTesting);
+        /*timelineTesting = new TimelineTesting(myBitmapFont);
+        addActor(timelineTesting);*/
     }
 
 

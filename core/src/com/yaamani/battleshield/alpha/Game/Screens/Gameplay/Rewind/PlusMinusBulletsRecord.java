@@ -14,7 +14,7 @@ public class PlusMinusBulletsRecord extends RewindEngine.RewindEvent {
     }
 
     @Override
-    public void onStart() {
+    public void onStart(float overTimeMillis) {
         if (plus) {
             int toBeDecrementedContainerIndex = containerIndex + 1;
             BulletsAndShieldContainer toBeDecrementedContainer = gameplayScreen.getBulletsAndShieldContainers()[toBeDecrementedContainerIndex];
@@ -25,5 +25,13 @@ public class PlusMinusBulletsRecord extends RewindEngine.RewindEvent {
             BulletsAndShieldContainer container = gameplayScreen.getBulletsAndShieldContainers()[index];
             gameplayScreen.getShieldsAndContainersHandler().incrementActiveShieldsNum(container);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "PlusMinusBulletsRecord{" +
+                "plus=" + plus +
+                ", containerIndex=" + containerIndex +
+                '}';
     }
 }

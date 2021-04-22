@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.RewindEngine;
@@ -305,6 +306,18 @@ public class GameplayScreen extends AdvancedScreen {
             bulletsHandler.update(delta);
 
             levelFinishStuff.update(delta);
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            Pool<Bullet> bulletPool = getBulletsHandler().getBulletPool();
+            Bullet b = bulletPool.obtain();
+            b.getEffects().getRewind().effect();
+            bulletPool.free(b);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            Pool<Bullet> bulletPool = getBulletsHandler().getBulletPool();
+            Bullet b = bulletPool.obtain();
+            b.getEffects().getTwoExitPortal().effect();
+            bulletPool.free(b);
         }
 
         bulletsHandler.updatePlusMinusBulletsTween(delta);

@@ -1,6 +1,5 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.ScoreTimerStuff;
@@ -19,7 +18,7 @@ public class AffectTimerColorRecord extends RewindEngine.RewindEvent {
     }
 
     @Override
-    public void onStart() {
+    public void onStart(float overTimeMillis) {
         ScoreTimerStuff scoreTimerStuff = gameplayScreen.getScoreTimerStuff();
 
         scoreTimerStuff.setAffectTimerTweenInitialValue(affectTimerTweenInitialValue);

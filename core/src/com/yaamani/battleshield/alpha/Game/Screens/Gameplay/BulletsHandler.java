@@ -1,7 +1,6 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -296,21 +295,8 @@ public class BulletsHandler implements Updatable {
         starBulletSecondStage.update(delta);
         starBulletThirdStage.update(delta);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            Pool<Bullet> bulletPool = gameplayScreen.getBulletsHandler().getBulletPool();
-            Bullet b = bulletPool.obtain();
-            b.getEffects().getRewind().effect();
-            bulletPool.free(b);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            Pool<Bullet> bulletPool = gameplayScreen.getBulletsHandler().getBulletPool();
-            Bullet b = bulletPool.obtain();
-            b.getEffects().getTwoExitPortal().effect();
-            bulletPool.free(b);
-        }
 
-
-        if (!stopHandlingNewWave)
-            handleNewWave();
+        handleNewWave(false, true);
 
 
         networkTransmissionAndStorageStuff();
@@ -770,7 +756,6 @@ public class BulletsHandler implements Updatable {
                 if (isFake)
                     bullet.getFakeTween().start(fakeTweenDelay);
 
-
             }
         } else {
             Gdx.app.log(TAG, "Attaching " + currentSpecialBullets[typeIndexForDoubleWave] + " to " + parent.toString());
@@ -814,7 +799,8 @@ public class BulletsHandler implements Updatable {
         }
     }
 
-    private void handleNewWave() {
+    public boolean handleNewWave(boolean forceSingle, boolean ifSingleConsiderFake) {
+        if (stopHandlingNewWave) return false;
 
         // If all containers are transparent -> return
         for (int i = 0; i < gameplayScreen.getBulletsAndShieldContainers().length; i++) {
@@ -822,25 +808,30 @@ public class BulletsHandler implements Updatable {
                 break;
 
             if (i == gameplayScreen.getBulletsAndShieldContainers().length - 1)
-                return;
+                return false;
         }
 
         if (currentWaveLastBullet != null) {
 
 
-            if (!currentWaveLastBullet.isInUse() & gameplayScreen.getState() == GameplayScreen.State.PLAYING)
-                newWave(false, true);
+            if (!currentWaveLastBullet.isInUse() & gameplayScreen.getState() == GameplayScreen.State.PLAYING) {
+                newWave(forceSingle, ifSingleConsiderFake);
+                return true;
 
-            else {
+            } else {
                 if (currentWaveLastBullet.getBulletType() == Bullet.BulletType.ORDINARY) {
 
-                    if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_ORDINARY_HEIGHT + BULLETS_CLEARANCE_BETWEEN_WAVES))
-                        newWave(false, true);
+                    if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_ORDINARY_HEIGHT + BULLETS_CLEARANCE_BETWEEN_WAVES)) {
+                        newWave(forceSingle, ifSingleConsiderFake);
+                        return true;
+                    }
 
                 } else {
 
-                    if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_SPECIAL_DIAMETER / 2f + BULLETS_SPECIAL_WAVE_LENGTH / 2f + BULLETS_CLEARANCE_BETWEEN_WAVES))
-                        newWave(false, true);
+                    if (currentWaveLastBullet.getY() < Bullet.getR() - (BULLETS_SPECIAL_DIAMETER / 2f + BULLETS_SPECIAL_WAVE_LENGTH / 2f + BULLETS_CLEARANCE_BETWEEN_WAVES)) {
+                        newWave(forceSingle, ifSingleConsiderFake);
+                        return true;
+                    }
 
                 }
             }
@@ -849,9 +840,12 @@ public class BulletsHandler implements Updatable {
             /*for (BulletsAndShieldContainer container:gameplayScreen.getBulletsAndShieldContainers()) {
                 Gdx.app.log(TAG, "index = " + container.getIndex() + ", a = " + container.getColor().a);
             }*/
-            newWave(false, true);
+            newWave(forceSingle, ifSingleConsiderFake);
+            return true;
             //Gdx.app.log(TAG, "null");
         }
+
+        return false;
     }
 
     private /*int*/SpecialBullet determineSpecialBullet(int indexForDoubleWave) {
@@ -928,7 +922,7 @@ public class BulletsHandler implements Updatable {
                 if (random.nextFloat() <= currentPlanetSpecialBulletsProbability) {
                     currentSpecialBullet = MyMath.pickRandomElement(currentPlanetSpecialBullets);
 
-                    if (currentSpecialBullet == SpecialBullet.REWIND) {
+                    /*if (currentSpecialBullet == SpecialBullet.REWIND) {
 
                         boolean willRewindBulletSlowMoInterfereWithLazerAttack = willRewindBulletSlowMoInterfereWithLazerAttack();
 
@@ -950,7 +944,7 @@ public class BulletsHandler implements Updatable {
                             }
 
                         } else setBulletCausingSlowMoExists(true);
-                    }
+                    }*/
 
                     return currentSpecialBullet;
                 }

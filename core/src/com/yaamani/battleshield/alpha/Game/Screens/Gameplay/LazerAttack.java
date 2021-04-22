@@ -6,7 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Resizable;
+import com.yaamani.battleshield.alpha.MyEngine.Timeline;
 import com.yaamani.battleshield.alpha.MyEngine.Tween;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
@@ -19,14 +21,15 @@ public class LazerAttack extends Group implements Updatable, Resizable {
     private Image lazerGlow;
     private Image haloArmor;
 
-    private Tween lazerGunFadeInTween;
+    private Tween initialFadeTween;
     private Tween lazerGlowShrinkingTween;
     private Tween lazerBeamShrinkingTween;
     private float lazerBeamVisibilityProbability = 1;
     private Tween lazerBeamVisibilityProbabilityTween;
     private Tween haloArmorBlinkingTween;
+    private Tween finalFadeTween;
 
-
+    private Timeline lazerAttackTimeline;
 
 
     private GameplayScreen gameplayScreen;
@@ -50,20 +53,26 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
         //setRotation(45);
 
-        initializeLazerGunFadeInTween();
+        initializeInitialFadeTween();
         initializeLazerGlowShrinkingTween();
         initializeLazerBeamShrinkingTween();
         initializeLazerBeamVisibilityProbabilityTween();
         initializeHaloArmorBlinkingTween();
+        initializeFinalFadeTween();
+
+        initializeLazerAttackTimeline();
     }
 
     @Override
     public void update(float delta) {
-        lazerGunFadeInTween.update(delta);
+        lazerAttackTimeline.update(delta);
+
+        initialFadeTween.update(delta);
         lazerGlowShrinkingTween.update(delta);
         lazerBeamShrinkingTween.update(delta);
         lazerBeamVisibilityProbabilityTween.update(delta);
         haloArmorBlinkingTween.update(delta);
+        finalFadeTween.update(delta);
     }
 
     @Override
@@ -93,19 +102,20 @@ public class LazerAttack extends Group implements Updatable, Resizable {
     }
 
     public void start() {
-        lazerGunFadeInTween.start();
+        //lazerGunFadeInTween.start();
+        lazerAttackTimeline.start();
         onStart();
     }
 
     public void onStart() {
-        LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
-        if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
-            haloArmor.addAction(Actions.alpha(1, LAZER_ALPHA_ACTION_DURATION));
-        }
+        /*LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
+        if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= *//*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*//*lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
+            haloArmor.addAction(Actions.alpha(1, LAZER_FADE_DURATION));
+        }*/
     }
 
     public void onFinish() {
-        lazerGun.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+
     }
 
     //-------------------------------- Utility ---------------------------------
@@ -140,7 +150,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
         if (lazerAttackHealthAffection.equals(LazerAttackStuff.LazerAttackHealthAffection.YAMANI)) {
 
             if (healthHandler.getHealth().getCurrentFinalValue() > 1)
-                healthHandler.setHealthValueTo(0.6f, LAZER_BEAM_SHRINKING_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
+                healthHandler.setHealthValueTo(1 + D_LAZER_YAMANI_HEALTH_AFFECTION_AMOUNT, LAZER_BEAM_SHRINKING_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
             else
                 healthHandler.affectHealth(D_LAZER_YAMANI_HEALTH_AFFECTION_AMOUNT, LAZER_BEAM_SHRINKING_TWEEN_DURATION, HEALTH_BAR_TWEEN_INTERPOLATION);
 
@@ -167,12 +177,20 @@ public class LazerAttack extends Group implements Updatable, Resizable {
     //------------------------------ initializers ------------------------------
     //------------------------------ initializers ------------------------------
 
-    private void initializeLazerGunFadeInTween() {
-        lazerGunFadeInTween = new Tween(LAZER_GUN_FADE_IN_TWEEN_DURATION, Interpolation.linear) {
+    private void initializeInitialFadeTween() {
+        initialFadeTween = new Tween(LAZER_GUN_FADE_IN_TWEEN_DURATION, Interpolation.linear) {
             @Override
             public void tween(float percentage, Interpolation interpolation) {
-                float a = interpolation.apply(percentage);
-                lazerGun.setColor(1, 1, 1, a);
+                float aIn = interpolation.apply(percentage);
+                lazerGun.setColor(1, 1, 1, aIn);
+
+                LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
+                if (lazerAttackStuff.didThePlayerCollectAllTheNecessaryArmorBullets())
+                    haloArmor.setColor(1, 1, 1, aIn);
+
+                float aOut = interpolation.apply(1, 0, percentage);
+                gameplayScreen.getControllerLeft().setColor(1, 1, 1, aOut);
+                gameplayScreen.getControllerRight().setColor(1, 1, 1, aOut);
             }
 
             @Override
@@ -181,12 +199,12 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
                 if (gameplayScreen.getState() != GameplayScreen.State.PLAYING) return;
 
-                lazerBeamShrinkingTween.start();
-                lazerGlowShrinkingTween.start();
+                //lazerBeamShrinkingTween.start();
+                //lazerGlowShrinkingTween.start();
 
                 LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
-                if (lazerAttackStuff.getCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack() >= /*LAZER_NECESSARY_NUMBER_OF_ARMOR_BULLETS_TO_ACTIVATE_THE_LAZER_ARMOR*/lazerAttackStuff.getCurrentNecessaryNumOfArmorBulletsForTheNextAttack()) {
-                    haloArmorBlinkingTween.start();
+                if (lazerAttackStuff.didThePlayerCollectAllTheNecessaryArmorBullets()) {
+                    //haloArmorBlinkingTween.start();
                 } else {
 
                     if (gameplayScreen.getGameplayMode() == GameplayMode.LAZER)
@@ -196,9 +214,14 @@ public class LazerAttack extends Group implements Updatable, Resizable {
                 }
 
             }
+
+            /*@Override
+            public String toString() {
+                return "lazerGunFadeInTween";
+            }*/
         };
 
-        gameplayScreen.addToFinishWhenStoppingTheGameplay(lazerGunFadeInTween);
+        //gameplayScreen.addToFinishWhenStoppingTheGameplay(initialFadeTween);
     }
 
     private void initializeLazerGlowShrinkingTween() {
@@ -207,9 +230,14 @@ public class LazerAttack extends Group implements Updatable, Resizable {
             @Override
             public void onStart() {
                 super.onStart();
-                lazerGlow.setHeight(LAZER_GLOW_HEIGHT);
 
-                calculateLazerGlowHorizontalBounds();
+                if (!gameplayScreen.isRewinding()) {
+                    lazerGlow.setHeight(LAZER_GLOW_HEIGHT);
+
+                    calculateLazerGlowHorizontalBounds();
+                } else {
+                    lazerGlow.setColor(1, 1, 1, 0);
+                }
             }
 
             @Override
@@ -234,9 +262,14 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
 
             }
+
+            /*@Override
+            public String toString() {
+                return "lazerGlowShrinkingTween";
+            }*/
         };
 
-        gameplayScreen.addToFinishWhenStoppingTheGameplay(lazerGlowShrinkingTween);
+        //gameplayScreen.addToFinishWhenStoppingTheGameplay(lazerGlowShrinkingTween);
     }
 
     private void initializeLazerBeamShrinkingTween() {
@@ -244,21 +277,27 @@ public class LazerAttack extends Group implements Updatable, Resizable {
             @Override
             public void onStart() {
                 super.onStart();
-                lazerBeam.setColor(1, 1, 1, 1);
+                if (!gameplayScreen.isRewinding()) {
 
-                calculateLazerBeamHorizontalBounds();
+                    lazerBeam.setColor(1, 1, 1, 1);
+
+                    calculateLazerBeamHorizontalBounds();
+                } else {
+                    lazerBeam.setColor(1, 1, 1, 0);
+                }
             }
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 float height = interpolation.apply(LAZER_BEAM_HEIGHT, LAZER_BEAM_HEIGHT/4f, percentage);
-                float heightMultiplier = MathUtils.random(LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_LOW, LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_HIGH);
+                //float heightMultiplier = MathUtils.random(LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_LOW, LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_HIGH);
+                float heightMultiplier = LAZER_BLINKING_MOTION_INTERPOLATION.apply(LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_LOW, LAZER_BEAM_SHRINKING_HEIGHT_MULTIPLIER_HIGH, percentage);
                 lazerBeam.setHeight(height * heightMultiplier);
                 lazerBeam.setY(-lazerBeam.getHeight()/2f);
 
-                float millisLeft = (1-percentage)*getDurationMillis();
+                /*float millisLeft = (1-percentage)*getDurationMillis();
                 if (!lazerBeamVisibilityProbabilityTween.isStarted() & millisLeft <= LAZER_BEAM_VISIBILITY_PROBABILITY_TWEEN_DURATION)
-                    lazerBeamVisibilityProbabilityTween.start();
+                    lazerBeamVisibilityProbabilityTween.start();*/
             }
 
             @Override
@@ -269,8 +308,12 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
                 if (gameplayScreen.getState() != GameplayScreen.State.PLAYING) return;
 
-                LazerAttack.this.onFinish();
             }
+
+            /*@Override
+            public String toString() {
+                return "lazerBeamShrinkingTween";
+            }*/
         };
     }
 
@@ -281,16 +324,25 @@ public class LazerAttack extends Group implements Updatable, Resizable {
             public void onStart() {
                 super.onStart();
 
-                lazerBeamVisibilityProbability = 1;
+                if (!gameplayScreen.isRewinding())
+                    lazerBeamVisibilityProbability = 1;
+                /*else
+                    lazerBeam.setColor(1, 1, 1, 0);*/
+
             }
 
             @Override
             public void tween(float percentage, Interpolation interpolation) {
                 lazerBeamVisibilityProbability = interpolation.apply(1, 0, percentage);
-                if (MathUtils.random() > lazerBeamVisibilityProbability)
+                if (LAZER_BLINKING_MOTION_INTERPOLATION.apply(percentage) > lazerBeamVisibilityProbability)
                     lazerBeam.setColor(1, 1, 1, 0);
                 else lazerBeam.setColor(1, 1, 1, 1);
             }
+
+            /*@Override
+            public String toString() {
+                return "lazerBeamVisibilityProbabilityTween";
+            }*/
         };
     }
 
@@ -298,22 +350,111 @@ public class LazerAttack extends Group implements Updatable, Resizable {
         haloArmorBlinkingTween = new Tween(LAZER_HALO_ARMOR_BLINKING_TWEEN_DURATION) {
 
             @Override
+            public void onStart() {
+                super.onStart();
+
+                /*LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
+                if (!lazerAttackStuff.didThePlayerCollectAllArmorBullets()) {
+                    finish();
+                    //haloArmorFadeOutTween.finish();
+                    haloArmor.setColor(1, 1, 1, 0);
+                }*/
+            }
+
+            @Override
             public void tween(float percentage, Interpolation interpolation) {
                 //float start = (1-lazerBeamVisibilityProbability)/(1-LAZER_HALO_ARMOR_BLINKING_START_ALPHA) + LAZER_HALO_ARMOR_BLINKING_START_ALPHA;
                 //float start = 1-lazerBeamVisibilityProbability;
-                float a = MathUtils.random(LAZER_HALO_ARMOR_BLINKING_START_ALPHA, 1);
-                haloArmor.setColor(1, 1, 1,a);
+                LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
+                if (lazerAttackStuff.didThePlayerCollectAllTheNecessaryArmorBullets()) {
+                    float a = MathUtils.random(LAZER_HALO_ARMOR_BLINKING_START_ALPHA, 1);
+                    haloArmor.setColor(1, 1, 1, a);
+                }
             }
 
             @Override
             public void onFinish() {
                 super.onFinish();
 
-                haloArmor.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+                //haloArmor.addAction(Actions.alpha(0, LAZER_ALPHA_ACTION_DURATION));
+                //haloArmorFadeOutTween.start();
 
                 if (gameplayScreen.getState() != GameplayScreen.State.PLAYING) return;
 
             }
+
+            /*@Override
+            public String toString() {
+                return "haloArmorBlinkingTween";
+            }*/
         };
+    }
+
+    private void initializeFinalFadeTween() {
+        finalFadeTween = new Tween((float) (LAZER_FADE_DURATION * MyMath.SECONDS_TO_MILLIS)) {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+
+                LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
+                lazerAttackStuff.getNextLazerAttackTimer().setPercentage(0);
+                lazerAttackStuff.getNextLazerAttackTimer().onUpdate(0);
+                lazerAttackStuff.getNextLazerAttackTimer().pause();
+            }
+
+            @Override
+            public void tween(float percentage, Interpolation interpolation) {
+                float aOut = interpolation.apply(1, 0, percentage);
+                float aIn = interpolation.apply(0, 1, percentage);
+
+                gameplayScreen.getControllerLeft().setColor(1, 1, 1, aIn);
+                gameplayScreen.getControllerRight().setColor(1, 1, 1, aIn);
+
+                lazerGun.setColor(1, 1, 1, aOut);
+
+                LazerAttackStuff lazerAttackStuff = gameplayScreen.getLazerAttackStuff();
+                if (lazerAttackStuff.didThePlayerCollectAllTheNecessaryArmorBullets())
+                    haloArmor.setColor(1, 1, 1, aOut);
+
+                if (lazerAttackStuff.didThePlayerCollectAllTheNecessaryArmorBullets())
+                    lazerAttackStuff.getArmorGlowing().setColor(1, 1, 1, aOut);
+
+                if (lazerAttackStuff.areThereAnyLazerAttacksLeft()) {
+                    lazerAttackStuff.getNextLazerAttackTimerText().setColor(1, 1, 1, aIn);
+                } else {
+                    lazerAttackStuff.getArmorBlack().setColor(1, 1, 1, aOut);
+                    lazerAttackStuff.getCollectedArmorBulletsText().setColor(1, 1, 1, aOut);
+                }
+            }
+
+            /*@Override
+            public String toString() {
+                return "haloArmorFadeOutTween";
+            }*/
+        };
+    }
+
+    private void initializeLazerAttackTimeline() {
+
+        lazerAttackTimeline = new Timeline(6) {
+            @Override
+            public void onFinish() {
+                super.onFinish();
+
+                if (gameplayScreen.getState() != GameplayScreen.State.PLAYING) return;
+
+                LazerAttack.this.onFinish();
+            }
+        };
+
+        lazerAttackTimeline.addTimer(initialFadeTween, 0);
+        lazerAttackTimeline.addTimer(lazerBeamShrinkingTween, initialFadeTween.getDurationMillis());
+        lazerAttackTimeline.addTimer(lazerGlowShrinkingTween, initialFadeTween.getDurationMillis());
+        lazerAttackTimeline.addTimer(lazerBeamVisibilityProbabilityTween, initialFadeTween.getDurationMillis() + lazerBeamShrinkingTween.getDurationMillis() - lazerBeamVisibilityProbabilityTween.getDurationMillis());
+        lazerAttackTimeline.addTimer(haloArmorBlinkingTween, initialFadeTween.getDurationMillis());
+        lazerAttackTimeline.addTimer(finalFadeTween, lazerAttackTimeline.getStartTimeOf(haloArmorBlinkingTween) + haloArmorBlinkingTween.getDurationMillis());
+
+        gameplayScreen.addToFinishWhenStoppingTheGameplay(lazerAttackTimeline);
     }
 }

@@ -7,7 +7,7 @@ import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
 
 public class BulletEffectRecord extends RewindEngine.RewindEvent {
 
-    public enum BulletEffectRecordType {MIRROR, FASTER_DIZZINESS_ROTATION, TWO_EXIT_PORTAL}
+    public enum BulletEffectRecordType {MIRROR, FASTER_DIZZINESS_ROTATION, TWO_EXIT_PORTAL, ARMOR}
 
     public BulletEffectRecordType bulletEffectRecordType;
 
@@ -18,7 +18,7 @@ public class BulletEffectRecord extends RewindEngine.RewindEvent {
     }
 
     @Override
-    public void onStart() {
+    public void onStart(float overTimeMillis) {
 
         switch (bulletEffectRecordType) {
             case MIRROR:
@@ -48,6 +48,18 @@ public class BulletEffectRecord extends RewindEngine.RewindEvent {
                 gameplayScreen.getTwoExitPortalUI().updateText(gameplayScreen.getBulletsHandler().getRemainingTwoExitPortals());
                 break;
 
+            case ARMOR:
+                gameplayScreen.getLazerAttackStuff().decrementCurrentNumOfCollectedArmorBulletsByThePlayerForNextAttack(-1);
+                break;
+
         }
+    }
+
+    @Override
+    public String toString() {
+        return "BulletEffectRecord{" +
+                "bulletEffectRecordType=" + bulletEffectRecordType +
+                ", val=" + val +
+                '}';
     }
 }

@@ -144,13 +144,19 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                 float durationMillis = (float) (currentPortalRecord.duration*MyMath.SECONDS_TO_MILLIS);
                 if (durationMillis <= PORTALS_CONTAINER_PORTAL_ALPHA_DURATION & !portalEntranceExitFadeInOutTween.isStarted()) {
                     // When rewinding, this will make the portal fade out.
-                    tweenEntrance = currentPortalRecord.type == BulletPortalType.PORTAL_ENTRANCE;
-                    fadeIn = true;
-                    calculateFadeInOutTweenInitialAndFinalValues();
-                    //float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
-                    portalEntranceExitFadeInOutTween.setPercentage(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION/*percentage*/);
+
+                    if (durationMillis >= 0) {
+
+                        tweenEntrance = currentPortalRecord.type == BulletPortalType.PORTAL_ENTRANCE;
+                        fadeIn = true;
+                        calculateFadeInOutTweenInitialAndFinalValues();
+                        //float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
+                        //portalEntranceExitFadeInOutTween.setPercentage(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION/*percentage*/);
+                        //Gdx.app.log(TAG, "portalEntranceExitFadeInOutTween");
+                        portalEntranceExitFadeInOutTween.setCurrentTime(durationMillis);
                     /*if (d ==  null & tweenEntrance)
                         d = portalEntranceExitFadeInOutTween;*/
+                    }
                 }
             }
         }

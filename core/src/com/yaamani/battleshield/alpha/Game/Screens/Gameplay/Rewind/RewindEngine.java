@@ -1,12 +1,9 @@
 package com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
+import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
 import java.util.Arrays;
@@ -26,7 +23,7 @@ public class RewindEngine implements Updatable {
     private Pool<TouchInputRecord> touchInputRecordPool;
     private Pool<AffectTimerRecord> affectTimerRecordPool;
     private Pool<AffectTimerColorRecord> affectTimerColorRecordPool;
-
+    private Pool<NextLazerAttackTimerRecord> nextLazerAttackTimerRecordPool;
 
 
     private float deltaTimeFromTheLastPushedEvent;
@@ -51,6 +48,7 @@ public class RewindEngine implements Updatable {
         initializeTouchInputRecordPool();
         initializeAffectTimerRecordPool();
         initializeAffectTimerColorRecordPool();
+        initializeNextLazerAttackTimerRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -83,8 +81,10 @@ public class RewindEngine implements Updatable {
 
                         if (event instanceof TouchInputRecord)
                             lastTouchInputRecord = (TouchInputRecord) rewindEvents.pop();
-                        else
-                            rewindEvents.pop().onStart();
+                        else {
+                            float overTime = (float) (deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession * MyMath.SECONDS_TO_MILLIS);
+                            rewindEvents.pop().onStart(overTime);
+                        }
 
                         freeRewindEvent(event);
                     } else
@@ -99,8 +99,10 @@ public class RewindEngine implements Updatable {
                     break;
             }
 
-            if (lastTouchInputRecord != null)
-                lastTouchInputRecord.onStart();
+            if (lastTouchInputRecord != null) {
+                float overTime = (float) (deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession * MyMath.SECONDS_TO_MILLIS);
+                lastTouchInputRecord.onStart(overTime);
+            }
         }
     }
 
@@ -112,7 +114,7 @@ public class RewindEngine implements Updatable {
                 RewindEvent dequeuedEvent = rewindEvents.removeLast();
                 totalTimeForAllPushedEvents -= dequeuedEvent.deltaTimeToTheNextEvent;
                 freeRewindEvent(dequeuedEvent);
-                Gdx.app.log(TAG, "XX Rewind Event Removed XX");
+                //Gdx.app.log(TAG, "XX Rewind Event Removed XX");
             }
         }
     }
@@ -127,6 +129,8 @@ public class RewindEngine implements Updatable {
         deltaTimeFromTheLastPushedEvent = 0;
 
         // Gdx.app.log(TAG, Arrays.toString(rewindEvents.toArray()));
+        if (!(rewindEvent instanceof TouchInputRecord))
+            Gdx.app.log(TAG, "Pushing rewind event " + rewindEvent.toString());
     }
 
     public void setDeltaTimeForLastPushedEvent() {
@@ -141,7 +145,7 @@ public class RewindEngine implements Updatable {
         deltaTimeFromTheLastPoppedEventInTheCurrentRewindingSession = 0;
         setDeltaTimeForLastPushedEvent();
         onEventPushed();
-        Gdx.app.log(TAG, Arrays.toString(rewindEvents.toArray()));
+        //Gdx.app.log(TAG, Arrays.toString(rewindEvents.toArray()));
     }
 
     private void freeRewindEvent(RewindEvent event) {
@@ -159,6 +163,8 @@ public class RewindEngine implements Updatable {
             affectTimerRecordPool.free((AffectTimerRecord) event);
         else if (event instanceof AffectTimerColorRecord)
             affectTimerColorRecordPool.free((AffectTimerColorRecord) event);
+        else if (event instanceof NextLazerAttackTimerRecord)
+            nextLazerAttackTimerRecordPool.free((NextLazerAttackTimerRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
     }
@@ -191,6 +197,10 @@ public class RewindEngine implements Updatable {
 
     public AffectTimerColorRecord obtainAffectTimerColorRecord() {
         return affectTimerColorRecordPool.obtain();
+    }
+
+    public NextLazerAttackTimerRecord obtainNextLazerAttackTimerRecord() {
+        return nextLazerAttackTimerRecordPool.obtain();
     }
 
     public void clearRewindEvents() {
@@ -226,7 +236,7 @@ public class RewindEngine implements Updatable {
                 obj.timeAfterFakeTweenFinished = Float.MAX_VALUE/2f;
                 obj.parentContainerIndex = -1;
                 obj.bulletPortalType = null;
-                obj.effectTookPlace = false;
+                //obj.effectTookPlace = false;
 
                 return obj;
             }
@@ -335,6 +345,15 @@ public class RewindEngine implements Updatable {
         };
     }
 
+    private void initializeNextLazerAttackTimerRecordPool() {
+        nextLazerAttackTimerRecordPool = new Pool<NextLazerAttackTimerRecord>(REWIND_NEXT_LAZER_ATTACK_TIMER_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+            @Override
+            protected NextLazerAttackTimerRecord newObject() {
+                return new NextLazerAttackTimerRecord(gameplayScreen);
+            }
+        };
+    }
+
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
@@ -357,7 +376,11 @@ public class RewindEngine implements Updatable {
             this.deltaTimeToTheNextEvent = deltaTimeToTheNextEvent;
         }
 
-        public abstract void onStart();
+        /**
+         *
+         * @param overTimeMillis Naturally the event will be executed a bit later. This parameter tells you how much later.
+         */
+        public abstract void onStart(float overTimeMillis);
 
         @Override
         public String toString() {

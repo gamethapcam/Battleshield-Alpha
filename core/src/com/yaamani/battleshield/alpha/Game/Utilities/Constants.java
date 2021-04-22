@@ -883,7 +883,7 @@ public final class Constants {
 
 
 
-    public static final float LAZER_LEVEL_TIME = 5/*0.5f*/; //minutes
+    public static final float LAZER_LEVEL_TIME = /*5*/0.5f; //minutes
 
     public static final int LAZER_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
@@ -930,7 +930,7 @@ public final class Constants {
 
     public static final float LAZER_TEXT_ARMOR_BULLET_HOW_MANY_COLLECTED_UI_Y = WORLD_SIZE * 0.457f;
 
-    public static final float LAZER_ALPHA_ACTION_DURATION = 0.25f; // sec
+    public static final float LAZER_FADE_DURATION = 0.25f; // sec
 
     public static final float LAZER_GUN_HEIGHT = WORLD_SIZE / 10f;
 
@@ -965,6 +965,8 @@ public final class Constants {
     public static final float LAZER_BEAM_VISIBILITY_PROBABILITY_TWEEN_DURATION = LAZER_BEAM_SHRINKING_TWEEN_DURATION*0.7f;
 
     public static final Interpolation LAZER_BEAM_VISIBILITY_PROBABILITY_TWEEN_INTERPOLATION = Interpolation.exp5In;
+
+    public static final Interpolation LAZER_BLINKING_MOTION_INTERPOLATION = new MyInterpolation.DeterministicRandomInterpolation(42, 0.001f);
 
     public static final float LAZER_HALO_ARMOR_BLINKING_TWEEN_DURATION = LAZER_BEAM_SHRINKING_TWEEN_DURATION;
 
@@ -1328,6 +1330,8 @@ public final class Constants {
     public static final int REWIND_AFFECT_TIMER_RECORD_POOL_INITIAL_CAPACITY = REWIND_BULLET_RECORD_POOL_INITIAL_CAPACITY;
 
     public static final int REWIND_AFFECT_TIMER_COLOR_RECORD_POOL_INITIAL_CAPACITY = REWIND_BULLET_RECORD_POOL_INITIAL_CAPACITY;
+
+    public static final int REWIND_NEXT_LAZER_ATTACK_TIMER_RECORD_POOL_INITIAL_CAPACITY = LAZER_NUMBER_OF_LAZER_ATTACKS;
 
 
 

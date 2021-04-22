@@ -216,7 +216,7 @@ public class Timer implements Updatable {
         return currentTime;
     }
 
-    protected void setCurrentTime(float currentTime) {
+    public void setCurrentTime(float currentTime) {
         if (currentTime > durationMillis | currentTime < 0)
             throw new ValueOutOfRangeException("currentTime(" + currentTime + ") must be smaller than durationMillis(" + getDurationMillis() + ") and greater than 0.");
         this.currentTime = currentTime;

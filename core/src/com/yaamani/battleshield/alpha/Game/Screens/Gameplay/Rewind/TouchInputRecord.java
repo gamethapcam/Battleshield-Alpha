@@ -23,7 +23,7 @@ public class TouchInputRecord extends RewindEngine.RewindEvent {
     }
 
     @Override
-    public void onStart() {
+    public void onStart(float overTimeMillis) {
         Controller controller;
         if (controllerPosition == Constants.Direction.LEFT)
             controller = gameplayScreen.getControllerLeft();
@@ -37,4 +37,6 @@ public class TouchInputRecord extends RewindEngine.RewindEvent {
             controller.getMyTouchListener().dragged(event, x, y, pointer);
 
     }
+
+
 }
