@@ -25,6 +25,7 @@ public class NextLazerAttackTimerRecord extends RewindEngine.RewindEvent {
 
         Timer nextLazerAttackTimer = lazerAttackStuff.getNextLazerAttackTimer();
         nextLazerAttackTimer.setCurrentTime(nextLazerAttackTimer.getDurationMillis() - overTimeMillis);
+        nextLazerAttackTimer.resume();
     }
 
 }

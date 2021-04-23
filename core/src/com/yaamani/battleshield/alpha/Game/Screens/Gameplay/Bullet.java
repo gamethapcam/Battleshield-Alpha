@@ -258,7 +258,7 @@ public class Bullet extends Group implements Resizable, Pool.Poolable {
         //if (getStage() != null) {
             //Viewport viewport = getStage().getViewport();
             //if (viewport != null)
-                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f)*0.55f;
+                R = Vector2.dst(0, 0, worldWidth/2f, worldHeight/2f)/**0.55f*/;
         //}
     }
 

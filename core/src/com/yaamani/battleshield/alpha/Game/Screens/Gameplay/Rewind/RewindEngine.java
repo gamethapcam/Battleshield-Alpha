@@ -6,7 +6,6 @@ import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
 import com.yaamani.battleshield.alpha.MyEngine.Updatable;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -24,6 +23,7 @@ public class RewindEngine implements Updatable {
     private Pool<AffectTimerRecord> affectTimerRecordPool;
     private Pool<AffectTimerColorRecord> affectTimerColorRecordPool;
     private Pool<NextLazerAttackTimerRecord> nextLazerAttackTimerRecordPool;
+    private Pool<LazerAttackRecord> lazerAttackRecordPool;
 
 
     private float deltaTimeFromTheLastPushedEvent;
@@ -49,6 +49,7 @@ public class RewindEngine implements Updatable {
         initializeAffectTimerRecordPool();
         initializeAffectTimerColorRecordPool();
         initializeNextLazerAttackTimerRecordPool();
+        initializeLazerAttackRecordPool();
         rewindEvents = new LinkedList<>();
     }
 
@@ -165,6 +166,8 @@ public class RewindEngine implements Updatable {
             affectTimerColorRecordPool.free((AffectTimerColorRecord) event);
         else if (event instanceof NextLazerAttackTimerRecord)
             nextLazerAttackTimerRecordPool.free((NextLazerAttackTimerRecord) event);
+        else if (event instanceof LazerAttackRecord)
+            lazerAttackRecordPool.free((LazerAttackRecord) event);
         else
             throw new IllegalStateException("A subclass of RewindEvent that you forgot to free.");
     }
@@ -201,6 +204,10 @@ public class RewindEngine implements Updatable {
 
     public NextLazerAttackTimerRecord obtainNextLazerAttackTimerRecord() {
         return nextLazerAttackTimerRecordPool.obtain();
+    }
+
+    public LazerAttackRecord obtainLazerAttackRecord() {
+        return lazerAttackRecordPool.obtain();
     }
 
     public void clearRewindEvents() {
@@ -346,10 +353,29 @@ public class RewindEngine implements Updatable {
     }
 
     private void initializeNextLazerAttackTimerRecordPool() {
-        nextLazerAttackTimerRecordPool = new Pool<NextLazerAttackTimerRecord>(REWIND_NEXT_LAZER_ATTACK_TIMER_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+        nextLazerAttackTimerRecordPool = new Pool<NextLazerAttackTimerRecord>(REWIND_LAZER_ATTACK_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
             @Override
             protected NextLazerAttackTimerRecord newObject() {
                 return new NextLazerAttackTimerRecord(gameplayScreen);
+            }
+        };
+    }
+
+    private void initializeLazerAttackRecordPool() {
+        lazerAttackRecordPool = new Pool<LazerAttackRecord>(REWIND_LAZER_ATTACK_RECORD_POOL_INITIAL_CAPACITY, Integer.MAX_VALUE, false) {
+            @Override
+            protected LazerAttackRecord newObject() {
+                return new LazerAttackRecord(gameplayScreen);
+            }
+
+            @Override
+            public LazerAttackRecord obtain() {
+                LazerAttackRecord obj = super.obtain();;
+                obj.currentNecessaryNumOfArmorBulletsForTheNextAttack = -1;
+                obj.currentNumOfCollectedArmorBulletsByThePlayerForNextAttack = -1;
+                obj.currentNumOfLazerAttacksThatTookPlace = -1;
+                obj.currentNumOfSpawnedArmorBulletsForTheNextAttack = -1;
+                return obj;
             }
         };
     }
@@ -378,7 +404,7 @@ public class RewindEngine implements Updatable {
 
         /**
          *
-         * @param overTimeMillis Naturally the event will be executed a bit later. This parameter tells you how much later.
+         * @param overTimeMillis Naturally the event will be executed a bit later. This parameter tells you how much later. (+ve) quantity.
          */
         public abstract void onStart(float overTimeMillis);
 

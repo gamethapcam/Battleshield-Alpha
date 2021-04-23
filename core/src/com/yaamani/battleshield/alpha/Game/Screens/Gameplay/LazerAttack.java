@@ -104,7 +104,6 @@ public class LazerAttack extends Group implements Updatable, Resizable {
     public void start() {
         //lazerGunFadeInTween.start();
         lazerAttackTimeline.start();
-        onStart();
     }
 
     public void onStart() {
@@ -116,6 +115,10 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
     public void onFinish() {
 
+    }
+
+    public Timeline getLazerAttackTimeline() {
+        return lazerAttackTimeline;
     }
 
     //-------------------------------- Utility ---------------------------------
@@ -438,6 +441,13 @@ public class LazerAttack extends Group implements Updatable, Resizable {
     private void initializeLazerAttackTimeline() {
 
         lazerAttackTimeline = new Timeline(6) {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                LazerAttack.this.onStart();
+            }
+
             @Override
             public void onFinish() {
                 super.onFinish();

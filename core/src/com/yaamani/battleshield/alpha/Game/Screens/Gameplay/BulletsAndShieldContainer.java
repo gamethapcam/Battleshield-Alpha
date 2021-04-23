@@ -145,18 +145,20 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                 if (durationMillis <= PORTALS_CONTAINER_PORTAL_ALPHA_DURATION & !portalEntranceExitFadeInOutTween.isStarted()) {
                     // When rewinding, this will make the portal fade out.
 
-                    if (durationMillis >= 0) {
 
-                        tweenEntrance = currentPortalRecord.type == BulletPortalType.PORTAL_ENTRANCE;
-                        fadeIn = true;
-                        calculateFadeInOutTweenInitialAndFinalValues();
-                        //float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
-                        //portalEntranceExitFadeInOutTween.setPercentage(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION/*percentage*/);
-                        //Gdx.app.log(TAG, "portalEntranceExitFadeInOutTween");
-                        portalEntranceExitFadeInOutTween.setCurrentTime(durationMillis);
+
+                    tweenEntrance = currentPortalRecord.type == BulletPortalType.PORTAL_ENTRANCE;
+                    fadeIn = true;
+                    calculateFadeInOutTweenInitialAndFinalValues();
+                    //float percentage = MathUtils.clamp(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION, 0.01f, 0.99f);
+                    //portalEntranceExitFadeInOutTween.setPercentage(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION/*percentage*/);
+                    //Gdx.app.log(TAG, "portalEntranceExitFadeInOutTween");
+                    if (durationMillis < 0)
+                        durationMillis = 0; // TODO: May introduce problems/bugs OR make other bugs harder to detect. You could try removing it and run the game (Bug guaranteed, so fix it).
+                    portalEntranceExitFadeInOutTween.setCurrentTime(durationMillis);
                     /*if (d ==  null & tweenEntrance)
                         d = portalEntranceExitFadeInOutTween;*/
-                    }
+
                 }
             }
         }

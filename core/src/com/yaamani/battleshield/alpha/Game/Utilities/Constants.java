@@ -883,7 +883,7 @@ public final class Constants {
 
 
 
-    public static final float LAZER_LEVEL_TIME = /*5*/0.5f; //minutes
+    public static final float LAZER_LEVEL_TIME = 5/*1*/; //minutes
 
     public static final int LAZER_SHIELDS_MAX_COUNT = SHIELDS_UNIVERSAL_MAX_COUNT;
 
@@ -1214,7 +1214,7 @@ public final class Constants {
 
     public static final float D_BIG_BOSS_SPECIAL_BULLETS_PROBABILITY = 0.5f;
 
-    public static final SpecialBullet[] BIG_BOSS_SPECIAL_BULLETS = {SpecialBullet.MIRROR, SpecialBullet.FASTER_DIZZINESS_ROTATION, SpecialBullet.TWO_EXIT_PORTAL, /*SpecialBullet.REWIND*/};
+    public static final SpecialBullet[] BIG_BOSS_SPECIAL_BULLETS = {SpecialBullet.MIRROR, SpecialBullet.FASTER_DIZZINESS_ROTATION, SpecialBullet.TWO_EXIT_PORTAL, SpecialBullet.REWIND};
 
 
     public static final float D_BIG_BOSS_AFFECT_TIMER_ORDINARY_AMOUNT = NO_DEATH ? 0 : -500;
@@ -1331,7 +1331,7 @@ public final class Constants {
 
     public static final int REWIND_AFFECT_TIMER_COLOR_RECORD_POOL_INITIAL_CAPACITY = REWIND_BULLET_RECORD_POOL_INITIAL_CAPACITY;
 
-    public static final int REWIND_NEXT_LAZER_ATTACK_TIMER_RECORD_POOL_INITIAL_CAPACITY = LAZER_NUMBER_OF_LAZER_ATTACKS;
+    public static final int REWIND_LAZER_ATTACK_RECORD_POOL_INITIAL_CAPACITY = LAZER_NUMBER_OF_LAZER_ATTACKS;
 
 
 
