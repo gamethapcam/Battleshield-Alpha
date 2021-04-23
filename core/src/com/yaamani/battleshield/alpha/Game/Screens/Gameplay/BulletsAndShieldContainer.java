@@ -154,7 +154,7 @@ public class BulletsAndShieldContainer extends Group implements Resizable {
                     //portalEntranceExitFadeInOutTween.setPercentage(durationMillis/PORTALS_CONTAINER_PORTAL_ALPHA_DURATION/*percentage*/);
                     //Gdx.app.log(TAG, "portalEntranceExitFadeInOutTween");
                     if (durationMillis < 0)
-                        durationMillis = 0; // TODO: May introduce problems/bugs OR make other bugs harder to detect. You could try removing it and run the game (Bug guaranteed, so fix it).
+                        durationMillis = 0;
                     portalEntranceExitFadeInOutTween.setCurrentTime(durationMillis);
                     /*if (d ==  null & tweenEntrance)
                         d = portalEntranceExitFadeInOutTween;*/

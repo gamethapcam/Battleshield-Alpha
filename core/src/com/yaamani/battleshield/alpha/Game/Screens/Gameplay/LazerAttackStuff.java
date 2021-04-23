@@ -173,6 +173,8 @@ public class LazerAttackStuff implements Updatable, Resizable {
         int currentAttackMaxArmorBullets = calculateTotalNumOfArmorBulletsThatShouldBeSpawned();
 
         if (currentNumOfSpawnedArmorBulletsForTheNextAttack < currentAttackMaxArmorBullets) {
+            if (currentNumOfSpawnedArmorBulletsForTheNextAttack < 0)
+                currentNumOfSpawnedArmorBulletsForTheNextAttack = 0;
             float timestampForTheCurrentBullet = timestampsForArmorBulletsToPrepareForTheNextLazerAttack[currentNumOfSpawnedArmorBulletsForTheNextAttack];
             float currentTime = nextLazerAttackTimer.getPercentage() * nextLazerAttackTimer.getDurationMillis();
 
