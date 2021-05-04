@@ -568,7 +568,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
 
         planets.setY(MM_PLANETS_TXT_FINAL_Y);
 
-        planets.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
+        planets.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 0);
 
         planets.addListener(
                 new InputListener() {
@@ -845,6 +845,7 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
             addActor(connectToAndroidClient);
             connectToAndroidClient.setVisible(true);
+            //connectToAndroidClient.setVisible(false);
         }
         connectToAndroidClient.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
         connectToAndroidClient.setHeight(5);
@@ -930,6 +931,8 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
         if (Gdx.app.getType() == Application.ApplicationType.Android | Gdx.app.getType() == Application.ApplicationType.iOS)
             addActor(saveControllersAngles);
 
+        //saveControllersAngles.setVisible(false);
+
         saveControllersAngles.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
         saveControllersAngles.setHeight(5);
         saveControllersAngles.setY(WORLD_SIZE - saveControllersAngles.getHeight());
@@ -960,8 +963,10 @@ public class MainMenuScreen extends AdvancedScreen implements OnPermissionResult
     private void initializeLoadControllersAngles() {
         loadControllersAngles = new SimpleText(myBitmapFont, "Load Controller Angles");
 
-        if (Gdx.app.getType() == Application.ApplicationType.Desktop)
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
             addActor(loadControllersAngles);
+            //loadControllersAngles.setVisible(false);
+        }
 
         loadControllersAngles.setColor(1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1-BG_COLOR_GREY, 1);
         loadControllersAngles.setHeight(5);

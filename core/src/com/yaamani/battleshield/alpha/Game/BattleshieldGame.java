@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
-import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Bullet;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.GameplayScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.LoadingScreen;
 import com.yaamani.battleshield.alpha.Game.Screens.MainMenuScreen;
@@ -15,14 +14,13 @@ import com.yaamani.battleshield.alpha.Game.Transitions.LoadingToMainMenu;
 import com.yaamani.battleshield.alpha.Game.Transitions.MainMenuToGameplay;
 import com.yaamani.battleshield.alpha.Game.Utilities.AndroidPermissionHandler;
 import com.yaamani.battleshield.alpha.Game.Utilities.OnPermissionResult;
+import com.yaamani.battleshield.alpha.MyEngine.InstaBugs;
 import com.yaamani.battleshield.alpha.MyEngine.MyText.MyBitmapFont;
 import com.yaamani.battleshield.alpha.MyEngine.SimplestTransition;
 import com.yaamani.battleshield.alpha.MyEngine.AdvancedApplicationAdapter;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
 import com.yaamani.battleshield.alpha.MyEngine.MyMath;
-
-import java.util.Arrays;
 
 import static com.yaamani.battleshield.alpha.ACodeThatWillNotAppearInThePublishedGame.DrawingStuff.saveShieldsWithVariousAngles;
 import static com.yaamani.battleshield.alpha.Game.Utilities.Constants.*;
@@ -66,6 +64,11 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
 
     @Override
 	public void create () {
+
+
+        InstaBugs.INSTANCE.initialize();
+
+
         initializeStage(new ExtendViewport(WORLD_SIZE, WORLD_SIZE, WORLD_SIZE*MAX_ASPECT_RATIO_SUPPORTED, WORLD_SIZE),
                         new SpriteBatch(),
                 false);
@@ -90,6 +93,8 @@ public class BattleshieldGame extends AdvancedApplicationAdapter implements OnPe
         //new ResumeGraduallyTesting().compareFunctions(MyInterpolation.myExp10, 1000, 10, 50, 100, 1, 4, 0.001f, 5, 2);
 
         destroyed = false;
+
+        //throw new RuntimeException("Intentional Exception");
     }
 
     @Override

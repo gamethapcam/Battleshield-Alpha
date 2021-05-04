@@ -30,7 +30,7 @@ public final class Constants {
 
 
 
-    public static final float WATCH_OUR_LOGO_DELAY = /*1000*/0;
+    public static final float WATCH_OUR_LOGO_DELAY = 1000/*0*/;
 
     public static final float LOADING_BG_COLOR_R = 223f/255f;
 
@@ -482,7 +482,7 @@ public final class Constants {
 
     public static final float STARS_MOVING_ANGLE = 40f * MathUtils.degRad;
 
-    public static final int STARS_COUNT = 400;
+    public static final int STARS_COUNT = 400/*1000*/;
 
     public static final float STARS_POLAR_TWEEN_DURATION = SHIELDS_ROTATION_OMEGA_ALPHA_TWEEN_DURATION;
 
