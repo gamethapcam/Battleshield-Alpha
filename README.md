@@ -1,5 +1,10 @@
 # Battleshield
 ![BATTLESHIELD](BATTLESHIELD.png)
+## Table of contents
+- [About](#about)
+- [Built with](#built-with)
+- [File Structure](#file-structure)
+- [Screenshots](#screenshots)
 ## About
 > A challenging mobile game for Android/iOS.
 ## Built with
