@@ -80,9 +80,10 @@ public class GameplayScreen extends AdvancedScreen {
     //private int rotation;
 
 
-    private MyFrameBuffer originalFrameBuffer;
-
+    private MyFrameBuffer originalGameplayFrameBuffer;
     private PortalPostProcessingEffect portalPostProcessingEffect;
+    private MyFrameBuffer portalFrameBuffer;
+
 
 
     private float slowMoDeltaFraction = 1;
@@ -101,6 +102,9 @@ public class GameplayScreen extends AdvancedScreen {
 
 
     private LazerAttackStuff lazerAttackStuff;
+
+
+
 
 
     // HUD
@@ -124,6 +128,12 @@ public class GameplayScreen extends AdvancedScreen {
     private LevelFinishStuff levelFinishStuff;
 
 
+
+    private Group allGameplayStuff;
+    private Group allHudStuff;
+
+
+
     private SimpleText currentInUseNumText; // For debugging
     private SimpleText activeBulletsText; // For debugging
 
@@ -144,6 +154,11 @@ public class GameplayScreen extends AdvancedScreen {
         //this.font = font;
         this.myBitmapFont = myBitmapFont;
         this.starsContainer = starsContainer;
+
+        allGameplayStuff = new Group();
+        allHudStuff = new Group();
+        addActor(allGameplayStuff);
+        addActor(allHudStuff);
 
         finishWhenStoppingTheGameplay = new Array<>(false, FINISH_WHEN_STOPPING_THE_GAMEPLAY_INITIAL_CAPACITY, Timer.class);
         //resumeWhenResumingStarBullet = new Array<>(false, PAUSE_WHEN_PAUSING_STAR_BULLET_INITIAL_CAPACITY, Timer.class);
@@ -200,21 +215,21 @@ public class GameplayScreen extends AdvancedScreen {
 
 
         activeBulletsText = new SimpleText(myBitmapFont, "");
-        addActor(activeBulletsText);
+        allHudStuff.addActor(activeBulletsText);
         activeBulletsText.setVisible(false); // Set to true for debugging.
         activeBulletsText.setHeight(WORLD_SIZE/22f);
 
         currentInUseNumText = new SimpleText(myBitmapFont, "");
-        addActor(currentInUseNumText);
+        allHudStuff.addActor(currentInUseNumText);
         currentInUseNumText.setVisible(false); // Set to true for debugging.
         currentInUseNumText.setHeight(WORLD_SIZE/22f);
         currentInUseNumText.setY(WORLD_SIZE/22f);
 
 
-        originalFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
+        originalGameplayFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
+        portalFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
 
         portalPostProcessingEffect = new PortalPostProcessingEffect();
-
 
         badlogic = new Texture("badlogic.jpg");
     }
@@ -228,7 +243,7 @@ public class GameplayScreen extends AdvancedScreen {
     @Override
     public void show() {
         super.show();
-        addActorAt(0, starsContainer);
+        allGameplayStuff.addActorAt(0, starsContainer);
         //starsContainer.remove();
     }
 
@@ -400,52 +415,82 @@ public class GameplayScreen extends AdvancedScreen {
     public void draw(Batch batch, float parentAlpha) {
 
 
-
+        //Gdx.app.log(TAG, "RUNNINGRUNNINGRUNNINGRUNNINGRUNNINGRUNNINGRUNNINGRUNNINGRUNNINGRUNNING");
 
         batch.end();
 
-        originalFrameBuffer.begin();
+        originalGameplayFrameBuffer.begin();
         batch.begin();
 
         SolidBG.instance.draw();
 
         batch.setColor(1, 1, 1, 1);
+        removeActor(allHudStuff);
+        addActor(allGameplayStuff);
         super.draw(batch, parentAlpha);
         batch.end();
-        originalFrameBuffer.end();
+        originalGameplayFrameBuffer.end();
 
-        Texture originalFrameBufferTexture = originalFrameBuffer.getColorBufferTexture();
-        //originalFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        Texture gameplayFrameBufferTexture = originalGameplayFrameBuffer.getColorBufferTexture();
+        //gameplayFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         //batch.begin();
 
         batch.setColor(1, 1, 1, 1);
 
+
+        //TODO: Render portal to another framebuffer
+
         if (bulletsHandler.isThereAPortal()) {
 
+            portalFrameBuffer.begin();
+
             portalPostProcessingEffect.draw(batch,
-                    originalFrameBufferTexture,
+                    gameplayFrameBufferTexture,
                     0,
                     0,
                     getStage().getViewport().getWorldWidth(),
                     getStage().getViewport().getWorldHeight());
 
-        } else {
+            batch.end();
 
-            batch.begin();
+            portalFrameBuffer.end();
 
-            batch.draw(originalFrameBufferTexture,
-                    0,
-                    0,
-                    getStage().getViewport().getWorldWidth(),
-                    getStage().getViewport().getWorldHeight(),
-                    0,
-                    0,
-                    originalFrameBufferTexture.getWidth(),
-                    originalFrameBufferTexture.getHeight(),
-                    false,
-                    true);
-        }
+
+        } /*else {
+
+
+        }*/
+
+        Texture portalFrameBufferTexture = portalFrameBuffer.getColorBufferTexture();
+
+
+        Texture finalGameplayTexture = bulletsHandler.isThereAPortal() ? portalFrameBufferTexture : gameplayFrameBufferTexture;
+
+        batch.begin();
+
+        batch.draw(finalGameplayTexture,
+                0,
+                0,
+                getStage().getViewport().getWorldWidth(),
+                getStage().getViewport().getWorldHeight(),
+                0,
+                0,
+                gameplayFrameBufferTexture.getWidth(),
+                gameplayFrameBufferTexture.getHeight(),
+                false,
+                true);
+
+        removeActor(allGameplayStuff);
+        addActor(allHudStuff);
+        super.draw(batch, parentAlpha);
+
+
+        clearChildren();
+        addActor(allGameplayStuff);
+        addActor(allHudStuff); // The HUD must be in front.
+
+
     }
 
     @Override
@@ -493,7 +538,7 @@ public class GameplayScreen extends AdvancedScreen {
         turret = new Image(Assets.instance.gameplayAssets.turret);
 
         setCurrentTurretRadius(TURRET_RADIUS);
-        addActor(turret);
+        allGameplayStuff.addActor(turret);
         turret.setColor(1, 1, 1, 1f);
     }
 
@@ -595,7 +640,7 @@ public class GameplayScreen extends AdvancedScreen {
     private void initializeBulletsAndShieldArray(int shieldsMaxCount) {
         if (containerOfContainers == null) {
             containerOfContainers = new Group();
-            addActorAt(gameOverLayer.getZIndex(), containerOfContainers);
+            allGameplayStuff.addActorAt(gameOverLayer.getZIndex(), containerOfContainers);
         }
 
         if (bulletsAndShieldContainers == null)
@@ -631,7 +676,7 @@ public class GameplayScreen extends AdvancedScreen {
         whiteTextureHidesEveryThingSecondStageStarBullet = new Image(Assets.instance.gameplayAssets.gameOverBG);
         whiteTextureHidesEveryThingSecondStageStarBullet.setVisible(false);
         whiteTextureHidesEveryThingSecondStageStarBullet.setColor(1, 1, 1, 0);
-        addActor(whiteTextureHidesEveryThingSecondStageStarBullet);
+        allGameplayStuff.addActor(whiteTextureHidesEveryThingSecondStageStarBullet);
     }
 
     private void initializeWhiteTextureHidesEveryThingSecondStageTweenStarBullet() {
@@ -736,7 +781,7 @@ public class GameplayScreen extends AdvancedScreen {
 
     private void initializeSpecialBulletUI() {
         specialBulletUI = new RowOfActors(SPECIAL_BULLET_UI_MARGIN_BETWEEN_ACTORS);
-        addActor(specialBulletUI);
+        allHudStuff.addActor(specialBulletUI);
         specialBulletUI.setPosition(SPECIAL_BULLET_UI_X, SPECIAL_BULLET_UI_Y);
     }
 
@@ -1231,6 +1276,13 @@ public class GameplayScreen extends AdvancedScreen {
         bulletsHandler.setNetworkAndStorageManager(networkAndStorageManager);
     }
 
+    public Group getAllGameplayStuff() {
+        return allGameplayStuff;
+    }
+
+    public Group getAllHudStuff() {
+        return allHudStuff;
+    }
 
     //------------------------------ Other methods ------------------------------
     //------------------------------ Other methods ------------------------------

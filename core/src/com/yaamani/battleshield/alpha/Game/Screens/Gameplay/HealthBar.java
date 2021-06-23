@@ -14,7 +14,7 @@ public class HealthBar extends Arch implements Resizable {
                 AngleIncreaseDirection.CLOCKWISE,
                 HEALTH_BAR_RADIUS, 0);
 
-        gameplayScreen.addActor(this);
+        gameplayScreen.getAllGameplayStuff().addActor(this);
 
         setInnerRadiusRatio(HEALTH_BAR_INNER_RADIUS_RATIO);
     }

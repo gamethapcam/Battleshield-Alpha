@@ -62,7 +62,7 @@ public class ScoreTimerStuff implements Resizable, Updatable {
         this.gameplayScreen = gameplayScreen;
 
         scoreText = new SimpleText(font, "0.0");
-        gameplayScreen.addActor(scoreText);
+        gameplayScreen.getAllHudStuff().addActor(scoreText);
         scoreText.setHeight(SCORE_TXT_HEIGHT);
 
         preferences = Gdx.app.getPreferences(SCORE_PREFERENCES_NAME);

@@ -418,7 +418,7 @@ public class LazerAttackStuff implements Updatable, Resizable {
     private void initializeNextLazerAttackTimer() {
         String text = "Next Attack " + MyMath.toMinutesDigitalTimeFormat(LAZER_LAZER_TIMER_DURATION/1000/60);
         nextLazerAttackTimerText = new SimpleText(gameplayScreen.getMyBitmapFont(), text);
-        gameplayScreen.addActor(nextLazerAttackTimerText);
+        gameplayScreen.getAllHudStuff().addActor(nextLazerAttackTimerText);
 
 
         nextLazerAttackTimer = new Timer(LAZER_LAZER_TIMER_DURATION) {
@@ -506,9 +506,9 @@ public class LazerAttackStuff implements Updatable, Resizable {
         collectedArmorBulletsText = new SimpleText(gameplayScreen.getMyBitmapFont(), "");
         updateCharacterSequenceForCollectedArmorBulletsText();
 
-        gameplayScreen.addActor(armorBlack);
-        gameplayScreen.addActor(armorGlowing);
-        gameplayScreen.addActor(collectedArmorBulletsText);
+        gameplayScreen.getAllGameplayStuff().addActor(armorBlack);
+        gameplayScreen.getAllGameplayStuff().addActor(armorGlowing);
+        gameplayScreen.getAllGameplayStuff().addActor(collectedArmorBulletsText);
 
         armorGlowing.setColor(1, 1, 1, 0);
         collectedArmorBulletsText.setColor(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1);

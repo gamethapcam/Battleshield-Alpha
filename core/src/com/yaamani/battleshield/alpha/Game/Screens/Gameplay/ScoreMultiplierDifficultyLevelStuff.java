@@ -251,14 +251,14 @@ public class ScoreMultiplierDifficultyLevelStuff implements Resizable, Updatable
         scoreMultiplierText.setColor(BULLET_SPEED_MULTIPLIER_TXT_COLOR);
         scoreMultiplierText.setHeight(BULLET_SPEED_MULTIPLIER_TXT_HEIGHT);
 
-        gameplayScreen.addActor(scoreMultiplierText);
+        gameplayScreen.getAllHudStuff().addActor(scoreMultiplierText);
     }
 
     private void initializeProgressBar() {
         TextureRegion reg = Assets.instance.mutualAssets.bigCircle;
 
         myProgressBar = new MyProgressBar(reg, 0.5f, MY_PROGRESS_BAR_DEFAULT_PERCENTAGE_BAR_HEIGHT_RATIO);
-        gameplayScreen.addActor(myProgressBar);
+        gameplayScreen.getAllHudStuff().addActor(myProgressBar);
         myProgressBar.setHeight(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_HEIGHT);
 
         myProgressBar.setBgColor(BULLET_SPEED_MULTIPLIER_PROGRESS_BAR_BG_COLOR);

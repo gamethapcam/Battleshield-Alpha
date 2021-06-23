@@ -77,7 +77,7 @@ public class LevelFinishStuff implements Resizable, Updatable {
         finishText = new SimpleText(gameplayScreen.getMyBitmapFont(), "Finish");
         finishText.setHeight(LEVEL_FINISH_FINISH_TEXT_FINAL_HEIGHT);
         finishText.setColor(BG_COLOR_GREY, BG_COLOR_GREY, BG_COLOR_GREY, 1.f);
-        gameplayScreen.addActor(finishText);
+        gameplayScreen.getAllHudStuff().addActor(finishText);
         finishText.setVisible(false);
 
 
@@ -134,7 +134,7 @@ public class LevelFinishStuff implements Resizable, Updatable {
         congratsText = new SimpleText(gameplayScreen.getMyBitmapFont(), "Congrats");
         congratsText.setHeight(WORLD_SIZE / 6f);
         congratsText.setColor(1, 1, 1, 1.f);
-        gameplayScreen.addActor(congratsText);
+        gameplayScreen.getAllHudStuff().addActor(congratsText);
         congratsText.setVisible(false);
     }
 }

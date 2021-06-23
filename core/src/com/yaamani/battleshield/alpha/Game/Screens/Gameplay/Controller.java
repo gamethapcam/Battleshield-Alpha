@@ -41,7 +41,7 @@ public abstract class Controller extends Group implements Resizable {
 
     public Controller(GameplayScreen gameplayScreen, Image stick, Direction controllerPosition, NetworkAndStorageManager networkAndStorageManager) {
         setTransform(false);
-        gameplayScreen.addActor(this);
+        gameplayScreen.getAllHudStuff().addActor(this);
 
         this.stick = stick;
         addActor(this.stick);

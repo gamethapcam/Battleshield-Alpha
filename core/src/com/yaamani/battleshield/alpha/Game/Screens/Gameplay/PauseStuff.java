@@ -30,7 +30,7 @@ public class PauseStuff implements Resizable, Updatable {
     private Image dimmingOverlay;
     private PauseMenu pauseMenu;
 
-    private GestureDetector doubleTapToResume;
+    private GestureDetector doubleTapToPause;
 
     private MyBitmapFont myBitmapFont;
     private Image _3;
@@ -56,7 +56,7 @@ public class PauseStuff implements Resizable, Updatable {
 
         initializePauseText();
 
-        initializeDoubleTapToResume();
+        initializeDoubleTapToPause();
 
         initializeResumeBounds();
 
@@ -122,15 +122,16 @@ public class PauseStuff implements Resizable, Updatable {
                 timer.pause();
         }*/
 
-        gameplayScreen.addActor(pauseHud);
+        gameplayScreen.getAllHudStuff().addActor(pauseHud);
     }
 
     private void resumeTheGame() {
+        Gdx.app.log(TAG, "Should resume now!!");
         //gameplayScreen.setState(GameplayScreen.State.PLAYING);
 
         //resumeAfterCountDown.start();
         _3Tween.start();
-        gameplayScreen.removeActor(pauseHud);
+        gameplayScreen.getAllHudStuff().removeActor(pauseHud);
 
         /*if (gameplayScreen.isInStarBulletAnimation()) {
 
@@ -174,8 +175,8 @@ public class PauseStuff implements Resizable, Updatable {
         return pauseSymbol;
     }
 
-    public GestureDetector getDoubleTapToResume() {
-        return doubleTapToResume;
+    public GestureDetector getDoubleTapToPause() {
+        return doubleTapToPause;
     }
 
     //------------------------------ initializers ------------------------------
@@ -189,8 +190,8 @@ public class PauseStuff implements Resizable, Updatable {
         pauseText.setSize(PAUSE_TEXT_HEIGHT*pauseTextRegion.getRegionWidth()/pauseTextRegion.getRegionHeight(), PAUSE_TEXT_HEIGHT);
     }
 
-    private void initializeDoubleTapToResume() {
-        doubleTapToResume = new GestureDetector(new GestureDetector.GestureAdapter() {
+    private void initializeDoubleTapToPause() {
+        doubleTapToPause = new GestureDetector(new GestureDetector.GestureAdapter() {
             @Override
             public boolean tap(float x, float y, int count, int button) {
                 if (gameplayScreen.getState() == GameplayScreen.State.PLAYING & count == 2)
@@ -199,7 +200,7 @@ public class PauseStuff implements Resizable, Updatable {
             }
         });
 
-        InputMultiplexer inputMultiplexer = new InputMultiplexer(doubleTapToResume, gameplayScreen.getStage());
+        InputMultiplexer inputMultiplexer = new InputMultiplexer(doubleTapToPause, gameplayScreen.getAllHudStuff().getStage());
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -213,7 +214,7 @@ public class PauseStuff implements Resizable, Updatable {
     private void initializePauseSymbol() {
         pauseSymbol = new Image(Assets.instance.gameplayAssets.pauseSymbol);
         pauseSymbol.setSize(PAUSE_SYMBOL_WIDTH, PAUSE_SYMBOL_HEIGHT);
-        gameplayScreen.addActor(pauseSymbol);
+        gameplayScreen.getAllHudStuff().addActor(pauseSymbol);
 
         pauseSymbol.addListener(new ClickListener() {
             @Override
@@ -268,9 +269,9 @@ public class PauseStuff implements Resizable, Updatable {
         _2.setColor(color);
         _1.setColor(color);*/
 
-        gameplayScreen.addActor(_3);
-        gameplayScreen.addActor(_2);
-        gameplayScreen.addActor(_1);
+        gameplayScreen.getAllHudStuff().addActor(_3);
+        gameplayScreen.getAllHudStuff().addActor(_2);
+        gameplayScreen.getAllHudStuff().addActor(_1);
 
         _3.setVisible(false);
         _2.setVisible(false);
@@ -390,7 +391,7 @@ public class PauseStuff implements Resizable, Updatable {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
-                    gameplayScreen.removeActor(pauseHud);
+                    gameplayScreen.getAllHudStuff().removeActor(pauseHud);
                     gameplayScreen.getHealthHandler().stopTheGameplay();
                     gameplayScreen.getAdvancedStage().switchScreens(gameplayScreen.getGameplayToMainMenu());
                 }
@@ -413,7 +414,7 @@ public class PauseStuff implements Resizable, Updatable {
                     //_3Tween.start();
                     //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getScoreMultiplierText().setVisible(false);
                     //gameplayScreen.getScoreStuff().getScoreMultiplierStuff().getMyProgressBar().setVisible(false);
-                    //gameplayScreen.removeActor(resumeBounds);
+                    //gameplayScreen.getAllHudStuff().removeActor(resumeBounds);
                 }
             });
         }
@@ -430,7 +431,7 @@ public class PauseStuff implements Resizable, Updatable {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
-                    gameplayScreen.removeActor(pauseHud);
+                    gameplayScreen.getAllHudStuff().removeActor(pauseHud);
                     gameplayScreen.getHealthHandler().stopTheGameplay();
                     gameplayScreen.getHealthHandler().newGame();
                 }
