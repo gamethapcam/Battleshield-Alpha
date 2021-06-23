@@ -36,7 +36,7 @@ public class LazerAttack extends Group implements Updatable, Resizable {
 
     public LazerAttack(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
-        gameplayScreen.addActor(this);
+        gameplayScreen.getAllGameplayStuff().addActor(this);
         //setVisible(false);
 
         lazerGun = new Image(Assets.instance.gameplayAssets.lazerGun);
