@@ -127,7 +127,7 @@ public class PortalPostProcessingEffect extends PostProcessingEffect implements 
 
         batch.end();
         batch.setShader(null);
-        batch.begin();
+        //batch.begin();
     }
 
     @Override

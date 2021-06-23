@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.yaamani.battleshield.alpha.Game.ImprovingControlls.NetworkAndStorageManager;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.BulletEffectRecord;
 import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.RewindEngine;
+import com.yaamani.battleshield.alpha.Game.Screens.Gameplay.Rewind.VhsTapePostProcessingEffect;
 import com.yaamani.battleshield.alpha.Game.SolidBG;
 import com.yaamani.battleshield.alpha.Game.Starfield.StarsContainer;
 import com.yaamani.battleshield.alpha.Game.Utilities.Assets;
@@ -83,7 +84,8 @@ public class GameplayScreen extends AdvancedScreen {
     private MyFrameBuffer originalGameplayFrameBuffer;
     private PortalPostProcessingEffect portalPostProcessingEffect;
     private MyFrameBuffer portalFrameBuffer;
-
+    private VhsTapePostProcessingEffect vhsTapePostProcessingEffect;
+    private MyFrameBuffer vhsTapeFrameBuffer;
 
 
     private float slowMoDeltaFraction = 1;
@@ -228,8 +230,10 @@ public class GameplayScreen extends AdvancedScreen {
 
         originalGameplayFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
         portalFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
+        vhsTapeFrameBuffer = new MyFrameBuffer(Pixmap.Format.RGBA8888, getStage().getViewport().getScreenWidth(), getStage().getViewport().getScreenHeight(), false);
 
         portalPostProcessingEffect = new PortalPostProcessingEffect();
+        vhsTapePostProcessingEffect = new VhsTapePostProcessingEffect();
 
         badlogic = new Texture("badlogic.jpg");
     }
@@ -256,6 +260,8 @@ public class GameplayScreen extends AdvancedScreen {
     @Override
     public void act(float delta) {
         if (!isVisible()) return;
+
+        //Gdx.app.log(TAG, "FPS = " + 1f/delta);
 
         pauseStuff.update(delta);
 
@@ -431,13 +437,16 @@ public class GameplayScreen extends AdvancedScreen {
         batch.end();
         originalGameplayFrameBuffer.end();
 
-        Texture gameplayFrameBufferTexture = originalGameplayFrameBuffer.getColorBufferTexture();
+        //Texture gameplayFrameBufferTexture = originalGameplayFrameBuffer.getColorBufferTexture();
         //gameplayFrameBufferTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         //batch.begin();
 
-        batch.setColor(1, 1, 1, 1);
+        Texture currentGameplayTexture = originalGameplayFrameBuffer.getColorBufferTexture();;
 
+
+
+        batch.setColor(1, 1, 1, 1);
 
         //TODO: Render portal to another framebuffer
 
@@ -446,38 +455,52 @@ public class GameplayScreen extends AdvancedScreen {
             portalFrameBuffer.begin();
 
             portalPostProcessingEffect.draw(batch,
-                    gameplayFrameBufferTexture,
+                    currentGameplayTexture,
                     0,
                     0,
                     getStage().getViewport().getWorldWidth(),
                     getStage().getViewport().getWorldHeight());
 
-            batch.end();
-
             portalFrameBuffer.end();
 
+
+            currentGameplayTexture = portalFrameBuffer.getColorBufferTexture();
 
         } /*else {
 
 
         }*/
 
-        Texture portalFrameBufferTexture = portalFrameBuffer.getColorBufferTexture();
+
+        if (isInRewindBulletAnimation()) {
+            vhsTapeFrameBuffer.begin();
+
+            vhsTapePostProcessingEffect.draw(batch,
+                    currentGameplayTexture,
+                    0,
+                    0,
+                    getStage().getViewport().getWorldWidth(),
+                    getStage().getViewport().getWorldHeight());
+
+            vhsTapeFrameBuffer.end();
+
+            currentGameplayTexture = vhsTapeFrameBuffer.getColorBufferTexture();
+
+        }
 
 
-        Texture finalGameplayTexture = bulletsHandler.isThereAPortal() ? portalFrameBufferTexture : gameplayFrameBufferTexture;
 
         batch.begin();
 
-        batch.draw(finalGameplayTexture,
+        batch.draw(currentGameplayTexture,
                 0,
                 0,
                 getStage().getViewport().getWorldWidth(),
                 getStage().getViewport().getWorldHeight(),
                 0,
                 0,
-                gameplayFrameBufferTexture.getWidth(),
-                gameplayFrameBufferTexture.getHeight(),
+                currentGameplayTexture.getWidth(),
+                currentGameplayTexture.getHeight(),
                 false,
                 true);
 
