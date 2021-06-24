@@ -45,3 +45,5 @@
 ![Gameplay4.png](Screenshots/Gameplay4.png)
 ![Gameplay5.png](Screenshots/Gameplay5.png)
 ![Gameplay6.png](Screenshots/Gameplay6.png)
+![starBullet.gif](Screenshots/starBullet.gif)
+![portal.gif](Screenshots/portal.gif)
